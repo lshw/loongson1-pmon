@@ -1,0 +1,23 @@
+#!/usr/bin/perl -w
+open FS,"<$ARGV[0]";
+open FD,">$ARGV[1]";
+print FD "static char $ARGV[2]\[]={\n";
+my ($x,$i,$d);
+$i=0;
+while(!eof(FS))
+{
+printf FD ("/*%08x:*/",$i) if($i%16==0);
+read FS,$d,1;
+$x=unpack "C",$d;
+printf FD ("0x%02x",$x);
+$i++;
+if(!eof(FS))
+{
+printf FD (","); 
+printf FD ("\n") if($i%16==0);
+}
+}
+print FD "};\n";
+close(FS);
+close(FD);
+

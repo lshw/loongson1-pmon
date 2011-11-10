@@ -1,0 +1,201 @@
+The sh Command
+sh
+
+The sh command is an embedded command that executes the Monitor command typed following the prompt. 
+
+Functional Description
+
+The following syntactic rules apply to all command lines entered at the 
+Monitor prompt.
+
+  »  	Multiple commands can appear on one line if each command is 
+	separated by a semicolon (;). 
+
+  »  	Register names are replaced by their contents if the register name is 
+	prefixed with an "at" symbol (@). 
+
+  »  	Symbol names are replaced by their value if the symbol name is 
+	pre fixed with an ampersand symbol (&).
+
+<  »  	Control-S pauses the output stream. 
+
+  »  	Control-Q restarts the output stream. 
+
+  »  	Control-C aborts the current command.
+
+The shell also maintains a command history. Previous command lines are
+recalled either with Emacs-like commands or with C Shell "!" notation.
+the following table lists the commands that are supported by the Monitor.
+
+ Command  Action 
+
+^P
+
+Recall previous command
+
+^N
+
+Recall next command
+
+^F
+
+Move cursor once character to the right (forward)
+
+^B
+
+Move the cursor one character to the left (back)
+
+^A
+
+Move the cursor to the beginning of the line
+
+^E
+
+Move the cursor to the end of the line
+
+^D
+
+Delete character at cursor position
+
+^H
+
+Delete character to the left of the cursor
+
+!str
+
+Recall and execute the last command that started with the string str
+
+!num
+
+Recall and execute command number num
+
+!!
+
+Recall and execute last command
+
++-/()
+
+Algebraic operators
+
+^addr
+
+Substitute with contents of address addr
+
+@name
+
+Substitute with contents of named register
+
+&<name
+
+Substitute with value of symbol name
+
+0xnum
+
+Treat num as a hexadecimal number
+
+0onum
+
+Treat num as an octal number
+
+0tnum
+
+Treat num as an decimal number
+
+The inbase, 
+
+inalpha, prompt, 
+
+and rptcmd 
+
+Variables
+
+The following paragraphs describe the inbase, inalpha, prompt, and 
+rptcmd environment variables:
+
+inbase - This variable selects the default input base for numeric values. A 
+value of 8, 10, or 16 selects that base as the assumed default. If "auto" is 
+specified, the base is determined according to the usual C language rules 
+(0x = hex, leading 0 = octal, otherwise decimal).
+
+If inbase is set to 8, 10, or 16, then values starting with zero through nine 
+are assumed to be values in the specified base. If inbase is set to "auto", 
+then values starting with zero are assumed to be octal, and numbers 
+starting with one through nine are assumed to be decimal.
+
+The following lists the rules that hold in setting the default numeric base.
+
+InbaseBase
+ 0x  Hexadecimal 
+ 0t  Decimal 
+ 0o  Octal 
+ [g-zG-Z@_.]  Symbol 
+ &  Symbol 
+ @  Register 
+
+inalpha - This variable selects whether arguments 
+starting with a, b, c, d, e, 
+or f are interpreted as symbols or as hexadecimal numbers.
+
+Setting inalpha to "hex" causes the Monitor interpret the argument as a 
+hexadecimal value, if possible. If the argument cannot be interpreted as a 
+hexadecimal value, then the Monitor checks the symbol table to see if the 
+argument is a known symbol. 
+
+Setting inalpha to "symbol" causes the Monitor to check the symbol table 
+first.
+
+It is also possible to specify values using simple expressions using the 
+arithmetic operators +, -, *, and /. Expressions do not take spaces between 
+the numerals and operators. For example, 
+
+PMON b printf+4
+ 
+
+sets a breakpoint at (printf+4). Any combination of register names, 
+symbols, and values may be used. The precedence order of operators is the 
+same as that defined by the C language. Two examples showing the use of 
+simple arithmetic operators follow:
+
+PMON ls -v start+0x240		
+
+Show the actual address.
+
+PMON d map+0t10*4		
+
+Dump memory at (map+(10*4)).
+
+PMON d @a0+0t56		
+
+Dump memory at 56(a0)
+
+PMON d ^tcbchn			
+
+Dump memory at contents of tcbchn
+
+ 
+
+prompt - This variable specifies the command prompt string. The 
+metacharacter "!" is replaced by the current history number. For example, 
+
+ 
+PMON set prompt "! " 
+
+23 _
+
+It is not possible to display system variables in the prompt.
+
+rptcmd - When this environment variable is set to "on", the previous 
+command is repeated when the user enters a blank line. When set to "trace", 
+only trace commands (t or to) are repeated.
+
+See Also
+hi (command history) 
+and set (setup and display environment 
+variables) commands.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

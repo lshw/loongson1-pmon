@@ -1,0 +1,48 @@
+SerialICE Limitations
+SerialICE Limitations
+
+When the target system is halted at a breakpoint, it's possible to save
+the contents of most general purpose registers. However, in this scheme,
+the contents of two general purpose registers must be
+sacrificed; two registers are required for use by the SerialICE Kernel code
+that extracts the contents of the other general purpose registers. The
+registers chosen are k0 and k1 because those are the only two registers
+that are guaranteed (by convention) to not contain useful values when
+interrupts are enabled.  Users should
+keep in mind that the contents of these registers at the time of a
+breakpoint are therefore not available. 
+
+SerialICE uses a hardware interrupt to take control of the target CPU.
+Since the SIO is connected to one of the CPU's interrupt request inputs,
+it's possible that the SerialICE Controller may be prevented from taking
+control of the target system by masking of that interrupt.
+Of course, the target system software is usually written with the
+intention of minimizing the time during which interrupts are masked, in
+order to optimize the system's realtime response.
+
+However, it's possible that inadvertent errors during program
+development could result in prolonged or even indefinite masking of
+interrupts. That would prevent the SerialICE Controller from placing the
+target in Debug mode, so care should be taken to avoid such errors.
+
+Also, it should be noted that SerialICE itself makes use of the CPU's
+exception handling mechanism whenever a breakpoint occurs. Therefore,
+care must be taken in debugging exception handlers, to ensure that any
+necessary machine state is saved before a debug exception may occur. In
+particular, the EPC (Exception Program Counter), and SR (Status
+Register) must be saved, along with any other registers which may be
+used by the handler.
+
+In practice, this means that breakpoints or single-stepping may safely
+be used within the body of an exception handler, provided it is written
+in such a way that all necessary state is saved as its initial action
+on entry. However neither of these features may be used during the
+first few instructions of the handler; these must be allowed to
+complete the task of saving essential machine state to the stack. 
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

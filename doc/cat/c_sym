@@ -1,0 +1,58 @@
+The sym Command
+sym
+
+The sym command sets a symbolic name for a variable.
+
+Format
+
+The format for this command is:
+
+	sym name value
+
+where:
+
+name	
+is the name of the variable for which a value is to be set.
+
+value	
+is the value to which the variable is set.
+
+Functional Description
+
+The sym command sets a symbolic name to the specified value. Normally 
+the load command clears the symbol table. However, there is an option to 
+override the clearing of the symbol table (see the load command for 
+details). 
+
+Symbols can be displayed using the ls command.
+
+Examples illustrating the use of this command follow.
+
+PMON sym start 9fc00240
+
+PMON sym flush_cache 9fc016f0
+
+PMON l start 4
+start+0x240 3c09a07f	lui	t1,0xa07f
+start+0x244 3c08003c	lui	t0,0x3c
+start+0x248 3529ff20	ori	t1,t1,0xff20
+
+PMON l 9fc0027c 5	
+start+0x27c 03a1e825	or	sp,sp,at 
+start+0x280 0ff005bc	jal	flush_cache
+start+0x284 24040000	addiu	a0,zero,0x0
+start+0x288 0ff005bc	jal	flush_cache
+start+0x28c 24040001	addiu	a0,zero,0x1
+
+See Also
+ls, 
+load, 
+l,
+and sh commands.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

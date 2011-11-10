@@ -1,0 +1,152 @@
+Example of using PMON for Assembly-level debugging
+Example of using PMON for Assembly-level debugging
+
+This page shows an annotated example of using PMON to
+download, and then debug a sample application.
+
+Load the application program l4003.rec (bubble sort).
+
+PMON load
+Downloading from ethernet, ^C to abort
+Entry address is 80000200
+total = 0x1280 bytes
+
+Disassemble the program.
+
+PMON l
+      _start        0c0001ba jal     CpuInit                # 0x800006e8
+      _start+0x4    00000000 nop
+      _start+0x8    3c01a000 lui     at,0xa000              # 40960
+      _start+0xc    02018025 or      s0,s0,at
+      _start+0x10   0200f809 jalr    s0
+      _start+0x14   24040003 addiu   a0,zero,0x3
+      _start+0x18   0200f809 jalr    s0
+      _start+0x1c   24040004 addiu   a0,zero,0x4
+      _start+0x20   0c0002a4 jal     clrbss                 # 0x80000a90
+      _start+0x24   00000000 nop
+more... q
+
+Go from here to 'main'. Go must only be used once, from then on
+you must use the 'c' (continue) command.
+
+PMON g . main
+        main        27bdffe0 addiu   sp,sp,0xffe0           # -32
+
+Disassemble but only show calls.
+
+PMON l -c
+        main+0xc    0c00014f jal     _puts                  # 0x8000053c
+        main+0x14   0c0000bf jal     init                   # 0x800002fc
+        main+0x1c   0c0000f8 jal     sort                   # 0x800003e0
+        main+0x24   0c00014f jal     _puts                  # 0x8000053c
+        init+0x14   0c000140 jal     malloc                 # 0x80000500
+        init+0x74   0c0000e8 jal     insert                 # 0x800003a0
+        sort+0x58   0c00011e jal     swap                   # 0x80000478
+       _puts+0x38   0c00018b jal     sio_putc               # 0x8000062c
+       _puts+0x4c   0c00018b jal     sio_putc               # 0x8000062c
+    sio_putc+0x14   0c000170 jal     sio_init               # 0x800005c0
+more... q
+
+Continue until the function init.
+
+PMON c init 
+        init        27bdffe0 addiu   sp,sp,0xffe0           # -32
+
+Continue until the address in register ra, 
+i.e., until this function returns.
+
+PMON c @ra
+        main+0x1c   0c0000f8 jal     sort                   # 0x800003e0
+
+Single step into the function sort.
+
+PMON t
+        sort        8f8e8028 lw      t6,-32728(gp)          # 0xffff8028
+
+Disassemble.
+
+PMON l
+        sort        8f8e8028 lw      t6,-32728(gp)          # 0xffff8028
+        sort+0x4    27bdffd8 addiu   sp,sp,0xffd8           # -40
+        sort+0x8    11c0001f beq     t6,zero,sort+0x88      # 0x80000468
+        sort+0xc    afbf0014 sw      ra,20(sp)              # 0x14
+        sort+0x10   8f8f8028 lw      t7,-32728(gp)          # 0xffff8028
+        sort+0x14   afa00024 sw      zero,36(sp)            # 0x24
+        sort+0x18   afaf0020 sw      t7,32(sp)              # 0x20
+        sort+0x1c   8fb80020 lw      t8,32(sp)              # 0x20
+        sort+0x20   00000000 nop
+        sort+0x24   8f190000 lw      t9,0(t8)
+more... q
+
+Single step.
+
+PMON t 
+        sort+0x4    27bdffd8 addiu   sp,sp,0xffd8           # -40
+
+Single step by pressing the return key (repeat last command).
+
+PMON 
+        sort+0x8    11c0001f beq     t6,zero,sort+0x88      # 0x80000468
+PMON 
+        sort+0x10   8f8f8028 lw      t7,-32728(gp)          # 0xffff8028
+PMON 
+        sort+0x14   afa00024 sw      zero,36(sp)            # 0x24
+PMON 
+        sort+0x18   afaf0020 sw      t7,32(sp)              # 0x20
+PMON 
+        sort+0x1c   8fb80020 lw      t8,32(sp)              # 0x20
+PMON 
+        sort+0x20   00000000 nop
+PMON 
+        sort+0x24   8f190000 lw      t9,0(t8)
+PMON 
+        sort+0x28   00000000 nop
+
+Disassemble.
+
+PMON l
+        sort+0x28   00000000 nop
+        sort+0x2c   13200012 beq     t9,zero,sort+0x78      # 0x80000458
+        sort+0x30   afb9001c sw      t9,28(sp)              # 0x1c
+        sort+0x34   8fa80020 lw      t0,32(sp)              # 0x20
+        sort+0x38   8faa001c lw      t2,28(sp)              # 0x1c
+        sort+0x3c   9509000a lhu     t1,10(t0)              # 0xa
+        sort+0x40   954b000a lhu     t3,10(t2)              # 0xa
+        sort+0x44   00000000 nop
+        sort+0x48   0169082b sltu    at,t3,t1
+        sort+0x4c   10200008 beq     at,zero,sort+0x70      # 0x80000450
+more... q
+
+Disassemble calls only.
+
+PMON l -c
+        sort+0x58   0c00011e jal     swap                   # 0x80000478
+       _puts+0x38   0c00018b jal     sio_putc               # 0x8000062c
+       _puts+0x4c   0c00018b jal     sio_putc               # 0x8000062c
+    sio_putc+0x14   0c000170 jal     sio_init               # 0x800005c0
+     CpuInit+0x4    0c0000a8 jal     getmachtype            # 0x800002a0
+     CpuInit+0x38   0100f809 jalr    t0
+searching.. ^C-break!
+        sort+0x28   00000000 nop
+
+Continue until sort+58.
+
+PMON c sort+58
+        sort+0x58   0c00011e jal     swap                   # 0x80000478
+
+Single step over the function swap.
+
+PMON to
+        sort+0x60   240c0001 addiu   t4,zero,0x1
+
+Continue until the function swap.
+
+PMON c swap
+        swap        8c8e0004 lw      t6,4(a0)
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

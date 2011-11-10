@@ -1,0 +1,137 @@
+<html>
+
+<head>
+<title>The ls Command</title>
+</head>
+
+<body>
+
+<h1>ls</h1>
+<!--INDEX "ls command" "list symbols" -->
+
+<p>The ls command lists the current symbols in the symbol table. </p>
+
+<h2>Format</h2>
+
+<dl>
+  <dd>The format for the ls command is:
+    <pre>
+
+<font size="+1">	ls [-ln] [<var>sym</var>|[-[v|a] <var>adr</var>]
+</font>
+</pre>
+    <p>where:</p>
+    <table width="95%">
+      <tr bgcolor="#CCCCCC"> 
+        <td valign="top" width="46" align="right">-l&nbsp;&nbsp; </td>
+        <td width="756" align="left" valign="top">&nbsp;provides a long listing, 
+          showing the address value for each symbol. </td>
+      </tr>
+      <tr>
+        <td valign="top" width="46" align="right">-n&nbsp;&nbsp; </td>
+        <td width="756" align="left" valign="top">&nbsp;lists the symbols in ascending 
+          order of address. </td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td valign="top" width="46" align="right"><var>sym&nbsp;&nbsp;</var></td>
+        <td width="756" align="left" valign="top">&nbsp;is a pattern filter for 
+          the symbols to be shown. Both character wildcards (&quot;?&quot;) and 
+          word wildcards (&quot;*&quot;) are permitted. </td>
+      </tr>
+      <tr>
+        <td valign="top" width="46" align="right">-v&nbsp;&nbsp; </td>
+        <td width="756" align="left" valign="top">&nbsp;is the verbose option, 
+          showing the value in hexadecimal, decimal, and octal. </td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td valign="top" width="46" align="right">-a&nbsp;&nbsp; </td>
+        <td width="756" align="left" valign="top">&nbsp;shows the address in symbolic 
+          form. </td>
+      </tr>
+      <tr>
+        <td valign="top" width="46" align="right"><var>adr&nbsp;&nbsp;</var></td>
+        <td width="756" align="left" valign="top">&nbsp;is the address for which 
+          a symbol or offset from a symbol is sought. </td>
+      </tr>
+    </table>
+    <p>Invoking the ls command without any options or parameters lists the symbols in
+    alphabetical order without displaying the actual address for each symbol.</p>
+  </dd>
+</dl>
+
+<h2>Functional Description</h2>
+
+<dl> 
+  <dd>The ls command lists the symbols in the symbol table.</dd>
+</dl>
+<p>The -l option produces a long listing, which includes the address value of 
+  each symbol. The -n option causes the symbols to be listed in ascending order 
+  of address. The -a adr option lists the symbol at the next lowest address. The 
+  -v adr option prints the result in hex, decimal, and octal. The -v option is 
+  useful for computing the value of an expression that may include registers, 
+  symbols, and absolute values. </p>
+<p>Examples illustrating the use of the ls command follow.</p>
+<dl> 
+  <dd> 
+    <div align="left">
+      <table width="751">
+        <tr bgcolor="#CCCCCC"> 
+          <td width="370"><font color="#FF0000"><tt>PMON&gt; ls <br>
+            flush_cache start </tt></font></td>
+          <td valign="top" width="403"><font color="#FF0000">List symbols in alphabetic 
+            order. </font></td>
+        </tr>
+        <tr> 
+          <td width="370"><font color="#FF0000"><tt>PMON&gt; ls -l <br>
+            9fc016f0 flush_cache <br>
+            9fc00240 start </tt></font></td>
+          <td valign="top" width="403"><font color="#FF0000">List symbols in alphabetic 
+            order with addresses. </font></td>
+        </tr>
+        <tr bgcolor="#CCCCCC"> 
+          <td width="370"><font color="#FF0000"><tt>PMON&gt; ls -ln <br>
+            9fc00240 start<br>
+            9fc016f0 flush_cache </tt></font></td>
+          <td valign="top" width="403"><font color="#FF0000">List symbols and 
+            addresses in ascending order of address. </font></td>
+        </tr>
+        <tr> 
+          <td width="370"><font color="#FF0000"><tt>PMON&gt; ls s* <br>
+            start<br>
+            </tt></font></td>
+          <td valign="top" width="403"><font color="#FF0000">List symbols starting 
+            with the letter &quot;s.&quot; </font></td>
+        </tr>
+        <tr bgcolor="#CCCCCC"> 
+          <td width="370"><font color="#FF0000"><tt>PMON&gt; ls -a 9fc00260 <br>
+            9fc00240 start+0x20<br>
+            </tt></font></td>
+          <td valign="top" width="403"><font color="#FF0000">List symbol at the 
+            next lowest address. </font></td>
+        </tr>
+        <tr> 
+          <td width="370"><font color="#FF0000"><tt>PMON&gt; ls -a @cpc <br>
+            a0020020 = start+0x20<br>
+            </tt></font></td>
+          <td valign="top" width="403"><font color="#FF0000">List symbol at the 
+            next lowest address from Current PC. </font></td>
+        </tr>
+        <tr bgcolor="#CCCCCC"> 
+          <td width="370"><font color="#FF0000"><tt>PMON&gt; ls -v @r2+0t10*4 
+            <br>
+            0x800222e8 = 0t-2147343640 = 0o20000421350<br>
+            </tt></font></td>
+          <td valign="top" width="403"><font color="#FF0000">Display the value 
+            of the expression &quot;@r2+0t10*4&quot;: </font></td>
+        </tr>
+      </table>
+    </div>
+  </dd>
+</dl>
+
+<hr>
+<p> <b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a> </p>
+<p><!--$Id: c_ls.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --></p>
+</body>
+</html>

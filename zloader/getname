@@ -1,0 +1,7 @@
+#echo $(pwd0=$(pwd);pwd1=$(dirname $pwd0)/zloader.;echo Makefile.${pwd0#$pwd1})
+pwd=$(pwd);
+if [ "${pwd#*/zloader.}" = "$pwd" ];then
+echo Makefile.cpci
+else
+echo Makefile.${pwd#*/zloader.}
+fi

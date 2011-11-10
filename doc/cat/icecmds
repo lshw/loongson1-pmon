@@ -1,0 +1,86 @@
+SerialICE Monitor Commands by Catagory
+SerialICE Monitor Commands by Catagory
+
+The SerialICE Monitor (running on the SerialICE Controller) provides a set of
+powerful assembly-level debugging commands. Click 
+here to see an example annotated debug
+session..
+
+Downloading
+
+Load File(load),
+
+Define a Symbol(sym),
+
+List Symbols(ls),
+
+Display/Set Registers/Memory
+
+Display/set Registers(r),
+
+Modify Memory(m),
+
+Display Memory(d),
+
+Disassemble Memory(l),
+
+Fill Memory(fill),
+
+Copy Memory(copy),
+
+Compare Memory(compare),
+
+Search Memory(search),
+
+Dump Memory(dump),
+
+Execution Control
+
+Start Execution(g),
+
+Display/Set Breakpoints(b),
+
+Set Complex Breakpoint(when),
+
+Delete Breakpoint(db),
+
+Single Step(t/to),
+
+Continue Execution(c),
+
+Set Data Breakpoint(ab),
+
+Miscellaneous
+
+Help(h),
+
+Enter DBX mode(debug),
+
+History(hi),
+
+Display/set Enviroment Variable(set),
+
+Set Terminal Parameters(stty),
+
+Transparent Mode(tr),
+
+Flush the Caches(flush),
+
+Display the Caches(cache),
+
+Display the version number,
+
+Reestablish connection with target(sync),
+
+Save Driver to Flash memory(sdtf),
+
+The Command Shell,
+
+Paginator.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

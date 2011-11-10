@@ -1,0 +1,6 @@
+TARGET=Bonito2emini
+TARGETEL=Bonito
+START=start.o
+MEMSIZE=128
+
+include Makefile.inc

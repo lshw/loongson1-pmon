@@ -1,0 +1,46 @@
+	PMON Target Requirements
+	PMON Target Requirements
+
+PMON requires somewhere between 128K and 256K Bytes of ROM depending on the features selected. It also
+requires 128K bytes of RAM. It needs to communicate with a debugger running on the Host via a UART.
+
+PMON Memory Map
+
+				RAM
+	   80020000       +---------------+
+			  |               |
+			  |          ^    |
+			  |   heap   |    |
+			  |		  |
+			  +---------------+
+			  |      bss      |
+			  |  (incl stack) |
+			  +---------------+
+			  |      data     |
+	   80000100	  +---------------+
+	                  |  excep vects  |
+	   80000000	  +---------------+
+
+			        ROM
+    Approx 9fc28000       +---------------+
+			  |	data	  |
+			  | copied to RAM |
+			  +---------------+
+			  |     text  	  |
+			  |    (code)  	  |
+			  +---------------+
+			  |  entry points |
+	                  +---------------+
+	                  |  excep vects  |
+	   9fc00000	  +---------------+
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+
+
+**This file was converted from HTML to TEXT using a TRIAL version of**
+**Markup Remover 1.1 (C) 1998 by Aquatic Moon Software http://www.aquaticmoon.com/**
+**This message does not appear in files converted after the program has been liscensed.**

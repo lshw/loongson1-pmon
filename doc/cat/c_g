@@ -1,0 +1,89 @@
+The g Command
+g
+
+The g command starts program execution.
+
+Format
+
+The format for the g command is:
+
+g [-st] [adr [bptadr]] [-c args-]
+
+where:
+
+-s	is a flag indicating that the stack pointer, sp, should not be set.
+
+-t	is a flag that causes the execution time of the client program 
+	to be displayed in seconds.
+
+adr	is the address of the first instruction to be executed.
+
+bptadr	is a breakpoint address where program execution is to be 
+	stopped. This breakpoint is removed the next time that 
+	execution halts.
+
+-c args	indicates that the argument or arguments args are to be 
+	passed to the client program.
+
+By default, the g command starts program execution at the address in the 
+EPC register, and sets the stack pointer, sp, to the beginning of the stack 
+area.
+
+Functional Description
+
+The g command starts program execution. If the user does not specify the 
+starting address adr, execution starts at the current value of the EPC 
+register. This command must only be used once after downloading
+a new program. Use the c command to continue 
+execution after a breakpoint.
+
+If the user specifies the -c option, the Monitor passes all arguments after -c to the
+client program by the following method. If -c is specified, the Monitor places the number of arguments (argc) in
+Register a0. The Monitor also places the
+address of an array of pointers to the command argument-strings in
+Register a1. The first element in the array pointed to by a1 contains a
+pointer to the string -c (the option on the command line).  Note that
+if the -c is not specified, register a0 will be set to zero.
+
+If adr is specified, a temporary breakpoint
+(bptadr) may also be specified.  The temporary breakpoint remains in
+effect only until the next time that program execution is halted. The
+character '.' may be used as a placeholder for the adr if you wish to
+specifiy a temporary breakpoint without specifying a start address.
+
+If you use the standard start-up file for executing programs under the
+control of the PROM Monitor, the function
+main will receive two incoming arguments, argc and argv, having the
+correct values to permit a program to read options from the command
+line, where argv[0] is a pointer to the string -c. 
+
+Note that a program built using version 4.0 of pmcc will not execute under 
+pre-3.0 versions of  the PROM Monitor unless the -c option is specified in 
+the g command.
+
+Examples illustrating the use of the g command follow.
+
+PMON g				Start executing at the current value of 
+				the EPC register.
+
+PMON g a0020000		Start executing at 0xa0020000.
+
+PMON g a0020000 a0020008	Start executing at 0xa0020000 and 
+				break at 0xa0020008.
+
+Files
+The g command is located in mon/go.c.
+
+See Also
+c command
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+
+
+**This file was converted from HTML to TEXT using a TRIAL version of**
+**Markup Remover 1.1 (C) 1998 by Aquatic Moon Software http://www.aquaticmoon.com/**
+**This message does not appear in files converted after the program has been liscensed.**

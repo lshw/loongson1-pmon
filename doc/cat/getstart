@@ -1,0 +1,45 @@
+		Getting Started
+		Getting Started
+
+This package contains software to support three entirely different
+techniques for testing and debugging target-resident programs.
+
+PMON is a traditional debug environment
+where the debug monitor runs on the same board as the application. The
+advantage of this scheme is that you only need a single target board.  The disadvantage is that the
+monitor consumes significant amounts of ROM and RAM space. It also makes the environment
+that you application runs in, much different than the standalone
+environment that it will eventually encounter once it has been "blown"
+into ROM.
+
+SerialICE-1A, on the other hand, requires
+two separate boards, one for use as the Target, and the other for use as the SerialICE Controller. Its advantage is that it requires
+minimal resources of ROM and RAM in the Target. It also runs the
+application in an environment that much more closely resembles the
+standalone environment that it will eventually encounter once it has
+been "blown" into ROM.
+
+SerialICE-1B, retains the benefits
+of SerialICE-1A in requiring only minimal target resources, but
+eliminates the need for the SerialICE Controller board. However, this
+solution is presently only available for Windows 9x/NT hosts.
+
+To build (or use) any of these programs you will need the
+following hardware and software:
+
+  »  A Host Computer System
+  »  MIPS C compiler for your Host
+  »  A debugger for your Host
+  »  A Target board (and for SerialICE-1A a controller board)
+
+Now make your choice of PMON, 
+SerialICE-1A, or
+SerialICE-1B, 
+and proceed to the next step in the installation procedure.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

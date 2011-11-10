@@ -1,0 +1,293 @@
+<title>The sh Command</title>
+
+<h1>sh</h1>
+
+
+
+<!--INDEX "sh command" "command editing" -->
+
+
+
+The sh command is an embedded command that executes the <a href="mondef.htm">Monitor</a> command typed following the prompt. <p>
+
+
+
+<h2>Functional Description</h2>
+<div align="left"> The following syntactic rules apply to all command lines entered 
+  at the <a href="mondef.htm">Monitor</a> prompt. </div>
+<ul>
+  <li> Multiple commands can appear on one line if each command is separated by 
+    a semicolon (;). </li>
+  <li>Register names are replaced by their contents if the register name is prefixed 
+    with an &quot;at&quot; symbol (@). </li>
+  <li>Symbol names are replaced by their value if the symbol name is pre fixed 
+    with an ampersand symbol (&amp;). </li>
+  <li>Control-S pauses the output stream. </li>
+  <li>Control-Q restarts the output stream.</li>
+  <li>Control-C aborts the current command. </li>
+</ul>
+<div align="left"> 
+  <p>The shell also maintains a command history. Previous command lines are recalled 
+    either with Emacs-like commands or with C Shell &quot;!&quot; notation. the 
+    following table lists the commands that are supported by the <a href="mondef.htm">Monitor</a>.</p>
+</div>
+<blockquote>
+<p>&nbsp; </p>
+</blockquote>
+<dl> 
+  <dd> 
+    <div align="left"> 
+      <table border cellpadding="5">
+        <tr bgcolor="#CCCCFF"> 
+          <th> Command </th>
+          <th> Action </th>
+        </tr>
+        <tr bgcolor="#CCCCCC"> 
+          <td> ^P </td>
+          <td> Recall previous command </td>
+        </tr>
+        <tr> 
+          <td> ^N </td>
+          <td> Recall next command </td>
+        </tr>
+        <tr bgcolor="#CCCCCC"> 
+          <td> ^F </td>
+          <td> Move cursor once character to the right (forward) </td>
+        </tr>
+        <tr> 
+          <td> ^B </td>
+          <td> Move the cursor one character to the left (back) </td>
+        </tr>
+        <tr bgcolor="#CCCCCC"> 
+          <td> ^A </td>
+          <td> Move the cursor to the beginning of the line </td>
+        </tr>
+        <tr> 
+          <td> ^E </td>
+          <td> Move the cursor to the end of the line </td>
+        </tr>
+        <tr bgcolor="#CCCCCC"> 
+          <td> ^D </td>
+          <td> Delete character at cursor position </td>
+        </tr>
+        <tr> 
+          <td> ^H </td>
+          <td> Delete character to the left of the cursor </td>
+        </tr>
+        <tr bgcolor="#CCCCCC"> 
+          <td> !<var>str</var> </td>
+          <td> Recall and execute the last command that started with the string 
+            <var>str</var> </td>
+        </tr>
+        <tr> 
+          <td> !<var>num</var> </td>
+          <td> Recall and execute command number <var>num</var> </td>
+        </tr>
+        <tr bgcolor="#CCCCCC"> 
+          <td> !! </td>
+          <td> Recall and execute last command </td>
+        </tr>
+        <tr> 
+          <td> +-/() </td>
+          <td> Algebraic operators </td>
+        </tr>
+        <tr bgcolor="#CCCCCC"> 
+          <td> ^<var>addr</var> </td>
+          <td> Substitute with contents of address <var>addr</var> </td>
+        </tr>
+        <tr> 
+          <td> @<var>name</var> </td>
+          <td> Substitute with contents of named register </td>
+        </tr>
+        <tr bgcolor="#CCCCCC"> 
+          <td> &amp;<var>name</var> </td>
+          <td> Substitute with value of symbol <var>name</var> </td>
+        </tr>
+        <tr> 
+          <td> 0x<var>num</var> </td>
+          <td> Treat <var>num</var> as a hexadecimal number </td>
+        </tr>
+        <tr bgcolor="#CCCCCC"> 
+          <td> 0o<var>num</var> </td>
+          <td> Treat <var>num</var> as an octal number </td>
+        </tr>
+        <tr> 
+          <td> 0t<var>num</var> </td>
+          <td> Treat <var>num</var> as an decimal number </td>
+        </tr>
+      </table>
+    </div>
+    <p align="left"> </p>
+  <dt>&nbsp;</dt>
+  <dd>The inbase, inalpha, prompt, and rptcmd Variables</dd>
+  <dt><br>
+  </dt>
+</dl>
+<div align="left">The following paragraphs describe the inbase, inalpha, prompt, 
+  and rptcmd environment variables:</div>
+<p> <b>inbase -</b> This variable selects the default input base for numeric values. 
+  A value of 8, 10, or 16 selects that base as the assumed default. If &quot;auto&quot; 
+  is specified, the base is determined according to the usual C language rules 
+  (0x = hex, leading 0 = octal, otherwise decimal).</p>
+<p> If inbase is set to 8, 10, or 16, then values starting with zero through nine 
+  are assumed to be values in the specified base. If inbase is set to &quot;auto&quot;, 
+  then values starting with zero are assumed to be octal, and numbers starting 
+  with one through nine are assumed to be decimal.</p>
+<p> The following lists the rules that hold in setting the default numeric base.</p>
+<blockquote> 
+  <p>&nbsp; </p>
+</blockquote>
+<dl> 
+  <dd> 
+    <div align="left"> 
+      <table border cellpadding="5">
+        <tr bgcolor="#CCCCFF"> 
+          <th>Inbase</th>
+          <th>Base</th>
+        </tr>
+        <tr bgcolor="#CCCCCC"> 
+          <td> 0x </td>
+          <td> Hexadecimal </td>
+        </tr>
+        <tr> 
+          <td> 0t </td>
+          <td> Decimal </td>
+        </tr>
+        <tr bgcolor="#CCCCCC"> 
+          <td> 0o </td>
+          <td> Octal </td>
+        </tr>
+        <tr> 
+          <td> [g-zG-Z@_.] </td>
+          <td> Symbol </td>
+        </tr>
+        <tr bgcolor="#CCCCCC"> 
+          <td> &amp; </td>
+          <td> Symbol </td>
+        </tr>
+        <tr> 
+          <td> @ </td>
+          <td> Register </td>
+        </tr>
+      </table>
+    </div>
+  <dt>&nbsp;</dt>
+  <dd>
+    <div align="left"></div>
+    <p align="left"> <b>inalpha -</b> This variable selects whether arguments 
+      starting with a, b, c, d, e, or f are interpreted as symbols or as hexadecimal 
+      numbers.
+</dl>
+<p> Setting inalpha to &quot;hex&quot; causes the <a href="mondef.htm">Monitor</a> 
+  interpret the argument as a hexadecimal value, if possible. If the argument 
+  cannot be interpreted as a hexadecimal value, then the <a href="mondef.htm">Monitor</a> 
+  checks the symbol table to see if the argument is a known symbol. </p>
+<p> Setting inalpha to &quot;symbol&quot; causes the <a href="mondef.htm">Monitor</a> 
+  to check the symbol table first.</p>
+<p> It is also possible to specify values using simple expressions using the arithmetic 
+  operators +, -, *, and /. Expressions do not take spaces between the numerals 
+  and operators. For example, </p>
+<blockquote> 
+  <p>&nbsp; </p>
+</blockquote>
+<div align="left">
+  <pre>
+
+PMON&gt; b printf+4
+
+</pre>
+</div>
+<blockquote> 
+  <p> sets a breakpoint at (printf+4). Any combination of register names, symbols, 
+    and values may be used. The precedence order of operators is the same as that 
+    defined by the C language. Two examples showing the use of simple arithmetic 
+    operators follow:</p>
+</blockquote>
+<blockquote> 
+  <p>&nbsp; </p>
+</blockquote>
+<dl> 
+  <div align="left"> 
+    <div align="left"> 
+      <table>
+        <tr> 
+          <td width="300"><samp> PMON&gt; ls -v start+0x240 </samp></td>
+          <td> Show the actual address. </td>
+        </tr>
+        <tr> 
+          <td><samp> PMON&gt; d map+0t10*4 </samp></td>
+          <td> Dump memory at (map+(10*4)). </td>
+        </tr>
+        <tr> 
+          <td><samp> PMON&gt; d @a0+0t56 </samp></td>
+          <td> Dump memory at 56(a0) </td>
+        </tr>
+        <tr> 
+          <td><samp> PMON&gt; d ^tcbchn </samp></td>
+          <td> Dump memory at contents of tcbchn </td>
+        </tr>
+      </table>
+    </div>
+    <dl>
+      <dt>&nbsp;</dt>
+    </dl>
+  </div>
+  <blockquote> 
+    <div align="left"> 
+      <div align="left"> 
+        <p><b>prompt -</b> This variable specifies the command prompt string. 
+          <br>
+        </p>
+      </div>
+    </div>
+  </blockquote>
+</dl>
+<div align="left"> 
+  <div align="left">The metacharacter &quot;!&quot; is replaced by the current 
+    history number. For example, </div>
+</div>
+<blockquote>
+  <div align="left">
+    <div align="left">
+      <div align="left">
+        <pre>
+
+PMON&gt; set prompt &quot;!&gt; &quot; 
+
+
+23&gt; _
+
+</pre>
+      </div>
+    </div>
+  </div>
+</blockquote>
+<p> It is not possible to display system variables in the prompt.</p>
+<blockquote>
+  <p><b>rptcmd -</b> When this environment variable is set to &quot;on&quot;, 
+    the previous command is repeated when the user enters a blank line. When set 
+    to &quot;trace&quot;, only trace commands (t or to) are repeated. </p>
+</blockquote>
+<p>&nbsp; </p>
+<h2>See Also</h2><dl><dd>
+
+<a href="c_hi.htm">hi</a> (command history) 
+
+and <a href="c_set.htm">set</a> (setup and display environment 
+
+variables) commands.
+
+
+
+</dl><p><hr>
+
+<b>Navigation:</b> 
+
+<a href="pmon.htm">Document Home</a> | 
+
+<a href="doctoc.htm">Document Contents</a> | 
+
+<a href="docindex.htm">Document Index</a> 
+<p>
+<p><!--$Id: c_sh.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --></p>
+<p> 

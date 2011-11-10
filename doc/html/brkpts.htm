@@ -1,0 +1,71 @@
+<html>
+
+<head>
+<title>How Breakpoints Work</title>
+</head>
+
+<body>
+
+<h1 align="center">How Breakpoints Work</h1>
+<!--INDEX "How Breakpoints Work" -->
+
+<hr>
+
+<p>Breakpoints are set using the <a href="c_t.htm">'t'</a>, <a href="c_t.htm">'to'</a>, <a
+href="c_b.htm">'b'</a>, <a href="c_g.htm">'g'</a> or <a href="c_c.htm">'c'</a> commands.
+The 't', 'to', 'g', and 'c' commands set temporary breakpoints that are automatically
+deleted when execution halts. The 'b' command set persistent breakpoints that must be
+explicitly deleted (using the <a href="c_db.htm">'db'</a> command).</p>
+
+<p>When the user types a 'b' command to set a breakpoint the <a href="mondef.htm">Monitor</a>
+decides which type of breakpoint to utilize using the following algorithm:</p>
+
+<pre>
+
+	if (is_writeable(addr)) bptype = RAM;
+
+	else if (is_cacheable(addr) &amp;&amp; cpu_has_ilock) bptype = ILOCK;
+
+	else if (cpu_has_hwbp) bptype = HW;
+
+	else error();
+
+</pre>
+
+<p>This information is saved in an array. When execution is started, the Monitor walks
+through the breakpoint array and implements the breakpoints using the following rules: 
+
+<dl> 
+  <dt><b>RAM</b> </dt>
+  <dd>Replace the instruction at the specified address with a &quot;break&quot; 
+    instruction and save the previous contents (the instruction) so that it can 
+    be restored when execution halts. </dd>
+  <dt>&nbsp;</dt>
+  <dt><b>ILOCK</b> </dt>
+  <dd>Use the Icache locking feature to lock a &quot;break&quot; instruction into 
+    the Icache at the specified address.</dd>
+  <dt>&nbsp;</dt>
+  <dt><b>HW</b> </dt>
+  <dd>Program the hardware breakpoint register to generate an exception when execution 
+    reaches the specified address.</dd>
+</dl>
+
+<p>When an exception is encountered, the processor passes control to the Exception Vector.
+The Monitor then restores the previous contents of all breakpoints, and transfers control
+to the Shell.</p>
+
+<p>Thus, if the memory is inspected, the break instructions will never be seen, as they
+are only present in memory during execution of the application program.</p>
+
+<p>The only exception to this is if the program hangs in such a way as to require the user
+to press reset on the target system. In this case the Monitor will &quot;forget&quot; that
+breakpoints had been set, and you will see any RAM breakpoints as break instructions in
+memory. At this point the application program must be re-downloaded to obtain correct
+execution.</p>
+
+<hr>
+<p> <b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a> </p>
+<p><!--$Id: brkpts.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --></p>
+</body>
+</html>

@@ -1,0 +1,69 @@
+The d Command
+d
+
+The d command displays memory contents in hex or ASCII format.
+
+Format
+
+The format for the d command is:
+
+d [-b|h|w|s|S] adr [cnt|-rreg]
+
+where:
+
+-b	displays the memory contents in groups of bytes.
+
+-h	displays the memory contents in halfword groups.
+
+-w	displays the memory contents in word groups.
+
+-s	displays the memory contents as a null terminated string.
+
+-S	cnt is the number of data items to be displayed.
+
+adr	specifies the base address from which data is displayed.
+
+cnt	specifies the number of lines displayed.
+
+-rreg	displays the contents of memory as register reg.
+
+Functional Description
+
+The d command displays memory, starting at the specified address, in 
+hexadecimal or ASCII format. A -b, -h, -w, or -s option, if specified, sets 
+how the data is displayed. See the examples at the end of this section for 
+illustration of the possible display formats.
+
+The datasz and moresz Variables
+
+If invoked without a -b, -h, -w, or -s option, the datasz variable sets the 
+display format. Setting datasz to -b, -h, -w, or -s has the same effect as 
+the command line options of the same names described in this section. The 
+datasz variable does not effect any other command displays.
+
+If invoked without cnt, the d command first displays the number of
+lines specified in the environment variable moresz. The Monitor then pauses and displays the more
+prompt. See the more command for commands available with the more
+prompt. Also see the more command for more information on the moresz
+variable.
+
+The following example displays memory starting at 0xa0010000.
+
+PMON d a0010000 
+a0010000 bf c0 2b 00 bf c0 2b 00 bf c0 2b 00 bf c0 2b 3c ..+...+...+...+
+
+Files
+The d command is located in mon/dump.c.
+
+See Also
+l command,
+search command,
+m command
+and dump command.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

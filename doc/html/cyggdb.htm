@@ -1,0 +1,226 @@
+		<title>GNU's gdb from Cygnus Support</title>
+
+		<h1 align="center">GNU's gdb from Cygnus Support</h1>
+
+
+
+<!--INDEX "Source-level debug with Cygnus' gdb" -->
+
+
+
+To use the debug <a href="mondef.htm">Monitor</a> with GNU's gdb,
+
+connect the serial port that gdb will use, to the Monitor's tty0 (the
+
+console) on the target board.  i.e., gdb only uses one serial port.<p>
+
+
+
+<!--If necessary, use the <a href="c_set.htm">set</a> command to set your<a href="mondef.htm">Monitor</a>'s prompt to "PMON> ".  Gdb ishardwired to expect that string, and will not work with any other value(note the space after the ">").<p>-->
+
+
+
+Compile and link your modules with the -g option.  This will generate
+
+the extra information that is required by gdb. For example,<p>
+
+
+
+<pre>
+
+	pmcc -g -o bubble bubble.c
+
+</pre>
+
+
+
+Invoke gdb.<p>
+
+
+
+<pre>
+
+	% mips-lsi-elf-gdb -b 9600 bubble
+
+</pre>
+
+
+
+where 'bubble' is the name of the object file that you are debugging.
+
+The option &quot;-b 9600&quot; specifies that 9600 baud will be used for the
+
+Host-to-Target communications.<p>
+
+
+
+By default gdb from Cygnus Support runs in a windowed mode. However, it
+
+the time of writing, the windowed mode was incomplete/buggy, so you might
+
+prefer to run it in non-windowed mode. To select non-windowed mode, add
+
+the option -nw to the command line.<p>
+
+
+
+<pre>
+
+	% mips-lsi-elf-gdb -nw -b 9600 bubble
+
+</pre>
+
+
+
+gdb normally expects your monitor to have a prompt of &quot;PMON&gt; &quot; (note
+
+the space). If your monitor uses a different type of prompt you can
+
+either change it in the Monitor using the <a href="c_set.htm">set</a>
+
+command or tell gdb what prompt to expect.  For example,<p>
+
+
+
+<pre>
+
+	(gdb) set monitor-prompt IMON&gt; 
+
+</pre>
+
+
+
+Note that this command does <i>not</i> expect quotes around the prompt,
+
+but gdb will take the entire string including trailing spaces. So be careful
+
+to type the string exactly.<p>
+
+
+
+Next you must specify the target type, and serial port
+
+that will be used to communicated with the target. For example,<p>
+
+
+
+<pre>
+
+	(gdb) target lsi /dev/ttyb
+
+</pre>
+
+
+
+this specifies that the target is running LSI Logic's PMON (or IMON),
+
+and that the target is connected to /dev/ttyb on the host. If you are
+
+using <a href="dosdef.htm">MSDOS</a> you will need to specify one of
+
+the COM ports. eg. com1.<p>
+
+
+
+To download your program to the Target issue the &quot;load&quot; command. No
+
+arguments are necessary as gdb has all the other information it needs.<p>
+
+
+
+<pre>
+
+	(gdb) load
+
+</pre>
+
+
+
+If you simply want to run your program, you can just type &quot;run&quot;. But if
+
+as is more likely you want to be able to set breakpoints and single-step
+
+your program, you should type,<p>
+
+
+
+<pre>
+
+	(gdb) b main
+
+	(gdb) run
+
+</pre>
+
+
+
+this will set a breakpoint at &quot;main&quot; and execute the program until it
+
+reaches that point.<p>
+
+
+
+The following table is a summary of the most frequently used commands:<p>
+
+
+
+<center>
+
+  <table border cellpadding="6" width="80%">
+    <tr bgcolor="#CCCCFF"> 
+      <th colspan="3">Brief Command Summary</th>
+    </tr>
+
+    <tr bgcolor="#FFCCCC"> 
+      <th>gdb</th>
+      <th>PMON/2000 equivalent</th>
+      <th>Description</th>
+    </tr>
+
+    <tr bgcolor="#CCCCCC"> 
+      <td>step</td>
+      <td>t</td>
+      <td>Single Step</td>
+    </tr>
+
+<tr><td>next</td><td>to</td><td>Step Over</td></tr>
+
+    <tr bgcolor="#CCCCCC"> 
+      <td>b addr</td>
+      <td>b addr</td>
+      <td>Set Breakpoint</td>
+    </tr>
+
+<tr><td>delete</td><td>db *</td><td>Delete</td></tr>
+
+    <tr bgcolor="#CCCCCC"> 
+      <td>c</td>
+      <td>c</td>
+      <td>Continue</td>
+    </tr>
+
+<tr><td>run</td><td>g</td><td>Start Execution</td></tr>
+
+</table></center>
+<p>&nbsp; 
+<p>When debugging the Host-to-Target communications it is sometimes useful to 
+  create of log of all the transactions. The following command writes a log to 
+  the file &quot;remote.log&quot;.
+<p>
+
+
+
+<pre>
+
+	(gdb) set remotelogfile remote.log
+
+</pre>
+
+
+
+
+
+<p><hr>
+<p><b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a></p>
+<p><!--$Id: cyggdb.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --></p>

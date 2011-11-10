@@ -1,0 +1,1 @@
+#define	NLOOPDEV	1

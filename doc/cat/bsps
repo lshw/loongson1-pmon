@@ -1,0 +1,66 @@
+	Board Support Packages
+	Board Support Packages
+
+This package provides several example Board Support Packages (BSPs). Each
+BSP consists of a Driver 
+and a Kernel. 
+The Driver is downloaded to the
+SerialICE Controller, whereas the Kernel is "blown" into ROM
+and plugged into the Target.
+
+The Driver is specific to a processor but not to a board. The Kernel is
+specific to a board (and therefore a processor). For example the module
+d4001.c is a driver for the 4001 processor. It contains information
+about what registers are present on the processor. Whereas the module
+k4001.s is a kernel for the BDMR400x evaluation board, and because of
+the similarities it is possible to use this kernel on a BDMR400x fitted
+with a 4001, 4002, or 4003 (although you might need to provide
+software multiple/divide emulation if your board is equipped with a
+4002, or 4003).
+
+MAKE FILES
+
+The following files are used to control the build of this directory. 
+
+  »  readme
+  »  makefile
+  »  version
+
+By default, the makefile will list all of the possible targets for this
+directory.  You can type "make all" to build everything, or if you wish
+to build just those files appropriate for a specific target type (eg.
+4102), you can type "make 4102", or even "make k4102" if all you need is
+the kernel.
+
+KERNEL FILES
+
+These are actually located in the lib directory. But they are built here.
+The reason that the source files are located in the lib directory, is that
+they are also needed for pmcc's 
+"-prom -board xxxx" option.
+
+  »  lib/k4101.s - For BDMR4101
+  »  lib/k4011.s - For BDMR4011
+  »  lib/k4102.s - For BDMR4102
+  »  lib/k64388.s - For 64388 (RAP)
+
+DRIVER FILES
+
+  »   d4101.c - For lr4101
+  »   d4011.c - For lr4011
+  »   d4102.c - For lr4102
+  »   400x.c - Common code for lr400x processors
+  »   401x.c - Common code for lr401x processors
+  »   accesstst.s - Example access routine
+  »   iceif.c - Main module of driver
+  »   imon.c - Support module of driver
+  »   printd.c - Support module of driver
+  »   defs.h - Header file for driver
+  »   iceif.h - Header file for driver
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

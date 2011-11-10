@@ -1,0 +1,37 @@
+		Getting Started with SerialICE-1B
+		Getting Started with SerialICE-1B
+
+ What You'll Need
+
+	  »  A Host computer system running Windows 95/98 or NT
+	  »  A Target board
+
+To run an application program on your Target using SerialICE-1B, perform the
+following steps:
+
+  »  If you haven't done so already, 
+Download 
+the PMON source from the Web site.
+
+  »  Next you need to Extract the files 
+from the archive.
+
+  »  To configure the package, you need to run the Install program specifiying the correct
+target type.
+
+  »  To prepare the package for use you must 
+Build the package.
+
+  »  Configure your hardware.
+SerialICE-1B requires either an RS232 link between your host your target,
+or a high-speed serial connection via a Wiggler.
+
+  »  Build, 
+Download and Execute your application on the Target.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

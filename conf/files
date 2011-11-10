@@ -1,0 +1,413 @@
+#	$Id: files,v 1.1.1.1 2006/09/14 01:59:08 root Exp $
+
+# 
+#  Copyright (c) 2000-2002 Opsycon AB  (www.opsycon.se)
+#  
+#  Redistribution and use in source and binary forms, with or without
+#  modification, are permitted provided that the following conditions
+#  are met:
+#  1. Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+#  2. Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#  3. All advertising materials mentioning features or use of this software
+#     must display the following acknowledgement:
+# 	This product includes software developed by Opsycon AB.
+#  4. The name of the author may not be used to endorse or promote products
+#     derived from this software without specific prior written permission.
+# 
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS
+#  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+#  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+#  ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+#  DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+#  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+#  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+#  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+#  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+#  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+#  SUCH DAMAGE.
+# 
+
+# generic attributes
+define	disk
+define	tape
+define	ifnet
+define	tty
+define	scsi {}
+define	ifmedia
+define	mii {[phy = -1]}
+define	ide
+define	sys
+
+
+# net device attributes - we have generic code for arc(net), ether(net),
+# and fddi.
+define	ether
+
+define	wdc_base
+define	ata {[channel = -1], [drive = -1]}
+define	atapi {[channel = -1]}
+# Common code for ESDI/IDE/etc. controllers
+device	wdc: ata, atapi, wdc_base
+file	sys/dev/ic/wdc.c wdc_base
+
+define  mainbus {}
+device  mainbus: sys
+attach  mainbus at root
+file    pmon/dev/mainbus.c		mainbus		needs-flag
+
+# Attributes which machine-independent bus support can be attached to.
+# These should be defined here, because some of these busses can have
+# devices which provide these attributes, and we'd like to avoid hairy
+# ordering constraints on inclusion of the busses' "files" files.
+define	isabus { }			# ISA attachment
+define	eisabus { }			# EISA attachment
+define	pcibus {[bus = -1]}		# PCI attachment
+define	tcbus { }			# TurboChannel attachment
+define	usbus { }			# USB attachment
+define	pcmciabus { [controller = -1], [socket = -1]}	# PCMCIA attachment
+define	cbbus {[slot = -1]}		# CardBus attachment
+define	pcmciaslot {[slot = -1]}	# PCMCIA slot itself
+
+device  pcibr {} : pcibus
+attach  pcibr at mainbus
+file    pmon/dev/pcibr.c		pcibr		needs-flag
+
+# UHCI USB controller
+#device  uhci: usbus
+#file    sys/dev/usb/uhci.c                  uhci    needs-flag 
+
+# 8250/16[45]50-based "com" ports
+# tty is special. must not depend on sys-config
+#device  com: tty
+#file    dev/ic/com.c            com & (com_isa | com_isapnp | com_commulti | com_pcmcia | com_localbus) needs-flag
+
+# Symbios/NCR 53c720/53c8xx SCSI controllers
+define	siop_common
+file	sys/dev/ic/siop_common.c	siop_common
+
+device	siop: scsi,siop_common
+file	sys/dev/ic/siop.c		siop
+
+# LSI Logic MPI controllers
+device	mpi: scsi
+file	sys/dev/ic/mpi.c		mpi
+
+pseudo-device pty: tty
+pseudo-device tb: tty
+
+pseudo-device loop: ifnet
+pseudo-device sl: ifnet
+pseudo-device ppp: ifnet
+pseudo-device tun: ifnet
+pseudo-device bpfilter: ifnet
+pseudo-device strip: ifnet
+pseudo-device enc: ifnet
+pseudo-device bridge: ifnet, ether
+pseudo-device vlan: ifnet, ether
+pseudo-device sppp: ifnet
+pseudo-device faith: ifnet
+pseudo-device gif: ifnet
+pseudo-device gre: ifnet
+pseudo-device crypto: ifnet
+
+
+# Tweak!
+file pmon/cmds/lwdhcp/options.c cmd_lwdhcp needs-flag
+file pmon/cmds/lwdhcp/packet.c  cmd_lwdhcp needs-flag
+file pmon/cmds/lwdhcp/lwdhcp.c  cmd_lwdhcp needs-flag
+file pmon/cmds/cmd_bootp.c  cmd_bootp 
+
+file net/if_bridge.c			bridge			needs-count
+file net/bpf.c				bpfilter		needs-count
+
+file sys/net/if.c			sys
+file sys/net/if_ethersubr.c		ether 			needs-flag
+file sys/net/if_loop.c			loop
+file sys/net/if_media.c			ifmedia
+file sys/net/radix.c			sys
+file sys/net/raw_cb.c			sys
+file sys/net/raw_usrreq.c		sys
+file sys/net/route.c			sys
+file sys/net/rtsock.c			sys
+
+file sys/netinet/if_ether.c		ether
+file sys/netinet/in.c			inet
+file sys/netinet/in_cksum.c		inet
+file sys/netinet/in_pcb.c		inet
+file sys/netinet/in_proto.c		inet
+file sys/netinet/ip_icmp.c		inet
+file sys/netinet/ip_id.c		inet
+file sys/netinet/ip_input.c		inet
+file sys/netinet/ip_output.c		inet
+file sys/netinet/raw_ip.c		inet
+file sys/netinet/raw_ether.c	raw_ether needs-flag
+file sys/netinet/udp_usrreq.c		inet
+
+file sys/netinet/tcp_debug.c		tcp	needs-flag
+file sys/netinet/tcp_input.c		tcp	needs-flag
+file sys/netinet/tcp_output.c		tcp	needs-flag
+file sys/netinet/tcp_subr.c		tcp	needs-flag
+file sys/netinet/tcp_timer.c		tcp	needs-flag
+file sys/netinet/tcp_usrreq.c		tcp	needs-flag
+
+file sys/kern/kern_clock.c		sys
+file sys/kern/kern_misc.c		sys
+file sys/kern/kern_synch.c		sys
+file sys/kern/uipc_domain.c		sys
+file sys/kern/uipc_socket2.c		sys
+file sys/kern/kern_descrip.c		sys
+file sys/kern/kern_proc.c		sys
+file sys/kern/kern_syscall.c		sys
+file sys/kern/sys_generic.c		sys
+file sys/kern/subr_autoconf.c		sys
+file sys/kern/uipc_mbuf.c		sys
+file sys/kern/uipc_syscalls.c		sys
+file sys/kern/init_main.c		sys
+file sys/kern/kern_malloc.c		sys
+file sys/kern/kern_sig.c		sys
+file sys/kern/kern_time.c		sys
+file sys/kern/sys_socket.c		sys
+file sys/kern/uipc_socket.c		sys
+file sys/dev/bus_dma.c			sys
+
+file pmon/cmds/boot.c			cmd_boot
+file pmon/cmds/call.c			cmd_call
+file pmon/cmds/mycmd.c			cmd_mycmd
+file pmon/cmds/mycmd_debug.c		cmd_mycmd_debug
+file pmon/cmds/xmodem.c			cmd_xmodem & !cmd_xyzmodem
+file pmon/cmds/xyzModem.c		cmd_xyzmodem
+file pmon/cmds/crc16.c			cmd_xyzmodem
+file pmon/cmds/sysinfo.c		cmd_setup & mod_display
+file pmon/cmds/newmt/newmt.c	cmd_newmt
+file pmon/cmds/setup.c			cmd_setup & mod_display
+file pmon/cmds/display.c		mod_display needs-flag
+file pmon/cmds/test/serial.c	(cmd_test | cmd_testfire)
+file pmon/cmds/test/tsc2003.c	(cmd_test | cmd_testfire)
+file pmon/cmds/test/ads7846.c	(cmd_test | cmd_testfire)
+file pmon/cmds/test/74LV165.c	(cmd_test | cmd_testfire)
+file pmon/cmds/test/MCP3201.c	(cmd_test | cmd_testfire)
+file pmon/cmds/test/rtc.c		(cmd_test | cmd_testfire)
+file pmon/cmds/test/usb_probe.c	(cmd_test | cmd_testfire) & mod_usb
+file pmon/cmds/test/test.c			cmd_test & mod_display
+file pmon/cmds/test/test_fire.c			cmd_testfire & mod_display
+file pmon/cmds/cmdtable.c 
+file pmon/cmds/debuggercmds.c		mod_debugger
+file pmon/cmds/devls.c 			(sys & cmd_devls)
+file pmon/cmds/cmd_go.c			(mod_debugger | cmd_g)
+file pmon/cmds/hist.c			cmd_hist	needs-flag
+file pmon/cmds/ifaddr.c			(inet & cmd_ifaddr)
+file pmon/cmds/oload.c			(mod_load | mod_fastload | mod_elfload | mod_s3load) needs-flag
+file pmon/cmds/load.c
+file pmon/cmds/tftpd.c			tftpd
+file pmon/cmds/cmd_grub.c
+file pmon/cmds/memcmds.c		cmd_mem
+#file pmon/cmds/memtst.c			cmd_mt
+file pmon/cmds/memtst_chinese.c			cmd_mt
+file pmon/cmds/miscmds.c		cmd_misc
+file pmon/cmds/pcicmds.c		pcibus
+file pmon/cmds/pflash.c			cmd_flash
+file pmon/cmds/cmd_env.c		(cmd_env | cmd_set) needs-flag
+file pmon/cmds/stty.c			cmd_stty
+file pmon/cmds/transp.c			cmd_tr
+file pmon/cmds/sdump.c			cmd_sdump
+file pmon/cmds/sym.c			(mod_symbols | cmd_sym) needs-flag
+file pmon/cmds/time.c 			(mod_tod | have_tod & cmd_date)	needs-flag
+file pmon/cmds/shellcmds.c		(cmd_shell | cmd_vers | cmd_help | cmd_eval) needs-flag
+file pmon/cmds/cmd_rz.c			pmon_zmodem_rz
+file pmon/cmds/cmd_log.c		(logfile & ramfiles)	needs-flag
+file pmon/cmds/sz_cmd.c			pmon_zmodem_sz
+file pmon/cmds/cmd_main/cmd_main.c cmd_main
+file pmon/cmds/cmd_main/window.c cmd_main
+
+file pmon/common/about.c		cmd_about
+file pmon/common/autoconf.c		sys
+file pmon/common/callvec.c
+file pmon/common/cmdparser.c
+file pmon/common/debugger.c		(mod_debugger | cmd_l)	needs-flag
+file pmon/common/demo.c			mod_demo
+file pmon/common/exception.c
+file pmon/common/main.c
+file pmon/common/more.c			cmd_more	needs-flag
+file pmon/common/rsa.c
+file pmon/common/sbrk.c
+file pmon/common/env.c
+
+#
+# File systems
+#
+file pmon/fs/ramfile.c			ramfiles  needs-flag
+file pmon/fs/termio.c
+file pmon/fs/socket.c			inet
+file pmon/fs/gzip.c			gzip		needs-flag
+file pmon/fs/iso9660fs.c		iso9660		needs-flag
+file pmon/fs/devfs.c			(scsi | ide)
+file pmon/fs/diskfs.c			(scsi | ide)
+file pmon/fs/fatfs.c			fatfs
+file pmon/fs/ext2fs.c			ext2
+#file pmon/fs/yaffsfs.c			yaffsfs
+file pmon/fs/yaffs2/yaffsfs.c		    yaffsfs
+file pmon/fs/yaffs2/yaffscfg.c		    yaffsfs
+file pmon/fs/yaffs2/yaffs_mtdif2.c	    yaffsfs
+file pmon/fs/yaffs2/yaffs_mtdif.c	    yaffsfs
+file pmon/fs/yaffs2/yaffs_nand.c	    yaffsfs
+file pmon/fs/yaffs2/yaffs_checkptrw.c       yaffsfs
+file pmon/fs/yaffs2/yaffs_ecc.c             yaffsfs
+file pmon/fs/yaffs2/yaffs_guts.c            yaffsfs
+file pmon/fs/yaffs2/yaffs_packedtags2.c     yaffsfs
+file pmon/fs/yaffs2/yaffs_qsort.c           yaffsfs
+file pmon/fs/yaffs2/yaffs_tagscompat.c      yaffsfs
+file pmon/fs/yaffs2/yaffs_tagsvalidity.c    yaffsfs
+
+file pmon/loaders/loadfn.c		(mod_s3load | mod_fastload)
+file pmon/loaders/zmodem/zmdm.c		(pmon_zmodem_rz | pmon_zmodem_tz)
+file pmon/loaders/zmodem/crctab.c	(pmon_zmodem_rz | pmon_zmodem_tz)
+file pmon/loaders/zmodem/zmrz.c		pmon_zmodem_rz
+file pmon/loaders/exec.c
+file pmon/loaders/exec_bin.c
+file pmon/loaders/exec_elf.c		
+file pmon/loaders/exec_elf64.c	!elf32only needs-flag
+file pmon/loaders/exec_wince.c   mod_wince
+file pmon/loaders/exec_srec.c		mod_s3load needs-flag
+
+file pmon/netio/netio.c			inet
+file pmon/netio/bootp.c			inet
+file pmon/netio/ifconfig.c		inet
+file pmon/netio/ping.c			inet
+file pmon/netio/tftplib.c		inet
+file pmon/netio/nfs.c           inet & nfs
+file pmon/netio/httplib.c		inet & http & tcp
+#file pmon/netio/udptty.c		inet
+
+file x86emu/int10/radeon_init.c radeon7000
+##int10
+file x86emu/int10/x86emu/src/x86emu/debug.c		mod_x86emu_int10	needs-flag
+file x86emu/int10/x86emu/src/x86emu/decode.c		mod_x86emu_int10	needs-flag
+file x86emu/int10/x86emu/src/x86emu/fpu.c		mod_x86emu_int10	needs-flag
+file x86emu/int10/x86emu/src/x86emu/ops.c		mod_x86emu_int10	needs-flag
+file x86emu/int10/x86emu/src/x86emu/ops2.c		mod_x86emu_int10	needs-flag
+file x86emu/int10/x86emu/src/x86emu/prim_ops.c		mod_x86emu_int10	needs-flag
+file x86emu/int10/x86emu/src/x86emu/sys.c		mod_x86emu_int10	needs-flag
+file x86emu/int10/generic.c				mod_x86emu_int10	needs-flag
+file x86emu/int10/helper_exec.c				mod_x86emu_int10	needs-flag
+file x86emu/int10/helper_mem.c				mod_x86emu_int10	needs-flag
+file x86emu/int10/xf86int10.c				mod_x86emu_int10	needs-flag
+file x86emu/int10/xf86x86emu.c				mod_x86emu_int10	needs-flag
+
+file x86emu/src/x86emu/debug.c		mod_x86emu	needs-flag
+file x86emu/src/x86emu/decode.c		mod_x86emu	needs-flag
+file x86emu/src/x86emu/fpu.c		mod_x86emu	needs-flag
+file x86emu/src/x86emu/ops.c		mod_x86emu	needs-flag
+file x86emu/src/x86emu/ops2.c		mod_x86emu	needs-flag
+file x86emu/src/x86emu/prim_ops.c	mod_x86emu	needs-flag
+file x86emu/src/x86emu/sys.c		mod_x86emu	needs-flag
+file x86emu/src/biosemu/besys.c		mod_x86emu	needs-flag
+file x86emu/src/biosemu/bios.c		mod_x86emu	needs-flag
+file x86emu/src/biosemu/linuxpci.c	mod_x86emu	needs-flag
+file x86emu/src/biosemu/biosemu.c	mod_x86emu	needs-flag
+file x86emu/src/biosemu/freebiosvga.c	mod_x86emu	needs-flag
+
+file fb/cfb_console.c                                       mod_framebuffer         needs-flag
+file pmon/dev/kbd.c			mod_vgacon	needs-flag
+file pmon/dev/vgacon.c			mod_vgacon	needs-flag
+
+file pmon/dev/cpc700_iic.c		cpc700
+file pmon/dev/cpc700.c			cpc700
+file pmon/dev/cpc710.c			cpc710
+file pmon/dev/mpc107.c			mpc107
+file pmon/dev/generic_poll.c
+
+file pmon/dev/flash.c			(flash | mod_flash_amd | mod_flash_intel | mod_flash_sst | mod_flash_winbond | mod_flash_st) needs-flag
+file pmon/dev/flashdev.c		(flash | mod_flash_amd | mod_flash_intel | mod_flash_sst | mod_flash_winbond | mod_flash_st)
+file pmon/dev/flash_amd.c		mod_flash_amd
+file pmon/dev/flash_int.c		mod_flash_intel
+file pmon/dev/flash_sst.c		mod_flash_sst
+file pmon/dev/flash_st.c		mod_flash_st
+file pmon/dev/flash_winbond.c	mod_flash_winbond
+file pmon/dev/fl_nvram.c		flash_based_nvram
+
+file pmon/dev/mc146818.c		mod_tod_mc146818
+file pmon/dev/ns16550.c			mod_uart_ns16550
+file pmon/dev/discouart.c		mod_uart_discovery
+
+file pmon/arch/powerpc/machdep.c	powerpc
+file pmon/arch/powerpc/dbg_machdep.c	powerpc
+file pmon/arch/powerpc/disassemble.c	(powerpc & cmd_l)
+file pmon/arch/powerpc/powerpc.S	powerpc
+file pmon/arch/powerpc/cachecmds.c	(powerpc & cmd_cache)
+
+file pmon/arch/mips/machdep.c		mips
+file pmon/arch/mips/mips_machdep.c	mips
+file pmon/arch/mips/disassemble.c	(mips & mod_debugger)
+file pmon/arch/mips/mips.S		mips
+file pmon/arch/mips/cache.S		(mips & !godson2c)
+file pmon/arch/mips/cache.2c.S		(mips & godson2c)
+
+file pmon/arch/i386/machdep.c		i386
+file pmon/arch/i386/mips_machdep.c	i386
+file pmon/arch/i386/disassemble.c	(i386 & mod_debugger)
+#file pmon/arch/i386/i386.S		i386
+file pmon/arch/i386/i386_pci.c		i386
+file pmon/cmds/gzip/zlib_deflate/deflate.c  select_gzip
+file pmon/cmds/gzip/zlib_deflate/deflate_syms.c    select_gzip
+file pmon/cmds/gzip/zlib_deflate/deftree.c  select_gzip
+file pmon/cmds/gzip/zlib_inflate/infblock.c    select_gzip
+file pmon/cmds/gzip/zlib_inflate/infcodes.c    select_gzip
+file pmon/cmds/gzip/zlib_inflate/inffast.c    select_gzip
+file pmon/cmds/gzip/zlib_inflate/inflate.c    select_gzip
+file pmon/cmds/gzip/zlib_inflate/inflate_syms.c    select_gzip
+file pmon/cmds/gzip/zlib_inflate/inftrees.c    select_gzip
+file pmon/cmds/gzip/zlib_inflate/infutil.c  select_gzip
+file pmon/cmds/gzip/gzip.c  select_gzip
+device fd
+attach fd at mainbus
+file    sys/dev/fd/fd.c fd needs-flag
+define usbbus {} 
+device usb: disk 
+attach usb at usbbus
+
+define ahcibus {} 
+
+file sys/dev/usb-ehci/usb.c		mod_usb & mod_usb_ehci			#lxy
+file sys/dev/usb-ehci/ehci-hcd.c	mod_usb & mod_usb_ehci			#lxy
+file sys/dev/usb-ehci/ehci-fsl.c	mod_usb & mod_usb_ehci			#lxy
+file sys/dev/usb-ehci/usb_storage.c	mod_usb_storage & mod_usb_ehci		#lxy
+
+file sys/dev/usb/usb.c			mod_usb & mod_usb_ohci
+file sys/dev/usb/usb_storage.c    	mod_usb_storage & mod_usb_ohci needs-flag
+file sys/dev/usb/part.c     	  	mod_usb_storage
+file sys/dev/usb/usb-ohci.c		  mod_usb_ohci needs-flag	
+file sys/dev/usb/usb_kbd.c		  mod_usb_kbd & mod_usb	needs-flag
+file sys/dev/usb/cmd_usb.c		  mod_usb & mod_usb_storage
+
+file sys/dev/usb/usb_uhci.c		  mod_usb_uhci	needs-flag
+file sys/dev/pci/smi712.c		  mod_smi712 needs-flag
+file sys/dev/pci/sm502.c		  mod_smi502 needs-flag
+file sys/dev/nand/nand_base.c	  nand
+file sys/dev/nand/nand_ecc.c      nand
+file sys/dev/nand/nand_ids.c      nand
+file sys/dev/nand/nand_bbt.c      nand
+file pmon/fs/mtd.c		  nand
+
+file sys/dev/nand/yaf-nand/nand_util.c      nand	#lxy
+
+
+device loopdev
+attach loopdev at mainbus
+file    pmon/dev/loopdev.c loopdev needs-flag
+file fb/sis/sis_main.c mod_sisfb needs-flag
+
+#boot menu 
+file pmon/loaders/exec_txt.c 	mod_txt
+file pmon/cmds/menulist2f.c     mod_display
+file pmon/cmds/boot_cfg.c
+file pmon/common/bootkernel.c
+
+
+#pmon password
+file pmon/cmds/password.c      
+file pmon/dev/md5.c            
+#command: cat
+file pmon/cmds/cat.c	mod_cat

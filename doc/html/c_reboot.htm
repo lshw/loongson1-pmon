@@ -1,0 +1,26 @@
+<html>
+<head>
+<title>Reboot PMON Command</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<h1> reboot</h1>
+<!--INDEX "reboot" rebootcmd"reboot command" --> 
+<p>The reboot command attempts to restart the PMON/2000 monitor (and any other 
+  code which runs before PMON/2000 at bootstrap time) by jumping to <font face="Courier New, Courier, mono">0xfff00100</font> 
+  - the PowerPC restart location. 
+<p>If your system initialization depends on some device receiving a hardware reset, 
+  this may not work.
+<h2> Format</h2>
+<dl> 
+  <dd> The format for the reboot command is:</dd>
+  <pre><font size="+1">PMON&gt; <b>reboot</b>
+</font></pre>
+</dl>
+<hr>
+<p><b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a> 
+<p><!--$Id: c_reboot.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $--> 
+</body>
+</html>

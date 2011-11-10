@@ -1,0 +1,47 @@
+# $Id: files.Bonito
+#
+# Bonito Target specific files
+#
+
+file	Targets/Bonito2F7inch/pci/pci_machdep.c
+file	Targets/Bonito2F7inch/pci/cs5536_io.c   cs5536
+file	Targets/Bonito2F7inch/pci/cs5536_vsm.c  cs5536
+file	Targets/Bonito2F7inch/pci/sys_cmd.c  	 cs5536
+file	Targets/Bonito2F7inch/Bonito/tgt_machdep.c
+
+
+define  localbus { [base = -1 ] }
+device  localbus
+attach  localbus at mainbus
+file    Targets/Bonito2F7inch/dev/localbus.c		localbus
+
+
+# Ethernet driver for Discovery ethernet
+device  gt: ether, ifnet, ifmedia
+attach  gt at localbus
+file    sys/dev/ic/if_gt.c			gt
+
+#
+# Media Indepedent Interface (mii)
+#
+include "sys/dev/mii/files.mii"
+
+# Various PCI bridges
+
+include "sys/dev/pci/files.pci"
+
+#
+# Machine-independent ATAPI drivers
+#
+
+include "sys/dev/ata/files.ata"
+
+#
+#  SCSI framework
+#
+include "sys/scsi/files.scsi"
+
+#
+# Custom application files
+#
+include "pmon/custom/files.custom"

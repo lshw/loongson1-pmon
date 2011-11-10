@@ -1,0 +1,35 @@
+The vers Command
+vers
+
+The vers command prints the version number of the Monitor.
+
+Format
+
+The format for the vers command is:
+
+vers [-a]
+
+where:
+
+-a	List all version numbers
+
+Functional Description
+
+Entering vers without any parameters prints the primary version number
+of the Monitor. This is the value of the file 'version' in either the
+pmon or imon directory. The -a option lists the version numbers of
+all the components that were used to build this Monitor.
+
+Examples
+
+PMON vers
+5.1.17
+PMON vers -a
+pmon:5.1.17 mon:5.1.6 lib:5.1.7 tools:5.1.7 inc:5.1.4 cc:MIPSSUN
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

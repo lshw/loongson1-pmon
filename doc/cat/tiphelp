@@ -1,0 +1,53 @@
+		The UNIX tip Command
+		The UNIX tip Command
+
+The UNIX tip command is a very simple terminal emulator. It does not
+support scripting or specific terminal emulation, but it does provide
+a mechanism to communicate with a target via an RS-232 link, and
+permit files to be downloaded.
+
+Setup
+
+  »  Create the file ~/.tiprc containing:
+
+	force=\377
+	raisechar=\377
+
+  »  Invoke tip and specify the I/O port.
+
+	% tip -9600 device
+
+where device is the I/O port that you wish to use in order to
+communicate with the Target.
+
+Unfortunately there isn't much standardization of device
+names across different UNIX vendors, so you will probably have to ask
+around a little in order to find out the names of the serial ports on
+your system. Here are some values that I am aware of.
+
+VendorPort names
+Sun Microsystemsttya..ttyb..etc
+Silicon Graphicsttyd1..ttyd2..etc
+
+Sending Files
+
+Normally everything you type is sent directly to the target. However,
+if you start a line with '~' it is interpreted as a direct command for tip.
+For example, to download a file you type:
+
+	~ filename
+
+That is, tilde, followed by '' followed by the name of the file
+that you wish to download.
+
+To obtain a complete list of the commands available type '~?'. 
+tip also maintains a large number of variables that
+control its operation. You may display the state of these variables
+by typing '~s all'.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

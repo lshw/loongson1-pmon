@@ -1,0 +1,41 @@
+		SerialICE Kernels
+		SerialICE Kernels
+
+The SerialICE package provides a number of example SerialICE Kernels. These
+are located in the bsps directory. To build an SerialICE Kernel
+simply move to the bsps directory and type make. This will list all of
+the kernels that are currently provided, together will instructions for
+building them. If you have built your own board, you will probably need
+to modify the kernel to make it work on
+your new board.
+
+Once you have built the S-record file you
+are ready to make ROMS.
+
+Operation
+Porting
+Target Design Considerations
+SerialICE protocol
+
+The SerialICE Kernel is a small (less than 1K bytes) program that is ROM-resident
+on your Target board.
+
+Principle Features:
+
+  »  Neither uses nor flushes the caches - runs from k1seg.
+  »  Does initialize at least one block of RAM - this usually just means that
+	it initializes the DRAM controller.
+  »  Uses Interrupt-driven Serial I/O - Actually interrupts are only used to
+	wakeup the kernel when the application is running.
+  »  Runs the Application on powerup - If no real application is included 
+	in the ROM, the processor sits in a branch-to-self loop until 
+	the wakeup request is received.
+  »  Does not include software emulation of floating-point or multiply/divide.
+  »  Does not include software for instruction emulation.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

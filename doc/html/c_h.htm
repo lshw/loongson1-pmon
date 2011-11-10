@@ -1,0 +1,89 @@
+<html>
+
+<head>
+<title>The h Command</title>
+</head>
+
+<body>
+
+<h1>h</h1>
+<!--INDEX "h command" help "help command" -->
+
+<p>The h command provides on-line help.</p>
+
+<h2>Format</h2>
+
+<dl>
+  <dd>The format for the h command is:
+    <pre>
+
+<font size="+1">h [*|cmd-]
+</font>
+</pre>
+    <p>where:</p>
+    <table width="95%">
+      <tr bgcolor="#CCCCCC"> 
+        <td width="54" align="right" valign="top">*&nbsp;&nbsp; </td>
+        <td width="409">&nbsp;&nbsp;provides detailed help on all the commands. 
+        </td>
+      </tr>
+      <tr>
+        <td width="54" align="right" valign="top">cmd&nbsp;&nbsp; </td>
+        <td width="409">&nbsp;&nbsp;is a command. The <a href="mondef.htm">Monitor</a> 
+          then provides help on the stated command. </td>
+      </tr>
+    </table>
+    <p>If the command is executed without any parameters, then the <a href="mondef.htm">Monitor</a>
+    lists all the available commands.</p>
+  </dd>
+</dl>
+
+<h2>Functional Description</h2>
+
+<dl> 
+  <dd>The h command provides on-line help. If issued without arguments, all commands 
+    are listed. If issued with one or more command names as an option, it produces 
+    more detailed help on those commands. 
+    <p>The &quot;*&quot; option produces detailed help on all the commands, using 
+      the more command to control output on the screen. </p>
+    <p>Examples illustrating the use of the h command follow. NOTE that the actual 
+      output is architecture and configuration dependent.</p>
+    <pre>
+PMON> h
+      <a href="c_h.htm">h</a>  <a href="c_h.htm">on-line help</a>                      <a href="c_hi.htm">hi</a>  <a href="c_hi.htm">display command history</a>
+      <a href="c_m.htm">m</a>  <a href="c_m.htm">modify memory</a>                      <a href="c_r.htm">r</a>  <a href="c_r.htm">display/set register</a>
+      <a href="c_d.htm">d</a>  <a href="c_d.htm">display memory</a>                     <a href="c_l.htm">l</a>  <a href="c_l.htm">list (disassemble) memory</a>
+   <a href="c_copy.htm">copy</a>  <a href="c_copy.htm">copy memory</a>                     <a href="c_fill.htm">fill</a>  <a href="c_fill.htm">fill memory</a>
+ <a href="c_search.htm">search</a>  <a href="c_search.htm">search memory</a>                     <a href="c_tr.htm">tr</a>  <a href="c_tr.htm">transparent mode</a>
+      <a href="c_g.htm">g</a>  <a href="c_g.htm">start execution (go)</a>               <a href="c_c.htm">c</a>  <a href="c_c.htm">continue execution</a>
+      <a href="c_t.htm">t</a>  <a href="c_t.htm">trace (single step)</a>               to  trace (step over)
+      <a href="c_b.htm">b</a>  <a href="c_b.htm">set break point(s)</a>                <a href="c_db.htm">db</a>  <a href="c_db.htm">delete break point(s)</a>
+   <a href="c_load.htm">load</a>  <a href="c_load.htm">load memory from hostport</a>       <a href="c_dump.htm">dump</a>  <a href="c_dump.htm">dump memory to hostport</a>
+    <a href="c_set.htm">set</a>  <a href="c_set.htm">display/set variable</a>            eset  edit variable(s)
+  <a href="c_set.htm">unset</a>  <a href="c_set.htm">unset variable(s)</a>               <a href="c_date.htm">date</a>  <a href="c_date.htm">get/set date and time</a>
+  <a href="c_flash.htm">flash</a>  <a href="c_flash.htm">program flash prom</a>              <a href="c_stty.htm">stty</a>  <a href="c_stty.htm">set terminal options</a>
+  <a href="c_about.htm">about</a>  <a href="c_about.htm">about PMON</a>                       <a href="c_sym.htm">sym</a>  <a href="c_sym.htm">define symbol</a>
+     <a href="c_ls.htm">ls</a>  <a href="c_ls.htm">list symbols</a>                   <a href="c_flush.htm">flush</a>  <a href="c_flush.htm">flush caches</a>
+     <a href="c_mt.htm">mt</a>  <a href="c_mt.htm">memory test</a>                     <a href="c_call.htm">call</a>  <a href="c_call.htm">call function</a>
+     <a href="c_bt.htm">bt</a>  <a href="c_bt.htm">stack backtrace</a>                   <a href="c_sh.htm">sh</a>  <a href="c_sh.htm">command shell</a>
+   <a href="c_more.htm">more</a>  <a href="c_more.htm">paginator</a>                     <a href="c_reboot.htm">reboot</a>  <a href="c_reboot.htm">reboot PMON
+</a>   <a href="boot.htm">boot</a>  <a href="boot.htm">boot wrapper</a>                 <a href="netboot.htm">netboot</a>  <a href="netboot.htm">load network file</a>
+   <a href="c_ping.html">ping</a>  <a href="c_ping.html">ping remote host</a>            <a href="scsiboot.htm">scsiboot</a>  <a href="scsiboot.htm">boot from scsi</a>
+
+PMON&gt;
+PMON&gt; h stty 
+
+stty [tty] [-va] [baud] [sane] [term] set terminal options 
+
+</pre>
+    <h2><br>
+      See Also:</h2>
+  </dd>
+</dl>
+
+<hr>
+<p> <b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a> </p>
+<p><!--$Id: c_h.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --></p>
+</body>
+</html>

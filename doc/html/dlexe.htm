@@ -1,0 +1,95 @@
+<html>
+
+<head>
+<title>Downloading and Executing Your Application</title>
+</head>
+
+<body>
+
+<h1 align="left">Downloading and Executing Your Application</h1>
+<!--INDEX "Downloading and executing an application" -->
+
+<p>The procedure used to download and execute your application depends on what debugger
+you are using. This debug <a href="mondef.htm">Monitor</a> supports either of the
+following debugger types:
+
+<ul>
+  <li><a href="terms.htm">Terminal Emulator</a> </li>
+</ul>
+
+<h2>Download and Execute with a Terminal Emulator</h2>
+
+<dl> 
+  <dd> 
+    <h2>Download</h2>
+    <p>There are three possible choices for downloading your application:
+    <ul>
+      <li>Your Terminal Emulator's <a href="sendfile.htm">Send File</a> command.</li>
+      <li>Using the tftp command via <a href="netboot.htm">Ethernet</a> using 
+        the netboot coomand.</li>
+      <li>Loading directly from an attached <a href="scsiboot.htm">SCSI</a> disk 
+        device</li>
+    </ul>
+    <blockquote>
+      <p>&nbsp;</p>
+    </blockquote>
+  </dd>
+</dl>
+<h2>Execute</h2>
+<blockquote> 
+  <p>If you want to run the entire application to completion, type 'g'. Control 
+    will return to the <a href="mondef.htm">Monitor's</a> prompt when the application 
+    terminates. For example,</p>
+  <pre>
+
+	PMON&gt; g
+
+	-- program output if any
+
+	PMON&gt;
+
+</pre>
+  <p>If you would prefer to be able to single-step your application, and to possibly 
+    set breakpoints, you might prefer to use the following sequence of commands.</p>
+</blockquote>
+<dl> 
+  <dl> 
+    <dd> 
+      <table width="521">
+        <tr> 
+          <td width="203"><tt>PMON&gt; g . main</tt></td>
+          <td width="406">Execute until main</td>
+        </tr>
+        <tr> 
+          <td width="203"><tt>PMON&gt; l . 8</tt></td>
+          <td width="406">Disassemble the next 8 instructions</td>
+        </tr>
+        <tr> 
+          <td width="203"><tt>PMON&gt; s</tt></td>
+          <td width="406">Single-step one instruction</td>
+        </tr>
+        <tr> 
+          <td width="203"><tt>PMON&gt; c sort</tt></td>
+          <td width="406">Continue until the label sort</td>
+        </tr>
+      </table>
+    </dd>
+    <dt>&nbsp;</dt>
+  </dl>
+</dl>
+<blockquote> 
+  <p>For a complete list of the commands available, please refer to the appropriate 
+    <a href="pmoncmds.htm">PMON</a> command list.</p>
+</blockquote>
+<h2>See Also:</h2>
+<blockquote>
+  <p><a href="c_load.htm">load</a>, <a href="boot.htm">boot</a>, <a href="netboot.htm">netboot</a> 
+    and <a href="scsiboot.htm">scsiboot</a> commands.</p>
+</blockquote>
+<hr>
+<p> <b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a> <br>
+</p>
+<p><!--$Id: dlexe.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --> </p>
+</body>
+</html>

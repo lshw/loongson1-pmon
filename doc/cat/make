@@ -1,0 +1,27 @@
+		The Make Utility
+		The Make Utility
+
+Make is an essential tool for managing large projects. It saves time
+by only compiling those modules that have been changed since the last
+build. To learn more about make I recommend either of these books.
+
+  »  "Managing Projects with Make", by Andrew Oram and Steve Talbott, published
+by O'Reilly & Associates, Inc. ISBN 0-937175-90-0
+
+  »  "Mastering Make", by Clovis L. Tondo et al., published by Prentice Hall, ISBN 0-13-554619-2.
+
+MSDOS users should note that they *must* use the make utility that is
+supplied with Microsoft's Visual C++ package. This utility is named 'nmake',
+so everytime they see 'make' in this document, they must substitute
+'nmake'.
+
+TechNote: The reason that MSDOS users *must* use nmake, is that
+only nmake permits three recursive calls to make, followed by a call
+to pmcc, followed by a call to the compiler without running out of memory.
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

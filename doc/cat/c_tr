@@ -1,0 +1,72 @@
+The tr Command
+tr
+
+The tr command selects transparent mode.
+
+Format
+
+The format for this command is:
+
+tr [-2] [port]
+
+where:
+
+	-2 	Selects 2-port mode.
+	port	Selects a specific port
+
+Functional Description
+
+The tr command selects transparent mode. In transparent mode, the Monitor copies any characters typed on the
+keyboard to the selected port and then copies characters arriving at
+the selected port to the screen.  This command can be used for two
+different functions.
+
+  »   To allow the user run the Monitor on the same serial port that
+      is used as a login line to your host. Do this by connnecting tty1
+      to your host system, and tty0 to your terminal. Typing 'tr' on
+      your terminal will connect you with your host.
+
+  »       To allow the user to 'rlogin' to another board via a serial port
+      or pseudo tty port. This mode is used on the ATMizer platform
+      in order to 'talk' to the SAR board. For example,
+
+	PMON tr tty2			connect to port tty2
+	SAR r				display registers on SAR board
+	^K				return to main board
+	PMON r				display registers on main board
+
+     tty2 is the name of the pseudo tty port (located in shared
+     memory) that is used to communicate with the SAR board.
+
+     Note that if you are using 2-port download mode. You will need
+     to add the option '-2' to indicate that you need 2-port transparent
+     mode. For example,
+
+	PMON tr -2 tty2
+
+     In this case the Monitor not only copies
+     characters typed on the keyboard to tty2 and characters arriving
+     on tty2 to the screen. It also copies characters arriving on tty1
+     to tty3, and characters arriving on tty3 to tty1.  
+
+The trabort Variable
+
+The environment variable trabort selects the character that terminates
+the transparent mode and returns the Monitor
+to the default command mode.
+
+The hostport Variable
+
+The environment variable hostport determines the default port for the
+tr command.
+
+See Also
+set
+command for the setup of the environment variables.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

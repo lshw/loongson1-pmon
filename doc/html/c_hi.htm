@@ -1,0 +1,91 @@
+<html>
+
+<head>
+<title>The hi Command</title>
+</head>
+
+<body>
+
+<h1>hi</h1>
+<!--INDEX "hi command" "command history" -->
+
+<p>The hi command lists the command history.</p>
+
+<h2>Format</h2>
+
+<dl>
+  <dd>The format for the hi command is:
+    <pre>
+
+<font size="+1">hi [cnt]
+</font>
+</pre>
+    <p>where:</p>
+    <table width="95%">
+      <tr bgcolor="#CCCCCC"> 
+        <td width="39" align="right" valign="top">cnt&nbsp;&nbsp;</td>
+        <td width="288" align="left" valign="top">&nbsp;&nbsp;is the number of 
+          commands to list. </td>
+      </tr>
+    </table>
+    <p>Entering the command with no parameters lists the last 200 executed com- mand lines to
+    the screen.</p>
+  </dd>
+</dl>
+
+<h2>Functional Description</h2>
+
+<dl> 
+  <dd>The hi command shows the command history, together with the history number 
+    for each command, in reverse order (the last command entered is listed first; 
+    the first command entered is listed last). The command num- bers are reset 
+    to zero each time the system is reset.</dd>
+</dl>
+<p>Entering the hi command with no arguments lists the last 200 commands. This 
+  option is useful for determining the history number for a particular command.</p>
+<p>The user can page through the output of the hi command, one screen at a time.</p>
+<p>The optional cnt parameter selects a set number of lines to be output. The 
+  history list is intentionally in the reverse order to that used in a C shell, 
+  so that the latest entry is displayed first. If a command line is identical 
+  to the previous command, it is not added to the command history.</p>
+<p>Examples illustrating the use of the hi command follow.</p>
+<blockquote>
+  <pre>
+
+PMON&gt; hi 3	Display the three last commands.
+
+14 hi 3
+13 hi 
+12 l
+
+
+PMON&gt; hi	Display the entire history, using more
+
+13 hi	to control the screen output.
+12 l
+11 to
+10 t
+9  l 
+8  g start main 
+7  hi 
+6  g
+5  ls -a @pc
+4  d start+200+0t13*4 
+
+
+more-(q)
+
+</pre>
+</blockquote>
+<h2>See Also </h2>
+
+<dl>
+  <dd><a href="c_sh.htm">sh</a> command, which maintains a command history. </dd>
+</dl>
+
+<hr>
+<p> <b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a> </p>
+<p><!--$Id: c_hi.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --></p>
+</body>
+</html>

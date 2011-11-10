@@ -1,0 +1,80 @@
+			PMON Initialization
+			PMON Initialization
+
+Here is a brief description of what happens when PMON
+boots (jal is a subroutine call).
+
+Execution starts at 0xbfc00000 (0xa0c00000 on the LR64360). At this 
+address there is a jump to _start  (usually at 0xbfc00274).
+
+_start: (pmon/mips.s)
+  
+  jal cpuInit
+	This calls getHostType and then sets up the RAM and returns
+	a pointer to the correct cache flush routine, and the CPU
+	type.
+  jalr s0
+	Calls the correct flush routine to flush the Dcache. It calls
+	indirect via register s0, which was set by cpuInit.  
+	
+  jal cpdata
+	Copies the .data section from the PROM to the RAM.
+  jal clrbss
+	Clears the .bss section in RAM.
+  jal copyHandler
+	Copies the exception handler to the exception vector in RAM.
+  jal copyHandler
+	Copies the exception handler to the exception vector in RAM.
+  jalr s0
+	Calls the correct flush routine to flush the Dcache. It calls
+	indirect via register s0, which was set by cpuInit.  
+	
+  jalr s0
+	Calls the correct flush routine to flush the Icache. It calls
+	indirect via register s0, which was set by cpuInit.  
+	
+  jal pmoninit
+	Calls pmoninit, this is the first piece of C. At this point
+	   PMON switches to kseg0 addresses (assuming that PMON was linked
+	   at a kseg0 address).
+	
+
+pmoninit() (pmon/main.c)
+  
+  jal mfc0
+	Uses mfc0() to read the Status register (C0_SR).
+	This is the first time that RAM is assumed to be working.
+	If RAM is not working, control will not return from this
+	call.
+  jal hostInit(8)
+	Initialize the DUART. This calls 
+	addDevice, which calls the OP_INIT 
+	section of the driver.
+  jal moninit
+	Initializes the core Monitor.
+  jal addCmdRec
+	Called several times. Adds PMON-specific commands to the Monitor.
+	
+  jal addEnvRec
+	Called several times. Adds PMON-specific environment variables 
+	to the Monitor.  
+  jal sprintf -- do_cmd
+	This pair of functions is called three times. They set two
+	environment variables and define the symbol Pmon.
+	
+  jal addGpRegs 
+	Add the Gp registers to the list of registers.
+	
+  jal hostInit 
+	Perform additional initialization.
+	
+  jal printf 
+	Print the first part of the banner.
+	
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

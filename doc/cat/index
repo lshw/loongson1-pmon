@@ -1,0 +1,64 @@
+	Host-resident Commands
+	Host-resident Commands
+
+These commands are built using the 
+makefile and
+your Host's 
+native
+C compiler. They are located on the tools directory and are required
+in order to build anything using your MIPS C
+compiler.
+
+pmcc
+	  
+	This program can be used to invoke your cross compiler.
+	It works just like the UNIX cc command but has the 
+	advantage that
+	it uses the correct include files, libraries, and start
+	addresses for executing the program under PMON (or IMON).
+
+dis
+	  
+	This program invokes the disassembler that was supplied
+	with your cross compiler.
+
+edown
+	  
+	This program can be used to download FastFormat or
+	Motorola S-records to a target system running PMON.
+
+tftp-put
+	  
+	This program can be used to download FastFormat or
+	Motorola S-records to a target system using Ethernet.
+
+prfp
+	  
+	Converts between floating-point and hex.
+
+rdfrec
+	  
+	Read and disassemble a FastFormat file.
+
+rdsrec
+	  
+	Read and disassemble a Motorola S-record file.
+
+gencoff
+	  
+	Generate a COFF file from a binary file.
+
+genfrec
+	  
+	Generate a FastFormat file from a MIPS ECOFF file.
+
+gensrec
+	  
+	Generate a Motorola S-record file from a MIPS ECOFF file.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

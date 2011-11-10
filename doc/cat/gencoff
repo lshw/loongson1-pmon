@@ -1,0 +1,70 @@
+The gencoff Command
+The gencoff Command
+
+NAME
+     gencoff - MIPS COFF generator
+
+SYNOPSIS
+
+gencoff [ -ld [-Taddr] [-Ssize] ] inputfile
+
+DESCRIPTION
+     gencoff is a host-resident MIPS COFF generator that generates a coff  file
+     that is good enough to be acceptable to gensrec and genfrec.
+     The intent is to permit memory image files to be  downloaded
+     to a target system.
+
+OPTIONS
+
+     -l   generate a little endian coff file.
+
+     -d   debug mode
+
+     -Taddr
+          start address of text section.
+
+     -Ssize
+          size of the text section.
+
+SEE ALSO
+     genfrec(1) gensrec(1) 
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

@@ -1,0 +1,56 @@
+The search Command
+search
+
+The search command executes a search for a memory pattern.
+
+Format
+
+The format for the search command is:
+
+search from to {val|-s str}-
+
+where:
+
+from	is the start address for the search operation.
+
+to	is the end address for the search operation.
+
+val	is the hexadecimal value that is the object of the search. 
+
+-s str	specifies that the search operation is for a string str.
+
+Functional Description
+
+The search command searches memory for a pattern. The pattern may be 
+a single byte, multiple bytes, or an ASCII string.
+
+If the -s option is specified, the next parameter is interpreted as an ASCII 
+string. To search for a multiple-word string, enclose the string in double 
+quotation marks.
+
+The output of this command is printed to the screen via the more command.
+
+The following example searches for 3c and d4 from 0xa0020000 to 
+0xa0030000:
+
+PMON search a0020000 a0030000 3c d4
+
+The following example searches for "ABC" from 0xa0020000 to 
+0xa0030000:
+
+PMON search a0020000 a0030000 -s "ABC" 
+
+Files
+The source for the search command is located in 
+mon/search.c.
+
+See Also
+d command and
+more command.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

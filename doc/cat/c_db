@@ -1,0 +1,51 @@
+The db Command
+db
+
+The db command deletes the specified breakpoints.
+
+Format
+
+The format for the db command is:
+
+db [numb|*]
+
+where:
+
+numb	
+is the breakpoint number to be deleted.
+
+*	
+deletes all breakpoints.
+
+Entering db without any parameters lists all existing breakpoints. Entering 
+an asterisk ("*") instead of a breakpoint number deletes all the existing 
+breakpoints.
+
+Functional Description
+
+The db command deletes one or more specified breakpoints.
+
+Examples illustrating the use of the db command follow.
+
+PMON db 3 		Delete breakpoint 3.
+
+PMON db 4 6		Delete breakpoints 4 and 6.
+
+PMON db *		Delete all breakpoints.
+
+PMON db		
+
+Bpt 0 = a002000c
+Display all breakpoints. 
+
+See Also 
+d,
+when, 
+and load commands.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

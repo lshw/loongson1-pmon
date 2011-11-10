@@ -1,0 +1,9 @@
+export CC=/usr/cross/macppc/usr/bin/cc
+export AS=/usr/cross/macppc/usr/bin/as
+export RANLIB=/usr/cross/macppc/usr/bin/ranlib
+export LD=/usr/cross/macppc/usr/bin/ld
+export AR=/usr/cross/macppc/usr/bin/ar
+export STRIP=/usr/cross/macppc/usr/strip
+export OBJCOPY=/usr/cross/macppc/usr/bin/objcopy
+export SIZE=/usr/cross/macppc/usr/bin/size
+export MKDEP=makedepend

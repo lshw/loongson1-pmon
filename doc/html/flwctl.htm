@@ -1,0 +1,148 @@
+		<title> Flow Control </title>
+
+		<h1 align="center">Flow Control</h1>
+
+
+
+<!--INDEX "Flow control" dlproto dlecho Xon-Xoff Etx-Ack -->
+
+
+
+A flow-control protocol is selected to ensure that the host does not
+
+send data too fast for the target to receive. The need for this can
+
+arise because, although the target system may be able to read a record
+
+at 9600 baud, the target system may need time to process that record
+
+before it can read the next record.<p>
+
+
+
+The environment variables dlproto and dlecho are used specify the
+
+flow-control protocol.<p>
+
+
+
+The following table summarizes the four flow-control protocols supported by
+
+this <a href="mondef.htm">Monitor</a>.<p>
+
+
+
+<table border cellpadding="5" width="95%">
+  <tr bgcolor="#CCCCFF"> 
+    <th>Terminal Emulator Sends</th>
+    <th>Target Returns</th>
+    <th>Set</th>
+    <th>Application</th>
+
+</tr>
+
+
+
+  <tr bgcolor="#CCCCCC"> 
+    <td valign="top"> Line terminated by carriage return</td>
+
+    <td valign="top">Echoes same line</td>
+
+    <td valign="top" nowrap><tt> dlecho = on<br>
+
+dlproto = none<tt></tt></tt></td>
+
+    <td valign="top"> Terminal Emulator waits for full line to be echoed before 
+      sending next line. </td>
+
+</tr>
+
+
+
+<tr>
+
+<td valign="top"> Line terminated by carriage return</td>
+
+<td valign="top">Returns line-feed character</td>
+
+<td valign="top" nowrap><tt>
+
+dlecho = lfeed<br>
+
+dlproto = none<tt></tt></tt></td>
+
+<td valign="top">
+
+Terminal Emulator waits for line-feed to be echoed before sending next line.
+
+</td>
+
+</tr>
+
+
+
+  <tr bgcolor="#CCCCCC"> 
+    <td valign="top"> Line terminated by carriage return</td>
+
+    <td valign="top">Returns Xoff and Xon characters</td>
+
+    <td valign="top" nowrap><tt> dlecho = off<br>
+
+dlproto = XonXoff<tt></tt></tt></td>
+
+    <td valign="top"> Terminal Emulator sends until Xoff. Resumes sending after 
+      Xon. </td>
+
+</tr>
+
+
+
+<tr>
+
+<td valign="top"> Line terminated by ETX character</td>
+
+<td valign="top">Returns Ack character</td>
+
+<td valign="top" nowrap><tt>
+
+dlecho = off<br>
+
+dlproto = EtxAck<tt></tt></tt></td>
+
+<td valign="top">
+
+Terminal Emulator sends line terminated by Etx. Sends next line after Ack
+
+(see note).
+
+</td>
+
+</tr>
+
+
+
+</table>
+<p> <b>Note:</b> The Xon-Xoff protocol is often not as reliable a method of flow-control 
+  as it might first appear. This is because many host systems do not shut off 
+  the flow of characters immediately upon receiving an Xoff. They may continue 
+  to transmit 20 or 30 bytes before finally stopping. Unfortunately these characters 
+  will not be seen by the monitor because it is not interrupt driven, and will 
+  be busy processing the previous line.
+<h2>See Also:</h2>
+<blockquote>
+  <p><a href="c_stty.htm">stty</a>, <a href="htermhlp.htm">hyper term help</a>, 
+    <a href="terms.htm">terminals</a> and <a href="tiphelp.htm">Unix tip help</a></p>
+</blockquote>
+<p>
+
+
+
+<p><hr>
+
+<p><b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a></p>
+<p><!--$Id: flwctl.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --> </p>
+<p>
+<p>
+<p>
+<p> 

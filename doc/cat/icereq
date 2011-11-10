@@ -1,0 +1,31 @@
+	SerialICE Target requirements
+	SerialICE Target requirements
+
+SerialICE was designed to minimize the resources required from the Target.
+The SerialICE Kernel software requires less than 1K Bytes of ROM, less than
+256 Bytes of RAM, and communicates with the SerialICE Controller via a 
+serial port.
+
+SerialICE Kernel Memory Map
+
+				RAM
+	   a0020200       +---------------+
+			  |      bss      |
+	   a0000100	  +---------------+
+	                  |  excep vects  |
+	   a0000000	  +---------------+
+
+			        ROM
+    Approx bfc00400       +---------------+
+			  |     text  	  |
+			  |    (code)  	  |
+			  +---------------+
+	                  |  excep vects  |
+	   bfc00000	  +---------------+
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

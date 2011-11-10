@@ -1,0 +1,92 @@
+		GNU's gdb from Cygnus Support
+		GNU's gdb from Cygnus Support
+
+To use the debug Monitor with GNU's gdb,
+connect the serial port that gdb will use, to the Monitor's tty0 (the
+console) on the target board.  i.e., gdb only uses one serial port.
+
+set command to set your
+Monitor's prompt to "PMON ".  Gdb is
+hardwired to expect that string, and will not work with any other value
+(note the space after the "").
+--
+
+Compile and link your modules with the -g option.  This will generate
+the extra information that is required by gdb. For example,
+
+	pmcc -g -o bubble bubble.c
+
+Invoke gdb.
+
+	% mips-lsi-elf-gdb -b 9600 bubble
+
+where 'bubble' is the name of the object file that you are debugging.
+The option "-b 9600" specifies that 9600 baud will be used for the
+Host-to-Target communications.
+
+By default gdb from Cygnus Support runs in a windowed mode. However, it
+the time of writing, the windowed mode was incomplete/buggy, so you might
+prefer to run it in non-windowed mode. To select non-windowed mode, add
+the option -nw to the command line.
+
+	% mips-lsi-elf-gdb -nw -b 9600 bubble
+
+gdb normally expects your monitor to have a prompt of "PMON " (note
+the space). If your monitor uses a different type of prompt you can
+either change it in the Monitor using the set
+command or tell gdb what prompt to expect.  For example,
+
+	(gdb) set monitor-prompt IMON 
+
+Note that this command does not expect quotes around the prompt,
+but gdb will take the entire string including trailing spaces. So be careful
+to type the string exactly.
+
+Next you must specify the target type, and serial port
+that will be used to communicated with the target. For example,
+
+	(gdb) target lsi /dev/ttyb
+
+this specifies that the target is running LSI Logic's PMON (or IMON),
+and that the target is connected to /dev/ttyb on the host. If you are
+using MSDOS you will need to specify one of
+the COM ports. eg. com1.
+
+To download your program to the Target issue the "load" command. No
+arguments are necessary as gdb has all the other information it needs.
+
+	(gdb) load
+
+If you simply want to run your program, you can just type "run". But if
+as is more likely you want to be able to set breakpoints and single-step
+your program, you should type,
+
+	(gdb) b main
+	(gdb) run
+
+this will set a breakpoint at "main" and execute the program until it
+reaches that point.
+
+The following table is a summary of the most frequently used commands:
+
+Brief Command Summary
+gdbPMON/IMON equivalentDescription
+steptSingle Step
+nexttoStep Over
+b addrb addrSet Breakpoint
+deletedb *Delete
+ccContinue
+rungStart Execution
+
+When debugging the Host-to-Target communications it is sometimes useful
+to create of log of all the transactions. The following command writes
+a log to the file "remote.log".
+
+	(gdb) set remotelogfile remote.log
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

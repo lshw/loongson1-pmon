@@ -1,0 +1,74 @@
+The Dump Command
+dump
+
+The dump command uploads S-records to the host port.
+
+Format
+
+The format for the dump command is:
+
+dump adr siz
+
+where:
+
+adr
+is the base address of the data to be uploaded.
+siz
+ the number of bytes to be uploaded.
+
+Functional Description
+
+The dump command uploads Motorola S-records to
+the host port. All uploaded S-records except the terminating S-record
+are S3-records. The terminating S-record is an S7-record. 
+
+The uleof and ulcr Variables
+
+After the dump is completed, the string specified in uleof will be transmit-
+ted. The default value for uleof is "%". 
+
+If the variable ulcr is set to "off", the lines will be terminated 
+by a carriage return ("\r") and a linefeed character ("\n"). 
+
+If ulcr is set to "on", each line will be terminated by a linefeed character 
+("\n") only. 
+
+The default value for ulcr is "off".
+
+The following example of the dump command dumps 256 bytes starting at 
+0x9FC00000.
+
+PMON dump 9FC00000 100
+S3159FC002403C09A07F3C08003C3529FF203508C62FB6 
+S3159FC00250AD2800003C09A07F3529FF102408002542 
+S3159FC00260AD2800003C02004040826000408068008C 
+S3159FC002703C1D800127BD8B403C01A00003A1E82502 
+S3159FC002800FF005BC240400000FF005BC2404000138 
+S3159FC002903C0280003C03800124426AB024633C2018 
+S3159FC002A024420010AC40FFF00043082AAC40FFF444 
+S3159FC002B0AC40FFF81420FFFAAC40FFFC3C099FC03E 
+S3159FC002C03C0A9FC0252903EC254A03FC3C0B8000B2 
+S3159FC002D08D28000025290004012A082A256B0004C1 
+S3159FC002E01420FFFBAD68FFFC3C099FC03C0A9FC022 
+S3159FC002F03C0B8000252903EC254A03FC356B004047 
+S3159FC003008D28000025290004012A082A256B000490 
+S3159FC003101420FFFBAD68FFFC3C099FC03C0A9FC0F1 
+S3159FC003203C0B8000252903EC254A03FC356B0080D6 
+S3159FC003308D28000025290004012A082A256B000460 
+S7030000FC 
+% 
+
+Files
+The dump command is located in mon/sdump.c.
+
+See Also
+l command,
+d command,
+and m command.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

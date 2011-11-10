@@ -1,0 +1,54 @@
+	SerialICE Targets
+	SerialICE Targets
+
+SerialICE supports almost any MIPS board as a Target. Each SerialICE
+Target needs to be equipped with a suitably configured SerialICE Kernel.
+The SerialICE package provides a number of example SerialICE Kernels.
+However, it is also quite simple to port
+a kernel to any target board that contains a serial port and 
+minimal ROM and RAM. This package currently
+contains SerialICE Kernel examples for the following boards.
+
+BDMR400x (4001/2/3) Evaluation Board
+
+  »  Insert the four flash memories containing the 
+	SerialICE Kernel in U8, 
+	U19, U29, and U40.
+  »  Connect a serial cable from U28 to the 
+	SerialICE Controller or Host.
+
+Nitro (4010) Evaluation Board
+
+  »  Insert the flash memory containing the 
+	SerialICE Kernel in U18.
+  »  Connect a serial cable from J18 to the 
+	SerialICE Controller or Host.
+
+BDMR4101 (4101) Evaluation Board
+
+  »  Insert the four flash memories containing the 
+	SerialICE Kernel in U5, 
+	U6, U7, and U8.
+  »  Connect a serial cable from U27 to the 
+	SerialICE Controller or Host.
+
+Nitro II (4011) Evaluation Board
+
+  »  Insert the EPROM memory containing the 
+	SerialICE Kernel in U4.
+  »  Connect a serial cable from J18 to the 
+	SerialICE Controller or Host.
+
+LR4102 TinyRISC Evaluation Board
+
+  »  Insert the EPROM memory containing the 
+	SerialICE Kernel in U25.
+  »  Connect a serial cable from J9 to the 
+	SerialICE Controller or Host.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

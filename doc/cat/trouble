@@ -1,0 +1,232 @@
+	PMON - Troubleshooting
+	Troubleshooting
+
+This page contains some hints and tips about solving problems that
+you might encounter when using PMON. Note that many of these
+solutions apply as much to IMON as they do PMON.
+
+I can't get my Interrupts to work
+
+The first thing to check is whether your peripheral's interrupts are
+reaching the CPU. You can do this very simply from the PMON command line.
+
+This example is for the 2681 DUART that LSI uses on most of its eval
+boards. The values shown here are for the BDMR4101 eval board.
+
+PMON fill . .+100 0	-- fill memory with nops.
+PMON m be000017 ff	-- enable the 2681's interrupt mask.
+PMON m be000017	-- check the 2681's Interrupt status register.
+be000017 09 .		-- looks good. TXA, TXB, and Timer ints are asserted.
+PMON t			-- single step. This causes PMON to reread 
+			-- the CAUSE register.
+PMON r cause		-- read the CAUSE value.
+C0_CAUSE: BD CE   IP   SW EXCODE
+          0  0 000001 00   Bp	-- Good. Int0 is asserted.
+
+2-port Download Hangs
+	This is usually caused by a download record that contains a
+	reference to an unimplemented address.  Check the .map file for
+	strange addresses. You can also use rdfrec -n (or rdsrec -n) to check the addresses
+	that appear in the download record file.
+
+	If you are suspicious about your cables, try using PMON's
+	tr command to check out the connection. For
+	example,
+
+	PMON tr
+	% edown < file.rec
+	-- one line of data should appear in the PMON console window
+	press cntrl-F in the console window
+	-- another line of data should appear in the PMON console window
+	press cntrl-K in the console window to return to the PMON prompt
+
+Single-port Download Hangs
+	This is usually caused by either,
+	
+	
+	
+	  »   A download record that contains a reference to an 
+	     unimplemented address. 
+	  »   The host transmitting the data too fast for the target.
+	  »   Because you are trying to download FastFormat records. 
+	     FastFormat records can only be
+	     downloaded in 2-port mode.  
+
+Errors Reported from Download
+	This is usually caused by the host sending the characters
+	too fast for the target system. 
+
+	If this is an ATMizer system. The problem is most likely caused
+	by a lack of download protocol. When downloading to an
+	ATMizerR/T platform, you must use a download
+	protocol. See the User's Manual for a discussion of
+	how to configure the download protocol.
+
+	If you experience this problem when using other processors
+	in LSI's MIPS family, the problem is most likely caused
+	by the caches not being enabled.
+
+Errors Reported from Ethernet Download
+	If you see 'protocol not supported' messages, it is
+	likely that you have a duplicate IP or hardware address on
+	your network. Each piece of equipment that is connected to
+	your network must have a unique Ethernet hardware (MAC) address.
+	PMON always uses the same value (currently aa:bb:cc:0:0:0),
+	however if you have more than one PMON-based board on your
+	network, you will need to choose different values for each
+	board.
+
+	You can either change the value at the PMON prompt using the
+	'set etheraddr' command, or you can edit the file
+	include/defines.h and build a new PROM. See also.
+
+I get the message "out of symbol space" during download
+	PMON uses the heap to store the downloaded symbols.  If you
+	have a large number of symbols (or the symbols are very long),
+	you will run out of heapspace. To correct this, compile your
+	progrom with pmcc's
+	-T option, and set the heaptop using PMON's set command.
+
+	For example, to increase your heapspace by 64K bytes,
+	perform the following steps.
+	
+
+	pmcc -T 80030000 -o test1 test1.c
+	PMON set heaptop 80030000
+	PMON load
+
+How do I generate S-records when using the GNU toolset?
+	Normally the pmcc command will
+	take care of generating those for you. However, if you are
+	calling the GNU tools directly, you will need to use the
+	utility objcopy. Try...
+	
+
+objcopy -O srec [infile] [outfile]
+
+The ATMizer (64360) Doesn't DMA Correctly
+	This is usually caused by incorrectly using load or
+	store half-word instructions to access the ATMizer's
+	special registers (CREDIT etc). All these registers
+	must be accessed using load and store word instructions.
+	The only exceptions are PRU timers 0-7 which must be
+	accessed using load and store half-word instructions.
+
+PMON Overwrites the Contents of Registers a0 and a1
+	PMON always sets the value of a0 and a1 when you
+	issue the g command. This is to permit command
+	line arguments to be passed to the downloaded
+	program. This is why the 'g' command must be
+	be used once only after a program has been downloaded.
+	The c command must be used to continue
+	execution after a breakpoint.
+
+PMON Overwrites the Contents of Registers k0 and k1
+	When single stepping, PMON requires the use
+	of the k0 register (and k1 on some processors). This
+	is unavoidable. But it does mean that you cannot
+	single-step through a piece of code that uses
+	these registers. See also PMON Limitations
+	and IMON Limitations.
+
+Win95/NT complains about "out of environment space"
+	If Win95/NT complains about "out of
+	environment space" when typing the SETENV command, you probably
+	need to add the following line to your CONFIG.SYS file:
+
+	SHELL=C:\DOS\COMMAND.COM C:\DOS\ /E:1024 /p
+
+	Where C:\DOS is the directory that contains COMMAND.COM and
+	other Win95/NT utilities.
+
+Win95/NT complains about "too many parameters"
+	If Win95/NT complains about "too many args" 
+	when typing the SETENV command, you probably
+	need to add double quotes around the %path% variable. For example,
+
+	path "%path%";c:\lsipkg\tools
+
+PMON Build on Win95/NT Dies
+	
+	  »  Make sure that you are typing nmake. You
+	must use the Microsoft make utility.
+
+	  »  If the build dies while attempting to compile the first
+	program in the tools directory. The problem is most likely to
+	be that the Microsoft Visual C++ package has been incorrectly
+	(or incompletely) installed (make sure that the environment
+	variables LIB and INCLUDE have been
+	set).  Check your installation by compiling a simple C program
+	using the cl command.  
+
+	
+
+Can't open new Win95 apps after Tasking build
+
+There appears to be some conflict between Microsoft's nmake and Tasking's
+compiler. As a result, a PMON build might either stop with some strange
+error at some arbitrary point, or if it completes, you might not be able
+to open some Win95 applications afterwards (eg. MS-DOS Prompt window).
+
+If it stops with a strange error, you can usually continue by simply
+reissuing the nmake command again. Unfortunately the only way around
+the problem of not being able to open new apps, is to reboot your system.
+These problems should go away when Tasking starts shipping real 32-bit
+apps, rather than these 16-bit apps with DOS extenders.
+
+Can I use PMON with the dbx Supplied by Sun?
+	No. The dbx supplied by Sun understands the Sparc architecture.
+	You must use a dbx that is targeted to the MIPS architecture.
+
+I am Having Problems Downloading S-records to other Equipment
+	By default, the pmcc command
+	includes non-standard S4 records that contain global symbol
+	information. Use the -syms option with the
+	pmcc command to supress S4 records.
+
+After I Type 'g' Cntrl-C Doesn't Return Control to the Prompt
+	Because PMON's I/O is not interrupt driven, it is unable
+	to 'see' the cntrl-C unless your program is performing I/O
+	via PMON. This limitation should not occur if you are using
+	SerialICE.
+
+Why does my program only work correctly the first time?
+	When you download a program, the .data section (initialized
+	global data) gets initialized from the file on your host. Thus,
+	the first time you run it, it gets these correctly initialized
+	values. However, if you re-execute the program without
+	re-downloading it, the .data section does not get
+	reinitialized. Thus, the second time you run your program, it
+	gets the data values left behind after the first time that it
+	was executed. Depending on how you have written your program,
+	that my cause your program to behave incorrectly, or even crash!
+
+How do I port PMON to my own board?
+	For more information on porting PMON to a new board,
+	read the description in the 
+	PMON User's Manual.
+
+Does PMON run with interrupts disabled?
+	Normally PMON runs with interrupts disabled. But some
+	processors have stuff like bus-error detection that needs
+	interrupts enabled. On those processors interrupts will be
+	enabled.  However, if a downloaded client program enables
+	interrupts, PMON will disable interrupts when a breakpoint is
+	hit, but restore them when you continue (or single-step).
+
+What do the ioctl calls with GETINTR and SETINTR do?
+	The SETINTR ioctl call is used to install the address of
+	the code that handles the ^C event. The address passed must
+	be the address of a jmp_buf that was previously set by
+	setjmp(). GETINTR returns the current value.
+
+Why does Install ask for the client ram size?
+	PMON needs to know how much RAM you have in order to be able
+	to set the stack pointer to the top of memory. It sets the
+	client sp to Client_PC+client_memory_size-24.
+
+What to do if you get "Target not responding" messages
+	When using SerialICE, it is possible for the SerialICE Controller and the
+	SerialICE Kernel to get out-of-step. To correct this situation press
+	RESET on the target and then type 'sync'.
+

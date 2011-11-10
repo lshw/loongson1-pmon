@@ -1,0 +1,122 @@
+		Making ROMS
+		Making ROMS
+
+To make a ROM, first download the appropriate file 
+to your PROM Programmer. The following table shows the location of the
+various binaries.
+
+Prom Monitor (PMON)
+
+pmon/bg/pmon.rec (Big endian)
+
+pmon/lg/pmon.rec (Little endian)
+
+SerialICE Monitor (IMON)
+
+imon/bg/imon.rec (Big endian)
+
+imon/lg/imon.rec (Little endian)
+
+SerialICE Kernels
+
+bsps/k*.rec
+
+Note that you will need to set the device type and split multiple (if
+any) before you start the download. A split multiple is necessary if
+the Target board requires more than one ROM
+as a minimum configuration. 
+
+Note that if your board requires more than one ROM as a minimum
+configuration and is also using the little endian byte ordering, the ROMs will need to be
+inserted in the reverse order to that used by a big endian processor.
+For example, if a board has sockets A, and B, and for big endian,
+device 1 from the programmer is inserted in socket A, and device 2 in
+socket 2. The reverse will be true for little endian, ie. device 1 will
+be inserted in socket B, and device 2 in socket A.
+
+Then set the Programmer's record type to Motorola
+S-records. For some toolsets, you will also need to specify an
+offset on the PROM programmer. The offset is required because some
+toolsets produce S-records that start at a non-zero address, whereas
+most PROM programmers expect the S-records to start at zero.  The
+following table shows the offsets required for the various MIPS
+toolsets.
+
+Offset
+
+Toolset Vendor Name
+
+ATMizer-1
+
+ATMizer-2
+
+Other MIPS CPUs
+
+MIPS
+
+0x00000000
+
+0x00000000
+
+0x00000000
+
+EPI
+
+0xa0c00000
+
+0x80000000
+
+0x9fc00000
+
+BSO Tasking
+
+0xa0c00000
+
+0x80000000
+
+0x9fc00000
+
+Cygnus Support (ECOFF)
+
+0x00000000
+
+0x00000000
+
+0x00000000
+
+Cygnus Support (ELF)
+
+0xa0c00000
+
+0x80000000
+
+0x9fc00000
+
+Algorithmics
+
+0x00000000
+
+0x00000000
+
+0x00000000
+
+You must make sure that the PROM you are using is large enough to 
+hold the program. Unfortunately, most PROM Programmers will not warn 
+you if your program is too large. You should be suspicious if the PROM 
+Programmer reports that the number of bytes downloaded is exactly the 
+same size as your PROM; this generally means that some data is being 
+omitted. Note that you cannot simply look at the address in the last 
+record of the S-record file, because some toolsets do not emit the 
+S-records in order.
+
+If you don't have a PROM programmer, I can personally recommend the
+emp20 programmer from
+Needham's Electronics.
+It is inexpensive and connects to the parallel port on a PC.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

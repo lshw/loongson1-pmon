@@ -1,0 +1,112 @@
+<html>
+<head>
+<title>PMON/2000 Netboot Command</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body vlink="#CC0000" alink="#3333FF">
+<h1>netboot </h1>
+<p>The netboot command loads binary object files over Ethernet interface.</p>
+<h2>Format </h2>
+<p>The format for this command is: </p>
+<blockquote> 
+  <pre><font size="+1">netboot [-bensy] [ host:[ path]]</font></pre>
+</blockquote>
+<pre>where: </pre>
+<table width="95%" border="0" align="left">
+  <tr bgcolor="#CCCCCC"> 
+    <td width="11%" align="right" valign="top">-b&nbsp;&nbsp;</td>
+    <td width="89%" align="left" valign="top">suppresses deletion of all breakpoints 
+      before the download.</td>
+  </tr>
+  <tr> 
+    <td width="11%" align="right" valign="top"> -e&nbsp;&nbsp;</td>
+    <td width="89%" align="left" valign="top">suppresses clearing of the exception 
+      handlers.</td>
+  </tr>
+  <tr bgcolor="#CCCCCC"> 
+    <td width="11%" align="right" valign="top">-n&nbsp;&nbsp;</td>
+    <td width="89%" align="left" valign="top">suppresses the loading of symbols 
+      from the file.</td>
+  </tr>
+  <tr> 
+    <td width="11%" align="right" valign="top">-s&nbsp;&nbsp;</td>
+    <td width="89%" align="left" valign="top">suppresses clearing of the symbol 
+      table before the download.</td>
+  </tr>
+  <tr bgcolor="#CCCCCC"> 
+    <td width="11%" align="right" valign="top">-y&nbsp;&nbsp;</td>
+    <td width="89%" align="left" valign="top">loads only the symbols from the 
+      file.</td>
+  </tr>
+  <tr> 
+    <td width="11%" align="right" valign="top">host&nbsp;&nbsp;</td>
+    <td width="89%" align="left" valign="top">is the internet host from which 
+      to read the file.</td>
+  </tr>
+  <tr bgcolor="#CCCCCC"> 
+    <td width="11%" align="right" valign="top">path&nbsp;&nbsp;</td>
+    <td width="89%" align="left" valign="top">is the file name to be loaded from 
+      the host.</td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>Invoking the netboot command with no parameters or arguments clears the symbol 
+  table, deletes all current breakpoints, and attempts to load the program found 
+  in the host and file specified by the bootaddr and bootfile environment variables. 
+</p>
+<h2>Functional Description </h2>
+<blockquote> 
+  <p>The netboot command uses the TFTP (Trivial File Transfer Protocol) to load 
+    an executable binary file from a remote host over Ethernet. </p>
+</blockquote>
+<p>PMON/2000 can read files in ELF 32-Bit format as used in:</p>
+<ul>
+  <li>Algorithmics’ SDE­MIPS</li>
+  <li>newer SGI compilers</li>
+  <li>systems compliant with the MIPS/ABI standard</li>
+  <li>older MIPS ECOFF format</li>
+  <li><a href="http://groupbsd.openbsd.org">OpenBSD</a> PowerPC 32-Bit ELF (includes 
+    Power&#149;4e, Power&#149;4C, Denali, Palomar-II)</li>
+  <li><a href="http://www.mvista.com/">Hard Hat Linux</a> for SBS PowerPC 32-Bit 
+    ELF (includes Denali, K2)</li>
+</ul>
+<p>PMON/2000 extracts any symbol table information from these files, and adds 
+  it to the target symbol table, unless overriden on command line.</p>
+<p>The netboot command normally clears the symbol table, exception handlers, and 
+  all <a href="c_b.htm">breakpoints</a>. The -s and -b options suppress the clearing 
+  of the symbol table and breakpoints, respectively. The value of the <font color="#FF0000">PC</font> 
+  register is set automatically to the entry point of the program. Therefore, 
+  to execute the downloaded program, only the <a href="c_g.htm">g command </a>is 
+  required. </p>
+<p>The boot command may return a large number of different error messages, relating 
+  to network problems or file access permissions on the remote host. For a file 
+  to be loaded via TFTP it <b>must be publicly readable</b>, and it may have to 
+  be in a directory which is acceptable to the remote server. <font color="#FF0000">See<b> 
+  tftp</b> section for more information about setting up and using TFTP</font>. 
+</p>
+<p>When reading the symbol table PMON/2000 may complain that it does not have 
+  enough room to store the program’s symbols. To increase the size of the heap, 
+  use the set heaptop command to reserve more space and, if necessary, relink 
+  your program with a higher base address. The boot command will also detect cases 
+  where the program being loaded would overwrite PMON’s crucial data or heap: 
+  again relinking your program at a different address will cure the problem. </p>
+<p>While it is loading each section of the file, boot displays the memory address 
+  (in hex) and size (in decimal) of that section. Typically these sections will 
+  be in the order .text, .data and .bss. </p>
+<h2>See Also:</h2>
+<blockquote>
+  <p><a href="scsiboot.htm">scsiboot</a>, <a href="boot.htm">boot</a> and <a href="c_load.htm">load</a> 
+    commands.</p>
+</blockquote>
+<hr>
+<p>&nbsp;</p>
+<p><b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a> </p>
+<p><!--$Id: netboot.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --></p>
+</body>
+</html>

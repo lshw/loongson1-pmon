@@ -1,0 +1,54 @@
+ping 	The ping command ‘‘bounces’’ a packet to and from a specified network host.
+
+Format 	The format for this command is:
+
+ping [-nqv] [-i wait]] [-s size] [-l preload] host
+
+where:
+
+-i wait 	Wait waitseconds between sending each packet. The default is
+to wait for one second between each packet.
+
+-l preload 	If preload is specified, ping sends that many packets as fast as
+possible before falling into its normal mode of behavior.
+
+-n 	Numeric output only. 	No attempt will be made to lookup symbolic
+names for host addresses.
+
+-q 	Quiet output. 	Nothing is displayed except the summary lines at
+startup time and when finished.
+
+-s size 	Specifies the number of data bytes to be sent. The default is 56,
+which translates into 64 ICMP data bytes when combined with
+the 8 bytes of ICMP header data.
+
+-v 	Verbose output. 	ICMP packets other than ECHO_RESPONSE
+that are received are listed. ‘‘Echo Replies’’ are displayed symbolically.
+
+Functional
+Description
+
+The ping command is used to verify ether net network connections and
+setup. It makes use of a feature of the ‘‘ICMP’’ protocol, which is used by
+hosts and gateways for low-level administrative chores. Each ICMP host is
+required to respond to an ECHO_REQUEST datagram with an
+ECHO_RESPONSE. ECHO_REQUEST datagrams (‘‘pings’’) have an IP and
+ICMP header, followed by a time and then an arbitrary number of ‘‘pad’’ bytes
+used to fill out the packet. The command continues pinging until interrupted
+by a Control-C.
+
+When using ping for fault isolation, start by pinging ‘‘127.0.0.1’’ (a universal
+self-address, by internet convention.) This verifies that at least the onboard
+setup is workable. Then, hosts and gateways further and further away should
+be ‘‘pinged’’. Round-trip times and packet loss statistics are computed. If
+duplicate packets are received, they are not included in the packet loss calculation,
+although the round trip time of these packets is used in calculating the
+minimum/average/maximum round-trip time numbers. When the program is
+terminated by a Control-C a brief summary is displayed.
+
+Ping will report duplicate and damaged packets. Duplicate packets ‘‘should
+never happen’’: they’d have to be gateway problems. Tell your network manager.
+
+Damaged packets (data doesn’t look like it should) are serious cause for
+alarm and often indicate broken hardware somewhere in the ping packet’s
+path (in the network or in the hosts).

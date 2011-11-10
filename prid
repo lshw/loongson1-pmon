@@ -1,0 +1,28 @@
+Binary file Targets/EV64240/compile/EV64240EL/disassemble.o matches
+Targets/EV64240/compile/EV64240EL/machine/cpu.h:#define COP_0_PRID		$15
+Targets/EV64240/compile/EV64240EL/machine/cpu.h: * CPU identification, from PRID register.
+Targets/EV64240/compile/EV64240EL/machine/cpu.h~:#define COP_0_PRID		$15
+Targets/EV64240/compile/EV64240EL/machine/cpu.h~: * CPU identification, from PRID register.
+Targets/EV64240/compile/EV64240EL/machine/regnum.h:#define	PRID	(AUXBASE+25)
+Binary file Targets/EV64240/compile/EV64240EL/pmon matches
+Binary file Targets/EV64240/compile/EV64240EL/pmon.bin matches
+Targets/EV64240/compile/EV64240EL/pmon.dis:ffffffff80094fe0:	00000047 00000000 505f3043 00444952     G.......C0_PRID.
+doc/cat/c_r:C0_PRID: IMP Rev 
+pmon/arch/mips/cache.S:	mfc0	v1, COP_0_PRID			# read processor ID register
+pmon/arch/mips/cache.S:	sw	v1, CpuProcessorId		# save PRID register
+pmon/arch/mips/cache.S~:	mfc0	v1, COP_0_PRID			# read processor ID register
+pmon/arch/mips/cache.S~:	sw	v1, CpuProcessorId		# save PRID register
+pmon/arch/mips/disassemble.c:    "C0_SR", "C0_CAUSE", "C0_EPC", "C0_PRID",
+pmon/arch/mips/mips.S:	mfc0	t0, COP_0_PRID
+pmon/arch/mips/mips.S:	mfc0	t0, COP_0_PRID
+pmon/arch/mips/mips.S:	sd	t0, PRID * RSIZE(k0)
+pmon/arch/mips/mips.S:	mfc0	v0, COP_0_PRID
+sys/arch/mips/include/cpu.h:#define COP_0_PRID		$15
+sys/arch/mips/include/cpu.h: * CPU identification, from PRID register.
+sys/arch/mips/include/cpu.h~:#define COP_0_PRID		$15
+sys/arch/mips/include/cpu.h~: * CPU identification, from PRID register.
+sys/arch/mips/include/regnum.h:#define	PRID	(AUXBASE+25)
+tags:COP_0_PRID	Targets/EV64240/compile/EV64240EL/machine/cpu.h	172;"	d
+tags:COP_0_PRID	sys/arch/mips/include/cpu.h	172;"	d
+tags:PRID	Targets/EV64240/compile/EV64240EL/machine/regnum.h	159;"	d
+tags:PRID	sys/arch/mips/include/regnum.h	159;"	d

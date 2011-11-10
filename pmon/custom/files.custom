@@ -1,0 +1,6 @@
+#
+# Custom specific files
+#
+file	pmon/custom/Force/PowerPMC250/powerpmc250.c     powerpmc250
+
+include "pmon/custom/IPU/files.IPU"

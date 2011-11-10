@@ -1,0 +1,52 @@
+			The tftp-put Command
+			The tftp-put Command
+
+NAME
+     tftp-put - Ethernet downloader
+
+SYNOPSIS
+
+tftp-put host infile
+
+DESCRIPTION
+     tftp-put is a host-resident downloader for ASCII records. The
+     records  to  be downloaded   are  taken  from  infile. This
+     command uses the UDP protocol and requires a 
+     TCP/IP stack and a
+     Perl5 interpreter. It performs the
+     same function as the put function of the tftp
+     command, and is useful for those hosts that do not have a tftp command
+     (eg. Windows95).
+
+OPTIONS
+
+     host  Specify the name of the host to which you wish to
+     download.
+
+     infile Specify the file that contains the records to be
+     downloaded. 
+     
+
+EXAMPLES
+     Down load the file hello.rec to umeteor.
+
+     perl tftp-put umeteor hello.rec
+
+SEE ALSO
+     genfrec(1) gensrec(1) pmcc(1)
+     Downloading via Ethernet
+
+FILES
+     This command is build from 
+     tools/tftp-put.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+
+
+**This file was converted from HTML to TEXT using a TRIAL version of**
+**Markup Remover 1.1 (C) 1998 by Aquatic Moon Software http://www.aquaticmoon.com/**
+**This message does not appear in files converted after the program has been liscensed.**

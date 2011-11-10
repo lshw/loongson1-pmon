@@ -1,0 +1,35 @@
+		RS232 Cabling Requirements
+		RS232 Cabling Requirements
+
+Some hosts require the hardware flow control signals to be connected
+before they will send and receive data via the RS232 ports. This may be
+true even if you have explicitly disabled the hardware flow control.
+
+LSI Logic's Evaluation boards require only pins 2, 3, and 5 to be
+connected (except CON7 on the SDP1000).
+
+	HOST					   LSI EVAL BOARD
+====================				   ==============
+       DB25    DB9					DB9
+       PIN     PIN					PIN
+
+RXD	2	3 ------------------------------------- 3
+GND	7	5 -------------------------------------- 5
+
+RTS	4	7 --+
+                    |
+CTS	5	8 --+
+
+DSR	6	6 --+
+                    |
+DCD	8	1 --+
+                    |
+DTR	20	4 --+
+ 
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

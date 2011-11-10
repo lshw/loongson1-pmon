@@ -1,0 +1,56 @@
+# $Id: files.LS232_sm502
+#
+# LS232 Target specific files
+#
+
+file	Targets/LS232_sm502/pci/pci_machdep.c
+file	Targets/LS232_sm502/ls232/tgt_machdep.c
+file Targets/LS232_sm502/dev/lcd.c                mod_soc_lcd needs-flag
+file	Targets/LS232_sm502/dev/i2c.c
+file	Targets/LS232_sm502/dev/spi.c
+file	Targets/LS232_sm502/dev/ac97.c
+file	Targets/LS232_sm502/dev/rtc-8025.c
+file	Targets/LS232_sm502/ls232/tgt_cmd.c
+#file	Targets/LS232_sm502/dev/sdcard_gpio.c
+file	Targets/LS232_sm502/dev/sdcard_spi.c
+file sys/dev/nand/fcr-nand.c      nand
+
+
+define  localbus { [base = -1 ] }
+device  localbus
+attach  localbus at mainbus
+file    Targets/LS232_sm502/dev/localbus.c		localbus
+
+device	dmfe: ether, ifnet, ifmedia, mii
+attach	dmfe at localbus
+file	Targets/LS232_sm502/dev/if_dc2114x.c dmfe
+
+# Ethernet driver for Discovery ethernet
+device  gt: ether, ifnet, ifmedia
+attach  gt at localbus
+file    sys/dev/ic/if_gt.c			gt
+
+#
+# Media Indepedent Interface (mii)
+#
+include "sys/dev/mii/files.mii"
+
+# Various PCI bridges
+
+include "sys/dev/pci/files.pci"
+
+#
+# Machine-independent ATAPI drivers
+#
+
+include "sys/dev/ata/files.ata"
+
+#
+#  SCSI framework
+#
+include "sys/scsi/files.scsi"
+
+#
+# Custom application files
+#
+include "pmon/custom/files.custom"

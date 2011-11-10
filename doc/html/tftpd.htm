@@ -1,0 +1,59 @@
+<html>
+<head>
+<title>Untitled Document</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<pre><b>TFTPD(8)                OpenBSD System Manager's Manual               TFTPD(8</b>)
+
+<b>NAME</b>
+     <b>tftpd</b> - DARPA Trivial File Transfer Protocol server
+
+<b>SYNOPSIS</b>
+     <b>tftpd [directory ...]</b>
+     <b>tftpd [-cs] [directory]</b>
+
+<b>DESCRIPTION</b>
+     <b>tftpd</b> is a server which supports the DARPA Trivial File Transfer Proto-
+     col.  The TFTP server operates at the port indicated in the `tftp' ser-
+     vice description; see <b>services(5</b>).  The server is normally started by
+     inetd(8).
+
+     The use of <b>tftp(1)</b> <i>does not</i> require an account or password on the remote
+     system.  Due to the lack of authentication information, tftpd will allow
+     only publicly readable files to be accessed.  Files may be written only
+     if they already exist and are publicly writable.  Note that this extends
+     the concept of ``public'' to include all users on all hosts that can be
+     reached through the network; this may not be appropriate on all systems,
+     and its implications should be considered before enabling tftp service.
+     The server should have the user ID with the lowest possible privilege.
+
+     Access to files may be restricted by invoking tftpd with a list of direc-
+     tories by including pathnames as server program arguments in
+     <b>/etc/inetd.conf</b>. In this case access is restricted to files whose names
+     are prefixed by the one of the given directories.
+
+     If the -c flag is used, tftpd will allow new files to be created; other-
+     wise uploaded files must already exist.  Files are created with default
+     permissions allowing anyone to read or write to them.
+
+     When using the -s flag with a directory name, tftpd will chroot(2) on
+     startup; therefore the remote host is not expected to pass the directory
+     as part of the file name to transfer.  This option is intended primarily
+     for compatibility with SunOS boot ROMs which do not include a directory
+     name.
+
+<b>SEE ALSO
+</b>     <b><a href="tftp.htm">tftp(1)</a></b>,  <b><a href="inetd.htm">inetd(8)</a></b>
+
+<b>HISTORY</b>
+     The tftpd command appeared in 4.2BSD.
+
+     The -s flag appeared in NetBSD 0.9a.
+
+     The -c flag was added in OpenBSD 2.1.
+
+<b>OpenBSD 2.6                      June 11, 1997  </b> </pre>
+</body>
+</html>

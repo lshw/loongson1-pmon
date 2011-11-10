@@ -1,0 +1,86 @@
+		SerialICE Serial Communications Protcol
+	SerialICE Serial Communications Protcol
+
+This page describes the SerialICE Kernel that runs on the customer's
+target board, and communicates with the SerialICE Monitor that runs on the 
+SerialICE Controller.
+
+On power up, the SerialICE Kernel initializes the SIO and the RAM, and
+then transfers control to the application (state0).
+
+State0
+
+In state0 the target is executing the application. Transition out of
+this state can only occur as a result of an exception. 
+
+All exceptions are first checked by the application. The application
+should tranfer control to the SerialICE Kernel's exception handler under the
+following two conditions:
+
+	  »  A byte arriving on the SIO from the SerialICE Controller
+	  »  A non-handled exception
+
+The SerialICE Kernel's exception handler (located at 0xbfc00180) saves a small
+number of registers (currently 9) in the RAM save area. This operation
+requires the use of general registers k0 and k1. This means that the
+SerialICE Kernel cannot be used to debug code in which registers k0 and k1
+hold useful values while interrupts are enabled, or to set breakpoints
+in a region of code where k0 and k1 are in use.
+
+Once the registers have been saved, the SerialICE Kernel checks the exception
+type. If it is an SIO interrupt, the byte on the SIO is checked
+for value.  If the byte has a value of 0x55 (ATTN) the SerialICE Kernel will
+respond with an 0xaa (ACK) and move to state1. For all other values the
+SerialICE Kernel will remain in state0 and return control to the application
+without sending any bytes back to the SerialICE Controller.  If any other
+exception occurs, the  the SerialICE Kernel will respond with an 0xaa (ACK)
+and move to state1.
+
+State1
+
+In state1 the SerialICE Kernel reads bytes from the SIO using polled
+mode.  Groups of four bytes are assembled into words. Once a word has
+been assembled, there are four possibilties depending on the value. If
+the word has one of 3 special values, the action taken will be as
+follows:
+
+	0x12345678 (SENDA0) 
+		Execute the code that is currently in the instruction
+		buffer area. Transmit the 4-byte value of register a0 on
+		completion.
+
+	0xdeadbeef (SENDSAP) 
+		Transmit a 4-byte value containing the address of the
+		register save area in the target memory.
+
+	0x87654321 (RUN_MODE)
+		Transfer control back to the application and switch to
+		state0.
+
+However, while the bytes are being assembled into words, the Kernel
+also checks the value of the first byte. If an ATTN byte (0x55) is seen,
+the kernel will send an ACK (0xaa), and go back to waiting for the first
+byte of the word.
+
+For all other cases, the words are written to the instruction buffer
+area in RAM. In this case, the SerialICE Kernel does not transmit any bytes
+back to the SerialICE Controller. The instruction buffer has a capacity of 27
+instructions.
+
+Programming issues
+
+The routines that are downloaded to the instruction buffer execute from
+kseg1 (non cacheable) and may use the following scratch registers:  t0,
+t1, t2, a0, a1, k0, k1, and s0. If you choose to call a subroutine, you
+must save and restore register ra appropriately.  The addresses of the
+get_word and put_word subroutines can be obtained from the register
+save area.  These subroutines use registers k0, k1, and a1. get_word
+returns the word in register v0; put_word transmits the word in
+register a0.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

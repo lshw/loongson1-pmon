@@ -1,0 +1,53 @@
+The c Command
+c
+
+The c command makes program execution continue after a breakpoint has 
+stopped program execution. 
+
+Format
+
+The format for the c command is:
+
+c [-w][bptadr] 
+
+where:
+
+bptadrspecifies a single breakpoint. The breakpoint is removed 
+when execution halts at this specified address.
+
+-wDon't wait (imon and imon95 only).
+
+Invoking the c command with no arguments causes the program execution 
+to continue from the address specified in the epc register. 
+
+Functional Description
+
+When the user enters the c command, program execution starts at the 
+address pointed to by the EPC register's current value. Use the g command 
+to start program execution from an address specified on the command line.
+
+As an option, a single temporary breakpoint
+may be specified. The temporary breakpoint is removed when execution
+halts. The temporary breakpoint is removed if another breakpoint stops
+program execution first. 
+
+Examples of the c command follow.
+
+PMON c 		Continue execution until exit or a regular
+			breakpoint is encountered.
+
+PMON c a0020104	Continue execution until 0xa0020104 or a regular
+			breakpoint is encountered.
+
+Files
+The c command is located in mon/go.c.
+
+See Also
+g command
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

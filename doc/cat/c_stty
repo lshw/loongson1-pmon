@@ -1,0 +1,85 @@
+The stty Command
+stty
+
+The stty command displays and sets terminal options.
+
+Format
+
+The format for this command is:
+
+stty	[device][-av] [baud] [sane] [term]
+	[ixany|-ixany] [ixoff|-ixoff]
+
+where:
+
+device	is either tty0 or tty1. The default is tty0.
+
+-a	gives a long listing showing all current settings.
+
+-v	displays the possible choices for baud rate and terminal type.
+
+baud	sets the baud rate.
+
+sane	resets terminal settings to the default.
+
+term	sets the terminal emulation type. 
+
+ixany	allows any character to restart the output.
+
+-ixany	allows only START to restart the output.
+
+ixoff	enables the tandem mode.
+
+-ixoff	disables the tandem mode.
+
+When invoking the stty command with no parameters, the Monitor displays the terminal type and baud rate for the tty0 port.
+
+Functional Description
+
+The stty command displays and sets the terminal options, such as terminal 
+emulation type, baud rate, and ioctl settings. First, to display the current 
+terminal type, baud rate, and ioctl settings for tty0, enter:
+
+PMON stty -a
+
+To display the same information for tty1, enter:
+
+PMON stty tty1 -a
+
+To change the baud rate or terminal type for tty0, simply enter the new set-
+ting after stty. Precede the new setting with tty1 to change the settings 
+for tty1. 
+
+Examples illustrating the use of this command follow.
+
+PMON stty	Display terminal type and baud rate for tty0.
+term=tvi920 baud=9600 
+
+PMON stty -a 		Display terminal type, baud rate, and ioctl 
+			settings for tty0.
+term=tvi920 baud=9600 
+canon echo echoe onlcr icrnl istrip ixon 
+erase=^H stop= start=^Q eol=^J eol2=^C vintr=^C 
+
+PMON stty 9600		Set baud rate for tty0 to 9600.
+
+PMON stty -v	List available baud rates.
+Baud rates: 
+         50   75  110  134   200   150 300 600 1200
+        1800 2400 4800 9600 19200 38400
+
+PMON stty tvi920	Set terminal type for tty0 to tvi920.
+
+PMON stty tvi920 9600	Set terminal type and baud rate for tty0 
+			to tvi920 and 9600 baud.
+
+PMON stty tty1 sane	Reset ioctl settings for tty1.
+
+PMON stty tty1 19200	Set tty1 to 19200 baud.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

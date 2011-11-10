@@ -1,0 +1,100 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.72 [en] (WinNT; U) [Netscape]">
+   <title>The call Command</title>
+</head>
+<body>
+
+<h1>
+call</h1>
+<!--INDEX "call command" "execute subroutine" "argc argv" -->
+<p>The call command executes a subroutine.
+<h2>
+Format</h2>
+
+<dl> 
+  <dd> The format for the call command is:</dd>
+  <pre><font size="+1">call adr [-s str|val]..</font>
+
+</pre>
+  where: <br>
+  &nbsp; 
+  <table width="95%">
+    <tr bgcolor="#CCCCCC"> 
+      <td WIDTH="95">adr&nbsp;</td>
+      <td width="553">is the address of the subroutine to be executed.&nbsp;</td>
+    </tr>
+    <tr> 
+      <td width="95">-s <i>str</i></td>
+      <td width="553">is a string argument.&nbsp;</td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td width="95"><i>val</i></td>
+      <td width="553">is a value to be passed.&nbsp;</td>
+    </tr>
+  </table>
+  <dl> 
+    <dt>&nbsp;</dt>
+  </dl>
+  <dd>
+    <div align="left">The call command calls a function using the standard C calling 
+      convention. The &quot;-s <i>str</i>&quot; and <i>val</i> options permit 
+      arguments to be passed to the subroutine.</div>
+  </dd>
+</dl>
+
+<h2>
+Functional Description</h2>
+
+<dl> 
+  <dd> The call command executes a downloaded subroutine, using a normal function 
+    call instruction to pass control to the specified address. This does not affect 
+    the existing value of the saved registers. Instead the subroutine is called 
+    directly from within PMON code without restoring the saved registers. Control 
+    returns to PMON via the usual subroutine return mechanism.</dd>
+  <br>
+  <dt>&nbsp;</dt>
+</dl>
+<p> If the user specifies arguments, these are passed using the standard C calling 
+  convention. If the &quot;-s&quot; option is specified, the following argument 
+  is assumed to be a string. In this case the address of the string is passed 
+  to the subroutine. If a numerical value is specified in place of the &quot;-s&quot;, 
+  it will be evaluated according to the existing rules and passed to the function. 
+  Up to ten arguments may be passed. </p>
+<dl> 
+  <p>This command is usually used to provide a method of displaying application-specific 
+    data structures. For example, if your application has a complex, linked-list 
+    data structure, you might find it helpful to add a function to your program 
+    that can display the structure. The <i>call</i> command can then be used to 
+    invoke this function from the PMON prompt at any time in the execution, even 
+    between two single-step operations. 
+  <p>Examples illustrating the use of the call command follow. 
+  <pre>PMON> call prstat&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Call the function whos name is 'prstat'.
+
+
+PMON> call prrec a0020000+8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Call the function 'prrec' and pass it <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the value 0xa0020008 as the first argument.
+
+
+
+PMON> call printf -s "hello world"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Call the function printf and pass it the
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;address of the string "hello world".
+
+</pre>
+</dl>
+
+<h2>
+See Also</h2>
+
+<dl>
+<dd>
+<a href="c_g.htm">g</a> command</dd>
+</dl>
+
+<hr>
+<p><b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a> 
+<p><!--$Id: c_call.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ -->
+</body>
+</html>

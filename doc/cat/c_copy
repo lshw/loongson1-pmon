@@ -1,0 +1,101 @@
+The copy Command
+copy
+
+The copy command copies a specified number of bytes from one location 
+in memory to another.
+
+Format
+
+The format of the copy command is:
+
+copy [-f] from to size
+
+where:
+
+from	declares the source address location. 
+
+to	declares the target address location. 
+
+size	is the size of the block of memory to be copied. This quantity 
+	is specified in bytes.
+
+-f	Specifies that the destination is flash memory.
+
+Functional Description
+
+The copy command replicates a specified number of bytes from one place 
+in memory to another. 
+
+The -f option is used when copying to flash memory. This requires that
+the board supports writes to that address range, and that the flash
+memories support sector erase.
+
+If to is less than from, copying is performed in ascending order starting at 
+from. If from is less than to, copying is performed in descending order 
+starting at from + size.
+
+When moving a data block down, the source data is copied from the
+bottom of the block upwards: and when moving a data block up, the
+source data is copied from the top of the block downwards. By this
+technique, there is no risk of copying over data in overlapping block
+move operations; as the data in the overlapping area is copied first.
+However, if the -f option is specified, copying is always performed
+in ascending address order.
+
+Examples
+
+  »  This example shows how to copy a block of memory, 8 Kbytes in
+size, with a base address of 0x80020000, to another 8-Kbyte area
+starting at the address 0x80060000.
+
+PMON copy 80020000 80060000 2000
+
+  »  This example shows how to copy a block of memory, 4 Kbytes in
+size, with a base address of 0x80020000, to a 4-Kbyte area of
+flash memory starting at the address 0x80060000.
+
+PMON copy -f 80020000 bfc40000 1000
+
+  »  This example shows how an application program may be copied into flash.
+This example is applicable to PMON only.
+
+pmcc -prom -crt0 -T 9fc40000 -D 80020000 -o bubble crt1.s bubble.c
+PMON load e03e0000
+-- download bubble.rec
+total = 146e
+PMON copy -f 80020000 bfc40000 1500
+
+Note:
+
+  »  The file crt1.s is exactly the same as lib/crt1.s, except that the
+following lines have been added before the call to clrbss.
+
+	li	a0,0x80020000
+	jal	cpdata
+
+  »  The value e03e0000 is the difference between the link address 9fc40000
+and the load address 80020000 (0x180020000-0x9fc40000=0xe03e0000).
+
+  »  The size argument for the copy command has been rounded up. The value
+must be the total as reported by the load command plus at least 32.
+
+To run the application, type,
+
+PMON g 9fc40000
+
+Files
+The copy command is located in mon/copy.c.
+
+See Also
+compare command
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+
+
+**This file was converted from HTML to TEXT using a TRIAL version of**
+**Markup Remover 1.1 (C) 1998 by Aquatic Moon Software http://www.aquaticmoon.com/**
+**This message does not appear in files converted after the program has been liscensed.**

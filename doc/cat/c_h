@@ -1,0 +1,56 @@
+The h Command
+h
+
+The h command provides on-line help.
+
+Format
+
+The format for the h command is:
+
+h [*|cmd-]
+
+where:
+
+*	provides detailed help on all the commands.
+
+cmd	is a command. The Monitor then provides help on the stated 
+command.
+
+If the command is executed without any parameters, then the Monitor lists all the available commands.
+
+Functional Description
+
+The h command provides on-line help. If issued without arguments, all 
+commands are listed. If issued with one or more command names as an 
+option, it produces more detailed help on those commands. 
+
+The "*" option produces detailed help on all the commands, using the more 
+command to control output on the screen. 
+
+Examples illustrating the use of the h command follow.
+
+PMON h
+h 	on-line help 		hi 	display command history
+m 	modify memory 		r 	display/set register 
+d 	display memory		l 	list (disassemble) memory
+copy 	copy memory		fill	fill memory 
+search	search memory		tr 	transparent mode 	
+g 	go execute		c	continue execution 
+t 	trace (single step)	to 	trace (step over)
+b 	set breakpoint(s)	db 	delete breakpoint(s)
+load	load from hostport	dump	dump to hostport 
+set 	display/set variable	stty	set terminal options
+sym 	define symbol		ls	list symbols
+flush	flush cache		debug	enter dbx mode
+mt 	memory test		call	call function
+
+PMON h stty 
+
+stty [tty] [-va] [baud] [sane] [term] set terminal options 
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

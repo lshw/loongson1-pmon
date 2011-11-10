@@ -1,0 +1,69 @@
+		 Flow Control 
+		Flow Control
+
+A flow-control protocol is selected to ensure that the host does not
+send data too fast for the target to receive. The need for this can
+arise because, although the target system may be able to read a record
+at 9600 baud, the target system may need time to process that record
+before it can read the next record.
+
+The environment variables dlproto and dlecho are used specify the
+flow-control protocol.
+
+The following table summarizes the four flow-control protocols supported by
+this Monitor.
+
+Terminal Emulator SendsTarget ReturnsSetApplication
+
+ Line terminated by carriage return
+Echoes same line
+
+dlecho = on
+
+dlproto = none
+
+Terminal Emulator waits for full line to be echoed before sending next line.
+
+ Line terminated by carriage return
+Returns line-feed character
+
+dlecho = lfeed
+
+dlproto = none
+
+Terminal Emulator waits for line-feed to be echoed before sending next line.
+
+ Line terminated by carriage return
+Returns Xoff and Xon characters
+
+dlecho = off
+
+dlproto = XonXoff
+
+Terminal Emulator sends until Xoff. Resumes sending after Xon.
+
+ Line terminated by ETX character
+Returns Ack character
+
+dlecho = off
+
+dlproto = EtxAck
+
+Terminal Emulator sends line terminated by Etx. Sends next line after Ack
+(see note).
+
+Note:
+The Xon-Xoff protocol is often not as reliable a method of flow-control
+as it might first appear. This is because
+many host systems do not shut off the flow
+of characters immediately upon receiving an Xoff. They may continue
+to transmit 20 or 30 bytes before finally stopping. Unfortunately these
+characters will not be seen by the monitor because it is not interrupt
+driven, and will be busy processing the previous line.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

@@ -1,0 +1,24 @@
+eset 	The eset command edits environment variables.
+
+Format 	The format for this command is:
+
+eset name...
+
+where:
+
+name 	is the name of the environment variable to edit.
+
+Functional
+Description
+
+The eset command is used to edit environment variable values. For each
+variable name given as an argument the eset command displays the variable
+name and its value. and then allows you to edit it using the same line-editing
+facilities available in the sh command, as described on page X??X. When you
+press carriage-retur n, the new value is stored.
+
+When using this command you should not place quotation marks around a
+multiple-word value; otherwise the quotation marks will be stored with the
+variable, which is probably not what you want.
+
+See also the set and unset commands, on pages X??X and X??X respectively.

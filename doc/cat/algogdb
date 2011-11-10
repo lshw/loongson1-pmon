@@ -1,0 +1,23 @@
+Source-Level Debug with Algorithmics' gdb
+Source-Level Debug with Algorithmics' gdb
+
+To use the debug Monitor with Algorithmic's
+gdb, you will need two serial ports. One serial port (connected to
+the Monitor's tty0) will be used as the console. This port is used to issue
+the command 'debug'. It is also the port where program I/O will
+appear. The second port is used for gdb to communicate with the Monitor's
+tty1. It is also used to download the program prior to switching to
+'debug' mode.
+
+-- Compile and link programs with -g
+PMONload				Prepare for download
+% edown  debug				Enter gdb mode
+(gdb) b main				Set breakpoint at main
+(gdb) run				Start execution
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

@@ -1,0 +1,57 @@
+The t Command
+t/to
+
+The t command performs a trace (single step) operation.
+
+Format
+
+The format for this command is:
+
+t [-vbci]
+
+or:
+
+to [-vbci]
+
+where:
+
+-v	lists each step (verbose).
+
+-b	captures only branches.
+
+-c	captures only calls (jal instruction).
+
+-i	stops on invalid program counter.
+
+cnt	traces cnt instructions.
+
+Functional Description
+
+The t command executes the instruction addressed by the current value
+of the EPC register. The to command is similar to the t command, except
+that the to command treats an entire procedure as a single step. For
+example, if the current instruction at EPC is a jump and link
+instruction, jal, the next stop is at EPC+8.
+
+A branch instruction and the instruction in its delay slot are executed
+as a single step. This also means that two-instruction loops are treated
+as a single step. This command is implemented by setting a 
+breakpoint at the following instruction.
+
+The command or commands that are executed on completion of the single 
+step is determined by the value of the environment variable brkcmd.
+
+An example illustrating the use of this command follows.
+
+	PMON t 
+	Pmon+0x240 3c09a07f lui t1,0xa07f
+
+Files
+The t/to commands are located in mon/go.c.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

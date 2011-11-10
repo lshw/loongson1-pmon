@@ -1,0 +1,114 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.72 [en] (WinNT; U) [Netscape]">
+   <title>The b Command</title>
+</head>
+<body>
+
+<h1>
+b</h1>
+<!--INDEX "breakpoint number" brkcmd "b command" -->
+<p>The b command sets and displays breakpoints.
+<h2>
+Format</h2>
+
+<dl> 
+  <dd> The format for the b command is:</dd>
+  <pre><font size="+1">b
+
+b <i>adr..
+
+</i>b <i>adr</i> -s <i>str</i></font>
+
+where:
+
+</pre>
+  <table width="95%">
+    <tr bgcolor="#CCCCCC"> 
+      <td ALIGN=LEFT VALIGN=TOP WIDTH="74"><i>adr</i></td>
+      <td width="695">specifies an address for the breakpoint. Up to 32 breakpoints 
+        addresses can be set.&nbsp;</td>
+    </tr>
+    <tr> 
+      <td width="74">-s <i>str</i></td>
+      <td width="695">executes the command string when the breakpoint is hit.&nbsp;</td>
+    </tr>
+  </table>
+  <p>Invoking the b command with no options causes the <a href="mondef.htm">Monitor</a> 
+    to print a list of the current breakpoints.
+</dl>
+
+<h2>
+Functional Description</h2>
+
+<dl> 
+  <dd> The b command sets a breakpoint at the specified address or addresses. 
+    Multiple addresses may be specified. Specified addresses must be word-aligned.</dd>
+  <br>
+  &nbsp; 
+  <p>The <a href="mondef.htm">Monitor</a> automatically assigns a number to each 
+    breakpoint. <br>
+    The <a href="mondef.htm">Monitor</a> allocates the lowest available breakpoint 
+    number from 0 to 31 to any new breakpoint. 
+  <p>The <a href="mondef.htm">Monitor</a> reports a new breakpoint's number immediately 
+    after the breakpoint is set (see the examples at the end of this subsection 
+    for illustration of this). The assigned numbers can be used in the <a href="c_db.htm">db</a> 
+    (Delete Breakpoint) command. 
+  <p><b>The brkcmd Variable</b> 
+  <p>When a breakpoint is reached, the command list specified in the environment 
+    variable brkcmd is executed. The default setting for brkcmd is: 
+  <pre>brkcmd = "l @pc 1"</pre>
+  This command "<tt>l @pc 1</tt>", specifies that when the breakpoint occurs, 
+  the <a href="mondef.htm">Monitor</a> will disassemble one line starting at the 
+  address of the program counter. 
+  <p>You can change the breakpoint command variable with the set command. For 
+    example, you can include additional monitor commands in the brkcmd variable. 
+    You must separate additional commands on the command line with a semicolon. 
+    For example, entering the following command lists one line after reaching 
+    a breakpoint, and then displays all the register values. 
+  <pre>set brkcmd "l @epc 1;r *"
+
+</pre>
+  By default, breakpoints are cleared when the load command is executed. See the 
+  section on the load command later in this document for details on how to override 
+  automatic breakpoint clearing after a download operation. 
+  <p>Some examples illustrating the use of the b command follow. <br>
+    &nbsp; 
+  <table width="95%">
+    <tr bgcolor="#CCCCCC"> 
+      <td width="231"><tt>PMON> b a002000c&nbsp;</tt></td>
+      <td width="538">Set a breakpoint at 0xa002000c.&nbsp;</td>
+    </tr>
+    <tr> 
+      <td width="231"><tt>Bpt 1 = a002000c&nbsp;</tt></td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td width="231"><tt>PMON> b&nbsp;</tt> <br>
+        <tt>Bpt 0 = 8002022c</tt> <br>
+        <tt>Bpt 1 = a002000c&nbsp;</tt></td>
+      <td VALIGN=TOP width="538">Display all breakpoints.&nbsp;</td>
+    </tr>
+    <tr> 
+      <td VALIGN=TOP width="231"><tt>PMON> b 80021248 -s "r"&nbsp;</tt></td>
+      <td width="538">Set a breakpoint at 0x80021248. Display registers when the 
+        breakpoint is encountered.&nbsp;</td>
+    </tr>
+  </table>
+</dl>
+
+<h2>
+See Also</h2>
+
+<dl>
+<dd>
+<a href="c_db.htm">db</a> and <a href="c_load.htm">load</a> commands.</dd>
+</dl>
+
+<hr>
+<p><b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a> 
+<p><!--$Id: c_b.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ -->
+</body>
+</html>

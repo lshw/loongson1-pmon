@@ -1,0 +1,123 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.72 [en] (WinNT; U) [Netscape]">
+   <title>The fill Command</title>
+</head>
+<body>
+
+<h1>
+fill</h1>
+<!--INDEX "fill command" "fill memory" -->
+<p>The fill command writes a hexadecimal pattern or string to a block of
+memory.
+<h2>
+Format</h2>
+
+<dl>
+<dd>
+The format for the fill command is:</dd>
+
+  <pre><font size="+1">fill <i>from</i> <i>to</i> {val|-s str}-</font>
+
+</pre>
+where:
+<br>&nbsp;
+  <table width="95%">
+    <tr bgcolor="#CCCCCC"> 
+      <td WIDTH="99" align="left" valign="top"> 
+        <blockquote> 
+          <p>from&nbsp;</p>
+        </blockquote>
+      </td>
+      <td width="640" align="left" valign="top"> 
+        <blockquote> 
+          <p>is the base address for the fill operation.&nbsp;</p>
+        </blockquote>
+      </td>
+    </tr>
+    <tr> 
+      <td width="99" align="left" valign="top"> 
+        <blockquote> 
+          <p>to&nbsp;</p>
+        </blockquote>
+      </td>
+      <td width="640" align="left" valign="top"> 
+        <blockquote> 
+          <p>is the end address for the fill operation.&nbsp;</p>
+        </blockquote>
+      </td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td width="99" align="left" valign="top"> 
+        <blockquote> 
+          <p>val&nbsp;</p>
+        </blockquote>
+      </td>
+      <td width="640" align="left" valign="top"> 
+        <blockquote> 
+          <p>is the hexadecimal value of the byte that is written to the area 
+            to be filled.&nbsp;</p>
+        </blockquote>
+      </td>
+    </tr>
+    <tr> 
+      <td width="99" align="left" valign="top"> 
+        <blockquote> 
+          <p>-s str&nbsp;</p>
+        </blockquote>
+      </td>
+      <td width="640" align="left" valign="top"> 
+        <blockquote> 
+          <p>specifies that the memory block should be filled with an ASCII string 
+            rather than a particular value. String str is the ASCII string to 
+            be written to the memory block during the fill operation if the -s 
+            parameter is specified.&nbsp;</p>
+        </blockquote>
+      </td>
+    </tr>
+  </table>
+</dl>
+
+<h2>
+Functional Description</h2>
+
+<dl> 
+  <dd> The fill command fills an area of memory with a specified hexadecimal pattern 
+    or repeating string. The pattern can be a single byte or multiple bytes. For 
+    the fill command to work correctly, to must be greater than from. If the -s 
+    option is specified, the next parameter is interpreted as an ASCII string. 
+    Multiple-word strings may be specified by enclosing them in quotes.</dd>
+  <br>
+  &nbsp; 
+  <p>For example, to clear an area of memory from 0xa0020000 to 0xa0021000, enter: 
+  <pre>PMON> fill a0020000 a0021000 0
+
+</pre>
+  To fill an area of memory from 0xa0020000 to 0xa00210000 with the string of 
+  values 0x41, 0x42, 0x43, 0x44, and 0x45, enter: 
+  <pre>PMON> fill a0020000 a00210000 41 42 43 44 45&nbsp;
+
+</pre>
+  To fill an area of memory from 0xa0020000 to 0xa00210000 with the ASCII string 
+  "hello world," enter: 
+  <pre>PMON> fill a0020000 a0021000 -s "hello world"&nbsp;
+
+</pre>
+</dl>
+
+<h2>
+See Also</h2>
+
+<dl>
+<dd>
+<a href="c_m.htm">m command</a>.</dd>
+</dl>
+
+<hr>
+<p><b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a> 
+<p><!--$Id: c_fill.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ -->
+</body>
+</html>

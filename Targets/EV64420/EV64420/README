@@ -1,0 +1,6 @@
+.2: inline reg init code
+.1: init_regs
+.3: test ra
+.4: clear btb,stop ras,itlb
+
+  

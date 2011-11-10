@@ -1,0 +1,73 @@
+#
+#	GENERIC definition for a full featured PMON.
+#
+#  Commented out options/selections should be used in target config.
+#
+
+#option		INET			# inet protocol support
+#option		CPC700			# IBM CPC700 Northbridge
+#option		CPC710			# IBM CPC700 Northbridge
+#option		MPC107			# Motorola MPC107 Host-Bridge
+#option		PCIVERBOSE=3		# PCI Scanning logging
+#option		NS16550_HZ=18432000
+#option		ECC_MEMORY
+#option		POWERPC			# PowerPC architecture
+#option		MIPS			# MIPS architecture
+
+#
+# HAVE options. What tgt level provide. HAVE_FLASH should be synthezised
+# from "flash.h" using NMOD_FLASH_AMD and NMOD_FLASH_INTEL, eg don't use.
+#
+
+#option		HAVE_LOGO		# Has 'splash' logo.
+#option		HAVE_TOD		# Platform has TOD clock.
+#option		HAVE_FLASH		# Platform has FLASH memory.
+#option		HAVE_NVENV		# Platform has non-volatile env mem 
+
+#
+# Module selection. Selects pmon features
+#
+select		mod_flash_amd		# AMD flash device programming
+select		mod_flash_intel		# intel flash device programming
+select		mod_flash_sst		# intel flash device programming
+select		mod_flash_st		# intel flash device programming
+select		mod_debugger		# Debugging module
+select		mod_symbols		# Symbol table handling
+select		mod_s3load		# Srecord loading
+select		mod_fastload		# LSI Fastload
+select		mod_elfload		# ELF loading
+#select		mod_tod_mc146818	# Time-Of-Day clock based on MC146818
+#select		mod_uart_ns16550	# UART Support for chip based on NS16550
+#select		logfile			# Enable log file support
+
+#
+# Command selection. Selects pmon commands
+#
+#select		cmd_about		# Display info about PMON
+select		cmd_boot		# Boot wrapper
+select		cmd_cache		# Cache enabling
+select		cmd_call		# Call a function command
+select		cmd_mycfg
+select		cmd_date		# Time of day command
+select		cmd_env			# Full blown environment command set
+select		cmd_flash		# Flash programming cmds
+select		cmd_hist		# Command history
+select		cmd_ifaddr		# Interface address command
+select		cmd_l			# Disassemble
+select		cmd_mem			# Memory manipulation commands
+select		cmd_more		# More paginator
+select		cmd_mt			# Simple memory test command
+select		cmd_misc		# Reboot & Flush etc.
+select		cmd_set			# As cmd_env but not req. cmd_hist
+select		cmd_stty		# TTY setings command
+select		cmd_tr			# Host port-through command
+select		cmd_devls		# Device list
+#
+select		cmd_shell		# Shell commands, vers, help, eval
+select		cmd_vers
+select		cmd_help
+select		cmd_eval
+select      cmd_mycmd
+option      CONFIG_CACHE_64K_4WAY
+#
+option USE_ENVMAC

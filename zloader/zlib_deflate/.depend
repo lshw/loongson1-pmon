@@ -1,0 +1,11 @@
+deflate.o: deflate.c \
+   /usr/src/linux-2.4.32/include/linux/module.h \
+   /usr/src/linux-2.4.32/include/linux/zutil.h \
+   defutil.h
+deflate_syms.o: deflate_syms.c \
+   /usr/src/linux-2.4.32/include/linux/module.h \
+   /usr/src/linux-2.4.32/include/linux/init.h \
+   /usr/src/linux-2.4.32/include/linux/zlib.h
+deftree.o: deftree.c \
+   /usr/src/linux-2.4.32/include/linux/zutil.h \
+   defutil.h

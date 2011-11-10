@@ -1,0 +1,396 @@
+	SerialICE Kernel Operation
+	SerialICE Kernel Operation
+
+Some of the code in this explanation is board-specific.
+This description uses code extracted from the 
+kernel for the 
+BDMR4101 evaluation board.
+
+Execution starts at the reset vector 0xbfc00000. At this address there
+is a branch-and-link to cpu_init.
+
+reset_vector: # bfc00000
+	bal	cpu_init
+
+cpu_init performs any hardware specific initialization. eg. initialize
+the serial port that will be used to communicate with the SerialICE Controller,
+initialize the DRAM controller. It does not need to initialize the
+caches.
+
+Once this step has been completed. We initialize the CAUSE and SR
+registers,
+
+	# make sure the sw bits of the CAUSE register are zero
+	.set noreorder
+	mtc0	zero,C0_CAUSE		
+	.set reorder
+
+	# enable ints in SR MASK+IEC
+	li	k0,(SR_BEV|SR_IEC|UART_INTBIT)
+	.set noreorder
+	mtc0	k0,C0_SR
+	.set reorder
+
+and then save some values in the savearea. Note that SAVEAREA has a kseg1
+value.
+
+	la	k0,SAVEAREA
+	la	t0,get_word
+	sw	t0,ICE_GWP*4(k0)
+	la	t0,put_word
+	sw	t0,ICE_PWP*4(k0)
+	li	t0,IBUFSIZE
+	sw	t0,ICE_IBS*4(k0)
+	li	t0,REG_MAP
+	sw	t0,ICE_MAP*4(k0)
+	li	t0,SA_VERS
+	sw	t0,ICE_SAV*4(k0)
+	li	t0,ICE_SAHSIZE
+	sw	t0,ICE_SAH*4(k0)
+#ifdef MIPSEB
+	li	t0,0
+#else
+	li	t0,1
+#endif
+	sw	t0,ICE_LE*4(k0)
+
+This block of code writes seven values into the savearea. This information
+is needed by the SerialICE Driver or DLL. The savearea is in two parts, a
+header, and registers. The size of the header is placed in ICE_SAH, following
+this are a number of saved registers. Which registers, and how many, are
+indicated by the ICE_MAP value.
+
+  »  The address of get_word. Needed to implement fast download.
+  »  The address of put_word. Currently unused.
+  »  Size of instruction buffer.
+	Permits the SerialICE Driver or DLL to avoid exceeding the 
+	capacity of the buffer.
+  »  Register bitmap. This tells the Driver or DLL which registers
+ 	have been placed in the savearea.
+  »  Savearea version number. This permits newly formatted saveareas in the
+	future. Current value is 2.
+  »  Savearea-header size. Size of the header portion of the savearea.
+  »  Little Endian flag. Indicates that the target is little endian.
+
+At this point the kernel permits you to transfer control to your
+application (if it is already in the ROM). Otherwise, it just sits
+in a tight loop waiting for a request from the SerialICE Driver or DLL.
+
+#ifdef RUN_APPLICATION
+	# execute a prom-resident application
+	b	cstartup
+#else
+	# wait here for the host to speak to me
+   1:	b	1b
+#endif
+
+When the kernel receives an interrupt, the hardware transfers control
+to the general exception vector. The kernel forces kseg1 (non cacheable) 
+execution and then saves 9 registers in the savearea. These registers
+are required for the kernel's operation.
+
+gen_vector: # bfc00180
+	# save regs
+	la	k0,SAVEAREA
+	sw	AT,ICE_AT*4(k0)
+	sw	v0,ICE_V0*4(k0)
+	sw	a0,ICE_A0*4(k0)
+	sw	a1,ICE_A1*4(k0)
+	sw	a2,ICE_A2*4(k0)
+	sw	a3,ICE_A3*4(k0)
+
+	# make sure that we are in kseg1
+	la	a3,1f
+	li	a2,K1BASE
+	or	a3,a2
+	j	a3
+   1:
+	sw	t0,ICE_T0*4(k0)
+	sw	t1,ICE_T1*4(k0)
+	sw	t2,ICE_T2*4(k0)
+	sw	t3,ICE_T3*4(k0)
+	sw	t4,ICE_T4*4(k0)
+	sw	s0,ICE_S0*4(k0)
+	sw	ra,ICE_RA*4(k0)
+	.set noreorder
+	mfc0	t0,C0_EPC
+	nop
+	.set reorder
+	sw	t0,ICE_EPC*4(k0)
+
+Register s0 is used as a pointer to the current location in the
+memory-based instruction buffer. So we need to initialize it here.
+
+	# init s0 (KSEG1)
+	li	s0,INSTR_BUFFER
+
+Now we need to find out what the cause of the exception was. The pseudo
+code is as follows:
+
+	if (not hw int) goto send_ack;
+	else if (not my int) goto send_ack;
+	else if (not attn byte) goto restore_rfe;
+	else goto send_ack;
+
+If the exception was not a hardware interrupt jump to send_ack. If
+it was a hardware, but it wasn't a serial-port interrupt jump to send_ack.
+If it was a serial-port interrupt, but it wasn't a valid ATTN byte
+jump to restore_rfe. For all other cases jump to send_ack. The real
+code follows:
+
+	# read the CAUSE register
+	.set noreorder
+	mfc0	a0,C0_CAUSE
+	nop
+	.set reorder
+
+	# hw int?
+	and	t0,a0,CAUSE_EXCMASK
+	bne	t0,zero,send_ack	# brif not a hw int
+
+	# It is a hw int. But is it my int?
+	.set noreorder
+	mfc0	t0,C0_SR
+	nop
+	.set reorder
+	and	t0,a0		# qualify the CAUSE bits
+	and	t0,UART_INTBIT
+	beq	t0,zero,send_ack	# brif not mine
+
+	# make sure that this is a *real* attn byte
+	# read the byte
+	li	a2,UART_BASE
+	lw	k0,UART_RXHR(a2)
+
+	li	k1,ATTN
+	bne	k0,k1,restore_rfe	# brif not an attn byte
+
+	# fall thru to send_ack
+	.end gen_vector
+
+send_ack sends the special ACK character. It also sets t0 and t1 to
+zero.  These two registers are used by the SerialICE Driver (running on the
+SerialICE Controller) to hold the current address and the current data value.
+The driver assumes that these registers start with a value of zero, and
+so they must be initialized here.
+
+send_ack:
+	li	a2,UART_BASE
+
+	# make sure that the tx is ready
+   1:	lw 	k0,UART_TXS(a2)
+	and	k0,TXS_TXRDY
+	beq	k0,zero,1b
+
+	li	k0,ACK
+	sw	k0,UART_TXHR(a2)
+
+	# make sure that r8 and r9 are zero.
+	li	t0,0
+	li	t1,0
+	# fall thru to ice_loop
+	.end send_ack
+
+	
+The next block of code is the main ice_loop. This is where the kernel
+remains while it is in control (state1). Pseudo code for this block
+follows:
+
+	for (;;) {
+		w = get_word();
+		if (w == SENDA0) {
+			*s0++ = 0; *s0++ = J_RA; *s0++ = 0;
+			a0 = (* s0)();
+			put_word(a0);
+			}
+		else if (w == RUN_MODE) {
+			restore_regs;
+			rfe;
+			}
+		else if (w == SENDSAP) {
+			a0 = 
+			put_word(a0);
+			}
+		else *s0++ = w;
+		}
+
+Each time around the loop, the kernel performs the following actions:
+
+  »  Get a 32-bit word from the serial interface by calling get_word()
+and check the value.
+  »  Value is SENDA0. Write a nop;j ra;nop to the instruction
+    buffer. Call the code that is in the instruction buffer
+    as a subroutine. Send the contents of register a0 to the
+    SerialICE Controller by calling put_word().
+  »  Value is RUN_MODE. Return control to the application. Do this
+    by restoring the registers and performing an rfe instruction.
+  »  Value is SENDSAP. Send the value of the Save Area Pointer to
+    the SerialICE Controller. Do this by putting the address of savearea
+    in register a0 and sending it's value to the SerialICE Controller
+    using put_word(). Note that the LS bit of the address must be set in
+    order to indicate that this kernel uses a savearea version of 2 or
+    greater.
+  »  All other values. Add the word to the instruction buffer
+and increment the pointer (register s0).
+
+The real code for the ice_loop follows:
+
+ice_loop:
+	bal	get_cmd
+
+   	# check for SENDA0
+	li	a2,SENDA0
+	bne	a2,v0,1f
+
+	# It is SENDA0. Execute the code in INSTR_BUFFER and send 
+	# the value of register a0.
+	# Make sure that the routine ends with a "j ra".
+	sw	zero,(s0)
+	li	k0,J_RA_INSTR
+	sw	k0,4(s0)
+	sw	zero,8(s0)
+	# Make sure that the writes complete before the jal.
+	.set noreorder
+	nop
+	nop
+	nop
+	.set reorder
+	# Reset s0 to point to start of INSTR_BUFFER.
+	li	s0,INSTR_BUFFER
+	jal	s0		# execute INSTR_BUFFER
+	bal	put_word	# send A0
+	b	ice_loop
+
+   1:	# check for RUN_MODE
+	li	a2,RUN_MODE
+	bne	a2,v0,1f
+
+restore_rfe:
+	# It is RUN_MODE. Transfer control to the client.
+	# restore regs
+	la	k0,SAVEAREA
+	lw	AT,ICE_AT*4(k0)
+	lw	v0,ICE_V0*4(k0)
+	lw	a0,ICE_A0*4(k0)
+	lw	a1,ICE_A1*4(k0)
+	lw	a2,ICE_A2*4(k0)
+	lw	a3,ICE_A3*4(k0)
+	lw	t0,ICE_T0*4(k0)
+	lw	t1,ICE_T1*4(k0)
+	lw	t2,ICE_T2*4(k0)
+	lw	t3,ICE_T3*4(k0)
+	lw	t4,ICE_T4*4(k0)
+	lw	s0,ICE_S0*4(k0)
+	lw	ra,ICE_RA*4(k0)
+	.set noreorder
+	lw	k0,ICE_EPC*4(k0)
+	nop
+	j	k0		# jump to client
+	rfe
+	.set reorder
+
+   1:	# check for SENDSAP
+	li	a2,SENDSAP
+	bne	a2,v0,1f
+
+	# It is SENDSAP. Send address of SAVEAREA.
+	la	a0,SAVEAREA
+	or	a0,1		# indicate new format
+	bal	put_word
+	b	ice_loop
+
+   1:	# else. Not a special word.
+	sw	v0,(s0)		# save word in INSTR_BUFFER
+	addu	s0,4		# ready for next word
+	b	ice_loop
+	.end ice_loop
+
+The get_cmd function reads 4 bytes from the serial port, and assembles
+them into a 32-bit word. The word is placed in register v0. This
+routine differs from the get_word routine that is used for download, in
+that it will always respond to an ATTN byte (0x55).
+
+get_cmd:
+	li	a2,UART_BASE
+	li	a1,4			# get 4 bytes
+
+	# wait for rxrdy
+   3:   lw      k0,UART_RXS(a2)
+	and	k0,RXS_RXRDY
+        beq     k0,zero,3b
+
+	# get the byte
+        lw      k0,UART_RXHR(a2)
+
+	# first byte?
+	bne	a1,4,2f			# brif not first byte
+
+	# is the byte a wakeup?
+	bne	k0,ATTN,2f		# brif not a wakeup
+
+	# wait for txrdy
+   1:   lw      k0,UART_TXS(a2)
+	and	k0,TXS_TXRDY
+        beq     k0,zero,1b
+
+	# send an ack
+	li	k0,ACK
+        sw      k0,UART_TXHR(a2)
+	b	3b
+
+   2:	sll	v0,8			# move word into position
+	or	v0,k0			# merge byte with word
+	subu	a1,1			# bytecount--
+	bne	a1,zero,3b		# do next byte
+
+	j	ra
+	.end get_cmd
+
+get_word:
+        li      a2,UART_BASE
+        li      a1,4
+
+   1:   lw      k0,UART_RXS(a2)
+	and	k0,RXS_RXRDY
+        beq     k0,zero,1b
+
+        lw      k0,UART_RXHR(a2)
+        sll     v0,8
+        or      v0,k0
+        subu    a1,1
+        bne     a1,zero,1b
+
+        j       ra
+        .end get_word
+
+The put_word function transmits the 32-bit contents of register a0 as 4
+successive bytes.  
+
+put_word:
+        li      a2,UART_BASE
+        li      a1,4
+
+   1:   lw      k0,UART_TXS(a2)
+	and	k0,TXS_TXRDY
+        beq     k0,zero,1b
+
+        sw      a0,UART_TXHR(a2)
+        srl     a0,8
+        subu    a1,1
+        bne     a1,zero,1b
+
+        j       ra
+        .end put_word
+
+Examples
+
+  »  k4101.s - Kernel for BDMR4101
+  »  k4011.s - Kernel for BDMR4011
+  »  k4102.s - Kernel for BDMR4102
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

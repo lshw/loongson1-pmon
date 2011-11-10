@@ -1,0 +1,82 @@
+<html>
+
+<head>
+<title>FastLoad Format</title>
+</head>
+
+<body>
+
+<h1 align="center">FastLoad Format</h1>
+<!--INDEX "FastLoad format" -->
+
+<hr>
+
+<p>The FastLoad Format uses a compressed ASCII format that permits files to be downloaded
+in less than half the time taken for Motorola S-records. </p>
+
+<p>The base-64 encoding used is &quot;<tt>A-Za-z0-9,.</tt>&quot;. The data is encoded in
+groups of 4 characters (24 bits). The character '<samp>/</samp>' is used to introduce a
+special function. Special functions are:</p>
+<div align="center"><center>
+
+    <table border="1" cellpadding="5" width="80%">
+      <tr bgcolor="#CCCCCC"> 
+        <td valign="top" align="left"><samp>A......</samp></td>
+        <td>Defines an address. </td>
+  </tr>
+  <tr>
+    <td valign="top" align="left"><samp>B..</samp></td>
+    <td>Define a single byte. </td>
+  </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td valign="top" align="left"><samp>C....</samp></td>
+        <td>Compare the checksums </td>
+  </tr>
+  <tr>
+    <td valign="top" align="left"><samp>EAA</samp></td>
+    <td>Define the program's entry point. The address will be the current address as defined
+    by the 'A' command. </td>
+  </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td valign="top" align="left"><samp>KAA</samp></td>
+        <td>Clear the checksum. </td>
+  </tr>
+  <tr>
+    <td valign="top" align="left"><samp>S.....,X</samp></td>
+    <td>Define a symbol. The address of the symbol will be the current address as defined by
+    the 'A' command. </td>
+  </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td valign="top" align="left"><samp>Z..</samp></td>
+        <td>Clear a number of bytes. </td>
+  </tr>
+</table>
+</center></div>
+
+<p>Examples:</p>
+
+<pre>
+
+      /ACgAgAA        - addr = a0020000
+
+      /ZAI            - clear 8*3=24 bytes
+
+      /EAA            - define entry at 'addr' and exit
+
+      AAABAAAC        - 00 00 01 00 00 02
+
+      /Sfred,X        - symbol = 'addr'
+
+      /BAB            - byte of 01
+</pre>
+<h2>See Also:</h2>
+<p><a href="srec.htm">srec</a>, <a href="c_load.htm">load</a> and <a href="flwctl.htm">flow 
+  control</a> commands<br>
+</p>
+
+<hr>
+<p> <b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a> </p>
+<p><!--$Id: frec.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --></p>
+</body>
+</html>

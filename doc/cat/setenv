@@ -1,0 +1,81 @@
+		Setting your Environment
+		Setting your Environment
+
+In order to use the pmcc command (or any of the other commands in the
+tools directory), you must set your environment correctly. How you do
+this depends on the type of host you are using. Please refer to the
+appropriate section below:
+
+MSDOS Hosts
+
+To set your environment, move to the directory where you unpacked the
+PMON5 source archive and type,
+
+	C setenv
+
+(this assumes that you have already run the "Install" program).
+
+The batch file SETENV.BAT creates a number of new environment variables
+which often exceeds the available environment size. If this happens,
+the operating system will usually respond with a message something like
+"Out of Environment space". To fix this problem, add the following line
+to your \CONFIG.SYS file:
+
+	SHELL=C:\DOS\COMMAND.COM C:\DOS\ /E:1024 /p
+
+Where C:\DOS is the directory that contains COMMAND.COM and
+other MSDOS utilities. This expands your environment space
+to 1024 bytes.
+
+This is also the stage where you might discover that your path
+variable is too long. Unfortunately the only indication is
+usually that the operating system echoes the new path to the
+screen. So if you see a list of directories printed to the
+screen after you type SETENV, it likely means that you need to
+shorten your path. Unfortunately the only way to do this is
+shorten your directory names, and move things closer to the
+root directory.
+
+To set the environment back the way it was before, type,
+
+	C unsetenv
+
+This is especially useful if you have built more than one copy of PMON5,
+each with different target parameters. You can then use the UNSETENV
+command when moving from one package to another, since it is usually
+very important to use the correct package when building a program.
+
+UNIX Hosts
+
+To set your environment, move to the directory where you unpacked the
+PMON5 source archive and type,
+
+	source.csh 		-- csh or tcsh
+	dot.sh			-- sh or bash
+
+csh and tcsh users should note that they might need to type 'rehash'
+before the pmcc command is recognized.
+
+Note also that this only sets the environment in the current shell. If
+you decide to use a different window you will need to repeat this
+procedure. On the other hand, if you have built  more than one copy of
+PMON5, each with different target parameters, you must use a different
+window for each package, and be certain to set the enviroment of each
+window correctly before compiling any programs.
+
+Note that you should not set the environment unnecessarily as it will
+keep expanding your environment size and possibly cause you to run
+out of space. The general rule is; If you get the message "Command
+not found." (or something like that) after issuing the pmcc command,
+you likely need to set your environment.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+
+
+**This file was converted from HTML to TEXT using a TRIAL version of**
+**Markup Remover 1.1 (C) 1998 by Aquatic Moon Software http://www.aquaticmoon.com/**
+**This message does not appear in files converted after the program has been liscensed.**

@@ -1,0 +1,101 @@
+
+
+This is x86/bios emulator adapted for used in 2.4 kernel
+to do initialize pc VGA cards.
+
+Port it to pmon/yamon should be easy,if you want an userland
+executable,please download the original x86emu-0.8 from SciTech 
+Software, Inc.
+
+Usage:
+ here is my choice:
+  1.add code in new directory arch/mips/freebiosvga/
+  2.arch/mips/config.in:
+     add config option CONFIG_VGA_POST to proper place
+         bool '  Support for VGA POST' CONFIG_VGA_POST
+
+  3.arch/mips/Makefile
+     add directory and target objects of freevgabios
+
+     ifdef CONFIG_VGA_POST
+     SUBDIRS      += arch/mips/freebiosvga
+     LIBS         += arch/mips/freebiosvga/vga.o
+     SUBDIRS      += arch/mips/freebiosvga/x86emu
+     LIBS         += arch/mips/freebiosvga/x86emu/x86emu.o
+     endif
+
+  4.init/main.c:
+    add call to vgabios_init (right after pci_init)
+    #ifdef CONFIG_VGA_POST
+      vgabios_init();
+    #endif
+
+  5.select 'VGA text console' or proper framebuffer, you may need to
+  slightly modify the code,because many of them is for x86
+
+    for 'VGA text console',the file is drivers/video/vgacon.c,propably
+  you need to comment out the check for card's presence in vgacon_startup.
+  Because card initialization is later than console_init,so at that time
+  pci address 0xa0000-0xc0000 may not response to your requests.
+
+
+Problems & limits:
+  1.currently the code rely on system's pci resource allocator to assign
+    a valid address to rom base register(offset 0x30 in pci header).
+    I have modified the pci_auto.c to handle rom. Patch is here:
+
+     diff -r1.2 pci_auto.c
+     107a108,110
+     >       u32 bases[7] = {PCI_BASE_ADDRESS_0,PCI_BASE_ADDRESS_1,PCI_BASE_ADDRESS_2,
+     >                         PCI_BASE_ADDRESS_3,PCI_BASE_ADDRESS_4,PCI_BASE_ADDRESS_5,
+     >                       PCI_ROM_ADDRESS};
+     110c113,116
+     <       for (bar = PCI_BASE_ADDRESS_0; bar <= PCI_BASE_ADDRESS_5; bar+=4) {
+     ---
+     >       for (bar_nr=0; bar_nr<7; bar_nr++) {
+     > 
+     >               bar = bases[bar_nr];
+     > 
+     137c143
+     <               if (bar_response & PCI_BASE_ADDRESS_SPACE) {
+     ---
+     >               if (bar_nr != 6 && (bar_response & PCI_BASE_ADDRESS_SPACE)) {
+     209d214
+     <               bar_nr++;
+     349,350d353
+     < 
+     <                       DBG("Skipping legacy mode IDE controller\n");
+
+   if you don't use pci_auto,then make sure your pmon/yamon do it.
+
+   Of course,you can write an absolute,safe value for your specific platform
+   to see it works:)
+
+   If the base address read from your card is invalid,you will get message 
+   like:
+     "No address assigned to rom" or "No valid bios found"
+    
+ 2. i am assuming ioremap(a_pci_address) will return a valid cpu virtue 
+   address for accessing memory located at 'a_pci_address'.
+    
+
+ 3. Multiple cards are not supported currently,though it may be a piece of
+ cake.Complex cards,e.g. those contain bridges,may fail.
+
+DISCLAIMER:
+  It is provided "as is" without express or implied warranty.
+
+  Any problems you can contact fxzhang@ict.ac.cn.
+
+  
+Happy hacking and good luck.
+		
+
+Cards tested here:
+   several S3 card
+  
+
+    
+    
+
+

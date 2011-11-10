@@ -1,0 +1,43 @@
+#
+#	GENERIC configuration for MICROPMON
+#
+#  Very small (typically around 40Kb) with srecord download.
+#
+
+makeoptions	OPT="-Os"		# Optimize for smallest size
+
+#
+# Module selection. Selects pmon features
+#
+#select		mod_flash_amd		# AMD flash device programming
+#select		mod_flash_intel		# intel flash device programming
+#select		mod_debugger		# Debugging module
+#select		mod_symbols		# Symbol table handling
+select		mod_s3load		# Srecord loading
+#select		mod_fastload		# LSI Fastload
+#select		mod_elfload		# ELF loading
+
+#
+# Command selection. Selects pmon commands
+#
+#select		cmd_about		# Display info about PMON
+#select		cmd_cache		# Cache enabling
+#select		cmd_call		# Call a function command
+#select		cmd_date		# Time of day command
+#select		cmd_env			# Full blown environment command set
+#select		cmd_flash		# Flash programming cmds
+select		cmd_g			# Go command if not mod_debugger
+#select		cmd_hist		# Command history
+#select		cmd_l			# Disassemble
+#select		cmd_mem			# Memory manipulation commands
+#select		cmd_mt			# Simple memory test command
+select		cmd_misc		# Reboot & Flush etc.
+select		cmd_set			# As cmd_env but not req. cmd_hist
+#select		cmd_stty		# TTY setings command
+#select		cmd_tr			# Host port-through command
+#
+#select		cmd_shell		# Shell commands, vers, help, eval
+ #select		cmd_vers
+ #select		cmd_help
+ #select		cmd_eval
+#

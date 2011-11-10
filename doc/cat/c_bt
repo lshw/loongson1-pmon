@@ -1,0 +1,48 @@
+bt The bt command displays a function call backtrace.
+
+Format The format for this command is:
+
+bt [-v] [ cnt]
+
+where:
+-v	specifies that each function’s stackframe base address and size should be displayed.
+cnt	specifies the number of lines to be displayed.
+
+When invoking this command with no options, the backtrace displays the
+names and up to four arguments for each level of stackframe.
+
+
+Functional
+Description
+
+The bt command displays a list of function calls, starting with the function in
+which the EPC register currently lies, and finishing when a return address
+becomes ‘‘invalid’’. An address is deemed invalid if it does not lie within one
+of the ranges specified by the validpcenvironment variable.
+
+Each line of output gives the current position in a function, and up to four of
+its arguments. The arguments can only be retrieved if they are saved within
+the function prologue, and this is unlikely to be the case for assembler functions
+and optimised C code. If you want to be able to see the arguments to C
+functions, then compile your program with optimisation disabled.
+
+If the -v option is given, then the command additionally displays the stackframe
+base address and size for each function. It will also indicate the
+amount of dynamic stack space allocated using C’s alloca function, or
+equivalent.
+
+The output of this command is passed to the more command, letting the user
+view one screenful of output at a time. Optionally, the user can specify cnt,
+which limits the number of lines to that number. An example illustrating the
+use of the bt command follows.
+
+PMON> c write+10
+write+0x0010 3c09a07f lui t1,0xa07f
+PMON> bt
+write+0x0010 (0x00000001,0xa0030300,0x0000001c)
+flsbuf+0x0234 (0xa0030300,0xa0029030)
+printf+0x045c (0xa0025490,0xa0020000,0x000000001,0x00000010)
+main+0x0138 (0x00000001,0xa07ffffe0)
+_start+0x0040 ()
+
+See also the more command

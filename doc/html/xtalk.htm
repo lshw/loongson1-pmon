@@ -1,0 +1,117 @@
+	<title>Downloading using Crosstalk on MSDOS</title>
+
+	
+<h1 align="left">Downloading a binary image using Crosstalk on MSDOS</h1>
+
+
+
+The following example illustrates how to send files using CrossTalk XVI. <p>
+
+
+
+<!--INDEX "Send file with Crosstalk" -->
+
+
+
+<table>
+
+<tr>
+    <td valign="top" width="399"><tt> C&gt; pmcc -srec -o bubble bubble.c </tt></td>
+    <td width="259"> Compile and link on host. </td>
+  </tr>
+
+
+
+<tr>
+    <td valign="top" width="399"><tt> C&gt; xtalk com1 </tt></td>
+    <td width="259"> Invoke Crosstalk. </td>
+  </tr>
+
+
+
+<tr>
+    <td valign="top" width="399"><tt> PMON&gt; set hostport tty0 </tt></td>
+    <td width="259"> Initial setup on target. </td>
+  </tr>
+
+
+
+<tr>
+    <td valign="top" width="399"><tt> PMON&gt; set dlecho off </tt></td>
+    <td width="259"> </td>
+  </tr>
+
+
+
+<tr>
+    <td valign="top" width="399"><tt> PMON&gt; set dlproto lfeed </tt></td>
+    <td width="259"> </td>
+  </tr>
+
+
+
+<tr>
+    <td valign="top" width="399"><tt> PMON&gt; load </tt></td>
+    <td width="259"> Prepare for download. </td>
+  </tr>
+
+
+
+<tr>
+    <td valign="top" width="399"><tt> ^Asend bubble.rec </tt></td>
+    <td width="259"> Start download. </td>
+  </tr>
+
+
+
+<tr>
+    <td valign="top" width="399"><tt> PMON&gt; g Run the downloaded program. </tt></td>
+  </tr>
+
+
+
+</table><p>
+
+
+
+For the above example, com1.xtk contains the following non-default 
+
+settings:
+
+
+
+<pre>
+
+	ATten			SOH (^A)
+
+	EMulate			VT-100
+
+	POrt			1
+
+	LWait			Echo
+
+	DAta			8
+
+	HAndshake		Off
+
+	PArity			None
+
+	SPeed			9600
+
+	GO			Local
+
+</pre>
+
+<p><hr>
+
+<b>Navigation:</b> 
+
+<a href="pmon.htm">Document Home</a> | 
+
+<a href="doctoc.htm">Document Contents</a> | 
+
+<a href="docindex.htm">Document Index</a> 
+<p>
+<p>
+<p><br>
+  <!--$Id: xtalk.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --> 

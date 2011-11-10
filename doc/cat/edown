@@ -1,0 +1,30 @@
+	Sending a File Using edown
+	Sending a File Using edown
+
+If both your UNIX host and your target have two serial ports available,
+you can use the edown command to send
+Fast-Format or S-record files to your target.  The following example
+illustrates how to perform this procedure using PMON.
+
+PMON set hostport tty1 		
+
+	Initial setup on target.
+
+PMON set dlecho off 
+
+PMON set dlproto EtxAck
+
+PMON load			
+
+	Prepare for download.
+
+% edown /dev/ttya < bubble.rec	
+
+	Start download.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

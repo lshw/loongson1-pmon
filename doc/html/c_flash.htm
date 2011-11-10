@@ -1,0 +1,86 @@
+<html>
+<head>
+<title>Untitled Document</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<h1>flash</h1>
+<p>The flash command provides for programming, erasing and copying flash memory 
+  areas.</p>
+<h2>Format </h2>
+<p>The format for the command is:</p>
+<blockquote>
+  <pre><font size="+1">flash [-q] [-e arg] [args ...]</font></pre>
+</blockquote>
+<pre>where:
+</pre>
+<table width="86%" border="0">
+  <tr bgcolor="#CCCCCC"> 
+    <td width="24%" align="left" valign="top"> 
+      <p>&lt;none&gt;</p>
+    </td>
+    <td width="76%" align="left" valign="top"> 
+      <blockquote> 
+        <p>gives a list of available flash areas and types</p>
+      </blockquote>
+    </td>
+  </tr>
+  <tr> 
+    <td width="24%" align="left" valign="top"> 
+      <p>-q</p>
+    </td>
+    <td width="76%" align="left" valign="top"> 
+      <blockquote> 
+        <p>gives a list of available flash areas and types</p>
+      </blockquote>
+    </td>
+  </tr>
+  <tr bgcolor="#CCCCCC"> 
+    <td width="24%" align="left" valign="top"> 
+      <p>-e base_addr</p>
+    </td>
+    <td width="76%" align="left" valign="top"> 
+      <blockquote> 
+        <p>erases the flash area on that base address. </p>
+      </blockquote>
+    </td>
+  </tr>
+  <tr> 
+    <td width="24%" align="left" valign="top"> 
+      <p> base_addr size from_addr</p>
+    </td>
+    <td width="76%" align="left" valign="top"> 
+      <blockquote> 
+        <p>writes the flash base_addr memory for size bytes using from_addr memory 
+          starting point.</p>
+      </blockquote>
+    </td>
+  </tr>
+</table>
+<p>Each area in the flash devices will be identified, and is dependant on the 
+  system implementation. </p>
+<p>These areas are useable for storage or for bootable images.<br>
+  The -q (Query) option will list each system dependent flash ROM area. The base 
+  address and size is listed, along with each flas area configuration, sector 
+  size (if supported) and the actual Flash device Manufacturing ID value (if reported). 
+  Example:</p>
+<pre>PMON> flash -q
+Available FLASH memory <br> Start   Size     Width Sectorsize Type
+ff000000 00800000 8*8   00040000   i28F160 
+fff00000 00080000 1*8   00010000   Am29F040 
+PMON> 
+</pre>
+<p> The -e (Erase) option code calculates the sector from the flash address you 
+  enter, and the number of sectors are the size divided by sectorsize (rounded 
+  up).<br>
+</p>
+<h2><b>See Also:</b></h2>
+<p> <font color="#000000">The <a href="boot.htm">boot -f </a>(from FLASH) command. 
+  It allows boot loading from one of several several flash areas. </font></p>
+<hr>
+<p><b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a> </p>
+<p><!--$Id: c_flash.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --></p>
+</body>
+</html>

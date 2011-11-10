@@ -1,0 +1,97 @@
+Targets/EV64240/compile/EV64240EL/headers:ffffffff8009f308 l       .bss	0000000000000004 cputype
+Targets/EV64240/compile/EV64240EL/headers:ffffffff80075558 g     F .text	000000000000000c md_cputype
+Targets/EV64240/compile/EV64240EL/pmon.dis:ffffffff800718a0:	0c01d5a2 	jal	ffffffff80075688 <md_cputype>
+Targets/EV64240/compile/EV64240EL/pmon.dis:ffffffff800718d0:	0c01d5a2 	jal	ffffffff80075688 <md_cputype>
+Targets/EV64240/compile/EV64240EL/pmon.dis:ffffffff80075688 <md_cputype>:
+Targets/EV64240/compile/EV64240EL/pmon.dis:ffffffff80078548:	0c01d5a2 	jal	ffffffff80075688 <md_cputype>
+Targets/EV64240/EV64240/tgt_machdep.c:	return(md_cputype());
+Targets/EV64260/EV64260/tgt_machdep.c:	return(md_cputype());
+include/pmon.h:int		md_cputype (void);
+md_cputype:Targets/EV64240/compile/EV64240EL/headers:ffffffff80075558 g     F .text	000000000000000c md_cputype
+md_cputype:Targets/EV64240/compile/EV64240EL/pmon.dis:ffffffff800718a0:	0c01d5a2 	jal	ffffffff80075688 <md_cputype>
+md_cputype:Targets/EV64240/compile/EV64240EL/pmon.dis:ffffffff800718d0:	0c01d5a2 	jal	ffffffff80075688 <md_cputype>
+md_cputype:Targets/EV64240/compile/EV64240EL/pmon.dis:ffffffff80075688 <md_cputype>:
+md_cputype:Targets/EV64240/compile/EV64240EL/pmon.dis:ffffffff80078548:	0c01d5a2 	jal	ffffffff80075688 <md_cputype>
+md_cputype:Targets/EV64240/EV64240/tgt_machdep.c:	return(md_cputype());
+md_cputype:Targets/EV64260/EV64260/tgt_machdep.c:	return(md_cputype());
+md_cputype:include/pmon.h:int		md_cputype (void);
+pmon/arch/mips/machdep.c:	if (((md_cputype() >> 8) & 0xffff) == 0x0504) {
+pmon/arch/mips/machdep.c:		cputype = CPU_7;
+pmon/arch/mips/machdep.c:	switch((md_cputype() >> 8) & 0xff) {
+pmon/arch/mips/machdep.c:		cputype = CPU_7;
+pmon/arch/mips/machdep.c:		cputype = CPU_7;
+pmon/arch/mips/machdep.c:		cputype = CPU_5;
+pmon/arch/mips/machdep.c:		cputype = CPU_41; // ?????????????
+pmon/arch/mips/machdep.c:		if(!(reglist->flags & cputype)) {
+pmon/arch/mips/machdep.c:		if(!(regmap->flags & cputype)) {
+pmon/arch/mips/machdep.c:		if(!(reglist->flags & cputype)) {
+pmon/arch/mips/machdep.c:		if(!(reglist[i].flags & R_GPR) || !(reglist[i].flags & cputype)) {
+pmon/arch/mips/machdep.c:			if(!(reglist[i].flags & R_FLOAT) || !(reglist[i].flags & cputype)) {
+pmon/arch/mips/machdep.c~:static int cputype;
+pmon/arch/mips/machdep.c~:	if (((md_cputype() >> 8) & 0xffff) == 0x0504) {
+pmon/arch/mips/machdep.c~:		cputype = CPU_7;
+pmon/arch/mips/machdep.c~:	switch((md_cputype() >> 8) & 0xff) {
+pmon/arch/mips/machdep.c~:		cputype = CPU_7;
+pmon/arch/mips/machdep.c~:		cputype = CPU_7;
+pmon/arch/mips/machdep.c~:		cputype = CPU_5;
+pmon/arch/mips/machdep.c~:		cputype = CPU_41;
+pmon/arch/mips/machdep.c~:		if(!(reglist->flags & cputype)) {
+pmon/arch/mips/machdep.c~:		if(!(regmap->flags & cputype)) {
+pmon/arch/mips/machdep.c~:		if(!(reglist->flags & cputype)) {
+pmon/arch/mips/machdep.c~:		if(!(reglist[i].flags & R_GPR) || !(reglist[i].flags & cputype)) {
+pmon/arch/mips/machdep.c~:			if(!(reglist[i].flags & R_FLOAT) || !(reglist[i].flags & cputype)) {
+pmon/arch/mips/mips.S:LEAF(md_cputype)
+pmon/arch/mips/mips.S:END(md_cputype)
+pmon/arch/powerpc/cachecmds.c:	int cputype;
+pmon/arch/powerpc/cachecmds.c:	cputype = md_cputype();
+pmon/arch/powerpc/cachecmds.c:	switch((cputype >> 16) & 0xffff) {
+pmon/arch/powerpc/cachecmds.c:		switch((cputype >> 8) & 0xff) {
+pmon/arch/powerpc/cachecmds.c:	int cputype;
+pmon/arch/powerpc/cachecmds.c:	cputype = md_cputype();
+pmon/arch/powerpc/cachecmds.c:	switch((cputype >> 16) & 0xffff) {
+pmon/arch/powerpc/cachecmds.c:		switch((cputype >> 8) & 0xff) {
+pmon/arch/powerpc/machdep.c:	int cputype;
+pmon/arch/powerpc/machdep.c:	cputype = md_cputype();
+pmon/arch/powerpc/machdep.c:	switch((cputype >> 16) & 0xffff) {
+pmon/arch/powerpc/machdep.c:		switch((cputype >> 8) & 0xff) {
+pmon/arch/powerpc/machdep.c:	int cputype;
+pmon/arch/powerpc/machdep.c:	cputype = md_cputype();
+pmon/arch/powerpc/machdep.c:	switch((cputype >> 16) & 0xffff) {
+pmon/arch/powerpc/powerpc.S: *  Get value from cputype register
+pmon/arch/powerpc/powerpc.S:	.globl	md_cputype
+pmon/arch/powerpc/powerpc.S:md_cputype:
+sys/arch/i386/include/cpu.h:#include <machine/cputypes.h>
+sys/arch/i386/include/cputypes.h:/*	$OpenBSD: cputypes.h,v 1.9 2002/03/30 09:42:28 mickey Exp $	*/
+sys/arch/i386/include/cputypes.h:/*	$NetBSD: cputypes.h,v 1.10 1997/10/18 04:51:03 mikel Exp $	*/
+sys/arch/i386/include/CVS/Entries:/cputypes.h/1.1.1.1/Wed Apr 30 02:59:20 2003//
+tags:CPUCLASS_386	sys/arch/i386/include/cputypes.h	35;"	d
+tags:CPUCLASS_486	sys/arch/i386/include/cputypes.h	36;"	d
+tags:CPUCLASS_586	sys/arch/i386/include/cputypes.h	37;"	d
+tags:CPUCLASS_686	sys/arch/i386/include/cputypes.h	38;"	d
+tags:CPUVENDOR_AMD	sys/arch/i386/include/cputypes.h	66;"	d
+tags:CPUVENDOR_CYRIX	sys/arch/i386/include/cputypes.h	64;"	d
+tags:CPUVENDOR_IDT	sys/arch/i386/include/cputypes.h	67;"	d
+tags:CPUVENDOR_INTEL	sys/arch/i386/include/cputypes.h	63;"	d
+tags:CPUVENDOR_NEXGEN	sys/arch/i386/include/cputypes.h	65;"	d
+tags:CPUVENDOR_NS	sys/arch/i386/include/cputypes.h	70;"	d
+tags:CPUVENDOR_RISE	sys/arch/i386/include/cputypes.h	68;"	d
+tags:CPUVENDOR_TRANSMETA	sys/arch/i386/include/cputypes.h	69;"	d
+tags:CPUVENDOR_UNKNOWN	sys/arch/i386/include/cputypes.h	62;"	d
+tags:CPUVENDOR_VIA	sys/arch/i386/include/cputypes.h	71;"	d
+tags:CPU_386	sys/arch/i386/include/cputypes.h	46;"	d
+tags:CPU_386SX	sys/arch/i386/include/cputypes.h	45;"	d
+tags:CPU_486	sys/arch/i386/include/cputypes.h	48;"	d
+tags:CPU_486DLC	sys/arch/i386/include/cputypes.h	49;"	d
+tags:CPU_486SX	sys/arch/i386/include/cputypes.h	47;"	d
+tags:CPU_586	sys/arch/i386/include/cputypes.h	52;"	d
+tags:CPU_686	sys/arch/i386/include/cputypes.h	56;"	d
+tags:CPU_6x86	sys/arch/i386/include/cputypes.h	50;"	d
+tags:CPU_AM586	sys/arch/i386/include/cputypes.h	53;"	d
+tags:CPU_DEFMODEL	sys/arch/i386/include/cputypes.h	78;"	d
+tags:CPU_K5	sys/arch/i386/include/cputypes.h	54;"	d
+tags:CPU_K6	sys/arch/i386/include/cputypes.h	55;"	d
+tags:CPU_MAXFAMILY	sys/arch/i386/include/cputypes.h	80;"	d
+tags:CPU_MAXMODEL	sys/arch/i386/include/cputypes.h	77;"	d
+tags:CPU_MINFAMILY	sys/arch/i386/include/cputypes.h	79;"	d
+tags:CPU_NX586	sys/arch/i386/include/cputypes.h	51;"	d
+tags:cputype	pmon/arch/mips/machdep.c	/^static int cputype;$/;"	v	file:

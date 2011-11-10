@@ -1,0 +1,7 @@
+TARGET=Bonito
+TARGETEL=Bonito
+START=start.o
+MEMSIZE=256
+ZLOADER_OPTIONS=-D NOCACHE2
+
+include Makefile.inc

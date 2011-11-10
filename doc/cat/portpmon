@@ -1,0 +1,259 @@
+		Porting PMON
+		Porting PMON
+
+The simplest way to bring up PMON on a new board is to test it out in
+two phases. In phase 1, you configure a PMON that maximizes the chances
+of it coming up first time. In phase 2, you turn on all the optional features
+that were turned off as part of phase 1.
+
+Phase 1
+
+If your board has exactly the same configuration as an existing LSI
+evaluation board, you can try plugging in one of the standard PMON
+PROMs. However, if PMON comes up, but dies whilest printing the banner,
+you are probably having problems with either the auto memory-size, the
+auto clock-frequency, or the auto nvram-type determining logic. In this
+case, you should build a PMON with those features turned off, and try
+again.
+
+If you have made some changes to the standard configuration, you will need
+to make some changes to PMON. Likely changes are:
+
+	  »  Different DRAM
+	  »  Different UART
+	  »  New Registers
+
+If the change you made will require a change to the DRAM initialization
+code, you will need to modify the appropriate CPU-specific init file.
+These files are named aXXXXX.s and are located in the lib directory.
+For example, the low-level init code for the 4101 is located in the
+file a4101.s.
+
+If you used a different UART, you might have to write a new driver.
+Most of LSI's evaluation boards use the 2681/68681 DUART from
+Philips/Motorola (lib/p2681.s).  But PMON also provides drivers for
+the 8251-like UART used in the L64008 (lib/p8251.c), and an untested
+driver for the 8530 (lib/p8530.c). You will then need to modify
+the CPU-specific high-level init file.
+These files are named cXXXXX.c and are located in the lib directory.
+For example, the high-level init code for the 4101 is located in the
+file c4101.c. In this file you will find the call to addDevice.
+
+Building a Phase 1 PMON
+
+The objective for Phase 1 is to build a PMON that has the best chance
+of booting successfully. We do this by turning off several of the
+optional features that have shown to be troublesome in the past.
+For example, to build a phase 1 PMON for a board that is fitted
+with LSI's L4001, perform the following steps.
+
+	  »  Run the Install program, and specify either all Big Endian,
+	or all Little Endian processors as appropriate.
+
+	  »  When the Current Selections are displayed, use the
+	appropriate number to turn off the unwanted features.
+
+	  »  Run the make command to build PMON.
+
+Your Current Selections display will look something like this:
+
+  1. Tools:.................. CYGELFDOS 11. Timing:....................... YES
+  2. CPU type: LR33000 LR33050          12. Source debug protocols:
+         LR33020 LR33120 LR33300                GDB_SUPPORT CROSSVIEW
+         LR33310 LR4001 LR4002 LR4003   13. Ethernet Address:
+         LR4101 LR4010 LR4011 LR4102            HWADDR=aa:bb:cc:00:00:00
+         L9A0084                                IPADDR=71.0.0.211
+  3. Serial Baudrate:............. 9600 14. Host download port:..... undefined
+  4. Memory addresses:                  15. Download mode:........ Single-port
+         ROM=9fc00000 RAM=80000100      16. Target download port:........ tty0
+         Client PC=80020000             17. Download protocol:........... NONE
+  5. Client RAM size:............. AUTO 18. Default Records:........ S-RECORDS
+  6. NVRAM check:.................. YES 19. Fast-record Checksum:......... YES
+  7. LR333xx Memory Type:..... TURBORKT 20. Prompt:.................. "PMON "
+  8. Floating-point support:...... NONE 21. Endian support:............... Big
+  9. Multiply/Divide emulation:.... YES 22. Default Endian:............... Big
+ 10. CPU clock frequency:......... AUTO
+
+ 
+After you have made the changes, it will look something like this.
+
+  1. Tools:.................. CYGELFDOS 11. Timing:....................... YES
+  2. CPU type: LR33000 LR33050          12. Source debug protocols:
+         LR33020 LR33120 LR33300                GDB_SUPPORT CROSSVIEW
+         LR33310 LR4001 LR4002 LR4003   13. Ethernet Address:
+         LR4101 LR4010 LR4011 LR4102            HWADDR=aa:bb:cc:00:00:00
+         L9A0084                                IPADDR=71.0.0.211
+  3. Serial Baudrate:............. 9600 14. Host download port:..... undefined
+  4. Memory addresses:                  15. Download mode:........ Single-port
+         ROM=9fc00000 RAM=80000100      16. Target download port:........ tty0
+         Client PC=80020000             17. Download protocol:........... NONE
+  5. Client RAM size:....... 896K bytes 18. Default Records:........ S-RECORDS
+  6. NVRAM check:................... NO 19. Fast-record Checksum:......... YES
+  7. LR333xx Memory Type:..... TURBORKT 20. Prompt:.................. "PMON "
+  8. Floating-point support:...... NONE 21. Endian support:............... Big
+  9. Multiply/Divide emulation:.... YES 22. Default Endian:............... Big
+ 10. CPU clock frequency:....... 50 MHz
+
+A brief explanation of each option follows. Note that the numbers
+used in this display will vary, as they are generated automatically.
+
+	  »  This example was generated for a configuration that uses
+	   MIPS tools hosted on a Sun. Yours will reflect the toolset
+	   and host combination that you are using.
+
+	  »  We have made no attempt to restrict the number of CPU types
+	   that are supported. 
+
+	  »  Select a default Baudrate of 9600 Baud for the Serial
+	communication. The actual UART type will depend on the CPU
+	type that is detected at run-time.
+
+	  »  This is the standard memory map for MIPS processors, it
+	is unlikely that you will need to change this.
+
+	  »  The Client RAM size has been changed from AUTO to 896K bytes.
+	This means that there is really 1M byte of memory on this board, 
+	but since the first 128K bytes is reserved for PMON, this leaves 
+	896K bytes available for client (downloadable) programs.
+
+	  »  The NVRAM check has been turned off. This will stop PMON
+	from attempting to identify the type of flash memory that is
+	fitted on the board.
+
+	  »  LR333xx Memory type. This is completely unimportant since this
+	is not for a LR333xx board.
+
+	  »  No floating-point support. There is no point is setting
+	this to any other value unless you have floating-point support in 
+	hardware or software.
+
+	  »  Multiply/Divide emulation is only required for the LR4002 or
+	LR4003. But it won't make PMON less likely to boot, so I left it
+	turned on.
+
+	  »  I have changed the CPU clock frequency from AUTO to 50 MHz.
+	This will stop PMON attempting to measure the clock frequency
+	during the initialization process.
+
+	  »  The Timing option controls whether client programs
+	built by the pmcc command will contain support for the 'g -t'
+	command.
+
+	  »  PMON can be built with, or without support for source-level
+	debuggers. It doesn't affect PMON's ability to boot, so I 
+	leave this enabled.
+
+	  »  You can disable this if you don't have an
+	Ethernet controller on your board. But in any case it won't 
+	stop PMON booting, because the Ethernet code is only called
+	if you set "hostport" to "ethernet" and then issue a "load"
+	command.
+
+	  »  The Host download port is the port on the host that
+	is to be used for downloading. Setting this eliminates
+	the need to specify the port on the edown command. It does not
+	effect the PMON build in any way.
+
+	  »  The Download mode is usually Two-port for Unix workstations,
+	and Single-port for DOS hosts. In any
+	case, this only effects the default value of the "hostport"
+	environment variable.
+
+	  »  The Target download port is usually tty1 for Unix
+	workstations and "tty0" for MSDOS
+	systems.  In any case, this only effects the default value of
+	the "hostport" environment variable.
+
+	  »  The Download protocol is usually EtxAck for Unix workstations
+	(for use with edown), and "None" for MSDOS 
+	systems.
+	In any case, this only effects
+	the default value of the "dlproto" environment variable.
+
+	  »  The Download record type is usually FAST-FORMAT for Unix
+	workstations and "S-RECORDS" for MSDOS
+	systems. This only effects the pmcc command, and has no effect
+	on the PMON build.
+
+	  »  This option tells pmcc whether to emit Checksum records
+	when generating the Fast-format records.
+
+	  »  The Prompt is usually "PMON ". This option only effects
+	the default value of the environment variable "prompt".
+
+	  »  This specified which byte order configurations should be built.
+	It can be set to build just big Endian, just little Endian, or
+	both.
+
+	  »  This option controls the default byte ordering to be
+	generated by the pmcc command.
+
+Testing Phase 1
+
+If PMON doesn't boot (i.e., nothing is printed), the most likely problems
+are:
+
+	  »  The PROM is not large enough. Most PROM Programmers don't
+	   warn you if the image doesn't fit.
+	  »  The DRAM initialization code in lib/aXXXXX.s is wrong.
+	  »  If you wrote your own UART driver, check it
+	   very carefully.
+	  »  Your DRAM is not working.
+	  »  Your DUART is not working. PMON polls the
+	DUART repeatedly while waiting for a command, and so you should
+	see very frequent chip selects on the DUART. If you don't see these,
+	suspect your DRAM. If you do see chip selects, check the RS232
+	connections, did you switch tx and rx, did you forget to connect
+	the ground pin? You should see a burst of data on the tx pin
+	of channel A, shortly after you release reset.
+
+You will probably find it quite useful to generate a disassembly of
+PMON. You can do that with the command:
+
+	dis pmon/bg/pmon  pmon.dis
+
+If you don't have the object file, you can disassemble the S-record
+file using the command.
+
+	rdsrec pmon.rec  pmon.dis
+
+If all you need is the address of the various subroutines. You will
+find those in pmon/bg/pmon.map. However, note that PMON executes
+entirely from kseg1 until it calls dbginit(). Thus the addresses will
+not be exactly the same as those given in the .map file. For example,
+an address of 9fc00274 in the map file, becomes bfc00274 inside PMON,
+and becomes 1fc00274 on the bus.
+
+Now read the section that describes what 
+happens when PMON boots.
+
+Suggestions
+
+If you have a logic analyser, you can use it to determine where
+PMON dies in the booting process by checking the addresses that
+it reaches. However, don't forget that just because the CPU fetches
+an address, doesn't mean that it reached that point. For example,
+if you have a jal instruction, you may see the CPU prefetch three
+or four instructions beyond the jal even if it never returns
+from the subroutine called by the jal instruction.
+
+If you have software-controlled LEDs on your board, you can insert
+code to turn them on or off at various critical phases of the booting
+process. This is rather tedious, because you will need to keep making
+new PROMs with the LED code inserted in different places until
+you isolate the problem. But it can be used to determine where your
+problem lies.
+
+Phase 2
+
+Having been successful in getting PMON to boot or your board.
+Rerun the Install program, and this time use all the defaults for
+auto memory-sizing, auto clock-frequency, and auto NVRAM determining 
+logic. Rebuild PMON, and try the new set of PROMS.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

@@ -1,0 +1,44 @@
+	 Building an Application for Execution under PMON
+	Building an Application for Execution under PMON
+
+To build an application for execution under PMON, you should use the pmcc command. This command "knows" about the
+requirements of the PMON execution environment, and will use the
+correct include files, startup file, and run-time library.
+
+Before you use the pmcc command, you will need to set your environment in order to add the pmcc
+command to your command search path.
+
+The pmcc command accepts most of the usual options that are recognized
+by a UNIX-style "cc" command. For example, you may..
+
+  »  specify multiple modules that can be either, .c, .s, or .o files.
+  »  name the output file using "-o filename".
+  »  stop at a .o file using the "-c" option.
+  »  specify that the compiler should include full debugging information
+by using the "-g" option.
+
+Please refer to the pmcc documentation for a
+complete listing of the options supported by this command.
+
+For example, to build a simple "Hello world" program, you would type:
+
+	pmcc -o hello hello.c
+
+The above command produces three files: bubble, bubble.map, and
+bubble.rec. The file bubble contains the linked and located object code, bubble.map contains a global
+symbol map, and bubble.rec contains the downloadable records.
+
+Note that if you are using a source-level debugger as you host-resident
+debugger, you will also need to specify the "-g" option. For example,
+
+	pmcc -g -o hello hello.c
+
+In general it is better to place all of the options before the list of
+files.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

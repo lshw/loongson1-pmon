@@ -1,0 +1,44 @@
+	SerialICE-1B Components
+	SerialICE-1B Components
+
+For information on configuring and building the SerialICE debugger, please
+refer to the section on Getting Started.
+
+  
+  
+
+  
+  
+
+SerialICE-1B Features
+
+  »  Minimal Target Requirements
+  »  A Powerful set of Assembly-level 
+	debugging commands
+  »  Supports Source-Level Debuggers
+  »  Unix-like user Interface 
+	(including command history/editing)
+  »  Display/set Registers
+  »  Display/
+	set Memory
+  »  Disassemble Memory
+  »  Search/
+	Copy/
+	Fill Memory
+  »  Multiple Breakpoints
+  »  Complex Breakpoints
+  »  Single Step Execution (including PROM) 
+  »  Downloadable Symbols for 
+	S-records and 
+	Fast-format records
+  »  Download via RS232 or 
+	Wiggler
+  »   Example Board Support Packages
+  »  Limitations
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

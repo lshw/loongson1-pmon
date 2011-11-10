@@ -1,0 +1,1 @@
+#define	NSDCARD	1

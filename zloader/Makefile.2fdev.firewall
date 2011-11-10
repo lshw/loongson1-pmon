@@ -1,0 +1,7 @@
+TARGET=Bonito2fdev
+TARGETEL=Bonito.2fdev.firewall
+export START=start_firewall.o
+MEMSIZE=128
+ZLOADER_OPTIONS=-mips3
+
+include Makefile.inc

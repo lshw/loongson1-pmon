@@ -1,0 +1,32 @@
+SerialICE Controller
+SerialICE Controller
+ 
+
+The SerialICE Monitor (on the SerialICE Controller) accepts commands from the 
+Host,
+and issues commands to the Target via a
+Driver.
+
+SerialICE supports the following boards for use as a SerialICE Controller.
+
+BDMR400x Evaluation Board
+
+  »  Insert the four flash memories containing the SerialICE Monitor in U8, 
+	U19, U29, and U40.
+  »  Connect a serial cable from U28 to the host.
+  »  Connect a null-modem serial cable from U43 to the 
+	target.
+
+Nitro (4010) Evaluation Board
+
+  »  Insert the flash memory containing the SerialICE Monitor in U18.
+  »  Connect a serial cable from J18 to the host.
+  »  Connect a null-modem serial cable from J17 to the 
+	target.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

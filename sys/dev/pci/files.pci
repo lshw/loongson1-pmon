@@ -1,0 +1,122 @@
+#	$OpenBSD: files.pci,v 1.108 2001/06/21 13:21:49 nate Exp $
+#	$NetBSD: files.pci,v 1.20 1996/09/24 17:47:15 christos Exp $
+#
+# Config file and device description for machine-independent PCI code.
+# Included by ports that need it.  Requires that the SCSI files be
+# defined first.
+
+device	pci {[dev = -1], [function = -1]}
+attach	pci at pcibus
+file	sys/dev/pci/pciconf.c		pci 
+file	sys/dev/pci/pci_map.c		pci
+file	sys/dev/pci/pci.c		pci
+
+# Ethernet driver for DC21040-based boards
+device	de: ether, ifnet, ifmedia
+attach	de at pci
+file	sys/dev/pci/if_de.c		de
+
+# Ethernet driver for fxp-based boards
+device	fxp: ether, ifnet, ifmedia, mii
+attach	fxp at pci
+file	sys/dev/pci/if_fxp.c		fxp & !e100
+file	sys/dev/pci/e100.c		fxp & e100
+
+device  rtl: ether, ifnet
+attach  rtl  at pci
+file    sys/dev/pci/rtl8139.c       rtl
+
+# Ethernet driver for fxp-based boards
+device em: ether, ifnet, ifmedia, mii
+attach em at pci
+file   sys/dev/pci/em/if_em.c          em
+
+
+# Ethernet driver for wx-based boards
+device	wx: ether, ifnet, ifmedia, mii, mii_phy
+attach	wx at pci
+file	sys/dev/pci/if_wx.c		wx
+
+# NCR 53c8xx SCSI chips
+device	ncr: scsi
+attach	ncr at pci
+file	sys/dev/pci/ncr.c		ncr
+
+# Symbios 53c8xx SCSI chips
+# device declaration in sys/conf/files
+define	siop_pci_common
+file	sys/dev/pci/siop_pci_common.c	siop_pci_common
+#
+attach	siop at pci with siop_pci: siop_pci_common
+file	sys/dev/pci/siop_pci.c		siop_pci
+
+# UHCI USB controller
+#attach  uhci at pci with uhci_pci
+#file	sys/dev/pci/uhci_pci.c              uhci
+
+# LSI MPI driver
+attach	mpi at pci with mpi_pci
+file	sys/dev/pci/mpi_pci.c		mpi_pci
+
+# PCI IDE controllers
+device	pciide {[channel = -1]}: wdc_base, ata, atapi, ide
+attach	pciide at pci
+file	sys/dev/pci/pciide.c		pciide
+
+# PCI-PCI bridge chips
+device	nppb: pcibus
+attach	nppb at pci
+file	sys/dev/pci/nppb.c		nppb
+
+device  ppb: pcibus
+attach  ppb at pci
+file    sys/dev/pci/ppb.c              ppb
+
+file	sys/dev/pci/pcidevs.c		pci
+file	sys/dev/pci/vt82c686.c 		(pci&vt82c686) needs-flag
+file	sys/dev/pci/cs5536.c 		(pci&cs5536) needs-flag
+file	sys/dev/pci/kb3310.c		(cs5536 & pci&kb3310)  needs-flag
+
+#added by yh
+
+device uhci:usbbus
+attach uhci at pci 
+#file sys/dev/usb/usb_uhci.c		uhci
+
+#file sys/dev/usb/hub.c			uhci	
+#file sys/dev/usb/usb.c			
+
+
+device ohci: usbbus 
+attach ohci at pci
+
+#file sys/dev/pci/usb-ohci.c		ohci
+
+#added by jlliu
+device  rtk: ether, ifnet
+attach  rtk at pci
+file    sys/dev/pci/rtl8169.c         rtk
+
+device  ste: ether, ifnet
+attach  ste at pci
+file    sys/dev/pci/sundance.c         ste
+
+device  ipg: ether, ifnet
+attach  ipg at pci
+file    sys/dev/pci/ipg.c         ipg
+# PCI-SATA driver added by zgj
+device  atp {[channel = -1]}: wdc_base, ata, atapi, ide
+attach  atp at pci 
+file    sys/dev/pci/atpsata.c           atp needs-flag
+
+device  sata 
+attach  sata at atp 
+file    sys/dev/pci/sata.c           sata 
+
+device	ahci {[channel = -1]} : ahcibus
+attach	ahci at pci
+file	sys/dev/pci/ahci.c		ahci | lahci
+
+device  ahcisata
+attach  ahcisata at ahcibus
+file    sys/dev/pci/ahcisata.c   	ahcisata needs-flag

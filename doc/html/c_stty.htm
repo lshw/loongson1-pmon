@@ -1,0 +1,133 @@
+<title>The stty Command</title>
+
+<h1>stty</h1>
+
+
+
+<!--INDEX "stty command" "set terminal parameters" -->
+
+<!--INDEX baud ixany ixoff sane -->
+
+
+
+The stty command displays and sets terminal options.<p>
+
+
+
+<h2>Format</h2>
+<p> The format for this command is:</p>
+<blockquote> 
+  <pre> <font size="+1">stty [device][-av] [baud] [sane] [term][ixany|-ixany] [ixoff|-ixoff] </font></pre>
+</blockquote>
+<p> where:</p>
+<blockquote> 
+  <p>&nbsp; </p>
+</blockquote>
+<dl> 
+  <dd> 
+    <table width="95%">
+      <tr bgcolor="#CCCCCC"> 
+        <td width="72" nowrap align="right" valign="top"> device&nbsp;&nbsp; </td>
+        <td width="480" align="left" valign="top">is either tty0 or tty1. The 
+          default is tty0. </td>
+      </tr>
+      <tr> 
+        <td width="72" nowrap align="right" valign="top"> -a &nbsp;&nbsp;</td>
+        <td width="480" align="left" valign="top">gives a long listing showing 
+          all current settings. </td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td width="72" nowrap align="right" valign="top"> -v &nbsp;&nbsp;</td>
+        <td width="480" align="left" valign="top">displays the possible choices 
+          for baud rate and terminal type. </td>
+      </tr>
+      <tr> 
+        <td width="72" nowrap align="right" valign="top"> baud &nbsp;&nbsp;</td>
+        <td width="480" align="left" valign="top">sets the baud rate. </td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td width="72" nowrap align="right" valign="top"> sane &nbsp;&nbsp;</td>
+        <td width="480" align="left" valign="top">resets terminal settings to 
+          the default. </td>
+      </tr>
+      <tr> 
+        <td width="72" nowrap align="right" valign="top"> term &nbsp;&nbsp;</td>
+        <td width="480" align="left" valign="top">sets the terminal emulation 
+          type. </td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td width="72" nowrap align="right" valign="top"> ixany &nbsp;&nbsp;</td>
+        <td width="480" align="left" valign="top">allows any character to restart 
+          the output. </td>
+      </tr>
+      <tr> 
+        <td width="72" nowrap align="right" valign="top"> -ixany &nbsp;&nbsp;</td>
+        <td width="480" align="left" valign="top">allows only START to restart 
+          the output. </td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td width="72" nowrap align="right" valign="top"> ixoff &nbsp;&nbsp;</td>
+        <td width="480" align="left" valign="top">enables the tandem mode. </td>
+      </tr>
+      <tr> 
+        <td width="72" nowrap align="right" valign="top"> -ixoff &nbsp;&nbsp;</td>
+        <td width="480" align="left" valign="top">disables the tandem mode. </td>
+      </tr>
+    </table>
+</dl>
+<p> When invoking the stty command with no parameters, the <a href="mondef.htm">Monitor</a> 
+  displays the terminal type and baud rate for the tty0 port.</p>
+<blockquote>
+  <p>&nbsp; </p>
+</blockquote>
+<h2>Functional Description</h2>
+<dl>
+  <dd> The stty command displays and sets the terminal options, such as terminal 
+    emulation type, baud rate, and ioctl settings. First, to display the current 
+    terminal type, baud rate, and ioctl settings for tty0, enter:
+    <p> 
+    <pre>
+
+PMON&gt; stty -a
+
+</pre>
+</dl>
+<p> To display the same information for tty1, enter:</p>
+<p> PMON&gt; stty tty1 -a To change the baud rate or terminal type for tty0, simply 
+  enter the new set- ting after stty. Precede the new setting with tty1 to change 
+  the settings for tty1. </p>
+<p> Examples illustrating the use of this command follow.</p>
+<blockquote> 
+  <pre>PMON&gt; stty &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Display terminal type and baud rate for tty0. <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;term=tvi920 baud=9600 
+
+PMON&gt; stty -a &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Display terminal type, baud rate, and ioctl settings for tty0. <br>&nbsp;&nbsp;term=tvi920 baud=9600 canon echo echoe onlcr icrnl istrip ixon <br>&nbsp;&nbsp;erase=^H&nbsp;stop= start=^Q eol=^J eol2=^C vintr=^C 
+
+PMON&gt; stty 9600 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set baud rate for&nbsp;tty0 to 9600. 
+
+PMON&gt; stty -v &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List <b>available</b> baud rates, terminal types and current baud.<br>&nbsp;&nbsp;Baud rates: 50 75&nbsp;110 134 200 150 300 600 1200 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1800 2400 4800 9600 19200 38400 <br>  Terminal Types:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   tvi920&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vt100
+            Baud:     9600<br>
+PMON&gt; stty tvi920 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set terminal type for tty0 to tvi920. 
+
+PMON&gt; stty tvi920 9600 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set&nbsp;terminal type and baud rate for tty0 to tvi920 and 9600 baud.
+
+PMON&gt; stty&nbsp;tty1 sane &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reset ioctl settings for tty1.
+
+PMON&gt; stty tty1 19200 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set tty1 to 19200 baud. 
+
+</pre>
+</blockquote>
+<h2>See Also:<br>
+</h2>
+<p><hr>
+
+<b>Navigation:</b> 
+
+<a href="pmon.htm">Document Home</a> | 
+
+<a href="doctoc.htm">Document Contents</a> | 
+
+<a href="docindex.htm">Document Index</a> 
+<p> 
+<p>
+<p><!--$Id: c_stty.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --></p>
+<p> 

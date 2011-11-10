@@ -1,0 +1,39 @@
+#
+# NOTE! Don't add files that are generated in specific
+# subdirectories here. Add them in the ".gitignore" file
+# in that subdirectory instead.
+#
+# Normal rules
+#
+#.*
+#!.config
+*.o
+#*.a
+.cvsignore
+
+
+#
+# Top-level generic files
+#
+tags
+TAGS
+gzrom
+gzrom.bin
+pmon.bin.c
+
+#
+# Generated include files
+#
+#include/asm
+#include/asm-*/asm-offsets.h
+#include/config
+#include/linux/autoconf.h
+#include/linux/compile.h
+#include/linux/version.h
+#include/linux/utsrelease.h
+
+# stgit generated dirs
+patches-*
+
+# cscope files
+cscope.*

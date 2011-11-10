@@ -1,0 +1,140 @@
+The load Command
+load
+
+The load command downloads programs and data from the host. 
+
+Format
+
+The format for the load command is:
+
+load [-abeistB] [-baud] [offset] [-c cmdstr] filename
+
+where:
+
+-m	Only load the symbol information.
+
+-a	suppresses addition of an offset to symbols.
+
+-b	suppresses deletion of all breakpoints before the download. 
+
+-e	suppresses clearing of the exception handlers.
+
+-i	ignores checksum errors.
+
+-s	suppresses clearing of the symbol table before the download.
+
+-t	loads at the top of memory (PMON only).
+
+-f	load driver from flash (IMON only).
+
+-B	Interprets input from host as binary data for Ethernet 
+	transfers.
+
+-baud		sets the baud rate for transfer.
+
+offset		loads at the specified offset.
+
+-c cmdstr	sets a command string that the Monitor sends to the host to 
+		start a download operation. String cmdstr is the string that 
+		starts the download. Note that the command string must be 
+		enclosed in double quotation marks if the string contains any 
+		spaces.
+
+filename	load the specified file (imon95 only).
+
+Invoking the load command with no parameters or arguments clears the 
+symbol table, deletes all current breakpoints, allows the Monitor to receive 
+programs or data from the host, and uses the current baud rate by default.
+
+Functional Description
+
+The load command accepts programs and data from the host port in LSI
+Logic's proprietary FastLoad format, Motorola S-record, or binary files.  The user can
+set environment variables to change the data port, the format, and the
+transfer protocol. 
+
+The load command normally clears the symbol table, exception handlers, 
+and all breakpoints. The -s and -b options suppress the clearing of the 
+symbol table and breakpoints, respectively. The value of the EPC register 
+is set automatically to the entry point of the program. Therefore, to execute 
+the downloaded program, only the g command is required.
+
+The -c option permits a command string to be sent to the host when the 
+load command is issued. This is intended for use in conjunction with the 
+transparent mode. Note that if the command string contains multiple 
+words, the command must be enclosed in double quotation marks, as 
+shown in the example below.
+
+The load command returns the error message "out of memory" if there is 
+insufficient space in the heap for the program's global symbols. To 
+increase the size of the heap , use the set heaptop command to reserve 
+more space in the heap, and then use the -T option with the pmcc command 
+to set the start address of the text section to the same address that was 
+specified for the heap. See the pmcc command on page 3-13.
+
+The dlecho, dlproto, and hostport Variables
+
+The dlecho, dlproto, and hostport variables control operation of the 
+download. The following table shows how these environment variables affect the 
+operation of the load command.
+
+VariableAction
+dlecho offDo not echo the lines
+dlecho onEcho the lines
+dlecho lfeedEcho only a linefeed for each line
+dlproto noneDo not use a protocol
+dlproto XonXoffSend Xon and Xoff to control the host
+dlproto EtxAckExpect Etx as end of record, send Ack
+hostport tty0Select tty0 as the port to which the host is connected
+hostport tty1Select tty1 as the port to which the host is connected
+hostport ethernetSelect ethernet
+as the port to which the host is connected
+
+See the section on downloading beginning on page 1-9 for more 
+information on these variables and the use of the load command.
+
+Examples
+
+Download to tty1 using the edown program.
+
+	PMON set dlecho off 
+	PMON set hostport tty1 
+	PMON set dlproto EtxAck 
+	PMON load 	
+	% edown 
+
+Download to tty0 using a terminal emulator.
+
+	PMON set dlecho off 
+	PMON set hostport tty0 
+	PMON set dlproto none 
+	PMON load 	
+	-- use terminal emulator's "send text file" command
+	Downloading from tty0, ^C to abort
+	Entry address is 80020000
+
+	Total = 0x00043C00 bytes
+	PMON
+
+When using the Monitor in an environment where
+tty1 is connected to a login line on a Unix host. You will need to send
+a command to start the download. In the following example the command
+"cat test1.rec" is sent to the host.
+
+	PMON load -c "cat test1.rec"
+
+Files
+The code for the load command is located in 
+pmon/load.c (PMON), 
+and imon/load.c (IMON).
+
+See Also
+set command for the setup 
+of the environment variables.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

@@ -1,0 +1,75 @@
+<html>
+<head>
+<title>Untitled Document</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<h1> bt</h1>
+<!--INDEX "backtrace count"btcmd "bt command" --> 
+<p>Thebtcommand displays a function call backtrace.
+<h2> Format</h2>
+<p> The format for the bt command is:</p>
+<dl>
+  <pre><font size="+1">	bt [-v] [ cnt]
+</font><br>where:
+</pre>
+  <table width="95%">
+    <tr bgcolor="#CCCCCC"> 
+      <td align=LEFT valign=TOP width="66"> 
+        <pre>-v</pre>
+      </td>
+      <td width="703">specifies that each function’s stackframe base address and 
+        size should be displayed. </td>
+    </tr>
+    <tr> 
+      <td width="66"> 
+        <pre>cnt</pre>
+      </td>
+      <td width="703">specifies the number of lines to be displayed. &nbsp;</td>
+    </tr>
+  </table>
+  <p>When invoking this command with no options, the backtrace displays the names 
+    and up to four arguments for each level of stackframe.
+</dl>
+<h2> Functional Description</h2>
+<dl> 
+  <dd> The bt command displays a list of function calls, starting with the function 
+    in which the User Stack register currently lies, and finishing when a return 
+    address becomes ‘‘invalid’’. An address is deemed invalid if it does not lie 
+    within one of the ranges specified by the validpcenvironment variable.<br>
+    &nbsp; 
+    <p>Each line of output gives the current position in a function, and up to 
+      four of its arguments. The arguments can only be retrieved if they are saved 
+      within the function prologue, and this is unlikely to be the case for assembler 
+      functions and optimized C code. If you want to be able to see the arguments 
+      to C functions, then compile your program with optimization disabled. If 
+      the -v option is given, then the command additionally displays the stack-frame 
+      base address and size for each function. It will also indicate the amount 
+      of dynamic stack space allocated using C’s alloca() function, or equivalent. 
+  </dd>
+  <dt>&nbsp;</dt>
+  <dd> 
+    <p> The output of this command is passed to the more command, letting the 
+      user view one screenful of output at a time. Optionally, the user can specify 
+      <font size="+1"> <font face="Courier New, Courier, mono">cnt</font></font>, 
+      which limits the number of lines to that number. An example illustrating 
+      the use of the bt command follows. 
+    <p>Example illustrating the use of the bt command follows. (MIPS code)<br>
+      &nbsp; 
+  </dd>
+  <dd> 
+    <pre>PMON> <b>c write+10</b> <br>&nbsp;&nbsp;&nbsp;&nbsp;write+0x0010&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3c09a07f&nbsp;&nbsp;&nbsp;lui&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t1,0xa07f <br>PMON> <b>bt</b> <br>&nbsp;&nbsp;&nbsp;&nbsp;write+0x0010&nbsp;&nbsp;&nbsp;&nbsp;(0x00000001,0xa0030300,0x0000001c) <br>&nbsp;&nbsp;&nbsp;flsbuf+0x0234&nbsp;&nbsp;&nbsp;&nbsp;(0xa0030300,0xa0029030) <br>&nbsp;&nbsp;&nbsp;printf+0x045c&nbsp;&nbsp;&nbsp;&nbsp;(0xa0025490,0xa0020000,0x000000001,0x00000010) <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;main+0x0138&nbsp;&nbsp;&nbsp;&nbsp;(0x00000001,0xa07ffffe0)     <br>&nbsp;&nbsp;&nbsp;_start+0x0040&nbsp;&nbsp;&nbsp;&nbsp;() 
+</pre>
+  </dd>
+</dl>
+<h2> See Also</h2>
+<dl> 
+  <dd> See also the <a href="c_more.htm">more</a> command </dd>
+</dl>
+<hr>
+<p><b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a> 
+<p><!--$Id: c_bt.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $--> 
+</body>
+</html>

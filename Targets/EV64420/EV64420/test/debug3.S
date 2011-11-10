@@ -1,0 +1,48 @@
+#define SET_LED(x) \
+	lw	v0, GT_BASE_ADDR+(GPP_VALUE);\
+	or v0,(7<<4); \
+	and v0,~(x<<4); \
+	sw	v0, GT_BASE_ADDR+(GPP_VALUE); \
+	li v0, 0x400;	\
+99:					\
+	bnez	v0, 99b;\
+	addiu	v0, -1
+
+#define HALT \
+1:\
+	b 1b;\
+	nop
+ 	
+	GT_REGWR(GPP_IO_CONTROL,MPP_UART_TX|DBG_LED0|DBG_LED1|DBG_LED2);
+ 	GT_REGWR(GPP_LEVEL_CONTROL,MP_INTA|MP_INTB|MP_INTC|MP_INTD);
+ 	GT_REGWR(GPP_INTERRUPT_MASK,MP_INTA|MP_INTB|MP_INTC|MP_INTD);
+
+	/* Route Multi Purpose Pins */
+	GT_REGWR(MPP_CONTROL0, 0x00000322);	//MPP0,MPP1 as S0_TXD,S0_RXD,MPP2 clk24M,others set to gpio pin
+	GT_REGWR(MPP_CONTROL1, 0x00000000);	
+	GT_REGWR(MPP_CONTROL2, 0x11111111);	//MPP16~23 as PCI REQ or GNT.
+	GT_REGWR(MPP_CONTROL3, 0x00400000); //MPP24~27 as PCI INTA-INTD,MPP29 as clk14M if nessary,others gpio.
+	
+#if 0
+1:	
+	SET_LED(0);
+	GT_REGW
+	DELAY(0x10000);
+	SET_LED(1);
+	DELAY(0x10000);
+	SET_LED(2);
+	DELAY(0x10000);
+	SET_LED(3);
+	DELAY(0x10000);
+	SET_LED(4);
+	DELAY(0x10000);
+	SET_LED(5);
+	DELAY(0x10000);
+	SET_LED(6);
+	DELAY(0x10000);
+	SET_LED(7);
+	DELAY(0x10000);
+	b 1b
+	nop
+#endif
+

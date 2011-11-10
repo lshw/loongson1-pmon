@@ -1,0 +1,46 @@
+# drivers/mtd/nand/Kconfig
+# $Id: Kconfig,v 1.35 2005/11/07 11:14:30 gleixner Exp $
+mainmenu_option next_comment
+
+comment 'NAND Flash Device Drivers'
+
+dep_tristate '  NAND Device Support' CONFIG_MTD_NAND $CONFIG_MTD
+if [ "$CONFIG_MTD_NAND" = "y" -o "$CONFIG_MTD_NAND" = "m" ]; then
+   bool '    Enable ECC correction algorithm'  CONFIG_MTD_NAND_ECC
+   bool '    Verify NAND page writes' CONFIG_MTD_NAND_VERIFY_WRITE
+fi
+if [ "$CONFIG_ARM" = "y" -a "$CONFIG_ARCH_P720T" = "y" ]; then
+   dep_tristate '  NAND Flash device on SPIA board' CONFIG_MTD_NAND_SPIA $CONFIG_MTD_NAND
+fi
+
+
+
+
+dep_bool "NAND ECC Smart Media byte order"  CONFIG_MTD_NAND_ECC_SMC $CONFIG_MTD_NAND
+
+dep_tristate "SmartMediaCard on autronix autcpu12 board" CONFIG_MTD_NAND_AUTCPU12 $CONFIG_MTD_NAND    $CONFIG_ARCH_AUTCPU12
+dep_tristate "Support for Cirrus Logic EBD7312 evaluation board" CONFIG_MTD_NAND_EDB7312 $CONFIG_MTD_NAND    $CONFIG_ARCH_EDB7312
+dep_tristate "iPAQ H1900 flash" CONFIG_MTD_NAND_H1900 $CONFIG_MTD_NAND    $CONFIG_ARCH_PXA    $CONFIG_MTD_PARTITIONS
+dep_tristate "NAND Flash device on SPIA board" CONFIG_MTD_NAND_SPIA $CONFIG_ARCH_P720T    $CONFIG_MTD_NAND
+dep_tristate "NAND Flash device on Amstrad E3" CONFIG_MTD_NAND_AMS_DELTA $CONFIG_MACH_AMS_DELTA    $CONFIG_MTD_NAND
+dep_tristate "NAND Flash device on TOTO board" CONFIG_MTD_NAND_TOTO $CONFIG_ARCH_OMAP    $CONFIG_MTD_NAND    $CONFIG_BROKEN
+dep_tristate "NAND Flash device on TS-7250 board" CONFIG_MTD_NAND_TS7250 $CONFIG_MACH_TS72XX    $CONFIG_MTD_NAND
+dep_tristate "CONFIG_MTD_NAND_IDS"  CONFIG_MTD_NAND_IDS $CONFIG_MACH_TS72XX    $CONFIG_MTD_NAND
+if [ "$CONFIG_SOC_AU1200" = "y" -o "$CONFIG_SOC_AU1550" = "y" ];then
+dep_tristate "Au1550/1200 NAND support" CONFIG_MTD_NAND_AU1550    $CONFIG_MTD_NAND
+fi
+dep_tristate "Renesas Flash ROM 4-slot interface board (FROM_BOARD4)" CONFIG_MTD_NAND_RTC_FROM4 $CONFIG_MTD_NAND    $CONFIG_SH_SOLUTION_ENGINE
+dep_tristate "NAND Flash device on PPChameleonEVB board" CONFIG_MTD_NAND_PPCHAMELEONEVB $CONFIG_PPCHAMELEONEVB    $CONFIG_MTD_NAND    $CONFIG_BROKEN
+dep_tristate "NAND Flash support for S3C2410/S3C2440 SoC" CONFIG_MTD_NAND_S3C2410 $CONFIG_ARCH_S3C2410    $CONFIG_MTD_NAND
+dep_bool "S3C2410 NAND driver debug" CONFIG_MTD_NAND_S3C2410_DEBUG $CONFIG_MTD_NAND_S3C2410
+dep_bool "S3C2410 NAND Hardware ECC" CONFIG_MTD_NAND_S3C2410_HWECC $CONFIG_MTD_NAND_S3C2410
+dep_tristate "NDFC NanD Flash Controller" CONFIG_MTD_NAND_NDFC $CONFIG_MTD_NAND    $CONFIG_44x
+dep_bool "S3C2410 NAND IDLE clock stop" CONFIG_MTD_NAND_S3C2410_CLKSTOP $CONFIG_MTD_NAND_S3C2410
+dep_tristate "DiskOnChip 2000, Millennium and Millennium Plus (NAND reimplementation) (EXPERIMENTAL)" CONFIG_MTD_NAND_DISKONCHIP $CONFIG_MTD_NAND    $CONFIG_EXPERIMENTAL
+dep_bool "Advanced detection options for DiskOnChip" CONFIG_MTD_NAND_DISKONCHIP_PROBE_ADVANCED $CONFIG_MTD_NAND_DISKONCHIP
+dep_bool "Probe high addresses" CONFIG_MTD_NAND_DISKONCHIP_PROBE_HIGH $CONFIG_MTD_NAND_DISKONCHIP_PROBE_ADVANCED
+dep_bool "Allow BBT writes on DiskOnChip Millennium and 2000TSOP" CONFIG_MTD_NAND_DISKONCHIP_BBTWRITE $CONFIG_MTD_NAND_DISKONCHIP
+dep_tristate "Support for NAND Flash on Sharp SL Series (C7xx + others)" CONFIG_MTD_NAND_SHARPSL $CONFIG_MTD_NAND    $CONFIG_ARCH_PXA
+dep_tristate "NAND support for CS5535/CS5536 (AMD Geode companion chip)" CONFIG_MTD_NAND_CS553X $CONFIG_MTD_NAND    $CONFIG_X86_32    
+dep_tristate 'NAND Flash device on fcr soc board' CONFIG_MTD_NAND_FCR_SOC $CONFIG_MTD_NAND
+endmenu

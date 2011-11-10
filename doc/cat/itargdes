@@ -1,0 +1,103 @@
+	Target Design Considerations
+	Target Design Considerations
+
+Since the SerialICE Kernel requires minimal ROM and RAM, the main issue is how the
+SerialICE Controller will communicate with the Target.
+
+There are three basic choices:
+
+  »  An On-chip SerialICE Port
+  »  An On-board Commercial SIO
+  »  An Off-board Commercial SIO
+
+Whether the the SIO port is implemented onchip or offchip, it must be
+mapped into the target CPU's address space and connected to one of
+the processor's interrupt request inputs. The base address may be
+chosen to suit individual system requirements.
+
+If there are not enough unused interrupt request inputs to devote
+one solely to the SIO, it is possible to implement a software
+sharing scheme that would permit the application and the SerialICE Kernel
+to use the same interrupt request input.
+
+On-chip SerialICE Port
+
+The on-chip SerialICE Port offers the highest potential performance at the lowest
+cost of board real-estate. In most cases the small die area required will
+be insignificant. This is the preferred solution for new designs.
+
+The silicon area needed for such a simple function is very small (well
+below 1mm2), and, since the interface is serial, the pin count overhead
+is also very low. 
+
+The reference onchip SIO design can support raw baud rates up to
+1.25Mbit/sec; allowing for communications overhead, the maximum data
+transfer rate during program downloads is around 50K Bytes/sec. This
+makes it possible to work with large download files. 
+
+For such an onchip implementation, it will usually be most convenient
+to derive the clock rate for the SIO from the CPU clock, through a
+frequency divider. For systems in which the clock rate must be
+flexible, it may be supplied from an offchip source; however, this
+requires an additional package I/O pin.
+
+The fast serial connection between the SerialICE Manager and the debug
+target must provide good signal integrity. In general, long cable
+runs should be avoided, since transmission line effects may severely
+affect the operation of the link at high clock rates.
+
+Recommended Configuration
+
+  »  An 8-bit header within 2" of the SIO pins (pinout shown below). If
+this close proximity is not possible, then 47R series terminating resistors
+should be placed on all outputs from the target.
+This is important, since it affects the integrity of the high-speed
+signals running between the target system and the Pod. If the
+board traces running between the connector and the SIO device are too
+long, they will cause transmission-line effects which could make the
+interface's operation unreliable.
+The recommended connector presents 2 rows each of 4 pins, on the
+industry standard 2.5 mm (0.1") pitch IDC connector.  These are listed
+below.
+
+Polarizing PinVCC
+GroundSerial Input (to target)
+GroundSerial Output (from target)
+GroundSerial Clock (to target)
+
+  »  A cable pod containing RS422 transceivers.
+Examples include the DS3695A devices offered
+by National Semiconductor Corp. These may be powered by the VCC feed from
+the 8-pin header. The pod should be connected to the target via
+8-way ribbon cable of no greater than 6" in length.
+
+  »  Good quality twisted pair data cable should be used for the
+connection between the pod and the SerialICE Controller.
+
+On-board Commercial SIO
+
+If it is not possible to integrate the SIO on-chip, a commercial SIO
+may be mounted on the Target. There is of course a penalty in board
+real-estate for this solution. But it may be used if board area is not 
+critical.
+
+Off-board Commercial SIO
+
+In this solution a small daughter card containing a commercial SIO is
+connected to the Target via a small number of pins. This removes most
+of the  board real-estate penalty, as it requires only the space needed
+for a small (approximately 25 pin) connector to connect an 8-bit
+peripheral to the CPU bus.
+
+In this way, standard production units carry only the minimal overhead
+of a small connector, yet can be used as development platforms at any
+time simply by plugging in the SIO card. In extremely cost sensitive
+applications, the debug connector position can simply be left open -
+reducing the overhead to a small amount of board area.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

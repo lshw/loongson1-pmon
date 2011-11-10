@@ -1,0 +1,91 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Kenneth R. Lewis">
+   <meta name="GENERATOR" content="Mozilla/4.72 [en] (WinNT; U) [Netscape]">
+   <title>Ping Command</title>
+</head>
+<body>
+<h1> ping</h1>
+<p> <font size=+0>The ping command ‘‘bounces’’ a packet to and from a specified 
+  network host.</font></p>
+<h2> Format</h2>
+<blockquote> 
+  <p><font size=+0>The format for this command is:</font> </p>
+  <blockquote> 
+    <pre> <font size="+1">ping [-nqv] [-i wait]] [-s size] [-l preload] host</font></pre>
+  </blockquote>
+</blockquote>
+<p>&nbsp; where: </p>
+<table cols=2 width="95%" align="left" cellpadding="1" cellspacing="4" >
+  <tr bgcolor="#CCCCCC"> 
+    <td align=right valign=TOP width="20%" nowrap>-i wait&nbsp;</td>
+    <td align="left" valign="top" width="80%">Wait waitseconds between sending 
+      each packet. The default is to wait for one second between each packet.</td>
+  </tr>
+  <tr> 
+    <td align=right valign=TOP width="20%" nowrap>-l preload&nbsp;</td>
+    <td align="left" valign="top" width="80%">If preload is specified, ping sends 
+      that many packets as fast as possible before falling into its normal mode 
+      of behavior.</td>
+  </tr>
+  <tr bgcolor="#CCCCCC"> 
+    <td align=right valign=TOP width="20%" nowrap>-n&nbsp; Numeric output only.&nbsp;</td>
+    <td align="left" valign="top" width="80%">No attempt will be made to lookup 
+      symbolic names for host addresses.</td>
+  </tr>
+  <tr> 
+    <td align=right valign=TOP width="20%" nowrap>-q&nbsp; Quiet output.&nbsp;</td>
+    <td align="left" valign="top" width="80%">Nothing is displayed except the 
+      summary lines at startup time and when finished.</td>
+  </tr>
+  <tr bgcolor="#CCCCCC"> 
+    <td align=right valign=TOP width="20%" nowrap>-s size&nbsp;</td>
+    <td align=left valign=top width="80%">ICMP packets other than ECHO_RESPONSE 
+      that are received are listed. ‘‘Echo Replies’’ are displayed symbolically.</td>
+  </tr>
+  <tr> 
+    <td align=right valign=TOP width="20%" nowrap>-v&nbsp; Verbose output.&nbsp;</td>
+    <td align="left" valign="top" width="80%">ICMP packets other than ECHO_RESPONSE 
+      that are received are listed. ‘‘Echo Replies’’ are displayed symbolically.</td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2> Functional Description</h2>
+<blockquote> 
+  <p>The ping command is used to verify ether net network connections and setup. 
+  </p>
+</blockquote>
+<p>It makes use of a feature of the ICMP protocol, which is used by hosts and 
+  gateways for low-level administrative chores. Each ICMP host is required to 
+  respond to an ECHO_REQUEST datagram with an ECHO_RESPONSE. ECHO_REQUEST datagrams 
+  (‘‘pings’’) have an IP and ICMP header, followed by a time and then an arbitrary 
+  number of ‘‘pad’’ bytes used to fill out the packet. The command continues pinging 
+  until interrupted by a Control-C. </p>
+<p>When using ping for fault isolation, start by pinging <font face="Courier New, Courier, mono">127.0.0.1</font> 
+  (a universal self-address, by internet convention.) This verifies that at least 
+  the onboard setup is workable. Then, hosts and gateways further and further 
+  away should be ‘‘pinged’’. Round-trip times and packet loss statistics are computed. 
+  If duplicate packets are received, they are not included in the packet loss 
+  calculation, although the round trip time of these packets is used in calculating 
+  the minimum/average/maximum round-trip time numbers. When the program is terminated 
+  by a Control-C a brief summary is displayed. </p>
+<p>Ping will report duplicate and damaged packets. Duplicate packets ‘‘should 
+  never happen’’: they’d have to be gateway problems. Tell your network manager. 
+</p>
+<p>Damaged packets (data doesn’t look like it should) are serious cause for alarm 
+  and often indicate broken hardware&nbsp; somewhere in the ping packet’s path 
+  (in the network or in the hosts). </p>
+<h2>See Also:</h2>
+<hr>
+<p><b>Navigation:</b> <a href="index.html">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a></p>
+<p><!--$Id: c_ping.html,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --></p>
+</body>
+</html>

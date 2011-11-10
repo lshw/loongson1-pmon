@@ -1,0 +1,119 @@
+		PMON - Adding Registers
+		Adding Registers
+
+Adding registers to PMON is very simple. You might want to do this in
+order to make PMON able to display and modify the registers of
+peripheral devices that you have on your own board. For example, if you
+have a real-time clock chip that contains 4 registers. You can add
+these registers to PMON so that you can display and set them from the
+PMON command line.
+
+The register information is entered into a table that is located
+in the appropriate file in the lib directory. For example, if your
+processor uses the 4001 core, you should add the registers to the
+array c4001_reglist located in the file lib/c4001.c. 
+A fragment of this table is shown below..
+
+        {mXc0,mips_cause_def,"C0_CAUSE","CAUSE",13,(F_CP0|F_MIPS)},
+        {mXmem,0,"M_TIC0","TIC0",M_TMR4001+O_TIC0},
+        {mXmem,Tmr4003Stat,"M_TSTAT","TSTAT",M_TMR4001+O_TSTAT},
+
+Reading from left to right, the field definitions are as follows...
+
+  »  The first field contains the 
+address of a function that can be used to set and get the
+current value of the register. 
+The prototype for a register access function is...
+
+	unsigned long mXmem(int mode, int reg, unsigned long value)
+
+	where:
+
+	
+	  »  mode is either zero for read, or 1 for write.
+	  »  reg is the value from the 5th field of the reglist[] structure.
+	  »  value (for write operations) contains the value to be
+		written.
+	  »  For reads, the return value is the value read from the
+		register.
+	
+
+The first example shows the definition for a register that is accessed via
+coprocessor 0. The remaining examples are for memory-mapped registers.
+
+  »  The second field contains either zero, or the address of an array
+of structures that describe the bit fields within the register. For
+example,
+
+char *excodes[] = {
+	"Int","MOD","TLBL","TLBS","AdEL","AdES","IBE","DBE",
+	"Sys","Bp","RI","CpU","Ovf","Resv","Resv","Resv",0};
+
+	RegSpec mips_cause_def[] = {
+	{1,31,"BD",2,0,1},
+	{2,28,"CE",10,0,1},
+	{6,10,"IP",2,0,1},
+	{2,8,"SW",2,0,0},
+	{4,2,"EXCODE",0,excodes,1},
+	{0}};
+
+	Where:
+
+	
+	  »  The first field of the structure definition contains the 
+		width of the register field in bits. For example, in the
+		example above, the BD field is one bit wide, while the
+		IP field is 6 bits wide.
+
+	  »  The second field of the structure definition contains the 
+		least significant bit number of the field. For example, 
+		in the example above, the BD field is in bit 31, 
+		while the IP field starts at bit 10.
+
+	  »  The third field of the structure definition contains the 
+		name of the register field.
+
+	  »  The fourth field of the structure definition contains 
+	the numerical base that PMON
+	should use when displaying the value of the register field. Possible
+	values are 2, 8, 10, and 16. If this
+	value is zero, it indicates that the next field if the structure
+	contains a pointer to an array.
+
+	  »  The fifth field of the structure definition contains either zero,
+	or a pointer to an array that specifies the strings that
+	should be displayed for each possible value of the register field.
+	In this example the values of the EXCODE field are
+	specified by the array excodes[].
+
+	  »  The sixth field of the structure definition contains a 
+	flag that is used to indicate
+	that this register field is read-only. In the example above,
+	only the SW field is not read-only.
+	
+
+In the first example, the CAUSE and TSTAT registers use this feature to 
+specify the bit fields in the register.
+
+  »  The third field contains the long name of the register.
+
+  »  The fourth field contains the short (or alternate) name of the register.
+
+  »  The fifth field contains additional information that is passed to the
+register access function.
+
+  »  The sixth field (if present) contains flags that specify additional
+information about the entry. For example,
+
+F_RO	The register is read-only.
+
+R_WO	The register is write-only.
+
+Once the table has been modified, you need to rebuild PMON and make new ROMs.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

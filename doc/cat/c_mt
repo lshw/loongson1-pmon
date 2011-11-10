@@ -1,0 +1,42 @@
+mt 	The mt command executes the memory test.
+
+Format The format for this command is:
+
+mt [-c] [[ addr] size]
+
+where:
+
+-c 	implements a continuous test.
+
+addr 	is the base address from which to perform the memory test.
+
+size 	is the number of bytes, in hexadecimal, on which to execute the memory test.
+
+Entering this command with no parameters tests all memory.
+
+Functional
+Description
+
+The mt command tests the available memory. By default, this command tests
+the memory at 0xA002.0000 to 0xA00F.FFFF.
+
+If size is specified, then only that number of bytes are tested. If addr is also
+specified, then testing starts at the specified address.
+
+Both addrand size are rounded down to the nearest word address. If the user
+specifies a size of zero, the test executes on the entire memory and does not
+terminate.
+
+The mt memory test is not an exhaustive test. In the mt test, a single ‘‘walking
+one’’ is written to each word and cleared in turn. Then, to test other bits in
+the word, each word is loaded with its own address and then read back.
+
+Because this test writes an exclusive value to every word, it is sufficient to
+find most stuck-at faults and shorts. How ever, this test is not adequate to find
+pattern sensitivity and leakage faults.
+
+Examples illustrating the use of the mt command follow.
+
+PMON> mt 		Test from 0xA002.0000 to 0xA00F.FFFF.
+PMON> mt 2000 		Test 8 Kbytes starting at 0xA002.0000.
+PMON> mt a0030000 4000 	Test 16 Kbytes starting at 0xA003.0000.

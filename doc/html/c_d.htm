@@ -1,0 +1,117 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.72 [en] (WinNT; U) [Netscape]">
+   <title>The d Command</title>
+</head>
+<body>
+
+<h1>
+d</h1>
+<!--INDEX "d command" "display memory" "dump memory" -->
+<p>The d command displays memory contents in hex or ASCII format.
+<h2>
+Format</h2>
+
+<dl> 
+  <dd> The format for the d command is:</dd>
+  <pre>
+<font size="+1">d [-b|h|w|s|S] adr [cnt|-rreg]
+</font>
+</pre>
+  where: <br>
+  &nbsp; 
+  <table width="95%" cellpadding="2">
+    <tr bgcolor="#CCCCCC"> 
+      <td WIDTH="83"> 
+        <div align="right">-b&nbsp;&nbsp;&nbsp;</div>
+      </td>
+      <td width="671">&nbsp;&nbsp;displays the memory contents in groups of bytes.&nbsp;</td>
+    </tr>
+    <tr> 
+      <td width="83"> 
+        <div align="right">-h&nbsp;&nbsp;&nbsp;</div>
+      </td>
+      <td width="671">&nbsp;&nbsp;displays the memory contents in halfword groups.&nbsp;</td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td width="83"> 
+        <div align="right">-w&nbsp;&nbsp;&nbsp;</div>
+      </td>
+      <td width="671">&nbsp;&nbsp;displays the memory contents in word groups.&nbsp;</td>
+    </tr>
+    <tr> 
+      <td width="83"> 
+        <div align="right">-s&nbsp;&nbsp;&nbsp;</div>
+      </td>
+      <td width="671">&nbsp;&nbsp;displays the memory contents as a null terminated 
+        string.&nbsp;</td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td width="83"> 
+        <div align="right">adr&nbsp;&nbsp;&nbsp;</div>
+      </td>
+      <td width="671">&nbsp;&nbsp;specifies the base address from which data is 
+        displayed.&nbsp;</td>
+    </tr>
+    <tr> 
+      <td width="83"> 
+        <div align="right">cnt&nbsp;&nbsp;&nbsp;</div>
+      </td>
+      <td width="671">&nbsp;&nbsp;specifies the number of lines displayed.&nbsp;</td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td width="83"> 
+        <div align="right">-rreg&nbsp;&nbsp;&nbsp;</div>
+      </td>
+      <td width="671">&nbsp;&nbsp;displays the contents of memory as register 
+        reg.&nbsp;</td>
+    </tr>
+  </table>
+</dl>
+
+<h2>
+Functional Description</h2>
+
+<dl> 
+  <dd> The d command displays memory, starting at the specified address, in hexadecimal 
+    or ASCII format. A -b, -h, -w, or -s option, if specified, sets how the data 
+    is displayed. See the examples at the end of this section for illustration 
+    of the possible display formats.</dd>
+  <p><br>
+    The datasz and moresz Variables in the environment control the display of 
+    memory. <br>
+    See <a href="c_set.htm">set</a> command. 
+  <p>If invoked without a -b, -h, -w, or -s option, the datasz variable sets the 
+    display format. Setting datasz to -b, -h, -w, or -s has the same effect as 
+    the command line options of the same names described in this section. The 
+    datasz variable does not effect any other command displays. 
+  <p>If invoked without cnt, the d command first displays the number of lines 
+    specified in the environment variable moresz. The <a href="mondef.htm">Monitor</a> 
+    then pauses and displays the more prompt. See the more command for commands 
+    available with the more prompt. Also see the more command for more information 
+    on the moresz variable. 
+  <p>The following example displays memory starting at 0xa0010000. 
+  <pre>
+PMON> d a0010000&nbsp;
+
+a0010000 bf c0 2b 00 bf c0 2b 00 bf c0 2b 00 bf c0 2b 3c ..+...+...+...+<a0010010 bf c0 2b 3c 20 ..+><<br>a0010020 bf c0 2b 20 bf c0 2b a8 bf c0 2b 78 bf c0 2b 60 ..+...+...+x..+` <br>a0010030 bf c0 2b 48 bf c0 2b a8 bf c0 2b a8 bf c0 2b a8 ..+H..+...+...+. <br>a0010040 bf c0 2b 78 bf c0 2b 60 bf c0 2b 48 bf c0 2e 78 ..+x..+`..+H...x <br>a0010050 bf c0 2f 08 bf c0 2e c4 bf c0 2e 80 bf c0 2f 90 ../.........../. <br>a0010060 bf c0 2f 90 bf c0 2f 90 bf c0 2e 78 bf c0 2e 78 ../.../....x...x <br>a0010070 bf c0 2e 78 00 00 00 00 00 00 00 00 00 00 00 00 ...x............ </pre>
+</dl>
+
+<h2>
+See Also</h2>
+
+<dl>
+<dd>
+<a href="c_l.htm">l command</a>, <a href="c_m.htm">m command</a> and <a href="c_dump.htm">dump
+command</a>.</dd>
+</dl>
+
+<hr>
+<p><b>Navigation:</b>&nbsp; <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a><br>
+  <br>
+  <!--$Id: c_d.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --> </p>
+</body>
+</html>

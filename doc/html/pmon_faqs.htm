@@ -1,0 +1,64 @@
+<html>
+<head>
+<title>Untitled Document</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<h1 align="center">Frequently Asked Questions</h1>
+<hr>
+<p>This section of our PMON/2000 Web-site is devoted to questions that frequently 
+  arise, but have readily available answers.</p>
+<p>Although most questions can be answered by reading the on-line Web-site documentation 
+  suite for PMON/2000, some are not so easily understood. In fact, if you are 
+  new to PMON/2000 then this set of pages will be very helpful. We are also developing 
+  a Discussion Forum Section that will serve as a central conversation area for 
+  users of, and contributirs to PMON/2000.</p>
+<p align="center"><b>Lets get rigtht to the good stuff.</b></p>
+<p><b>Q:</b> I tried using the '<a href="c_load.htm">load</a>' command to get 
+  a binary image from my host server, but nothing gets downloaded across the network 
+  - and my console hangs. Is PMON broken?</p>
+<p><b>A:</b> The '<a href="c_load.htm">load</a>' command operates on serial ports 
+  only. To use '<a href="c_load.htm">load</a>' correctly, the '<a href="c_set.htm">env</a>' 
+  variable hostport should only be set to <b>tty0</b> or <b>tty1</b>. Then '<a href="c_load.htm">load</a>' 
+  will transfer an '<a href="srec.htm">S-Record</a>' of '<a href="frec.htm">Fast 
+  Load Format</a>' image across the serial port you choose. To load over Ethernet 
+  the '<a href="netboot.htm">netboot</a>' or '<a href="boot.htm">boot</a>' shortcut 
+  should be used.<br>
+</p>
+<p><b>Q:</b> I just changed my 'ipaddr' and 'gateway' variables in the environment 
+  so I could netboot a new application from a remote host. My PMON/2000 board 
+  still cannot see the network host and reports &quot;Network not reachable.&quot; 
+  What am I doing wrong?</p>
+<p><b>A:</b> Currently PMON/2000 must also be restarted if '<a href="c_set.htm">ipaddr</a>' 
+  or '<a href="c_set.htm">gateway</a>' is changed. The built-in 'ifconfig' function, 
+  which sets up the Networking interface, is run during the board initialization. 
+  We are looking into a procedure that will allow changing these parameters at 
+  run-time. This would be more consistent with the behaviour of real operating 
+  systems (Windows not included, of course).<br>
+</p>
+<p><b>Q</b>: I want to download an ELF 32-Bit binary image across the serial port, 
+  but it will not work. Why?</p>
+<p><b>A</b>: Downloading binary files over serial ports does not yet work. A method 
+  using the Zmodem protocol will be implemented in the next major revision. Currently 
+  serial port downloading only works with '<a href="srec.htm">S-records</a>' or 
+  '<a href="frec.htm">fastload</a>' format. <br>
+</p>
+<p><b>Q: </b>I have tried to download from an NT host, but it fails. Is there 
+  any special directory, or file pathname convention needed?</p>
+<p><b>A:</b> This is likely to be a problem if the file in question is outside 
+  of the default location for your '<a href="tftpd.htm">tftpd</a>' on the WindowsNT 
+  machine. PMON/2000 is a native child of the Unix world and, as such, expects 
+  filename and pathname conventions that use forward slash (&quot;/&quot;) as 
+  a seperator for pathname elements. WindowsNT does not conform to this standard. 
+  Try putting the file in question into the base directory location that your 
+  '<a href="tftpd.htm">tftpd</a>' server on the WindowsNT machine uses as a starting 
+  point for finding files that are requested.</p>
+
+<hr>
+<p><b>Navigation:</b> <a href="index.html">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a> | <a href="http://groupbsd.org">Return 
+  to GroupBSD Site</a> 
+<p><!--$Id: pmon_faqs.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ -->
+</body>
+</html>

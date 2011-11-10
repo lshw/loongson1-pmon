@@ -1,0 +1,115 @@
+<html>
+
+<head>
+<title>Prom Monitor On-line Documentation</title>
+</head>
+
+<body>
+
+<h1 align="center">PMON/2000 Host Types</h1>
+<!--INDEX "PMON Components" -->
+
+<hr>
+
+<p><b>Host Types:</b></p>
+<p>The PMON/2000 prom monitor is currently supported by the following host platforms 
+  for downloading and debugging.</p>
+
+<p>Any Unix system equipped with <a href="nativc.htm">GNU 'C'</a> Compiler that 
+  can generate 32-Bit ELF PowerPC bianries. (Generally, GNU gcc 2.8.1 or 2.9.5+ 
+  ). <br>
+  <br>
+  A properly configured NT4 system with GNU Cross compiler suite, also equipped 
+  to generate 32-Bit ELF PowerPC bianries. <br>
+</p>
+<p><b>Targets:</b><br>
+  <br>
+  Any <a href="http://www.sbs.com">SBS Technologies PowerPC Single Board Computer</a>, 
+  like: </p>
+<table width="95%" border="1">
+  <tr> 
+    <td width="21%"> 
+      <div align="center"><b>Product / Model</b></div>
+    </td>
+    <td width="38%"> 
+      <div align="center"><b>Processor Type(s) / Memory</b></div>
+    </td>
+    <td width="41%"> 
+      <div align="center"><b>Description</b></div>
+    </td>
+  </tr>
+  <tr> 
+    <td width="21%"><a href="power4e.pdf">Power.4e</a></td>
+    <td width="38%">PowerPC 604e / Mach5<br>
+      32 to 256 MB DRAM on mezzanine modules. Equipped with 8.5 MB FlashROM <br>
+      <b>- fully supported by PMON/2000</b></td>
+    <td width="41%">General purpose VMEbus SBC with FastSCSI, 10/100BaseT ETHERNET, 
+      2 Serial ports, 1 Parallel port, Tundra Universe-II VMEbus I/O and one (1) 
+      PMC Slot. Front and rear (P2) I/O connectivity.</td>
+  </tr>
+  <tr> 
+    <td width="21%"><a href="power4c.pdf">Power.4C</a></td>
+    <td width="38%">PowerPC 604e / Mach5<br>
+      32 to 640 MB SDRAM on baseboard + expansion mezzanine modules. Equipped 
+      with 8.5MB FlashROM<br>
+      <font size="-1" color="#808080">porting underway as of May 20, 2000 (USA)</font></td>
+    <td width="41%">General purpose VMEbus SBC with Rear Panle Only I/O that includes: 
+      10/100BaseT (or AUI), four (4) Serial ports, 1 Parallel port, and Fast/Wide 
+      SCSI and Universe-II VMEbus I/O</td>
+  </tr>
+  <tr> 
+    <td width="21%">Power.7e</td>
+    <td width="38%">PowerPC 750<br>
+      64 to 512 MB SDRAM on mezzanine modules. Equipped with 8.5 MB FlashROM<br>
+    </td>
+    <td width="41%">General purpose VMEbus SBC with FastSCSI, 10/100BaseT ETHERNET, 
+      2 Serial ports, 1 Parallel port, Tundra Universe-IIb VMEbus I/O and one 
+      (1) PMC Slot. Front and rear (P2) I/O connectivity.</td>
+  </tr>
+  <tr> 
+    <td width="21%"><a href="denali.pdf">Denali </a><br>
+      (with SCSI PMC)</td>
+    <td width="38%">PowerPC 603e / 750<br>
+      64 MB SDRAM. Equipped with 8.5 MB FlashROM<br>
+      <b>- fully supported by PMON/2000</b></td>
+    <td width="41%">CompactPCI SBC with one (1) PMC Slot, Local 10/100BaseT ETHERNET, 
+      two (2) serial ports and local IDT ATM SAR (25 Mbs copper) through J5. Hot 
+      Swap design.</td>
+  </tr>
+  <tr> 
+    <td width="21%">K2</td>
+    <td width="38%"><font size="-1" color="#808080">porting underway as of May 
+      20, 2000 (Sweden)</font></td>
+    <td width="41%">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td width="21%"><a href="palomar2.pdf">Palomar-II/IV </a><br>
+      (with SCSI on baseboard)</td>
+    <td width="38%">PowerPC 750<br>
+      64 to 256 MB SDRAM on Processing PMC Module. Equipped with 2.5 to 8.5 MB 
+      FlashROM, IBM CPC700 PCI Bridge<br>
+      <b>- fully supported by PMON/2000</b></td>
+    <td width="41%">Processor PMC Module with two (2) serial ports, JTAG, I<font size="-1">2</font>C 
+      and fast PCIbridge. Supports standard PMC PCIbus devices on a baseboard.</td>
+  </tr>
+</table>
+<p>........ and other similarly configured platforms running <a href="http://www.openbsd.org">OpenBSD</a> 
+  or Linux for PowerPC and equipped with the above GNU compiler toolset. <br>
+  <br>
+  Minimal requirements are an <a href="rs232.htm">RS-232 Console port</a> connection 
+  to a terminal, or <a href="terms.htm">terminal emulation program</a> (on the 
+  host) for interaction with PMON/2000 on a Target board. Download of code can 
+  be done via the RS-232 serial connection, but is far more efficient if you utilize 
+  the ETHERNET port. Most <a href="http://www.sbs.com">SBS Technologies SBC's</a> 
+  and most of the Palomar 'baseboard' configurations support some form of ETHERNET 
+  port. PMON/2000 allows direct bootloading and execution of 32-Bit ELF binaries 
+  using these download methods. </p>
+
+<hr align="center">
+<p align="left"> <b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a
+href="doctoc.htm">Document Contents</a> | <a href="docindex.htm">Document Index</a> 
+  <br>
+</p>
+<p align="left"><!--$Id: htypes.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --> </p>
+</body>
+</html>

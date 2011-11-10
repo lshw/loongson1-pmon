@@ -1,0 +1,62 @@
+#include <pmon.h>
+
+#define SRC_BUFFER_ADDR 0
+#define FRAME_BUFFER_ADDR_2 0
+
+unsigned int gpu_instructions[]=
+{
+    0x08010E00,0x1,0x0801049a,0xFF,
+    0x0801049C,0x80ff0000,0x0801049D,0x80ff0000,
+    0x0801048A,SRC_BUFFER_ADDR,0x0801048B,0x100,
+    0x0801048C,0x0,0x0801048D,0x6,
+    0x08010498,0x0,0x08010499,0x040040,
+    0x08010497,0x200000,0x20000100,0x0,
+    0x0,0x040040,0x0801049a,0xff,
+    0x0801049C,0x8000ff00,0x0801049D,0x8000ff00,       //32
+
+    0x0801048A,SRC_BUFFER_ADDR,0x0801048B,0x100,
+    0x0801048C,0,0x0801048D,0x6,
+    0x08010498,0,0x08010499,0x010020,
+    0x08010497,0x200000,0x20000100,0x0,          //48
+
+    0,0x010020,0x0801049a,0xff,
+    0x0801049C,0x80123456,0x0801049D,0x80123456,
+    0x0801048A,FRAME_BUFFER_ADDR_2,0x0801048B,0x100,
+    0x0801048C,0,0x0801048D,6,                     //64
+
+    0x08010498,0,0x08010499,0x300040,
+    0x08010497,0x200000,0x20000100,0,
+    0,0x300040,0x08010E03,8,
+    0x08010480,SRC_BUFFER_ADDR,0x08010481,0x100,   //80
+
+    0x08010483,0x10006,0x08010484,0,
+    0x08010485,0x040040,0x08010488,0x10000,
+    0x08010489,0x8000,0x08010497,0x30cccc,
+    0x0801048e,0x400000,0x0801048f,0xd6,         //96
+
+    0x0801048D,0x4006,0x20000100,0,
+    0x000000,0x080040,0x08010E03,8,
+    0x08010E02,0x701,0x48000000,0x701,
+    0x10000000,0x0
+};
+
+extern unsigned long GPU_fbaddr;
+
+int gpu_mystretch(void)
+{
+    UINT32 my_fbaddr = (GPU_fbaddr & 0x0FFFFFFF );
+    UINT32 my_cmdbuf_add = gcCMDBUFADDR;
+    int i=0;
+    int gpu_cmd_size=sizeof(gpu_instructions);
+    
+    if(my_cmdbuf_add & 0x80000000)
+        my_cmdbuf_add |= 0xA0000000 ;
+    for(i=0;i<gpu_cmd_size;i=i+4)
+    {
+        *(volatile UINT32 *)(my_cmdbuf_add + i) = gpu_instructions[i];
+    }
+
+        *(volatile UINT32 *)(my_cmdbuf_add + 9*4 ) = ;
+        *(volatile UINT32 *)(my_cmdbuf_add + i) = gpu_instructions[i];
+        *(volatile UINT32 *)(my_cmdbuf_add + 57*4) = my_fbaddr;
+}

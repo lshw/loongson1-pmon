@@ -1,0 +1,80 @@
+<title>The more Command</title>
+<h1>more</h1>
+
+<!--INDEX paginator "more command" -->
+
+The more command provides screen-at-a-time control for user input.<p>
+
+<h2>Format</h2><dl><dd>
+
+The more command is an embedded command and is not accessible to the 
+user on the command line.<p>
+
+</dl><h2>Functional Description</h2>
+<dl>
+  <dd> The more command is not specified by the user on the command line, but 
+    is implicitly used by certain commands. After displaying the number of lines 
+    according to the value of the moresz environment variable, the more command 
+    displays the prompt &quot;more-&quot; Commands that use the more command include 
+    h, hi, d, l, search, and ls. 
+</dl>
+<p> The user can enter the following commands at the &quot;more-&quot; prompt: 
+</p>
+<dl>
+  <dd>
+    <table 0 cellpadding="5" width="95%">
+      <tr bgcolor="#CCCCFF"> 
+        <th width="131" align="right" valign="top">Command&nbsp;&nbsp;</th>
+        <th width="655" align="left" valign="top">Action</th>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td width="131" align="right" valign="top">Space&nbsp;</td>
+        <td width="655" align="left" valign="top">&nbsp;Print one more page</td>
+      </tr>
+      <tr> 
+        <td width="131" align="right" valign="top">/str&nbsp;</td>
+        <td width="655" align="left" valign="top">&nbsp;Search forward for string 
+          str</td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td width="131" align="right" valign="top">n&nbsp;</td>
+        <td width="655" align="left" valign="top">&nbsp;Repeat last executed search</td>
+      </tr>
+      <tr> 
+        <td width="131" align="right" valign="top">&lt;CR&gt;&nbsp;</td>
+        <td width="655" align="left" valign="top">&nbsp;Show next line</td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td width="131" align="right" valign="top">q&nbsp;</td>
+        <td width="655" align="left" valign="top">&nbsp;Quit from the more prompt 
+          and return to the monitor prompt</td>
+      </tr>
+    </table>
+</dl>
+<p>The <font face="Courier New, Courier, mono">moresz</font> Variable</p>
+<p> <font face="Courier New, Courier, mono">moresz</font> sets how many lines 
+  are displayed on one screen during screen-at-a-time output. If <font face="Courier New, Courier, mono">moresz</font> 
+  is set to zero, the screen scrolls continuously. The ^S or ^Q control sequence 
+  must be used to pause the output, and the ^C control sequence must be used to 
+  terminate output. </p>
+<p> For example, to set the default number of lines output by the more command 
+  to 12, enter: </p>
+<blockquote>
+  <p>PMON&gt; set moresz 12 </p>
+  <p>&nbsp; </p>
+</blockquote>
+<h2>See Also</h2><dl><dd>
+<a href="c_set.htm">set</a> command for the setup of 
+the environment variables.
+
+</dl><p><hr>
+<b>Navigation:</b> 
+<a href="pmon.htm">Document Home</a> | 
+<a href="doctoc.htm">Document Contents</a> | 
+<a href="docindex.htm">Document Index</a> 
+<p>
+<p>
+<p>
+<p>
+<p><!--$Id: c_more.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --> 
+<p>&nbsp;</p>

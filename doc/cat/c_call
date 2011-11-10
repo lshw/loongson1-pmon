@@ -1,0 +1,71 @@
+The call Command
+call
+
+The call command executes a subroutine.
+
+Format
+
+The format for the call command is:
+
+call adr [-s str|val]..
+
+where:
+
+adr	is the address of the subroutine to be executed.
+
+-s str	is a string argument.
+
+val	is a value to be passed.
+
+The call command calls a function using the standard C calling
+convention. The "-s str" 
+and val options permit arguments to be passed to the subroutine.
+
+Functional Description
+
+The call command executes a downloaded subroutine, using a jalr instruction
+to pass control to the specified address.
+This does not affect the existing value of the saved
+registers. Instead the subroutine is called directly from C code
+without restoring the saved registers. Control returns to PMON
+via the usual subroutine return mechanism. 
+
+If the user specifies arguments,
+these are passed using the standard C calling convention. If the
+"-s" option is specified, the following argument is assumed to be
+a string. In this case the address of the string is passed to the
+subroutine. If a numerical value is specified in place of the "-s",
+it will be evaluated according to the existing rules and passed
+to the function. Up to five arguments may be passed.
+
+This command is usually used to provide a method of displaying
+application-specific data structures. For example, if your application
+has a complex, linked-list data structure, you might find it helpful
+to add a function to your program that can display the structure. The
+call command can then be used to invoke this function from the
+PMON prompt at any time in the execution, even between two single-step
+operations.
+
+Examples illustrating the use of the call command follow.
+
+PMON call prstat		Call the function whos name is 'prstat'.
+
+PMON call prrec a0020000+8	Call the function 'prrec' and pass it
+				the value 0xa0020008 as the first argument.
+
+PMON call printf -s "hello world"
+				Call the function printf and pass it the
+				address of the string "hello world".
+
+Files
+The call command is located in mon/call.c.
+
+See Also
+g command
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

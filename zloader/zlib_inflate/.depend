@@ -1,0 +1,51 @@
+infblock.o: infblock.c \
+   /usr/src/linux-2.4.32/include/linux/zutil.h \
+   infblock.h \
+   inftrees.h \
+   infcodes.h \
+   infutil.h
+infcodes.o: infcodes.c \
+   /usr/src/linux-2.4.32/include/linux/zutil.h \
+   inftrees.h \
+   infblock.h \
+   infcodes.h \
+   infutil.h \
+   inffast.h
+infcodes.h: \
+   infblock.h
+	@touch infcodes.h
+inffast.o: inffast.c \
+   /usr/src/linux-2.4.32/include/linux/zutil.h \
+   inftrees.h \
+   infblock.h \
+   infcodes.h \
+   infutil.h \
+   inffast.h
+inflate.o: inflate.c \
+   /usr/src/linux-2.4.32/include/linux/module.h \
+   /usr/src/linux-2.4.32/include/linux/zutil.h \
+   infblock.h \
+   infutil.h
+inflate_syms.o: inflate_syms.c \
+   /usr/src/linux-2.4.32/include/linux/module.h \
+   /usr/src/linux-2.4.32/include/linux/init.h \
+   /usr/src/linux-2.4.32/include/linux/zlib.h
+inftrees.o: inftrees.c \
+   /usr/src/linux-2.4.32/include/linux/zutil.h \
+   inftrees.h \
+   infutil.h \
+   inffixed.h
+infutil.o: infutil.c \
+   /usr/src/linux-2.4.32/include/linux/zutil.h \
+   infblock.h \
+   inftrees.h \
+   infcodes.h \
+   infutil.h
+infutil.h: \
+   /usr/src/linux-2.4.32/include/linux/zconf.h \
+   inftrees.h \
+   infcodes.h
+	@touch infutil.h
+.PRECIOUS:	infcodes.h \
+	infutil.h \
+

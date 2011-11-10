@@ -1,0 +1,113 @@
+<html>
+
+<head>
+<title>The Dump Command</title>
+</head>
+
+<body>
+
+<h1>dump</h1>
+<!--INDEX "dump command" "dump memory" "upload memory" -->
+
+<p>The dump command uploads S-records to the host port.</p>
+
+<h2>Format</h2>
+
+<dl> 
+  <dd>The format for the dump command is: </dd>
+</dl>
+<dl>
+  <dd> 
+    <dl> 
+      <dt><tt><font size="+1">dump</font></tt> <font size="+1"><i>adr</i> <i>siz</i> 
+        </font></dt>
+    </dl>
+  </dd>
+</dl>
+<blockquote> 
+  <p>where: </p>
+</blockquote>
+<dl> 
+  <table width="95%" border="0" cellpadding="2">
+    <tr bgcolor="#CCCCCC"> 
+      <td width="12%" valign="top" align="left"> 
+        <blockquote> 
+          <p><i>adr</i> </p>
+        </blockquote>
+      </td>
+      <td width="88%">is the base address of the data to be uploaded. </td>
+    </tr>
+    <tr> 
+      <td width="12%" valign="top" align="left"> 
+        <blockquote> 
+          <p><i>siz</i> </p>
+        </blockquote>
+      </td>
+      <td width="88%">the number of bytes to be uploaded</td>
+    </tr>
+  </table>
+  
+</dl>
+
+<h2>Functional Description</h2>
+
+<dl> 
+  <dd>The dump command uploads <a href="srec.htm">Motorola S-records</a> to the 
+    host port. All uploaded S-records except the terminating S-record are S3-records. 
+    The terminating S-record is an S7-record. 
+    <p>The <b><font face="Courier New, Courier, mono">uleof</font></b> and <b><font face="Courier New, Courier, mono">ulcr</font></b> 
+      Variables affect dump behavior.</p>
+    <p>After the dump is completed, the string specified in <font face="Courier New, Courier, mono">uleof</font> 
+      will be transmitted. The default value for <font face="Courier New, Courier, mono">uleof</font> 
+      is &quot;%&quot;. </p>
+    <p>If the variable <font face="Courier New, Courier, mono">ulcr</font> is 
+      set to &quot;<font face="Courier New, Courier, mono">off</font>&quot;, the 
+      lines will be terminated by a carriage return (&quot;\r&quot;) and a linefeed 
+      character (&quot;\n&quot;). </p>
+    <p>If <font face="Courier New, Courier, mono">ulcr</font> is set to &quot;<font face="Courier New, Courier, mono">on</font>&quot;, 
+      each line will be terminated by a linefeed character (&quot;\n&quot;) only. 
+    </p>
+    <p>The default value for <font face="Courier New, Courier, mono">ulcr</font> 
+      is &quot;<font face="Courier New, Courier, mono">off</font>&quot;.</p>
+    <p>The following example of the dump command dumps 256 bytes starting at 0x9FC00000.</p>
+    <pre>
+
+PMON&gt; dump 9FC00000 100
+
+S3159FC002403C09A07F3C08003C3529FF203508C62FB6 
+S3159FC00250AD2800003C09A07F3529FF102408002542 
+S3159FC00260AD2800003C02004040826000408068008C 
+S3159FC002703C1D800127BD8B403C01A00003A1E82502 
+S3159FC002800FF005BC240400000FF005BC2404000138 
+S3159FC002903C0280003C03800124426AB024633C2018 
+S3159FC002A024420010AC40FFF00043082AAC40FFF444 
+S3159FC002B0AC40FFF81420FFFAAC40FFFC3C099FC03E 
+S3159FC002C03C0A9FC0252903EC254A03FC3C0B8000B2 
+S3159FC002D08D28000025290004012A082A256B0004C1 
+S3159FC002E01420FFFBAD68FFFC3C099FC03C0A9FC022 
+S3159FC002F03C0B8000252903EC254A03FC356B004047 
+S3159FC003008D28000025290004012A082A256B000490
+S3159FC003101420FFFBAD68FFFC3C099FC03C0A9FC0F1 
+S3159FC003203C0B8000252903EC254A03FC356B0080D6 
+S3159FC003308D28000025290004012A082A256B000460 
+S7030000FC 
+PMON&gt;
+
+</pre>
+  </dd>
+</dl>
+
+<h2>See Also</h2>
+
+<dl>
+  <dd><a href="c_l.htm">l command</a>, <a href="c_d.htm">d command</a>, and <a href="c_m.htm">m
+    command</a>. </dd>
+</dl>
+
+<hr>
+<p> <b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a> <br>
+</p>
+<p><!--$Id: c_dump.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --> </p>
+</body>
+</html>

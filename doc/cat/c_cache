@@ -1,0 +1,69 @@
+The cache Command
+cache
+
+The cache command displays the contents of the caches.
+
+Format
+
+The format for the cache command is:
+
+cache  [-idvl][set [adr]]
+
+where:
+
+-i	is a flag indicating that the Icache should be displayed.
+
+-d	is a flag indicating that the Dcache should be displayed (default).
+
+-v	is a flag indicating that only valid entries should be displayed.
+
+-l	is a flag indicating that only locked entries should be displayed
+	(400x cores only).
+
+set	is the set number, eg. 0 or 1 for set0 and set1 respectively 
+	(default is set0).
+
+adr	is the address of the first cache entry to be displayed.
+
+By default, the cache command displays the first 8 lines of set0 of the
+Dcache.
+
+Functional Description
+
+The cache command displays the contents of the caches. If the user does 
+not specify the 
+starting address adr or set number, display starts at address zero.
+Note that, because PMON generally executes from cache, the values
+displayed by this command will change even though no user application
+has been executed. With IMON this restriction is avoided.  
+
+If the user specifies the -i option, the contents of the Icache
+will be displayed, otherwise the Dcache will be displayed.
+If set is specified, the command will display the contents of the
+specified cache set.
+If adr is specified, the display will start at that address.
+
+Examples illustrating the use of the cache command follow.
+
+PMON cache			Display Dcache set0 starting at 
+                                address zero.
+
+PMON cache 1 80020000		Display Dcache set 1 starting at
+				address 0x80020000.
+
+PMON cache -i 0 80020000	Display Icache set 0 starting at
+				address 0x80020000.
+
+Files
+The cache command is located in lib/c400x.c
+or lib/c401x.c
+
+See Also
+flush command
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

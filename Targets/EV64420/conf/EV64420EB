@@ -1,0 +1,17 @@
+# $Id: EV64420EB,v 1.1.1.1 2006/09/14 01:59:08 root Exp $
+#
+#	GENERIC configuration for Galileo EV64420 Big Endian
+#
+
+machine         EV64420        mips    # CPU Architecture, Platform
+config          pmon 
+
+#
+#  Define target endian
+#
+makeoptions	ENDIAN=EB		# Big endian version.
+
+#
+#  The use default configuration
+#
+include "Targets/EV64420/conf/EV64420"

@@ -1,0 +1,71 @@
+1.02 release notes (18/07/94)
+
+Crash recovery now supported and the file date is set (which didn't happen
+so far.) Added a CREDITS file. Mr. Paul Vixie (paul@vix.com; moderator
+of comp.sources.unix) is currently reviewing the source in order to resolve
+the copyright mess. Shouldn't be a problem.
+
+1.01 release notes (17/07/94)
+
+Wow, how's that, to be accussed of stealing copyrighted code by Mr. Forsberg
+himself... (well, it did cause the release to be retracted from 
+comp.sources.unix it's a shame). Fortunately it isn't true as anyone (except
+maybe Mr. Forsberg) can see for themselves. It seems we now have manual pages
+which were contributed by Bart Massey (bart@cs.uoregon.edu).
+to avoid problems in passing the file through ms-dos machines the archive
+now goes as zmXXX.zip where XXX is the version number. So far no technical
+changes; only a marked failure to communicate with sz and rz has been noted.
+Anybody interested in fixing this is welcome to do so; please mail us the 
+changes and they will be incorporated in the next release. I would like to
+express my surprise at the ease with which the moderator of a usenet group
+can be bullied into retracting other peoples postings. 
+
+1.00 release notes (15/07/94)
+
+Hi there,
+
+This is the very first release of this fresh and unstable Zmodem implementation.
+
+MCS allows you to use and copy/modify this source under the following
+conditions:
+
+  - MCS or Jacques Mattheij shall not be liable for any damages arising
+    from the use of this code
+  - the archive must be distributed as a whole leaving version numbers intact.
+    please do not distribute modifications; mail them back to us for inclusion
+    in the next release which should follow each other fairly quickly in 
+    the beginning
+  - you will not use this software for commercial purposes.
+    (commercial licenses are available contact us for info)
+
+Yes! that's all the legal stuff you'll be getting from me. I'm a programmer
+not a lawyer. (the average piece of freeware these days can be shrunk
+to an easy 50% without compression by removing the 200 line copyright message
+above each module).
+
+The reason this code and the corresponding documentation were created is
+dissatisfaction with the current public domain versions of zmodem and their
+documentation. As of this writing the code runs on exactly ONE operating 
+system and you are very likely never to have heard of it. (Unite!; runs on
+the 386 and better; microkernel etc..) So, this is likely not a plug and
+play package but with some help from the world out there and xs4all
+(the public internet access point in Amsterdam, The Netherlands) we can
+turn it in to one. If someone would like to do a port; has a bug report or
+would like to send us a message use any of the possibilities below.
+Enjoy it and on to the next release
+
+             Jacques Mattheij.
+
+/* contact us through (in order of preference)                                */
+/*                                                                            */
+/*   email:          jacquesm@hacktic.nl                                      */
+/*   mail:           MCS                                                      */
+/*                   Prinses Beatrixlaan 535                                  */
+/*                   2284 AT  RIJSWIJK                                        */
+/*                   The Netherlands                                          */
+/*   voice phone:    31+070-3936926                                           */
+
+
+
+
+

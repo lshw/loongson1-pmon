@@ -1,0 +1,64 @@
+<html>
+
+<head>
+<title>Terminal Emulators</title>
+</head>
+
+<body>
+<h1 align="center">Terminal Emulators</h1>
+<!--INDEX "Terminal Emulators" -->
+<!--INDEX "Assembly-level debug" Symbols "Local variables" Hyperterminal -->
+<!--INDEX Terminal Procomm Crosstalk tip -->
+
+<p>A terminal emulator can provide assembly-level debugging. It permits the user to
+display/set registers and memory, and to single step and set breakpoints. In this mode you
+can use global symbols, but you can't use local variable names. A Terminal Emulator is
+often used to <a href="sendfile.htm">send a file</a> to the Target.</p>
+
+<p>For more program-specific information, please select the appropriate program below.
+
+<ul>
+  <li><a href="htermhlp.htm">Hyperterminal</a> (Windows 95/98/NT) </li>
+  <li><a href="xtalk.htm">Crosstalk</a> (MSDOS, Windows 3.x, Windows 95) </li>
+  <li>Procomm (MSDOS, Windows 3.x, Windows 95) </li>
+  <li><a href="tiphelp.htm">tip</a> (UNIX) </li>
+</ul>
+
+<p>Note that the <a href="mondef.htm">Monitor</a> does not require any specific type of
+Terminal Emulation, but vt100 is always a safe choice if you need to make one.</p>
+
+<p>You should configure the terminal emulator on your Host for 9600 baud, 8 bits data, no
+parity, 1 stop bit, and whatever communication port you chose on the back of your Host,
+turn on the power to your SerialICE Controller/Target, and you should see a banner that
+looks something like this:</p>
+
+<pre>
+
+
+
+	IMON version 5.1.0 [EB], LSI LOGIC Corp. Wed Mar 19 13:01:41 1997
+
+	This is free software, and comes with ABSOLUTELY NO WARRANTY.
+
+	You are welcome to redistribute it without restriction.
+
+	NVRAM: Am29F010. Debugger support: CROSSVIEW, DBX. 
+
+	Type 'h' for on-line help. 
+
+	 
+
+	IMON&gt; 
+
+</pre>
+
+<p>If you don't see this display, you might need to use a <a href="rs232.htm">special
+cable</a> to satify the requirements of your host's hardware flow control scheme (even if
+it has been disabled).</p>
+
+<hr>
+<p> <b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a></p>
+<p><!--$Id: terms.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --> </p>
+</body>
+</html>

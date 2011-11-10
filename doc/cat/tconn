@@ -1,0 +1,22 @@
+	Target to SerialICE Controller Connection
+	Target to SerialICE Controller Connection
+
+The SerialICE Monitor (running on the 
+SerialICE Controller) and the 
+SerialICE Kernel
+(running on the Target) 
+communicate via 
+a standard RS-232 serial link.
+It is possible to configure the SerialICE Kernel to use either a standard
+UART (or DUART), or LSI Logic's SerialICE Port core. The SerialICE Port core has the
+advantage that it takes up no Target board area.
+
+Please note that the connection between the SerialICE Controller's B port and the
+Target's A port must be made using a null modem cable.
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

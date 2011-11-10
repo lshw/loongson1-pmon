@@ -1,0 +1,47 @@
+date The date command displays or sets the date and time.
+
+Format The format of the date command is:
+
+date [ yymmddHHMM.SS]
+
+where:
+
+yymmddHHMM.SS
+
+is the new date and time.
+
+Functional
+Description
+
+The date command with no arguments displays the current date and time as
+stored in the board’s battery-backed clock/calendar device. If an argument is
+given, then this sets the current date and time.
+
+The optional argument is a string of pairs of digits, with the following meaning:
+
+yy year (modulo 100)
+
+mm month (Januar y = 1)
+
+dd day of month
+
+HH hour (24 hour clock)
+
+MM minute
+
+.SS seconds
+
+When setting the date and time, you only need to enter as much as needs
+changing, starting with the minutes, then hours, then day, etc. Any value
+which is omitted is unchanged, except for seconds, which will be set to zero if
+omitted.
+
+Some examples of the date command follow.
+PMON> date 			Display current time
+Wed Feb 23 13:29:33 1994
+PMON> date 32 			Change minutes
+Wed Feb 23 13:32:00 1994
+PMON> date 1405 		Change hours and minutes
+Wed Feb 23 14:05:00 1994
+PMON> date 9402241103 		New date and time
+Thu Feb 24 11:03:00 1994

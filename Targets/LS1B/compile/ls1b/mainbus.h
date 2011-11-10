@@ -1,0 +1,1 @@
+#define	NMAINBUS	1

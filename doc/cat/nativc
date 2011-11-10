@@ -1,0 +1,53 @@
+		Native C Compiler
+		Native C Compiler
+
+You will need a native C compiler and 'make' utility for your host (a
+native compiler is a compiler that generates code for execution on your
+host). This C compiler is required to compile the programs in the tools
+directory (on UNIX systems you will also need the native C compiler to
+compile the install program).  The 'make'
+utility is needed to control the build sequence of the various
+subdirectories of the package.
+
+Windows95/NT
+
+You need Microsoft's Visual C++ Pro package in order to build this
+package completely. However, since most users simply wish to use the
+pmcc command to compile and then download 
+there own application
+programs, we have placed pre-built binaries of the relevant modules on
+the web site to avoid the
+need for the Microsoft C compiler.
+
+Note that if you do use Microsoft's Visual C++ Pro package to build
+the complete package, you will have to type 'nmake' rather than 'make'.
+This applies to any of the examples shown in this on-line manual.
+
+Also note that it is not likely that you will be able to use the 'make'
+utility that might be provided by the vendor of your MIPS cross
+compiler, because of significant differences in syntax between different
+'make' programs.
+
+UNIX Workstations
+
+Although you will need a native "C" compiler to build this package. It
+does not need to be ANSI compliant, any K&R compliant compiler will
+suffice.  Typically you can either use the compiler and 'make' utility
+that was supplied with your workstation, or with gcc. You can
+obtain gcc from the GNU ftp
+site.
+
+If you are unsure whether you system has a native C compiler and 'make'
+utility, you can check using the following commands.
+
+	% which cc		-- look for the standard C compiler
+	% which gcc		-- look for the GNU C compiler
+	% which make		-- look for the 'make' utility
+	% cc foobar.c		-- Solaris2 check for optional C compiler
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

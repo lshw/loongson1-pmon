@@ -1,0 +1,45 @@
+		<title>Native C Compiler</title>
+		<h1 align=center>Native C Compiler</h1>
+
+<!--INDEX "Native C compiler" -->
+
+You will need a native C compiler and 'make' utility for your host (a
+native compiler is a compiler that generates code for execution on your
+host). This C compiler is required to compile the programs in the tools
+directory (on UNIX systems you will also need the native C compiler to
+compile the install program).  The <a href="make.htm">'make'</a>
+utility is needed to control the build sequence of the various
+subdirectories of the package.<p>
+
+<h2>UNIX Workstations</h2>
+<!--INDEX UNIX --> 
+<p> Although you will need a native "C" compiler to build this package, it <b>must 
+  be ANSI compliant</b>, any old K&R compliant compiler will not suffice. Typically 
+  you can either use the compiler and 'make' utility that was supplied with your 
+  workstation, or with gcc. The PMON/2000 project utilizes strict prototyping 
+  throughout, assuring no suprise behavior and run time. </p>
+<dl> 
+  <dt>&nbsp;</dt>
+</dl>
+<p>You can obtain gcc from the <a href="ftp://prep.ai.mit.edu/pub/gnu">GNU ftp 
+  site</a>. </p>
+<dl> 
+  <dt>&nbsp;</dt>
+</dl>
+<p> If you are unsure whether you system has a native C compiler and 'make' utility, 
+  you can check using the following commands. </p>
+<blockquote>
+<p>&nbsp; </p>
+  <pre>
+	% which cc		-- look for the standard C compiler
+	% which gcc		-- look for the GNU C compiler
+	% which make		-- look for the 'make' utility
+	% cc foobar.c		-- Solaris2 check for optional C compiler
+</pre>
+</blockquote>
+<p><hr>
+<p><b>Navigation:</b> <a href="index.html">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a> <br>
+</p>
+<p><!--$Id: nativc.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --></p>
+<p>&nbsp; </p>

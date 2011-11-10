@@ -1,0 +1,44 @@
+The Sync Command
+sync
+
+The sync command reestablishes connection with the Target.
+
+Format
+
+The format for the sync command is:
+
+	sync
+
+Functional Description
+
+The sync command is used to reestablish connection
+after the SerialICE Monitor has reported that it has lost contact
+with the target. You must press reset on the target before using this
+command.
+
+An Example illustrating the use of the sync command follows.
+
+IMON r				Attempt to display GP registers
+	IMON displays several messages stating that it is unable
+	to establish connection with the target.
+
+	User presses reset on the target.
+
+IMON sync			Reestablish connection
+IMON r				GP registers displayed correctly
+
+       zero      at       v0       v1       a0       a1       a2       a3   
+ $0- 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+        t0       t1       t2       t3       t4       t5       t6       t7   
+ $8- 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+        s0       s1       s2       s3       s4       s5       s6       s7   
+$16- 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+        t8       t9       k0       k1       gp       sp       s8       ra   
+$24- 00000000 00000000 00000000 00000000 00000000 9fffffe8 00000000 00000000
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

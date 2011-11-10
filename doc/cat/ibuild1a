@@ -1,0 +1,80 @@
+		Building SerialICE
+		Building SerialICE
+
+The steps required to build SerialICE are dependent on whether you have
+a native "C" compiler for your host. So please
+refer to the appropriate section below. Note that MSDOS users must type "nmake" rather than
+"make".
+
+Hosts With a Native "C" Compiler
+
+  »  Set your environment.
+  »  Build the run-time library using the following command. Note that
+if you unpacked two copies of the source, you must perform this
+command in both copies.  Don't forget to use the correct environment for each one.
+
+	make
+
+  »  If you don't have a set of IMON ROMS for
+your SerialICE Controller board, type the following command.  Note that if you
+unpacked two copies of the source, you must perform this command in
+the directory that was configured to match your SerialICE Controller. 
+
+	make imon-only
+
+Then make a set of ROMs for your SerialICE Controller
+board. For a "BDMR400x" SerialICE Controller use the file imon/bg/imon.rec.
+For a "4010 Nitro" SerialICE Controller use the file imon/lg/imon.rec.
+
+  »  Make a driver and a set of SerialICE Kernel ROMS
+for your Target board using the following commands. Note that if you
+unpacked two copies of the source, you must make the driver in
+the directory that was configured to match your SerialICE Controller, and the
+kernel  in the directory that was configured to match your
+Target.  
+
+	cd bsps
+	make driver kernel
+
+Where driver and kernel are taken from the following
+table.
+
+Target Boarddriverkernel
+BDMR4001 (Big endian)d4001k4001-be
+BDMR4003 (Big endian)d4003k4001-be
+BDMR4101 (Big endian)d4101k4001-be
+BDMR4001 (Little endian)d4001k4001-le
+BDMR4003 (Little endian)d4003k4001-le
+4010 Nitro (R3000 Mode)d4010k4010-3k
+4010 Nitro (R4000 Mode)d4010k4010-4k
+SDP1000d64008ksdp1000
+
+Hosts Without a Native "C" Compiler
+
+Currently this option is only available for MSDOS users. UNIX users are assumed to have a native "C" compiler.
+
+  »  If you don't have a set of IMON ROMS for
+you SerialICE Controller board, visit the PMON Web site,
+collect a prebuilt ROM-image file, and unpack it into the top-level directory of the
+PMON source package. Note that if you unpacked two copies of the source
+package, you must unpack this ROM image into the directory containing
+the package configured for your SerialICE Controller.
+
+  »  Visit the PMON Web site, collect
+a copy of the appropriate prebuilt run-time library, and unpack it into the top-level directory of the
+PMON source package. Note that if you unpacked two copies of the source
+package, you must pick up two appropriate copies of the library, and
+unpack each of them in their correct directory.
+
+  »  Visit the PMON Web site and pick up a copy of the appropriate prebuilt driver
+and kernel for your configuration. 
+
+Then use the kernel file (bsp/k*.rec) to make a set of ROMs for
+your Target board.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

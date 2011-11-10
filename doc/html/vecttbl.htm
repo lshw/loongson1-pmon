@@ -1,0 +1,158 @@
+<html>
+
+<head>
+<title>PMON 2000 Vector Table</title>
+</head>
+
+<body>
+
+<h1 align="center">PMON 2000 Vector Table</h1>
+
+<hr>
+<!--INDEX "PMON Vector Table" -->
+
+<p>The vector table allows a client program to access a number of target-dependent 
+  services provided by the PROM Monitor. The linkage mechanism for all these services 
+  is to jump to an address obtained from the vector table. </p>
+<p>For example,</p>
+
+<pre>
+
+		lw	t0,TBLBASE
+		lw	t0,OFFSET(t0)
+		j	t0
+
+</pre>
+
+<p>Where <samp>TBLBASE</samp> is a location where the fourth argunment given to a program
+started with the <a href="c_g.htm">g</a> command is saved by that program. Code is
+different by architecture. Example given is Mips.</p>
+
+<p><!--INDEX crt1 crt0 mips.s "pmcc command" --> The following table shows the services that are provided, the arguments that are
+passed to each service function, and the table offset for each service..</p>
+<div align="center"><center>
+
+<table border="1" cellpadding="5" width="800">
+  <tr>
+    <th width="137"><h4>PMON 2000 Vector Table</h4>
+    </th>
+  </tr>
+  <tr>
+    <th width="137">Offset</th>
+    <th width="327">Function</th>
+    <th width="294">Usage</th>
+  </tr>
+  <tr>
+    <td valign="top" width="137"><p align="center">0</td>
+    <td valign="top" width="327">TBD</td>
+    <td width="294">&nbsp;</td>
+  </tr>
+  <tr>
+    <td valign="top" width="137">&nbsp;</td>
+    <td valign="top" width="327">&nbsp;</td>
+    <td width="294">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="137">&nbsp;</td>
+    <td width="327">&nbsp;</td>
+    <td width="294">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="137">&nbsp;</td>
+    <td width="327">&nbsp;</td>
+    <td width="294">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="137">&nbsp;</td>
+    <td width="327">&nbsp;</td>
+    <td width="294">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="137">&nbsp;</td>
+    <td width="327">&nbsp;</td>
+    <td width="294">&nbsp;</td>
+  </tr>
+  <tr>
+    <td valign="top" width="137">&nbsp;</td>
+    <td valign="top" width="327">&nbsp;</td>
+    <td width="294">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="137">&nbsp;</td>
+    <td width="327">&nbsp;</td>
+    <td width="294">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="137">&nbsp;</td>
+    <td width="327">&nbsp;</td>
+    <td width="294">&nbsp;</td>
+  </tr>
+  <tr>
+    <td valign="top" width="137">&nbsp;</td>
+    <td valign="top" width="327">&nbsp;</td>
+    <td width="294">&nbsp;</td>
+  </tr>
+  <tr>
+    <td valign="top" width="137">&nbsp;</td>
+    <td valign="top" width="327">&nbsp;</td>
+    <td width="294">&nbsp;</td>
+  </tr>
+  <tr>
+    <td valign="top" width="137">&nbsp;</td>
+    <td width="327">&nbsp;</td>
+    <td valign="top" width="294">&nbsp;</td>
+  </tr>
+  <tr>
+    <td valign="top" width="137">&nbsp;</td>
+    <td valign="top" width="327">&nbsp;</td>
+    <td width="294">&nbsp;</td>
+  </tr>
+  <tr>
+    <td valign="top" width="137">&nbsp;</td>
+    <td valign="top" width="327">&nbsp;</td>
+    <td width="294">&nbsp;</td>
+  </tr>
+  <tr>
+    <td valign="top" width="137">&nbsp;</td>
+    <td valign="top" width="327">&nbsp;</td>
+    <td width="294">&nbsp;</td>
+  </tr>
+  <tr>
+    <td valign="top" width="137">&nbsp;</td>
+    <td valign="top" width="327">&nbsp;</td>
+    <td width="294">&nbsp;</td>
+  </tr>
+  <tr>
+    <td valign="top" width="137">&nbsp;</td>
+    <td valign="top" width="327">&nbsp;</td>
+    <td width="294">&nbsp;</td>
+  </tr>
+  <tr>
+    <td valign="top" width="137">&nbsp;</td>
+    <td valign="top" width="327">&nbsp;</td>
+    <td valign="top" width="294">&nbsp;</td>
+  </tr>
+  <tr>
+    <td valign="top" width="137">&nbsp;</td>
+    <td valign="top" width="327">&nbsp;</td>
+    <td valign="top" width="294">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="137">&nbsp;</td>
+    <td width="327">&nbsp;</td>
+    <td width="294">&nbsp;</td>
+  </tr>
+  <tr>
+    <td valign="top" width="137">&nbsp;</td>
+    <td valign="top" width="327">&nbsp;</td>
+    <td width="294">&nbsp;</td>
+  </tr>
+</table>
+</center></div>
+
+<hr>
+<p> <b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a></p>
+<p><!--$Id: vecttbl.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --> </p>
+</body>
+</html>

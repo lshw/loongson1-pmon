@@ -1,0 +1,123 @@
+		Running the PMON Install Program
+		Running the PMON Install Program
+
+Before you can perform this step, you must have installed your  MIPS
+"C" compiler, and know where it is located.
+
+To run the Install program type:
+
+	% Install		-- UNIX
+	C Install		-- MSDOS
+
+UNIX users should note that this program first attempts to find
+a suitable Native C compiler. It first tries "cc", and if that is not
+found, it tries "gcc". You can also force it to use a specific compiler
+by including it on the command line. For example,
+
+	% Install gcc
+
+Once the Install program starts executing it will display the following
+message.
+
+This is the LSIPKG installation program. Use it to specify your tools
+and target environment.
+
+For support Call 800-232-MIPS, Fax 408-954-4874, email pjb@lsil.com,
+or point your web browser at 'http://www.carmel.com/pmon/'.
+
+For each of the questions that follow, the possible choices available
+are shown in square brackets and the default is shown in parentheses.
+When given as an option, 'q' allows you to cancel the selection.
+
+This is PMON 5.1.3
+The following subpackages have been found:
+ 
+        PMON    - The Prom Monitor (V5.1.3)
+        IMON    - The SerialICE Ice Manager (V5.1.2)
+        MON     - The Core Debug Monitor (V5.1.0)
+        CLIB    - The C Run-time Library (V5.1.0)
+        BSPS    - The SerialICE Board Support Packages (V5.1.1)
+
+Is this correct? [y n] (y)  
+
+The purpose of this question is to verify that the install program has
+correctly recognized any optional subpackages that may have been
+installed.  In most cases you can simply take the default (y) and press
+the RETURN key. The next question relates to the toolset you will be
+using.
+
+This package can be built using a number of different MIPS
+cross compilers. Select one of the following tool types:
+
+1. BSO/Tasking tools
+2. Algorithmics tools
+3. EPI tools
+4. Cygnus Support tools (ELF)
+
+Enter one of the above tool types [1-4 q] (q)  
+
+Your list may look a little different, but in any case all you need to do
+is enter a number to indicate which toolset you will be using. For example,
+'4' would specific that we were planning to use the ELF toolset 
+from Cygnus Support. You will then be asked to specify where the tools
+are located.
+
+Where are the tools located?  
+
+For example, if you have installed the tools in C:\cygnus you would 
+enter this path here. Next you must specify what type of Target system
+you will be using.
+
+Select one of the following target configurations:
+
+1. All Processors Big Endian
+2. All Processors Little Endian
+3. ATMizer-1 R-T Host
+4. ATMizer-1 R-T SAR engine
+5. ATMizer-2 R-T Host (4010)
+6. ATMizer-2 R-T SAR engine
+7. SDP1000 (L64008 MPEG-2 Transport)
+
+Enter your selection [1-7] (1)  
+
+For all Big Endian processors (except the
+ATMizer family or L64008) select option 1. For all Little Endian
+processors (except the ATMizer Host) select option 2. The Install
+program will then display a summary of all the choices you have made.
+
+Your current selections are:
+
+  1. Tools:..................... CYGELF 10. CPU clock frequency:......... AUTO
+  2. CPU type: LR33000 LR33050          11. Timing:....................... YES
+         LR33020 LR33120 LR33300        12. Source debug protocols:           
+         LR33310 LR4001 LR4002 LR4003           GDB_SUPPORT CROSSVIEW         
+         LR4010                         13. Ethernet:                         
+  3. Devices:                                   SONIC ADDR=0xbc000000         
+         dev   type address    baud             HWADDR=aa:bb:cc:00:00:00      
+         tty0  2681            9600             SONIC_DW32                    
+         tty1  2681 0xbe000000 9600     14. Host download port:..... undefined
+  4. Memory addresses:                  15. Download mode:........... Two-port
+         ROM=9fc00000 RAM=80000100      16. Target download port:........ tty1
+         Client PC=80020000             17. Download protocol:......... EtxAck
+  5. Client RAM size:............. AUTO 18. Download records:..... FAST-FORMAT
+  6. NVRAM check:.................. YES 19. Fast-record Checksum:......... YES
+  7. LR333xx Memory Type:..... TURBORKT 20. Prompt:.................. "PMON "
+  8. Floating-point support:...... NONE 21. Endian support:............... Big
+  9. Multiply/Divide emulation:... NONE 22. Default Endian:............... Big
+
+Is this correct? [y n 1-22 q] (y)  
+
+This question is asking you to confirm the settings implied by your previous
+responses. In most cases you can simply take the default (y) and press the
+RETURN key. However, if you need to customize the installation, this is
+where you do it.
+
+At this point the Install program will create some files and then
+return you to your system's prompt.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

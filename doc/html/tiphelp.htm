@@ -1,0 +1,87 @@
+		<title>The UNIX tip Command</title>
+
+		<h1 align="center">The UNIX tip Command</h1>
+
+
+
+<!--INDEX "tip command" -->
+
+<!--INDEX UNIX tip /etc/remote linesync -->
+
+
+
+<p>The UNIX tip command is a very simple terminal emulator. </p>
+<p>It does not support scripting or specific terminal emulation, but it does provide 
+  a mechanism to communicate with a target via an RS-232 link, and permit files 
+  to be downloaded.</p>
+<p>
+
+
+
+<h2>Setup</h2>
+<dl> 
+  <ul>
+    <li>Create the file ~/.tiprc containing: 
+      <pre>
+
+	force=\377
+
+	raisechar=\377
+
+</pre>
+    <li>Invoke tip and specify the I/O port. 
+      <pre>
+
+	% tip -9600 <i>device</i>
+
+</pre>
+  </ul>
+</dl>
+<p>where <i>device</i> is the I/O port that you wish to use in order to communicate 
+  with the Target.</p>
+<p> Unfortunately there isn't much standardization of device names across different 
+  UNIX vendors, so you will probably have to ask around a little in order to find 
+  out the names of the serial ports on your system. Here are some values that 
+  I am aware of.</p>
+<table border cellpadding="6" width="55%" align="left">
+  <tr bgcolor="#CCCCFF"> 
+    <th width="37%">Vendor</th>
+    <th width="63%">Port names</th>
+  </tr>
+  <tr bgcolor="#CCCCCC"> 
+    <td width="37%">Sun Microsystems</td>
+    <td width="63%">ttya..ttyb..etc</td>
+  </tr>
+  <tr> 
+    <td width="37%">Silicon Graphics</td>
+    <td width="63%">ttyd1..ttyd2..etc</td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2>Sending Files</h2>
+<p> Normally everything you type is sent directly to the target. However, if you 
+  start a line with '~' it is interpreted as a direct command for tip. For example, 
+  to download a file you type:</p>
+<blockquote> 
+  <p> ~&gt; filename </p>
+</blockquote>
+<p> That is, tilde, followed by '&gt;' followed by the name of the file that you 
+  wish to download.</p>
+<p> To obtain a complete list of the commands available type '~?'. tip also maintains 
+  a large number of variables that control its operation. You may display the 
+  state of these variables by typing '~s all'.</p>
+<blockquote>
+  <p>&nbsp; </p>
+</blockquote>
+<p><hr>
+
+<p><b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a></p>
+<p><!--$Id: tiphelp.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --> </p>
+<p>
+
+
+

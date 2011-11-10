@@ -1,0 +1,14 @@
+#! /bin/sh
+# $Id: stepversion,v 1.1.1.1 2006/09/14 01:59:06 root Exp $
+#
+if [ ! -w version ]; then rm -f version; echo 1.0 > version; fi
+
+awk -F. "NR == 1 {	
+			\$NF += 1;
+			version = \$1;
+			for (i = 2; i <= NF; i++) {
+			    version = version \".\" \$i;
+			}
+			print version > \"version\";
+			print \"const char vers[] = \\\"1.0 Build \" version \"\\\";\";
+		 }" < version

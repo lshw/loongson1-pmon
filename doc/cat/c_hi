@@ -1,0 +1,69 @@
+The hi Command
+hi
+
+The hi command lists the command history.
+
+Format
+
+The format for the hi command is:
+
+hi [cnt]
+
+where:
+
+cnt	is the number of commands to list.
+
+Entering the command with no parameters lists the last 200 executed com-
+mand lines to the screen.
+
+Functional Description
+
+The hi command shows the command history, together with the history 
+number for each command, in reverse order (the last command entered is 
+listed first; the first command entered is listed last). The command num-
+bers are reset to zero each time the system is reset.
+
+Entering the hi command with no arguments lists the last 200 commands. 
+This option is useful for determining the history number for a particular 
+command.
+
+The user can page through the output of the hi command, one screen at a 
+time.
+
+The optional cnt parameter selects a set number of lines to be output.
+The history list is intentionally in the reverse order to that used in
+a C shell, so that the latest entry is displayed first. If a command
+line is identical to the previous command, it is not added to the
+command history.
+
+Examples illustrating the use of the hi command follow.
+
+PMON hi 3	Display the three last commands.
+14 hi 3
+13 hi 
+12 l
+
+PMON hi	Display the entire history, using more
+13 hi	to control the screen output.
+12 l
+11 to
+10 t
+9  l 
+8  g start main 
+7  hi 
+6  g
+5  ls -a @epc
+4  d Pmon+200+0t13*4 
+
+more-(q)
+
+See Also 
+sh
+command, which maintains a command history.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

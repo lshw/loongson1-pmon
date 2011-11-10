@@ -1,0 +1,52 @@
+		Installing the SerialICE Driver
+		Installing the SerialICE Driver
+
+Before you can use the SerialICE Monitor to communicate with your Target, you
+must install an appropriate driver. The steps that you need to perform
+are described below.
+
+  »  Open a Terminal window to the SerialICE Controller.
+  »  Download the driver.
+
+You may use Ethernet, 
+edown, or your Terminal Emulator's
+"Send File" feature to do this.
+
+  »  Save the driver in flash memory (optional).
+
+Once the driver has been downloaded, you may choose to save it in the
+flash memory to avoid needing to repeat this step. Note that this command
+cannot be used after another load command has been issued.
+
+	IMON sdtf		(Save Driver To Flash)
+
+Now that the driver has been placed in flash. You may reload it at
+any time by pressing reset, and then typing "load -f". 
+
+  »  Automatic driver install after reset (optional).
+
+Type the following command if you wish the driver to be installed on
+powerup (or reset).
+
+	IMON set nvram load -f
+
+Note that if you use this procedure at a later date, you might
+notice that the message "verbose: not found" is displayed after reset.
+The message is not fatal, and will not effect the correct
+working of your board, but it can be avoided by performing a dummy
+"set nvram", after powerup, but before a "load -f" is performed.
+
+Now that the driver has been loaded, you may display the Target's
+registers and memory.
+
+	IMON r			-- display Target's GP registers
+	IMON r *		-- display all of Target's registers
+	IMON l bfc00000	-- disassemble starting at 0xbfc00000
+	IMON d a0000100	-- display memory starting at 0xa0000100
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

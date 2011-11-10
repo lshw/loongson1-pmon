@@ -1,0 +1,41 @@
+Targets/CK2/CK2/tgt_machdep.c:	return(md_cputype());
+Targets/CK3/CK3/tgt_machdep.c:	return(md_cputype());
+Targets/cPCI680/cPCI680/tgt_machdep.c:	return(md_cputype());
+Targets/DB64360/DB64360/tgt_machdep.c:	return(md_cputype());
+Targets/EV64240/compile/EV64240EL/headers:ffffffff80075558 g     F .text	000000000000000c md_cputype
+Binary file Targets/EV64240/compile/EV64240EL/machdep.o matches
+Binary file Targets/EV64240/compile/EV64240EL/mips.o matches
+Binary file Targets/EV64240/compile/EV64240EL/pmon matches
+Targets/EV64240/compile/EV64240EL/pmon.dis:ffffffff800718a0:	0c01d5a2 	jal	ffffffff80075688 <md_cputype>
+Targets/EV64240/compile/EV64240EL/pmon.dis:ffffffff800718d0:	0c01d5a2 	jal	ffffffff80075688 <md_cputype>
+Targets/EV64240/compile/EV64240EL/pmon.dis:ffffffff80075688 <md_cputype>:
+Targets/EV64240/compile/EV64240EL/pmon.dis:ffffffff80078548:	0c01d5a2 	jal	ffffffff80075688 <md_cputype>
+Binary file Targets/EV64240/compile/EV64240EL/tgt_machdep.o matches
+Targets/EV64240/EV64240/tgt_machdep.c:	return(md_cputype());
+Targets/EV64260/EV64260/tgt_machdep.c:	return(md_cputype());
+Targets/EV96132/EV96132/tgt_machdep.c:	return(md_cputype());
+Targets/Jaguar_ATX/Jaguar_ATX/tgt_machdep.c:	return(md_cputype());
+Targets/Net4501/Net4501/tgt_machdep.c:	return(md_cputype());
+Targets/Ocelot/Ocelot/tgt_machdep.c:	return(md_cputype());
+Targets/Ocelot_C/Ocelot_C/tgt_machdep.c:	return(md_cputype());
+Targets/Ocelot_G/Ocelot_G/tgt_machdep.c:	return(md_cputype());
+Targets/PalomarII/PalomarII/tgt_machdep.c:	return(md_cputype());
+Targets/Pocono/Pocono/tgt_machdep.c:	return(md_cputype());
+Targets/Power4e/Power4e/tgt_machdep.c:	return(md_cputype());
+Targets/Power7e/Power7e/tgt_machdep.c:	return(md_cputype());
+Targets/PowerPMC230/PowerPMC230/tgt_machdep.c:	return(md_cputype());
+Targets/PowerPMC250/PowerPMC250/tgt_machdep.c:	return(md_cputype());
+Targets/Puma/Puma/tgt_machdep.c:	return(md_cputype());
+Targets/VG4/VG4/tgt_machdep.c:	return(md_cputype());
+include/pmon.h:int		md_cputype (void);
+pmon/arch/i386/machdep.c:	cputype = md_cputype();
+pmon/arch/mips/machdep.c:	if (((md_cputype() >> 8) & 0xffff) == 0x0504) {
+pmon/arch/mips/machdep.c:	switch((md_cputype() >> 8) & 0xff) {
+pmon/arch/mips/mips.S:LEAF(md_cputype)
+pmon/arch/mips/mips.S:END(md_cputype)
+pmon/arch/powerpc/cachecmds.c:	cputype = md_cputype();
+pmon/arch/powerpc/cachecmds.c:	cputype = md_cputype();
+pmon/arch/powerpc/machdep.c:	cputype = md_cputype();
+pmon/arch/powerpc/machdep.c:	cputype = md_cputype();
+pmon/arch/powerpc/powerpc.S:	.globl	md_cputype
+pmon/arch/powerpc/powerpc.S:md_cputype:

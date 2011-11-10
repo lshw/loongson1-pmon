@@ -1,0 +1,15 @@
+	Host to SerialICE Target Connection
+	Host to SerialICE Target Connection
+
+The Debugger (running on the Host) and the SerialICE Kernel (running on the Target) communicate via
+a standard RS-232 serial link or hardware wiggler.  It is possible to configure the
+SerialICE Kernel to use either a standard UART (or DUART), or LSI
+Logic's SerialICE Port core.  The SerialICE Port core has the advantage
+that it takes up no Target board area.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

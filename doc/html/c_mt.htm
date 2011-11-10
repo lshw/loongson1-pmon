@@ -1,0 +1,79 @@
+<html>
+<head>
+<title>Untitled Document</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<h1> mt</h1>
+<!--INDEX "memory test continuous start_address size" mtcmd "mt command" --> 
+<p>The mt command executes the memory test.
+<h2> Format</h2>
+<p> The format for the mt command is:</p>
+<dl> 
+  <pre><font size="+1">	mt [-c] [[ addr] size]
+</font><br>where:
+</pre>
+  <table width="95%">
+    <tr bgcolor="#CCCCCC"> 
+      <td align=right valign=top width="87"> 
+        <pre>-c&nbsp;</pre>
+      </td>
+      <td width="744" align="left" valign="top">&nbsp;implements a continuous 
+        memory test. </td>
+    </tr>
+    <tr> 
+      <td width="87" align="right" valign="top">addr&nbsp;</td>
+      <td width="744" align="left" valign="top">&nbsp;is the base address from 
+        which to perform the memory test.</td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td width="87" align="right" valign="top"> 
+        <pre>size&nbsp;</pre>
+      </td>
+      <td width="744" align="left" valign="top">&nbsp;is the number of bytes, 
+        in hexadecimal, on which to execute the memory test.</td>
+    </tr>
+  </table>
+  <p>Entering this command with no parameters tests all available (non PMON-resident) 
+    memory. 
+</dl>
+<h2> Functional Description</h2>
+<dl> 
+  <dd> The mt command tests the available memory. By default, this command tests 
+    the memory at the first location after PMON/2000 text to the last location 
+    of free RAM below the PMON/2000 data segment. </dd>
+</dl>
+<p>If size is specified, then only that number of bytes are tested. If addr is 
+  also specified, then testing starts at the specified address. Both addrand size 
+  are rounded down to the nearest word address. If the user specifies a size of 
+  0 (zero), the test executes on the entire available memory and does not terminate. 
+</p>
+<p>The mt memory test is not an exhaustive test. In the mt test, a single ‘‘walking 
+  one’’ is written to each word and cleared in turn. Then, to test other bits 
+  in the word, each word is loaded with its own address and then read back. Because 
+  this test writes an exclusive value to every word, it is sufficient to find 
+  most stuck-at faults and shorts. However, this test is not adequate to find 
+  pattern sensitivity and DRAM decay/leakage faults. </p>
+<p>Examples illustrating the use of the mt command follow.<br>
+  &nbsp; </p>
+<dl>
+  <dd> 
+    <pre>PMON> mt 			Test from just above PMON/2000 text to data-1.
+PMON> mt 00020000 		Test 8 Kbytes starting at 0x0002.0000.
+PMON> mt 00030000 4000 	Test 16 Kbytes starting at 0x0003.0000. 
+
+</pre>
+  </dd>
+</dl>
+<h2>See Also<br>
+</h2>
+<dl>
+  <dt>&nbsp; </dt>
+</dl>
+<hr>
+<p><b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a> 
+<p><!--$Id: c_mt.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --> 
+</body>
+</html>

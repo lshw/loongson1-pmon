@@ -1,0 +1,73 @@
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.72 [en] (WinNT; U) [Netscape]">
+   <title>The c Command</title>
+</head>
+<body>
+
+<h1>
+c</h1>
+<!--INDEX "c command" -->
+<p>The c command makes program execution continue after a breakpoint has
+stopped program execution.
+<h2>
+Format</h2>
+
+<dl> 
+  <dd> The format for the c command is:</dd>
+  <p><font size="+1">c [<i>bptadr</i>]</font> 
+  <p>where: <br>
+    &nbsp; 
+  <table width="95%">
+    <tr bgcolor="#CCCCCC"> 
+      <td ALIGN=LEFT VALIGN=TOP WIDTH="71"><i>bptadr</i></td>
+      <td width="650">specifies a single breakpoint. The breakpoint is removed 
+        when execution halts at this specified address.&nbsp;</td>
+    </tr>
+  </table>
+  <p>Invoking the c command with no arguments causes the program execution to 
+    continue from the address specified in the <i>current pc, CPC</i> register.
+</dl>
+
+<h2>
+Functional Description</h2>
+
+<dl> 
+  <dd> When the user enters the c command, program execution starts at the address 
+    pointed to by the <i>CPC</i> register's current value. Use the g command to 
+    start program execution from an address specified on the command line.</dd>
+  <p>As an option, a single temporary <a href="brkpts.htm">breakpoint</a> may 
+    be specified. The temporary breakpoint is removed when execution stops. The 
+    temporary breakpoint is removed if another breakpoint stops program execution 
+    first. 
+  <p>Examples of the c command follow. <br>
+    &nbsp; 
+  <table width="95%">
+    <tr bgcolor="#CCCCCC"> 
+      <td VALIGN=TOP WIDTH="194">PMON> c&nbsp;</td>
+      <td width="572">Continue execution until exit or a regular breakpoint is 
+        encountered.&nbsp;</td>
+    </tr>
+    <tr> 
+      <td VALIGN=TOP width="194">PMON> c a0020104&nbsp;</td>
+      <td width="572">Continue execution until 0xa0020104 or a regular breakpoint 
+        is encountered.&nbsp;</td>
+    </tr>
+  </table>
+</dl>
+
+<h2>
+See Also</h2>
+
+<dl>
+<dd>
+<a href="c_g.htm">g</a> command</dd>
+</dl>
+
+<hr>
+<p><b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a> 
+<p><!--$Id: c_c.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ -->
+</body>
+</html>

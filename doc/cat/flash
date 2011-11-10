@@ -1,0 +1,26 @@
+		Flash Memory Types
+
+		Flash Memory Types
+
+The flash memory must support sector erase if it is
+to be used to hold configuration settings. PMON/IMON is currently
+aware of the following devices that support sector erase.
+
+AMD Am29F010 - 5v 128KB
+AMD Am29F040 - 5v 512KB
+Atmel AT29F040 - 5v 512KB
+Intel 28F010 - 12v 128KB
+Intel 28F020 - 12v 256KB
+--
+ 
+
+Devices from other manufacturers that conform to the same programming
+method can be easily added to the table located in the file
+nvram.c.  All you need to know is the flashcode.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

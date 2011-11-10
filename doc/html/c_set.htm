@@ -1,0 +1,419 @@
+<html>
+
+<head>
+<title>The set Command</title>
+</head>
+
+<body>
+
+<h1>set</h1>
+<!--INDEX etheraddr inbase moresz prompt regstyle rptcmd trabort ulcr --><!--INDEX uleof datasz brkcmd validpc "set command" --> 
+<p>The set command sets and displays environment variables.</p>
+
+<h2>Format</h2>
+
+<p>The format for this command is: </p>
+<blockquote>
+  <pre><font size="+1">set [<var>name</var> [<var>value</var>]] where:</font></pre>
+</blockquote>
+<table width="95%">
+  <tr bgcolor="#CCCCCC"> 
+    <td width="73" align="right" valign="top"><var>name&nbsp;&nbsp;</var></td>
+    <td width="444" align="left" valign="top">is the name of the environment variable 
+      to set. </td>
+  </tr>
+  <tr> 
+    <td width="73" align="right" valign="top"><var>value&nbsp;&nbsp;</var></td>
+    <td width="444" align="left" valign="top">is the string to which the environment 
+      variable is set. </td>
+  </tr>
+  <tr bgcolor="#CCCCCC"> 
+    <td width="73" align="right" valign="top">nvram &nbsp;&nbsp;</td>
+    <td width="444" align="left" valign="top">causes the environment variables 
+      and stty settings to be copied into NVRAM. </td>
+  </tr>
+  <tr> 
+    <td width="73" align="right" valign="top"><var>cmdlist&nbsp;&nbsp;</var></td>
+    <td width="444" align="left" valign="top">is the list of PMON/2000 <a href="mondef.htm">Monitor</a> 
+      commands to be executed following reset. </td>
+  </tr>
+</table>
+<p>Entering the set command with no arguments displays all the current environment 
+  variables.</p>
+<h2>Functional Description</h2>
+
+<dl> 
+  <dd>The set command is used to set or display environment variable values, to 
+    copy the settings of environment variables and terminal options to NVRAM, 
+    and to specify a list of commands to be executed by the PMON/2000 <a href="mondef.htm">Monitor</a> 
+    following reset. </dd>
+</dl>
+<p>In some cases, when the <a href="mondef.htm">Monitor</a> displays a variable's 
+  current value, the <a href="mondef.htm">Monitor</a> prints a list of allowed 
+  values enclosed in square brackets; in other cases, no list is shown. In general, 
+  when the value is a numeric value, or when the value has an unlimited range 
+  of possible values, no list is shown. </p>
+<p>The set command does not evaluate the specified value or check the specified 
+  value against a list of allowed values. Value checking is only performed when 
+  a command uses a variable. </p>
+<p>To set a variable to a multiple-word value, enclose the value in single or 
+  double quotation marks. </p>
+<p>When used with the nvram option, the set command copies the current settings 
+  of the environments variables and the terminal options as specified in the stty 
+  command into NVRAM. The optional command list permits the user to specify PMON/2000 
+  <a href="mondef.htm">Monitor</a> commands that will be executed following reset. 
+  This option requires that the flash memories support sector erase. </p>
+<p>To avoid reading the NVRAM during power-up, hold the console return key down 
+  while releasing reset. After repeating this process several times, you will 
+  see the following message:</p>
+<blockquote> 
+  <pre>
+
+Skip NVRAM read? (y/n)? &gt;
+
+If you type `y', the booting process will proceed without reading the NVRAM. </pre>
+</blockquote>
+<p>Examples illustrating the use of the set command follow.</p>
+<blockquote>
+  <pre>
+
+	PMON&gt; set&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Display all current values.
+
+	    brkcmd = &quot;l @cpc 1&quot;
+	    datasz = -b          [-b -h -w]
+	   inalpha = hex         [hex symbol]
+	    inbase = 16          [auto 8 10 16]
+	    moresz = 10        
+	  regstyle = sw          [hw sw]
+	    rptcmd = trace       [off on trace]
+	   trabort = ^K        
+	     uleof = %         
+	      ulcr = off         [off on]
+	   validpc = &quot;_ftext etext&quot;
+	   heaptop = 80020000  
+	    dlecho = off         [off on lfeed]
+	   dlproto = EtxAck      [none XonXoff EtxAck]
+	  hostport = tty1      
+	    prompt = &quot;PMON&gt; &quot;
+	 etheraddr = aa:bb:cc:00:00:00
+	    ipaddr = 71.0.0.211
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vxWorks = <br>	      diag = 0           [N[:dev]]
+
+
+	PMON&gt; set moresz&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Display current moresz.
+
+	moresz = 10 
+
+
+
+	PMON&gt; set moresz 20&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set moresz to 20 decimal.
+
+</pre>
+  <p>Display instruction at current pc and display all general-purpose registers: 
+  </p>
+  <pre>
+
+	PMON&gt; set brkcmd &quot;l @cpc 1;r&quot;
+
+</pre>
+  <p><b>Environment Variables and Default Values </b></p>
+</blockquote>
+<dl> 
+  <dd> 
+    <table border="1" cellpadding="5">
+      <tr bgcolor="#CCCCFF"> 
+        <th>Environment Variable</th>
+        <th>Default Value</th>
+        <th>Options</th>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td nowrap>bootp</td>
+        <td nowrap>no</td>
+        <td nowrap>[no|sec|pri|save]</td>
+      </tr>
+      <tr> 
+        <td nowrap>brkcmd </td>
+        <td nowrap>&quot;l @cpc 1&quot; </td>
+        <td nowrap>command list </td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td nowrap>busclock</td>
+        <td nowrap>target depenent</td>
+        <td nowrap>external/bus clock</td>
+      </tr>
+      <tr> 
+        <td nowrap>cpuclock</td>
+        <td nowrap>target dependent</td>
+        <td nowrap>cpu pipeline clock</td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td nowrap>datasz </td>
+        <td nowrap>-b </td>
+        <td nowrap>[-b|-h|-w] </td>
+      </tr>
+      <tr> 
+        <td nowrap>dlecho </td>
+        <td nowrap>off </td>
+        <td nowrap>[off|on|lfeed] </td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td nowrap>dlproto </td>
+        <td nowrap>EtxAck </td>
+        <td nowrap>[none|XonXoff|EtxAck] </td>
+      </tr>
+      <tr> 
+        <td nowrap>ethaddr </td>
+        <td nowrap>target dependent </td>
+        <td nowrap>string </td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td nowrap>ipaddr </td>
+        <td nowrap>none</td>
+        <td nowrap>string </td>
+      </tr>
+      <tr> 
+        <td nowrap>heaptop </td>
+        <td nowrap>target dependent </td>
+        <td nowrap>string </td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td nowrap>hostport </td>
+        <td nowrap>tty1 </td>
+        <td nowrap>tty0-9 </td>
+      </tr>
+      <tr> 
+        <td nowrap>inalpha </td>
+        <td nowrap>hex </td>
+        <td nowrap>hex symbol </td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td nowrap>inbase </td>
+        <td nowrap>16 </td>
+        <td nowrap>[auto|8|10|16] </td>
+      </tr>
+      <tr> 
+        <td nowrap>memsize</td>
+        <td nowrap>target dependent</td>
+        <td nowrap>memory size in MBytes</td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td nowrap>moresz </td>
+        <td nowrap>10 </td>
+        <td nowrap>0-n </td>
+      </tr>
+      <tr> 
+        <td nowrap>prompt </td>
+        <td nowrap>&quot;PMON&gt; &quot; </td>
+        <td nowrap>string </td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td nowrap>regstyle </td>
+        <td nowrap>sw </td>
+        <td nowrap>[hw|sw] </td>
+      </tr>
+      <tr> 
+        <td nowrap>rptcmd </td>
+        <td nowrap>trace </td>
+        <td nowrap>[off|on|trace] </td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td nowrap>showsym</td>
+        <td nowrap>yes</td>
+        <td nowrap>[yes|no]</td>
+      </tr>
+      <tr> 
+        <td nowrap>trabort </td>
+        <td nowrap>^K </td>
+        <td nowrap>char </td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td nowrap>ulcr </td>
+        <td nowrap>off </td>
+        <td nowrap>[off|on] </td>
+      </tr>
+      <tr> 
+        <td nowrap>uleof </td>
+        <td nowrap>off </td>
+        <td nowrap>string </td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td nowrap>validpc </td>
+        <td nowrap>&quot;_ftext etext&quot; </td>
+        <td nowrap>string </td>
+      </tr>
+    </table>
+    <p>Environment variables can be set and displayed using the <a href="c_set.htm">set 
+      command</a>.</p>
+  </dd>
+</dl>
+<p>Brief descriptions of each of the variables follow, together with references 
+  to their complete descriptions.<a name="brkcmd"></a></p>
+<blockquote> 
+  <table width="95%" border="0" cellspacing="1" cellpadding="1">
+    <tr bgcolor="#CCCCFF"> 
+      <td width="13%" align="right" valign="top">Variable&nbsp;&nbsp;</td>
+      <td width="87%" align="left" valign="top">Description</td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td width="13%" align="right" valign="top">brkcmd&nbsp;&nbsp;</td>
+      <td width="87%" align="left" valign="top">This variable specifies a sequence 
+        of <a href="mondef.htm">Monitor</a> commands that are executed when a 
+        breakpoint halts program execution. See the <a href="c_b.htm">b command</a>.</td>
+    </tr>
+    <tr> 
+      <td width="13%" align="right" valign="top">busclock&nbsp;&nbsp;</td>
+      <td width="87%" align="left" valign="top">Set to the value of the bus/timing 
+        clock frequency. Useful for programs that needs to know this for timing 
+        purposes. Not applicable to all targets.</td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td width="13%" align="right" valign="top">cpuclock&nbsp;&nbsp;</td>
+      <td width="87%" align="left" valign="top">Set to the pipleine clock frequency 
+        of the target processor.</td>
+    </tr>
+    <tr> 
+      <td width="13%" align="right" valign="top">datasz&nbsp;&nbsp;</td>
+      <td width="87%" align="left" valign="top">This variable controls whether 
+        data is displayed in byte, half-word, or word groups. See the <a href="c_d.htm">d 
+        command</a>.</td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td width="13%" align="right" valign="top">dlecho&nbsp;&nbsp;</td>
+      <td width="87%" align="left" valign="top">This variable controls whether 
+        the target board echoes on downloads. An entire line can be echoed, a 
+        single line-feed character can be echoed, or there can be no echo at all. 
+        See the <a href="c_load.htm">load</a> command and the section on <a href="flwctl.htm">flow 
+        control</a>.</td>
+    </tr>
+    <tr> 
+      <td width="13%" align="right" valign="top">dlproto&nbsp;&nbsp;</td>
+      <td width="87%" align="left" valign="top">This variable selects the download 
+        protocol for transfers via RS-232C. The <a
+        href="mondef.htm">Monitor</a> supports Xon/Xoff and EtxAck download protocols. 
+        See the <a
+        href="c_load.htm">load</a> command and the section on <a href="flwctl.htm">flow 
+        control</a>.</td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td width="13%" align="right" valign="top">bootp&nbsp;&nbsp;</td>
+      <td width="87%" align="left" valign="top">Enable bootp protocol for setting 
+        IP address and download/boot.</td>
+    </tr>
+    <tr> 
+      <td width="13%" align="right" valign="top">ethaddr&nbsp;&nbsp;</td>
+      <td width="87%" align="left" valign="top">This variable specifies the hardware 
+        Ethernet address. See the section on downloading via <a href="netboot.htm">Ethernet</a>.</td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td width="13%" align="right" valign="top">ipaddr&nbsp;&nbsp;</td>
+      <td width="87%" align="left" valign="top">This variable specifies the Internet 
+        Protocol address. See the section on downloading via <a href="netboot.htm">Ethernet</a>.</td>
+    </tr>
+    <tr> 
+      <td width="13%" align="right" valign="top">heaptop&nbsp;&nbsp;</td>
+      <td width="87%" align="left" valign="top">This variable specifies the highest 
+        allowable address in the heap maintained by the PROM <a href="mondef.htm">Monitor</a>. 
+        See the <a href="c_load.htm">load</a> command.</td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td width="13%" align="right" valign="top">hostport&nbsp;&nbsp;</td>
+      <td width="87%" align="left" valign="top">This variable selects whether 
+        tty0, tty1, or ethernet is the host port. See the <a href="c_load.htm">load</a> 
+        command and the section on <a href="flwctl.htm">flow control</a>.</td>
+    </tr>
+    <tr> 
+      <td width="13%" align="right" valign="top">inalpha&nbsp;&nbsp;</td>
+      <td width="87%" align="left" valign="top">This variable selects whether 
+        strings starting with the ASCII characters a, b, c, d, e, and f are interpreted 
+        as symbols or hexadecimal numbers. See the <a
+        href="c_sh.htm">sh</a> command.</td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td width="13%" align="right" valign="top">inbase&nbsp;&nbsp;</td>
+      <td width="87%" align="left" valign="top">This variable selects the default 
+        input base for numeric values. Users can input octal, decimal, or hexadecimal 
+        numbers by changing this variable. See the <a
+        href="c_sh.htm">sh</a> command.</td>
+    </tr>
+    <tr> 
+      <td width="13%" align="right" valign="top">memsize&nbsp;&nbsp;</td>
+      <td width="87%" align="left" valign="top">The probed total RAM memory size 
+        in MBytes.</td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td width="13%" align="right" valign="top">moresz&nbsp;&nbsp;</td>
+      <td width="87%" align="left" valign="top">This variable specifies how many 
+        lines to display during screen-at-a-time display. See the <a href="c_more.htm">more</a> 
+        command.</td>
+    </tr>
+    <tr> 
+      <td width="13%" align="right" valign="top">prompt&nbsp;&nbsp;</td>
+      <td width="87%" align="left" valign="top">
+        <p>This variable defines the <a href="mondef.htm">Monitor</a> prompt. 
+          An example of using this command is when you need to set the prompt 
+          to &quot;PMON&gt; &quot; for compatibility with a source-level debugger. 
+          To do this use the following command:</p>
+        <pre><font size="+1">PMON2000&gt; set prompt &quot;PMON&gt; &quot;</font></pre>
+        <p>This will set the prompt to &quot;PMON&gt; &quot; (note the space) 
+          and save this new value in the non-volatile memory (if supported).</p>
+        </td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td width="13%" align="right" valign="top">regstyle&nbsp;&nbsp;</td>
+      <td width="87%" align="left" valign="top">This variable defines whether 
+        hardware or software names are displayed in the l command. See the <a href="c_l.htm">l 
+        command</a>.</td>
+    </tr>
+    <tr> 
+      <td width="13%" align="right" valign="top">rptcmd&nbsp;&nbsp;</td>
+      <td width="87%" align="left" valign="top">When this variable is set to &quot;on,&quot; 
+        the previous command is executed again when the user enters an empty line. 
+        See the <a href="c_sh.htm">sh</a> command.</td>
+    </tr>
+    <tr> 
+      <td width="13%" align="right" valign="top">showsym&nbsp;&nbsp;</td>
+      <td width="87%" align="left" valign="top">Show or don't show symbols when 
+        doing trace and disassembly.</td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td width="13%" align="right" valign="top">trabort&nbsp;&nbsp;</td>
+      <td width="87%" align="left" valign="top">This variable selects the character 
+        that terminates transparent mode and returns the <a href="mondef.htm">Monitor</a> 
+        to command mode. See the <a href="c_tr.htm">tr</a> command.</td>
+    </tr>
+    <tr> 
+      <td width="13%" align="right" valign="top">ulcr&nbsp;&nbsp;</td>
+      <td width="87%" align="left" valign="top">This variable defines whether 
+        there is a carriage return or both a carriage return and a linefeed character 
+        at the end of the line during dumps. See the <a
+        href="c_dump.htm">dump</a> command.</td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td width="13%" align="right" valign="top">uleof&nbsp;&nbsp;</td>
+      <td width="87%" align="left" valign="top">This variable specifies a string 
+        that is sent to the host after a dump to the target has completed. See 
+        the <a href="c_dump.htm">dump</a> command.</td>
+    </tr>
+    <tr> 
+      <td width="13%" align="right" valign="top">validpc&nbsp;&nbsp;</td>
+      <td width="87%" align="left" valign="top">This variable specifies the range 
+        of valid PC values during program tracing. See the <a href="c_t.htm">trace</a> 
+        command.</td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td width="13%" align="right" valign="top">vxWorks&nbsp;&nbsp;</td>
+      <td width="87%" align="left" valign="top">This string variable is passed 
+        to a VxWorks kernel at boot time. It contains host and target IP address, 
+        user name and other required parameters. See Wind River documentation 
+        for details.</td>
+    </tr>
+  </table>
+  <p>&nbsp;</p>
+</blockquote>
+<h2>See Also:</h2>
+<hr>
+<p> <b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a> </p>
+<p><!--$Id: c_set.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --></p>
+</body>
+</html>

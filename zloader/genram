@@ -1,0 +1,140 @@
+#!/usr/bin/perl 
+my ($myedata,$myend,$initmips,$mystart,$tgt_putchar);
+open(F,qq(mipsel-linux-objdump -x $ARGV[0]|));
+while(<F>)
+{
+chomp;
+if(/([0-9a-f]+).+_edata/){
+   $myedata=qq(0x$1);
+ }
+
+if(/([0-9a-f]+).+_end$/){
+   $myend=qq(0x$1);
+ }
+if(/([0-9a-f]+).+initmips$/){
+   $myinitmips=qq(0x$1);
+ }
+if(/([0-9a-f]+).+\s_start$/){
+   $mystart=qq(0x$1);
+ }
+if(/([0-9a-f]+).+\stgt_putchar$/){
+   $tgt_putchar=qq(0x$1);
+ }
+}
+printf(<< "END"
+#define NOMSG
+typedef	long long  off_t;	
+struct callvectors {
+	int     (*open) (char *, int, int);
+	int     (*close) (int);
+	int     (*read) (int, void *, int);
+	int     (*write) (int, void *, int);
+	off_t   (*lseek) (int, off_t, int);
+	int     (*printf) (const char *, ...);
+	void    (*cacheflush) (void);
+	char    *(*gets) (char *);
+};
+struct callvectors *cvs;
+void realinitmips(unsigned int msize);
+#ifndef NOCACHE2
+void flush_cache2()
+{
+asm volatile(\
+"	mfc0	\$3, \$15			# read processor ID register;" \\
+"	li		\$2, 0x6303				#godson2f prid;" \\
+"	beq		\$2, \$3, godson_2f;" \\
+"	nop;" \\
+"	li		\$2, 0x6302				#godson2e prid;" \\
+"	bne	\$2, \$3,11f ;"\\
+"	nop;" \\
+"# godson2e;" \\
+"godson_2f:;" \\
+"	li	  \$2, 0x80000000;" \\
+"    addu  \$3,\$2,512*1024;" \\
+"10:;" \\
+"	cache	3, 0(\$2);" \\
+"	cache	3, 1(\$2);" \\
+"	cache	3, 2(\$2);" \\
+"	cache	3, 3(\$2);" \\
+"	addu	\$2, 32;" \\
+"	bne	    \$2,\$3, 10b;" \\
+"	nop;" \\
+"11:;" \\
+::
+:"\$2","\$3"
+);
+}
+#else
+void flush_cache()
+{
+asm volatile(\
+"		.set mips3;;" \\
+"        li    \$5,0x80000000;" \\
+"        addu  \$6,\$5,16384;" \\
+"1:;" \\
+"        cache  1,0(\$5);" \\
+"        cache  1,1(\$5);" \\
+"        cache  1,2(\$5);" \\
+"        cache  1,3(\$5);" \\
+"        cache  0,(\$5);" \\
+"        add    \$5,\$5,32;" \\
+"        bne    \$5,\$6,1b;" \\
+"        nop;" \\
+"		.set mips0;;" \\
+::
+: "\$5","\$6");
+}
+#endif
+void initmips(unsigned int msize,struct callvectors *cv)
+{
+    int *edata=(void *)$myedata;
+    int *end=(void *)$myend;
+    int *p;
+    cvs=cv;
+    tgt_puts("Uncompressing Bios");
+    run_unzip(biosdata,$mystart);
+    tgt_puts("OK,Booting Bios\\r\\n");
+    for(p=edata;p<=end;p++)
+    {
+        *p=0;
+    }
+	memset($mystart-0x1000,0,0x1000);//$mystart-0x1000 for frame(registers),memset for pretty
+//	cv->cacheflush();
+	tgt_puts("flush_cache...");
+#ifdef NOCACHE2
+	flush_cache();
+#else
+	flush_cache2();
+#endif
+	tgt_puts("done,boot now\\r\\n");
+    realinitmips(msize);
+}
+
+void realinitmips(unsigned int msize)
+{
+	     asm ("li  \$29,$mystart-0x4000;" \
+		      "li \$2,$myinitmips;" \
+			  "move \$4,\%0;" \
+			  "jalr \$2;" \
+			  " nop;" \
+			  "1: b 1b;nop;"
+          :
+          : "r" (msize)
+          : "\$29", "\$2","\$4");
+}
+
+static void (*rom_putchar)(char c)=(${tgt_putchar}-${mystart}+0xffffffffbfc00000);
+void tgt_putchar(char c)
+{
+#ifndef NOMSG
+cvs->printf("%%c",c);
+#endif
+}
+void tgt_puts(char *str)
+{
+#ifndef NOMSG
+cvs->printf("%%s",str);
+#endif
+}
+END
+);

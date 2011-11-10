@@ -1,0 +1,52 @@
+		Getting Started with PMON
+		Getting Started with PMON
+
+ What You'll Need
+
+	  »  A Host computer system (UNIX or MSDOS)
+	  »  A Target board
+
+To run an application program on your Target using PMON, perform the
+following steps:
+
+  »  If you haven't done so already, 
+Download 
+the PMON source from the Web site.
+
+  »  Next you need to Extract the files 
+from the archive.
+
+  »  To configure the package you need to run the 
+Install program. The following table
+provides a summary of the target types you need for each
+evaluation board.
+
+TargetTarget Type
+BDMR4101-be"All Processors Big Endian"
+BDMR4011-be"All Processors Big Endian"
+BDMR4102-be"All Processors Big Endian"
+BDMR4101-le"All Processors Little Endian"
+BDMR4011-le"All Processors Little Endian"
+BDMR4102-le"All Processors Little Endian"
+SDP1000"SDP1000 (L64008 MPEG-2 Transport)"
+L64363 (ATMizer2)"ATMizer-2 R-T SAR Engine"
+ Key: The "-be" means Big Endian, the "-le" means Little Endian.
+
+  »  To prepare the package for use you must 
+Build the package.
+
+  »  Configure your hardware.
+PMON requires an RS232 link between your host and port A on the Target.
+The actual hardware port name
+will depend on which host and Target you
+will be using.
+
+  »  Build, 
+Download and Execute your application on the Target.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

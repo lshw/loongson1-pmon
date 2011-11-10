@@ -1,0 +1,66 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.72 [en] (WinNT; U) [Netscape]">
+   <title>The flush Command</title>
+</head>
+<body>
+
+<h1>
+flush</h1>
+<!--INDEX "flush command" "flush cache" -->
+<p>The flush command flushes the data and/or instruction cache.
+<h2>
+Format</h2>
+
+<dl>
+<dd>
+The format for the flush command is:</dd>
+
+  <pre>
+<font size="+1">flush [-di]
+</font>
+</pre>
+where:
+<br>&nbsp;
+  <table width="95%">
+    <tr bgcolor="#CCCCCC"> 
+      <td WIDTH="67" align="right" valign="top" height="20">-d&nbsp;</td>
+      <td width="764" height="20" align="left" valign="top"> 
+        <blockquote> 
+          <p>flushes the data cache only.&nbsp;</p>
+        </blockquote>
+      </td>
+    </tr>
+    <tr> 
+      <td width="67" align="right" valign="top">-i&nbsp;</td>
+      <td width="764" align="left" valign="top"> 
+        <blockquote> 
+          <p>flushes the instruction cache only.&nbsp;</p>
+        </blockquote>
+      </td>
+    </tr>
+  </table>
+
+<p>Entering flush without any parameters flushes both caches.</dl>
+
+<h2>
+Functional Description</h2>
+
+<dl>
+  <dd> The flush command performs a hard flush of the data and/or instruction cache. 
+    <br>
+    All entries will be flushed, even those that had been locked.</dd>
+</dl>
+
+<h2>
+See Also</h2>
+
+<p><br>
+<hr>
+<p><b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a> 
+<p><!--$Id: c_flush.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ -->
+</body>
+</html>

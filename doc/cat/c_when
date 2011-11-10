@@ -1,0 +1,154 @@
+The when Command
+when
+
+The when command sets complex breakpoints 
+
+Format
+
+The format for the when command is: 
+
+when condition action
+ 
+
+where: 
+
+condition  Specifies the conditions under which the 
+		     breakpoint will occur.
+
+	action     Specifies the action to be taken when the 
+		     breakpoint occurs.
+
+Functional Description
+
+The when command provides a very flexible way to set breakpoints and to specify the action that
+should be taken when they are encountered.
+
+Each when command takes two arguments, a condition, and an
+action.  The condition can be something as simple as @pc==main (when
+the program counter is equal to value of the symbol main), or it can be
+a complex expression that might include specifying the contents of
+memory locations.
+
+Actions can be any Monitor command string.
+But it can also include the pseudo command stop. For example, the
+command, "when @pc==main stop" specifies that when the
+program counter has the value of the symbol main, execution should
+stop. 
+
+Conditional expressions can be combined in any arbitrary
+manner to provide extremely complex breakpoint conditions. For
+example,
+
+	PMON when @pc==main2&(^tcbchn==task1||^tcbchn==task2) stop
+
+which will stop execution when the pc is equal to main2, and
+either tcbchn is equal to task1 or task2. 
+
+In the preceeding examples we have chosen to stop execution when
+the condition is met. However, it is possible to specify a list
+of commands. For example,
+
+	PMON when @pc==sort "r;d -w dat3 1"
+
+	specifes that when the pc is equal to 'sort', the commands
+	'r' and 'd -w dat3 1' will be executed. The ';' is used to
+	separate commands, and the double quotes are necessary because
+	the argument contains spaces.  
+
+The Monitor is responsible for deciding when
+to use hardware breakpoint registers (if present). In general, the Monitor uses software breakpoints unless there
+is a specific reason that a hardware breakpoint is required.
+
+If you issue a command that requires a hardware breakpoint register.
+But that the Monitor finds that there is not
+one available. The Monitor will automatically
+use trace mode when you issue the c command to continue execution.
+Because trace mode is not real-time, the Monitor will warn you at the time that you set
+the breakpoint that this will require non real-time execution.
+
+Examples
+
+  »  Stop when a memory location changes.
+
+	You can specify data locations by using the dereferencing
+	operator '^'. For example,
+
+		PMON when '^tcbchn!=0' stop
+
+	means that execution should stop when the contents
+	of the memory location specified by the symbol tcbchn is not
+	equal to zero. Note that expressions that include the character
+	'!' must be enclosed within single- or double-quotes to 
+	supress the normal history substitution mechanism. Single- or
+	double-quotes must also be used if the expression contains
+	spaces.  
+
+  »  Break on the 20th time around a loop.
+
+	when @pc==0x80021234 "r a @a+1"
+	when @a==0t20 stop
+
+These commands specify that execution should pause each time the pc has
+the value 0x80021234. Each execution pauses, the command "r a
+@a+1" will be executed. This command increments the value of
+pseudo register 'a'.  See the r
+command for more information on the pseudo registers.
+
+If during one of these pauses in execution pseudo register 'a' has
+the value 20 (decimal), execution will stop.
+
+  »  Break when fred() is executed after jim(), but not after mike().
+
+	when @pc==jim "r a 1"
+	when @pc==mike "r a 0"
+	when "@pc==fred & @a==1" stop
+
+  »  Stop if dat1 ever gets set back to zero.
+
+	when "^dat1 != 0" "r a 1"
+	when "^dat1 == 0 & @a == 1" stop
+
+This requires a hardware data breakpoint register in order to execute
+this in real-time. In this mode a brief pause will occur each time
+a write to dat1 occurs.
+
+If you don't have a hardware data breakpoint register, you can
+maintain real-time performance by only checking the value at specific
+points in the program.
+
+	when "@pc == fred & ^jim != 0" "r a 1"
+	when "@pc == fred & ^jim == 0 & @a == 1" stop
+
+  »  Find the maximum value written to a specified memory location.
+
+	when "^dat1  @a" "r a ^dat1"
+
+Use the command "r a" to examine the value when the
+program stops.
+
+  »  Stop if jim() is ever called with a 2nd argument of zero.
+
+	when "@pc == jim & @a1 == 0" stop
+
+  »  Count how many times jim() is executed.
+
+	when "@pc == jim" "r a @a+1"
+
+Use the command "r a" to examine the value when the
+program stops.
+
+See Also 
+b, 
+db,
+and load commands.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+
+
+**This file was converted from HTML to TEXT using a TRIAL version of**
+**Markup Remover 1.1 (C) 1998 by Aquatic Moon Software http://www.aquaticmoon.com/**
+**This message does not appear in files converted after the program has been liscensed.**

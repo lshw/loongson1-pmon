@@ -1,0 +1,20 @@
+ifndef S
+S:=$(shell cd ../../../..; pwd)
+endif
+TARGET= ${S}/Targets/LS1B
+SUBTARGET?=ls1b
+CPPFLAGS=-mips2
+START?=start_ls1b.o
+
+%OBJS
+
+%CFILES
+
+%SFILES
+
+%LOAD
+
+export CFILES OBJS SFILES
+include ${S}/Makefile.inc
+
+%RULES

@@ -1,0 +1,41 @@
+	Porting the SerialICE Kernel
+	Porting the SerialICE Kernel
+
+In most cases it will be sufficient to simply change the interrupt
+number, and possibly the base address of the SIO. The following code
+fragment, which was taken from the SerialICE Kernel for the BDMR4101 shows
+where the SIO base address and interrupt input are defined.
+
+	#define UART_BASE 	0xbfff0200
+	#define UART_RXS	0x0	/* rx status */
+	#define UART_RXC	0x0	/* rx control */
+	#define UART_RXHR	0x4	/* rx holding reg */
+	#define UART_TXS	0x8	/* tx status */
+	#define UART_TXHR	0xc	/* tx holding reg */
+	#define UART_INTBIT	SR_INT2
+
+The SIO on this board is connected to INT2, where the following numbering
+is used.
+
+SR bit numberSR bit nameAlternate SR bit nameCAUSE bit nameDescription
+8SR_IBIT1-CAUSE_SW1Software int1
+9SR_IBIT2-CAUSE_SW2Software int2
+10SR_IBIT3SR_INT0CAUSE_IP3Hardware int0
+11SR_IBIT4SR_INT1CAUSE_IP4Hardware int1
+12SR_IBIT5SR_INT2CAUSE_IP5Hardware int2
+13SR_IBIT6SR_INT3CAUSE_IP6Hardware int3
+14SR_IBIT7SR_INT4CAUSE_IP7Hardware int4
+15SR_IBIT8SR_INT5CAUSE_IP8Hardware int5
+
+Note that it is recommended that you do not use the non-maskable
+interrupt input (even if you have one), because although this will make 
+it possible for the SerialICE Kernel to always get control from the
+application. It will also make it possible for it to get control at unsafe
+times, and therefore not be able to resume the application later.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

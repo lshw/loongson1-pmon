@@ -1,0 +1,165 @@
+		PMON Vector Table
+		PMON Vector Table
+
+The vector table allows a client program to access a number of
+target-dependent services provided by the PROM Monitor. The linkage
+mechanism for all these services is to jump to an address obtained from
+the vector table. For example,
+
+		li	t0,TBLBASE
+		lw	t0,OFFSET(t0)
+		j	t0
+
+Where TBLBASE is 0xa0c00200 for the ATMizer-I, and
+0xbfc00200 for all other processors. OFFSET is obtained from 
+the table below.
+
+The following table shows the services that are
+provided, the arguments that are passed to each service function, and
+the table offset for each service. The declaration for vector table itself 
+is located
+in the file pmon/mips.s. Normally an
+application establishes a connection to these services by linking
+in the file lib/crt1.s. This routine
+is automatically linked with your application when you use the
+pmcc command.
+
+PROM Monitor Vector Table
+OffsetFunctionUsage
+
+0
+
+read(int fd, char *buf, int size)
+
+Read specified number of bytes into buf. Returns number of
+bytes read.
+
+4
+
+write(int fd, char *buf, int size)
+
+Write specified number of bytes from buf. Returns number of
+bytes written.
+
+8
+
+int open(char *name [,int mode])
+
+Open a device. Returns file descriptor.
+
+12
+
+close(int fd)
+
+Close a file descriptor.
+
+16
+
+ioctl(int fd, int request, arg)
+
+Perform I/O control operation.
+
+20
+
+printf(char *fmtstr, arg...)
+
+Print formatted to stdout.
+
+24
+
+vsprintf(char *dst, char *fmtstr, arglist)
+
+Write formatted string to dst using arglist. used by printf.
+
+28
+
+ttctl(int fd, int op, arg...)
+
+Perform terminal specific operations.
+
+32
+
+exit(int status)
+
+Client exit to PMON.
+
+36
+
+char *getenv(char *name)
+
+Return a pointer to the value of the named environment variable. Return
+zero if not found.
+
+40
+
+onintr(int code, long *dat)
+
+Connect interrupt handler to specified exception code. 
+
+44
+
+flush_cache(ICACHE|DCACHE)
+
+Flush the selected cache.
+
+48
+
+_exception()
+
+Transfer control to PMON's exception handler.
+
+52
+
+_fpstatesz()
+
+Return size of fp state. Requires fp emulation.
+
+56
+
+_fpinit()
+
+Initialize the fp emulation package. Standard fp emulation only.
+
+60
+
+_fpstate()
+
+Return pointer to fp state. Requires fp emulation.
+
+64
+
+cop1()
+
+Transfer control to PMON's exception handler for fp exceptions.
+Requires fp emulation.
+
+68
+
+adr2symoff(char *dst, int value, int width)
+
+Convert addr to symbol+offset. Return zero if not found.
+
+72
+
+sym2adr(long *v, char *label)
+
+Find the value of a label. Return zero if not found.
+
+76
+
+getclkfreq()
+
+Return the CPU clock frequency (in MHz)
+
+80
+
+_clkinit()
+
+Initialize the clock. Required before getclkfreq().
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

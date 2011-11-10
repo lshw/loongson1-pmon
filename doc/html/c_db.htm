@@ -1,0 +1,101 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.72 [en] (WinNT; U) [Netscape]">
+   <title>The db Command</title>
+</head>
+<body>
+
+<h1>
+db</h1>
+<!--INDEX "db command" "delete breakpoints" -->
+<p>The db command deletes the specified breakpoints.
+<h2>
+Format</h2>
+
+<dl>
+<dd>
+The format for the db command is:</dd>
+
+<pre>
+db [<i>numb</i>|*]
+
+</pre>
+where:
+<br>&nbsp;
+  <table width="95%">
+    <tr bgcolor="#CCCCCC"> 
+      <td WIDTH="110" valign="top"> 
+        <div align="right"><i>numb&nbsp;&nbsp;</i></div>
+      </td>
+
+      <td width="721" valign="top">&nbsp;&nbsp;is the breakpoint number to be 
+        deleted.&nbsp;</td>
+</tr>
+
+<tr>
+      <td width="110" valign="top"> 
+        <div align="right">*&nbsp;&nbsp;&nbsp;</div>
+      </td>
+
+      <td width="721" valign="top">&nbsp;&nbsp;deletes all breakpoints.&nbsp;</td>
+</tr>
+</table>
+
+<p>Entering db without any parameters lists all existing breakpoints. Entering
+an asterisk ("*") instead of a breakpoint number deletes all the existing
+breakpoints.</dl>
+
+<h2>
+Functional Description</h2>
+
+<dl>
+<dd>
+The db command deletes one or more specified breakpoints.</dd>
+
+<p><br>Examples illustrating the use of the db command follow.
+<br>&nbsp;
+  <table width="95%">
+    <tr bgcolor="#CCCCCC"> 
+      <td WIDTH="219" valign="top"><tt>PMON> db 3&nbsp;</tt></td>
+      <td width="612" valign="top"> 
+        <pre>Delete breakpoint 3.&nbsp;</pre>
+      </td>
+    </tr>
+    <tr> 
+      <td width="219" valign="top"><tt>PMON> db 4 6&nbsp;</tt></td>
+      <td width="612" valign="top"> 
+        <pre>Delete breakpoints 4 and 6.&nbsp;</pre>
+      </td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td width="219" valign="top"><tt>PMON> db *&nbsp;</tt></td>
+      <td width="612" valign="top"> 
+        <pre>Delete all breakpoints.&nbsp;</pre>
+      </td>
+    </tr>
+    <tr> 
+      <td width="219" valign="top" height="23"><tt>PMON> db&nbsp;</tt> <br>
+        <tt>Bpt 0 = a002000c&nbsp;</tt></td>
+      <td width="612" valign="top" height="23"> 
+        <pre>Display all breakpoints.&nbsp;</pre>
+      </td>
+    </tr>
+  </table>
+</dl>
+
+<h2>
+See Also</h2>
+
+<dl>
+<dd>
+<a href="c_d.htm">d</a> and <a href="c_load.htm">load</a> commands.</dd>
+</dl>
+
+<hr>
+<p><b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a>
+<p><!--$Id: c_db.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --> 
+</body>
+</html>

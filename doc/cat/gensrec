@@ -1,0 +1,45 @@
+The gensrec Command
+The gensrec Command
+
+NAME
+     gensrec - Motorola S-record generator for MIPS COFF
+
+SYNOPSIS
+
+gensrec [ -ptdbBdS ] inputfile
+
+DESCRIPTION
+     gensrec is a Motorola S-record generator, 
+     that  reads  MIPS-format COFF files.
+
+OPTIONS
+
+     -p   prom mode, start addresses at zero.
+
+     -t   omit text section
+
+     -d   debug mode
+
+     -b   generate binary memory image file
+
+     -B   emulate nm -B
+
+     -s   include symbols
+
+     -S   print ROM/RAM sizes
+
+SEE ALSO
+     genfrec(1) pmcc(1) 
+     rdsrec(1)
+
+FILES
+	This command is built from
+	tools/gensrec.c.
+     
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

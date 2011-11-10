@@ -1,0 +1,95 @@
+The b Command
+b
+
+The b command sets and displays breakpoints.
+
+Format
+
+The format for the b command is:
+
+b
+b adr..
+b adr -s str
+
+where:
+
+adr	specifies an address for the breakpoint. 
+				Up to 32 breakpoints addresses can be set.
+
+-s str	executes the command string when the breakpoint is hit.
+
+Invoking the b command with no options causes the Monitor to print a list 
+of the current breakpoints. 
+
+Functional Description
+
+The b command sets a breakpoint at the specified 
+address or addresses. Multiple addresses may be specified. Specified 
+addresses must be word-aligned. 
+
+This command is effectively a "pass-thru" to the 
+when command. Issuing the command, 
+"b main" is equivalent to issuing the command, 
+"when @pc==main stop". However, unlike the 
+when command, the b command can
+take multiple addresses.
+
+The Monitor automatically assigns a number to each breakpoint. 
+The Monitor allocates the lowest 
+available breakpoint number from 0 to 31 to any new breakpoint. 
+
+The Monitor reports a new breakpoint's number immediately after the 
+breakpoint is set (see the examples at the end of this subsection for 
+illustration of this). The assigned numbers can be used in the 
+db (Delete Breakpoint) command.
+
+The brkcmd Variable 
+
+When a breakpoint is reached, the command list specified in the 
+environment variable brkcmd is executed. The default setting for brkcmd is:
+
+brkcmd = "l @pc 1"
+
+This command "l @pc 1", specifies that when the breakpoint
+occurs, the Monitor will disassemble one line starting at the address
+of the program counter.
+
+You can change the breakpoint command variable with the set command. 
+For example, you can include additional monitor commands in the brkcmd 
+variable. You must separate additional commands on the command line 
+with a semicolon. For example, entering the following command lists one 
+line after reaching a breakpoint, and then displays all the register values.
+
+set brkcmd "l @epc 1;r *"
+
+By default, breakpoints are cleared when the load command is executed. 
+See the section on the load command later in this document for details on 
+how to override automatic breakpoint clearing after a download operation.
+
+Some examples illustrating the use of the b command follow.
+
+PMON b a002000c	Set a breakpoint at 0xa002000c.
+
+Bpt 1 = a002000c
+
+PMON b			
+
+Bpt 0 = 8002022c
+
+Bpt 1 = a002000c
+Display all breakpoints.
+
+PMON b 80021248 -s "r"	Set a breakpoint at 0x80021248. Display registers
+			when the breakpoint is encountered.
+
+See Also 
+db,
+when, 
+and load commands.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

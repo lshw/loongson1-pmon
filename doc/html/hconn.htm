@@ -1,0 +1,43 @@
+<html>
+
+<head>
+<title>Host to Monitor Connection</title>
+</head>
+
+<body>
+
+<h1 align="center">Host to Monitor Connection</h1>
+<!--INDEX "Host to Monitor connection" -->
+
+<p>The connection between the Host and the debug <a href="mondef.htm">Monitor</a> requires
+one serial port, and optionally an Ethernet connection or a second serial port.</p>
+
+<h2>RS232 Serial Port</h2>
+<!--INDEX RS232 -->
+
+<p>This connection is used for all command information that passes between the host and
+the debug monitor. This port is also used for downloading if there is no Ethernet link or
+second serial port. </p>
+
+<p>The <a href="bauds.htm">baud</a> rate used for this connection defaults to 9600.
+However, most systems will work satisfactorily up too 38400. </p>
+
+<h2>Ethernet Link (optional)</h2>
+
+<p>This connection can be used for fast <a href="netboot.htm">downloads</a>. It 
+  only supports the UDP protocol used by tftp, and is not presently supported 
+  by the source-level debuggers.</p>
+
+<h2>Second Serial Port (optional)</h2>
+<!--INDEX "Second serial port" -->
+
+<p>This connection can be used for downloading on UNIX hosts. It's advantage is that it
+provides a more reliable flowcontrol mechanism than that available from <a
+href="tiphelp.htm">tip</a>.</p>
+
+<hr>
+<p> <b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a></p>
+<p><!--$Id: hconn.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --> </p>
+</body>
+</html>

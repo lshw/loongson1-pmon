@@ -1,0 +1,19 @@
+ifndef S
+S:=$(shell cd ../../../..; pwd)
+endif
+TARGET= ${S}/Targets/fcr_soc
+SUBTARGET?=fcr
+CPPFLAGS=-mips2
+
+%OBJS
+
+%CFILES
+
+%SFILES
+
+%LOAD
+
+export CFILES OBJS SFILES
+include ${S}/Makefile.inc
+
+%RULES

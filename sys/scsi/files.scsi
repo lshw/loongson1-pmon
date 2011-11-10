@@ -1,0 +1,21 @@
+#	$Id: files.scsi,v 1.1.1.1 2006/09/14 01:59:08 root Exp $
+#
+file	sys/scsi/scsi_base.c		scsi
+#file	sys/scsi/scsi_ioctl.c		scsi
+file	sys/scsi/scsiconf.c		scsi
+#file    scsi/atapi_base.c               scsi
+
+device	scsibus {target = -1, lun = -1}
+attach	scsibus at scsi
+
+device	cd: disk
+attach	cd at scsibus
+file	sys/scsi/cd.c			cd needs-flag
+#file	sys/scsi/cd_atapi.c		cd
+
+device	sd: disk
+attach	sd at scsibus
+file	sys/scsi/sd.c			sd needs-flag
+#file	scsi/sd_atapi.c			sd needs-flag
+#file	sys/scsi/sd_scsi.c		sd needs-flag
+

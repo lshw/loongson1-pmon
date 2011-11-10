@@ -1,0 +1,39 @@
+		Terminal - Windows 3.x
+		Terminal - Windows 3.x
+
+Setup
+
+  »  Program Manager: Accessories-Terminal
+  »  Select "Settings-Terminal Preferences"
+	
+	  »   Click on the "Use Function, Arrow, and Ctrl Keys for Windows" 
+	check box, so that the check symbol is not displayed. 
+	  »   Select "OK"
+	
+  »  Select "Settings-Communications"
+	
+	  »  Set "Baud Rate" to "9600"
+	  »  Set "Data Bits" to "8"
+	  »  Set "Parity" to "None"
+	  »  Set "Flow Control" to "None"
+	  »  Set "Stop Bits" to "1"
+	  »  Set "Connector" to "COM1"
+	  »  Select "OK"
+	
+	
+	
+Sending Files
+
+  »  Select "Transfers-Send Text File"
+	
+	  »  Use browser to select directory
+	  »  Clear the check mark from "Append LF" and "Strip LF"
+	  »  Set "List File of Type:" to "All files"
+	  »  Select the .rec file, then "OK"
+	
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 

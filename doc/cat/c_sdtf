@@ -1,0 +1,46 @@
+The sdtf Command
+sdtf
+
+The sdtf command saves the driver to the flash memory.
+
+Format
+
+The format for the sdtf command is:
+
+	sdtf
+
+Functional Description
+
+The sdtf command is used to save a driver in the flash memory. It must
+be used immediately after completing the download of the driver from the
+Host. This command requires that the flash memories support sector erase.
+
+An Example illustrating the use of the sdtf command follows.
+
+IMON load			Load the driver from the Host
+Downloading from ethernet, ^C to abort
+total = 0x6ce0 bytes
+Driver for LR4010 has been loaded
+
+IMON sdtf			Save the driver in the flash memory
+saving driver (27872 bytes) from 80020000 to flash at bfc60000
+
+-- This command takes approximately 15 seconds to complete
+
+	&ltPower cycle the board&gt
+
+IMON> load -f			Loads driver from flash
+loading 27872 bytes to 80020000
+Driver for LR4010 has been loaded
+
+IMON
+
+Files
+The sdtf command is located in imon/main.c.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

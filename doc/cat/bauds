@@ -1,0 +1,21 @@
+ Choosing and Setting Baud Rates 
+Choosing and Setting Baud Rates
+
+To minimize download time, use the highest mutually acceptable baud 
+rate for the host and target. 
+
+On the target, use the stty command to set the baud rate. For example,
+to set the baud rate on the target board's tty1 port to 19200 baud,
+enter the following command line at the debug Monitor's prompt:
+
+	PMON stty tty1 19200
+
+On the host, the way the baud rate is set depends on the host type and 
+the debugger you have selected.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

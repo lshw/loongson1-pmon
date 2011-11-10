@@ -1,0 +1,46 @@
+The compare Command
+compare
+
+The compare command compares the contents of two memory areas.
+
+Format
+
+The format of the compare command is:
+
+compare adr1 adr2 siz
+
+where:
+
+adr1	specifies the start address of the first memory area.
+
+adr2	specifies the start address of the second memory area.
+
+siz	is the size of the block of memory to be compared. 
+        This quantity is specified in bytes.
+
+Functional Description
+
+The compare command compares each byte in the two memory areas. Any
+bytes that are different are displayed with the address, the expected
+value, and the actual value read.
+
+Examples
+
+  »  This example shows how to compare two blocks of memory, 8 Kbytes in
+size. The first block has a base address of 0x80020000, the second
+block starts at 0x80060000.
+
+PMON compare 80020000 80060000 2000
+
+Files
+The compare command is located in mon/compare.c.
+
+See Also
+copy command
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

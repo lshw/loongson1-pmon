@@ -1,0 +1,322 @@
+The set Command
+set
+
+The set command sets and displays environment variables.
+
+Format
+
+The format for this command is:
+
+	set [name [value]]
+	set nvram [cmdlist]
+
+where:
+
+name	is the name of the environment variable to set.
+
+value	is the string to which the environment variable is set.
+
+nvram	causes the environment 
+variables and stty settings to be copied into NVRAM.
+
+cmdlist	is the list of  PROM Monitor commands to be executed 
+following reset.  
+
+Entering the set command with no arguments displays all the current 
+environment variables.
+
+Functional Description
+
+The set command is used to set or display environment variable values, to 
+copy the settings of environment variables and terminal options to 
+NVRAM, and to specify a list of commands to be executed by the PROM 
+Monitor following reset.  
+
+In some cases, when the Monitor displays a
+variable's current value, the Monitor prints a
+list of allowed values enclosed in square brackets; in other cases, no
+list is shown. In general, when the value is a numeric value, or when
+the value has an unlimited range of possible values, no list is shown.
+
+The set command does not evaluate the specified value or check the 
+specified value against a list of allowed values. Value checking is only 
+performed when a command uses a variable. 
+
+To set a variable to a multiple-word value, enclose the value in single or 
+double quotation marks.  
+
+When used with the nvram option, the set command copies the current
+settings of the environments variables and the terminal options as
+specified in the stty command into NVRAM. The optional command list
+permits the user to specify  PROM Monitor
+commands that will be executed following reset.  This option requires
+that the flash memories support sector erase.  
+
+To avoid reading the NVRAM during power-up, hold the console return 
+key down while releasing reset. After repeating this process several times, 
+you will see the following message:
+
+Skip NVRAM read? (y/n)? 
+ 
+
+If you type `y', the booting process will proceed without reading the 
+NVRAM.  
+
+Examples illustrating the use of the set command follow.
+
+	PMON set	Display all current values.
+	    brkcmd = "l @pc 1"
+	    datasz = -b          [-b -h -w]
+	   inalpha = hex         [hex symbol]
+	    inbase = 16          [auto 8 10 16]
+	    moresz = 10        
+	  regstyle = sw          [hw sw]
+	    rptcmd = trace       [off on trace]
+	   trabort = ^K        
+	     uleof = %         
+	      ulcr = off         [off on]
+	   validpc = "_ftext etext"
+	   heaptop = 80020000  
+	    dlecho = off         [off on lfeed]
+	   dlproto = EtxAck      [none XonXoff EtxAck]
+	  hostport = tty1      
+	    prompt = "PMON "
+	 etheraddr = aa:bb:cc:00:00:00
+	    ipaddr = 71.0.0.211
+	      diag = 0           [N[:dev]]
+
+	PMON set moresz	Display current moresz.
+	moresz = 10 
+
+	PMON set moresz 20	Set moresz to 20 decimal.
+
+Display current value of Cause Register and display all 
+general-purpose registers: 
+
+	PMON set brkcmd "l @epc 1;r cause;r"
+
+Environment Variables and Default Values 
+
+Environment VariableDefault ValueOptions
+
+brkcmd
+ 
+"l @epc 1"
+ 
+command list
+
+datasz
+ 
+-b
+ 
+[-b|-h|-w]
+
+dlecho
+ 
+off
+ 
+[off|on|lfeed]
+
+dlproto
+ 
+EtxAck
+ 
+[none|XonXoff|EtxAck]
+
+etheraddr
+ 
+aa:bb:cc:00:00:00
+ 
+string
+
+ipaddr
+ 
+71.0.0.211
+ 
+string
+
+heaptop
+ 
+80020000
+ 
+string
+
+hostport
+ 
+tty1
+ 
+tty0-9
+
+inalpha
+ 
+hex
+ 
+hex symbol
+
+inbase 
+ 
+16
+ 
+[auto|8|10|16]
+
+moresz
+ 
+10
+ 
+0-n
+
+prompt
+ 
+"PMON "
+ 
+string
+
+regstyle
+ 
+sw
+ 
+[hw|sw]
+
+rptcmd
+ 
+trace
+ 
+[off|on|trace]
+
+trabort
+ 
+^K
+ 
+char
+
+ulcr
+ 
+off
+ 
+[off|on]
+
+uleof
+ 
+off
+ 
+string
+
+validpc
+ 
+"_ftext etext"
+ 
+string
+
+diag
+ 
+0
+ 
+[N[:dev]]
+
+Environment variables can be set and displayed using the 
+set command.
+
+Brief descriptions of each of the variables follow, together 
+with references to their complete descriptions.
+
+  »      brkcmd - This variable specifies a sequence of Monitor commands
+	that are executed when a breakpoint halts program execution. See the b command.
+
+  »      datasz - This variable controls whether data is displayed in
+	byte, half-word, or word groups. See the d
+	command.
+
+  »      dlecho - This variable controls whether the target board echoes
+	on downloads. An entire line can be echoed, a single line-feed
+	character can be echoed, or there can be no echo at all. See the load command and the section on 
+	flow control.
+
+  »      dlproto - This variable selects the download protocol for
+	transfers via RS-232C. The Monitor supports Xon/Xoff and EtxAck
+	download protocols. See the load command
+	and the section on
+	flow control.
+
+  »      etheraddr - This variable specifies the hardware Ethernet
+	address. See the load command and the
+	section on downloading
+	via Ethernet.
+
+  »      ipaddr - This variable specifies the Internet Protocol
+	address. See the load command and the
+	section on downloading
+	via Ethernet.
+
+  »  	heaptop - This variable specifies the highest allowable address in the 
+	heap maintained by the PROM Monitor. See the 
+	load command.  
+
+  »      hostport - This variable selects whether tty0, tty1, or
+	ethernet is the host port. See the load
+	command and the section on 
+	flow control.
+
+  »  	inalpha - This variable selects whether strings starting with the ASCII 
+	characters a, b, c, d, e, and f are interpreted as symbols or 
+	hexadecimal numbers. See the sh command.
+
+  »  	inbase - This variable selects the default input base for numeric 
+	values. 
+	Users can input octal, decimal, or hexadecimal numbers by changing 
+	this variable. See the sh command.
+
+  »  	moresz - This variable specifies how many lines to display during 
+	screen-at-a-time display. See the more 
+	command.
+
+  »      prompt - This variable defines the Monitor 
+	prompt. An example of using this command is when you need to
+	set the prompt to "PMON " for compatibility with a source-level
+	debugger. To do this use the following commands.
+
+	
+		IMON set prompt "PMON "
+		IMON set nvram
+	
+
+	This will set the prompt to "PMON " (note the space) and save this
+	new value in the non-volatile memory (if supported).
+
+  »  	regstyle - This variable defines whether hardware or software names 
+	are displayed for the LR33000 registers in the l command. See the 
+	l command.
+
+  »  	rptcmd - When this variable is set to "on," the previous command is 
+	executed again when the user enters an empty line. See the 
+	sh command.
+
+  »  	trabort - This variable selects the character that terminates 
+	transparent mode and returns the Monitor 
+	to command mode. See 
+	the tr command.
+
+  »  	ulcr - This variable defines whether there is a carriage return 
+	or both a carriage return and a linefeed character at the end of 
+	the line during dumps. See the dump 
+	command.
+
+  »      uleof - This variable specifies a string that is sent to
+	the host after a dump to the target has completed. See the 
+	dump command.  
+
+  »  	validpc - This variable specifies the range of valid PC values during 
+	program tracing. See the trace command.
+
+  »  	diag - This variable specifies the diagnostic level. zero is off,
+	non-zero is on. Valid values are 0 thru 9. By default the
+	diagnostic output is sent to the console. However, you may
+	direct it to another port. For example,
+
+	PMON set diag 2:/dev/tty1
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

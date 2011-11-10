@@ -1,0 +1,100 @@
+		How Breakpoints Work
+		How Breakpoints Work
+
+Breakpoints are set using the 
+'t', 
+'to', 
+'b', 
+'g', 
+'c', 
+or 'when' commands.  
+The 't', 'to', 'g', and 'c' commands set
+temporary breakpoints that are automatically deleted when execution
+halts. The 'b' and 'when' commands set persistent breakpoints that must
+be explicitly deleted (using the 'db' command).
+
+When the user types a 'b' command to set a breakpoint. The Monitor decides which type of breakpoint to utilize
+using the following algorithm:
+
+	if (is_writeable(addr)) bptype = RAM;
+	else if (is_cacheable(addr) & cpu_has_ilock) bptype = ILOCK;
+	else if (cpu_has_hwbp) bptype = HW;
+	else error();
+
+This information is saved in an array.  When execution is started, the
+Monitor walks through the breakpoint array and implements the
+breakpoints using the following rules:
+
+RAM 
+Replace the instruction at the specified address with a "break"
+instruction and save the previous contents (the instruction) so that it
+can be restored when execution halts. 
+
+ILOCK 
+Use the Icache locking feature to lock a "break" instruction into the
+Icache at the specified address.
+
+HW 
+Program the hardware breakpoint register to generate an exception when
+execution reaches the specified address.
+
+When an exception is encountered, the MIPS processor
+passes control to the General Exception Vector. The Monitor
+then restores the previous contents of all breakpoints, and transfers
+control to the prompt.
+
+Thus, if the memory is inspected, the break instructions will never
+be seen, as they are only present in memory during execution of the
+application program.
+
+The only exception to this is if the program hangs in such a way as to
+require the user to press reset on the target system. In this case the
+Monitor will "forget" that breakpoints had been set, and so you will
+see any RAM breakpoints as break instructions in memory. At this point
+the application program must be re-downloaded to obtain correct
+execution.
+
+Diagram showing how breakpoints work in the SerialIce1 DLL
+
+ab_cmd ----setHwdbpt------+
+                   '       |        +--------+
+setbp -----------+  '''''''|''''''''|        |
+                 |         |        |  Bpt[] |
+when ------------+         |        |        |
+	         |    '''''|''''''''|        |
+	         v   '     |        +--------+
+             setTrigger ---+
+	                   |
+trace (sstep) -------------+
+                           |
+c temp --------------------+
+                           |
+g . temp ------------------+              [imon95]
+                           |
+ .................................................................
+                           |
+ibpt32                     |             [serialice1.dll]
+  |                        |
+  v                        |
+ibpt32m -------------------+
+                           |
+dbpt32                     |
+  |                        |
+  v                        |
+dbpt32m -------------------+
+                           |
+                           |                   +-----------+
+		           v                   |           |
+                       setbp_target '''''''''''| brkList[] |
+                        |       |              |           |
+			v       |              +-----------+
+		brkInstall      |
+		                v
+		             brkRemove
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

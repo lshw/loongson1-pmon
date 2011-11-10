@@ -1,0 +1,139 @@
+# $Id: EV64240,v 1.1.1.1 2006/09/14 01:59:08 root Exp $
+#
+#	GENERIC configuration for Galileo EV64240
+#
+#  This file is supposed to be included by target file after
+#  endian has been defined.
+#
+
+select		mod_flash_amd		# AMD flash device programming
+select		mod_flash_intel		# intel flash device programming
+select		mod_debugger		# Debugging module
+select		mod_symbols		# Symbol table handling
+select		mod_s3load		# Srecord loading
+#select		mod_fastload		# LSI Fastload
+select		mod_elfload		# ELF loading
+
+select		cmd_mycmd
+select		cmd_newmt
+select		cmd_setup
+
+#
+# Command selection. Selects pmon commands
+#
+select		cmd_about		# Display info about PMON
+select		cmd_boot		# Boot wrapper
+select		cmd_cache		# Cache enabling
+#select		cmd_call		# Call a function command
+select		cmd_date		# Time of day command
+select		cmd_env			# Full blown environment command set
+select		cmd_flash		# Flash programming cmds
+select		cmd_hist		# Command history
+select		cmd_ifaddr		# Interface address command
+select		cmd_l			# Disassemble
+select		cmd_mem			# Memory manipulation commands
+select		cmd_more		# More paginator
+#select		cmd_mt			# Simple memory test command
+select		cmd_misc		# Reboot & Flush etc.
+#select		cmd_stty		# TTY setings command
+select		cmd_tr			# Host port-through command
+select		cmd_devls		# Device list
+#
+select		cmd_shell		# Shell commands, vers, help, eval
+#
+#
+# Platform options
+#
+option		EV64240
+option		MIPS
+option		INET
+option		DISCOVERY		# GALILEO GT64240 Host Bridge
+
+select		mod_uart_ns16550	# Standard UART driver
+option		CONS_BAUD=B115200
+#option		CONS_BAUD=B9600
+select		ext2
+
+#select		mod_x86emu		# X86 emulation for VGA
+
+####################################################################
+# To support x86emu (such as ATI adaptor), as follows:
+select		mod_x86emu_int10
+#select         mod_framebuffer
+
+# TO support BLX framebuffer (sis6326 and tvia), as follows:
+#select		mod_x86emu_int10
+#select		mod_framebuffer
+#option		CONFIG_VGA_CARD_SIS6326
+####################################################################
+
+select		mod_vgacon
+option		NOPCINAMES		# Save some space for x86emu
+
+#
+# Functional options.
+#
+option		NOSNOOP			# Caches are no-snooping
+
+#
+# HAVE options. What tgt level provide
+#
+option		HAVE_TOD		# Time-Of-Day clock
+option		HAVE_NVENV		#  Platform has non-volatile env mem
+option		HAVE_LOGO		# Output splash logo
+option		USE_SUPERIO_UART
+option		USE_PIIX_RTC
+#option		GODSONEV2A
+option		LINUX_PC
+#option 	DEBUG_EMU_VGA
+#option		AUTOLOAD
+#option		CONFIG_PCI0_LARGE_MEM	
+#option		CONFIG_CACHE_64K_4WAY
+#option		CONFIG_GODSON_SECONDARY_CACHE
+#option 	CONFIG_VGA_CARD_SIS6326
+
+#
+# System Name and Target Name
+#
+option		SYSTYPE="\"ev64240\""
+option		TARGETNAME="\"EV64240\""
+
+#
+#  Now the Machine specification
+#
+mainbus0        at root
+localbus0	at mainbus0
+pcibr0		at mainbus0
+pcibr1		at mainbus0
+pci*		at pcibr?
+#ppb*		at pci? dev ? function ?	# PCI-PCI bridges
+#pci*		at ppb? bus ?
+
+#### USB
+#uhci*		at pci? dev ? function ?
+
+#### SCSI support
+#siop*		at pci? dev ? function ?	# Symbios/NCR 53c...
+#scsibus*	at siop?
+#sd*		at scsibus? target ? lun ? 
+#cd*		at scsibus? target ? lun ? 
+
+#### Networking Devices
+#gt0		at localbus? base 4
+#gt1		at localbus? base 5
+#gt2		at localbus? base 6
+# fxp normally only used for debugging (enable/disable both)
+fxp0            at pci? dev ? function ?        # Intel 82559 Device
+inphy*          at mii? phy ?                   # Intel 82555 PHYs
+
+#### IDE controllers
+pciide* 	at pci ? dev ? function ? flags 0x0000
+
+#### IDE hard drives
+wd*		at pciide? channel ? drive ? flags 0x0000
+
+#### Pseudo devices
+pseudo-device	loop	1	# network loopback
+
+
+

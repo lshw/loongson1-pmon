@@ -1,0 +1,48 @@
+The flush Command
+flush
+
+The flush command flushes the data and/or instruction cache.
+
+Format
+
+The format for the flush command is:
+
+flush [-di]
+
+where:
+
+-d	flushes the data cache only.
+
+-i	flushes the instruction cache only.
+
+Entering flush without any parameters flushes both caches.
+
+Functional Description
+
+The flush command performs a hard flush of the data and/or instruction 
+cache. All entries will be flushed, even those that had been locked.
+
+See Also
+Cache command
+
+Files
+r3000 flush
+
+lr33000/33020/33050 flush
+
+lr33300/33310 flush
+
+lr4001/4003/4101/4102 flush
+
+lr4010/4011 flush
+
+lr90084 flush
+
+r4300 flush
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

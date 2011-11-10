@@ -1,0 +1,265 @@
+The pmcc Command
+The pmcc Command
+
+NAME
+     pmcc - A host-resident C compiler driver for producing binaries 
+     to run under LSI Logic's PMON, or for a SerialICE debug environment.
+
+SYNOPSIS
+
+pmcc [ -options ] inputfile...
+
+DESCRIPTION
+     pmcc is a driver for your  MIPS  C  compiler  that  produces
+     binaries to run under LSI Logic's PMON. By default pmcc generates
+     three files; the binary (a.out), a downloadable ASCII file
+     (a.rec),  and  a  link  map (a.map). If the -o outfile option is
+     used  to  rename  the  output  file,  they  become outfile.out,
+     outfile.rec, and outfile.map.
+
+OPTIONS
+
+     -mips16
+	  
+	  Compile using MIPS16 (TinyRISC) instructions.
+
+     -v
+	  
+	  Be verbose. With this option switched on, pmcc displays the
+	  command lines it uses to invoke the compiler, assembler, and
+	  linker.
+
+     -xflash
+	  
+	  Create a downloadable image that will copy itself into flash.
+	  See also.
+
+     -board boardname
+	  
+	  Create a standalone (non PMON) image that contains a board
+	  support package for the specified board. To find out which
+	  boards are supported by this command, invoke pmcc with 
+	  "-board help".  See also.
+
+     -ssyms
+	  
+          Place the symbols in a separate file  named  a.sym  (or
+          outfile.sym).  This  is  useful  when debugging a PROM-
+          based application.
+
+     -syms
+	  
+          Do not include symbols  in  downloadable  output  file.
+          Important  when  producing a download file for non PMON
+          environments.
+
+     -srec
+	  
+          Generate Motorola S3  records  instead  of  fast-format
+          records.   Important when producing a download file for
+          non PMON environments. Also required  when  downloading
+          via a Terminal Emulator.
+
+     -fast
+	  
+          Generate fast-format records  instead  of  Motorola  S3
+          records.
+
+     -crt0
+	  
+          don't link in a startup file (crt0.o or crt1.o).
+
+     -prom
+	  
+          Concatinate the text and data sections in the  S-record
+          file. Forces S-record generation.
+	  See also.
+
+     -double
+	  
+          Use LSI-supplied double-precision math library.
+
+     -chksum
+	  
+          Don't include a checksum in  fast-format  records.  For
+          compatibilty with earlier versions of PMON.
+
+     -T adr
+	  
+          define the start address for the text section.
+
+     -D adr
+	  
+          define the start address for the data and bss sections.
+
+     -EL  
+	  
+	select little endian byte ordering.
+
+     -EB  
+	  
+	select big endian byte ordering.
+
+     -o name
+	  
+          define the output file name.
+
+     -Dname[=value]
+	  
+          define a preprocessor constant.
+
+     -L   
+	  
+	discard standard list of directories that are  searched
+          for libraries.
+
+     -Ldir
+	  
+          add dir to list of directories that  are  searched  for
+          libraries.
+
+     -I   
+	  
+	discard standard list of directories that are  searched
+          for include files.
+
+     -Idir
+	  
+          add dir to list of directories that  are  searched  for
+          include files.
+
+     -O[2-3]
+	  
+          select optimization level.
+
+     -G N
+          
+	  control which global variables will be accessed via the
+	  small data/bss section (using gp). All global variables
+	  that are equal or smaller in size (measured in bytes) than
+	  the value of N (default 8), will be placed in the small
+	  data/bss section. Specifying "-G 0" determines that no
+	  variables will be located in the small data/bss section,
+	  and that the compiler will never use the gp-relative
+	  address mode.
+
+     -g   
+	  
+	generate information for source-level debuggers.
+
+     -S   
+	  
+     	  stop after assembling.
+
+     -c   
+	  
+	stop after compiling.
+
+     -W[acl],arg1[,arg2...]
+	  
+          pass arguments directly to the assembler 'a',  compiler
+          'c', or linker 'l'.
+
+     -f-  
+	  
+	read extra arguments from stdin.
+
+     -ffilename
+	  
+          read extra arguments from filename.
+
+     -driver
+	  
+	  identify the S-record file as a SerialIce-1 driver.
+
+     -mips2
+	  
+	  enable support for the MIPS2 instruction set.
+
+     -lx
+	  
+	  search the -Ldir directory list for a file named libx.a.
+
+     -float
+	  
+	  instruct the compiler to not promote float to double during
+	  function calls. Not available on all toolsets.
+
+EXAMPLES
+     Compile a program for execution under PMON.
+
+	pmcc -o hello hello.c
+
+     Compile a program for making a PROM.
+
+	pmcc -crt0 -prom -syms -T 9fc00000 -D 80000100 -o ofile ifiles...
+
+	Compile a program for download and execution on a bdmr4101 
+	using SerialICE.
+
+	pmcc -board bdmr4101 -o ofile ifiles...
+
+	Compile a program for making proms for use on a bdmr4101.
+	Includes debug support via SerialICE.
+
+	pmcc -prom -board bdmr4101 -o ofile ifiles...
+
+	Convert a promable .rec file into a downloadable, self-updating
+	binary for downloading via PMON.
+
+	pmcc -xflash -o ofile  yyy.rec
+
+	Convert a promable .rec file into a downloadable, self-updating
+	binary for downloading via SerialICE on a bdmr4101.
+
+	pmcc -board bdmr4101 -xflash -o ofile yyy.rec
+
+SEE ALSO
+     gensrec(1) genfrec(1) 
+     
+FILES
+	This command is built from 
+	tools/misc.c, plus one of 
+	the following depending on toolset:
+     
+ 
+	tools/bso.c
+	
+	Tools from BSO/Tasking
+	
+	tools/mips.c
+	
+	Tools from MIPS Technology
+	
+	tools/algo.c
+	
+	Tools from Algorithmics
+	
+	tools/epi.c
+	
+	Tools from Embedded Performance
+	
+	tools/cygnus.c
+	
+	Tools from Cygnus Solutions (COFF)
+	
+	tools/cygelf.c
+	
+	Tools from Cygnus Solutions (ELF)
+	
+	tools/ghs.c
+	
+	Tools from Green Hills Software
+	
+
+It reads the dynamically-created file 
+include/defines.h,
+in order to determine the local defaults that were selected during the
+running of the Install program.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

@@ -1,0 +1,156 @@
+<html>
+
+<head>
+<title>The m Command</title>
+</head>
+
+<body>
+
+<h1>m</h1>
+<!--INDEX "m command" "modify memory" -->
+
+<p>The m command displays and modifies memory. </p>
+
+<h2>Format</h2>
+
+<dl>
+  <dd>The format for the m command is:
+    <pre>
+
+<font size="+1">m [-bhw] [adr [hexval|-s str]..]
+</font>
+</pre>
+    <p>where:</p>
+    <table width="95%">
+      <tr bgcolor="#CCCCCC"> 
+        <td width="59" align="right" valign="top">-b&nbsp; </td>
+        <td width="452" align="left" valign="top">&nbsp;is a flag signifying that 
+          byte accesses are to be used. </td>
+      </tr>
+      <tr>
+        <td width="59" align="right" valign="top">-h&nbsp; </td>
+        <td width="452" align="left" valign="top">&nbsp;is a flag signifying that 
+          halfword (16-bit) accesses are to be used. </td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td width="59" align="right" valign="top">-w&nbsp; </td>
+        <td width="452" align="left" valign="top">&nbsp;is a flag signifying that 
+          word (32-bit) accesses are to be used. </td>
+      </tr>
+      <tr>
+        <td width="59" align="right" valign="top">adr&nbsp; </td>
+        <td width="452" align="left" valign="top">&nbsp;is the memory address 
+          to display or modify without entering interactive mode. </td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td width="59" align="right" valign="top">hexval&nbsp; </td>
+        <td width="452" align="left" valign="top">&nbsp;is the value to insert 
+          at the specified address. </td>
+      </tr>
+      <tr>
+        <td width="59" align="right" valign="top">-s&nbsp; </td>
+        <td width="452" align="left" valign="top">&nbsp;is a flag signifying that 
+          the following parameter is a string value. </td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td width="59" align="right" valign="top">str&nbsp; </td>
+        <td width="452" align="left" valign="top">&nbsp;is a string value to copy 
+          to the specified address. </td>
+      </tr>
+      <tr>
+        <td width="59" align="right" valign="top"><cr></td>
+        <td width="452" align="left" valign="top">&nbsp;enters interactive mode. 
+        </td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td width="59" align="right" valign="top">=&nbsp; </td>
+        <td width="452" align="left" valign="top">&nbsp;in interactive mode, reads 
+          current address again. </td>
+      </tr>
+      <tr>
+        <td width="59" align="right" valign="top">^|-&nbsp; </td>
+        <td width="452" align="left" valign="top">&nbsp;in interactive mode, moves 
+          back one word. </td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td width="59" align="right" valign="top">. &lt;cr&gt;&nbsp;</td>
+        <td width="452" align="left" valign="top">&nbsp;exits interactive mode. 
+        </td>
+      </tr>
+    </table>
+    <p>Entering no values with this command causes the command to operate in interactive mode.</p>
+  </dd>
+</dl>
+
+<h2>Functional Description</h2>
+
+<dl> 
+  <dd>This command can display and then modify memory locations interactively. 
+    This command can also set memory to a specified value directly. </dd>
+</dl>
+<p>If invoked with one or more values following the address, the command is executed 
+  immediately, without entering the interactive mode.</p>
+<p>If the command is invoked without a value, the command enters the interactive 
+  memory mode. In interactive memory mode, the user enters a command at the cursor. 
+  The interactive memory mode first displays the address and its current value. 
+  Interactive memory mode then lets the user select one of the commands listed 
+  in the following table.</p>
+<p>If the -s option is specified, the <a href="mondef.htm">Monitor</a> displays 
+  the memory contents as an ASCII string. A multiple-word string may be specified 
+  by enclosing the multiple-word string in quotation marks.</p>
+<p>Examples illustrating the use of the m command follow.</p>
+<blockquote> 
+  <pre>
+
+PMON&gt; m a0020000&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Display memory at address in interactive mode.
+
+a0020000 00 _&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User can enter command at cursor (_).
+
+
+PMON&gt; m a0020000 1 2 3 4&nbsp;&nbsp;&nbsp;&nbsp;Set address 0xa0020000 to 1, address 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0xa0020001 to 2, etc., in noninteractive mode.
+
+
+PMON&gt; m a0020000&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Display memory at 0xa0020000.
+
+a0020000 01 CR 
+a0020001 02 CR 
+a0020002 03 CR 
+a0020003 04 .
+
+
+
+PMON&gt; m a0020000 22&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set address 0xa0020000 to 0x22.
+
+PMON&gt; m a0020000&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Display memory at 0xa0020000.
+
+a0020000 22 44 
+a0020001 00 <cr> 
+a0020002 00 55 
+a0020003 00 66
+a0020004 00 ^ 
+a0020003 66 <cr>
+a0020004 00 .
+
+
+PMON&gt; m 80020000 -s even&nbsp;&nbsp;&nbsp;&nbsp;Set memory starting at 0x80020000 to 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the string &quot;even.&quot;
+
+	
+PMON&gt; m 80030100 -s &quot;PMON 2000&quot;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set memory starting at 0x80030100 to 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the multiple-word string &quot;PMON 2000.&quot;
+
+</pre>
+</blockquote>
+<h2>See Also</h2>
+
+<dl>
+  <dd><a href="c_fill.htm">fill command</a>, <a href="c_l.htm">l command</a>, <a href="c_d.htm">d command</a>, and <a href="c_dump.htm">dump command</a>. </dd>
+</dl>
+
+<hr>
+<p> <b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a> </p>
+<p><!--$Id: c_m.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --></p>
+</body>
+</html>

@@ -1,0 +1,112 @@
+BDMR4101
+BDMR4101
+
+Description
+
+The BDMR4101 is the evaluation board for the 4101 TinyRISC Processor. It
+comes with it's own special power supply.
+
+Memory Map
+
+	RAM	   a000.0000 1MB
+		   a100.0000 8MB Module (optional)
+	ROM	   bfc0.0000 4 flash sockets U5,U6,U7,U8
+	DUART	   be00.0000 2681
+	Ethernet   Sonic 10BaseT only
+
+Interrupts
+
+	int0	2681
+	int1	Sonic
+	int2	SerialICE Port + external pin if CFG:CPC0EN=1
+	int3	external pin if CFG:CPC1EN=1
+	int4	external pin if CFG:CPC2EN=1
+	int5	external pin if CFG:CPC3EN=1
+
+External Connections
+
+	Power - 5V DC via coaxial power connector
+	RS232
+		J28 ChanA (PMON console)
+		J27 ChanB
+	SerialICE Port
+
+Clocks
+
+U52Clock for CPU.
+U53Clock for SerialICE Port. 
+1.8432MHz=115200, 20MHz=1250000.
+
+Jumpers
+
+Jumper In		Jumper Out
+
+J1	Little Endian		Big Endian
+
+J2	Wburstn		-
+
+J3	No Dwrap		Dwrap
+
+J4	No Iwrap		Iwrap
+
+J5-J6	Sram wait states
+	
+	0 ws (J6=In J5=In)
+	1 ws (J6=In J5=Out)
+	2 ws (J6=Out J5=In)
+	3 ws (J6=Out J5=Out)
+	
+
+J7	BCLK=PCLK		BCLK=0.5*PCLK
+
+J8	Arb_mode1		Arb_mode2
+
+J9,J11	Icache refill size
+	
+	1 word (J9=In J11=In)
+	2 word (J9=In J11=Out)
+	4 word (J9=Out J11=In)
+	8 word (J9=Out J11=Out)
+	
+
+J10,J12	Default		-
+
+J13,J15	Dcache refill size
+	
+	1 word (J13=In J15=In)
+	2 word (J13=In J15=Out)
+	4 word (J13=Out J15=In)
+	8 word (J13=Out J15=Out)
+	
+
+J14,J16	Default		-
+
+J17-J18	on board 3.3v		external 3.3v
+
+J19	Default Position 1-2		-
+
+J20		-	Sonic Status
+
+J251-2 SerialICE Port Clock comes from oscillator (U53)
+2-3 SerialICE Port Clock comes from SerialICE Port connector.
+A board will always transmit it's osc clock to the connector.
+It is swapped with the clock input on the other board in the cable.
+
+J26in - J27 (tty1 connector) acts as tty1. SerialICE uses 
+SerialICE Port connector.
+
+out - J27 is connected to the SerialICE Port through level translators
+and tty1 is unavailable. This requires that the onboard osc be
+selected and installed.
+
+IceKernel
+
+  »  For the wiggler, J25 1-2, J26 in.
+  »  For tty1, J25 1-2, J26 out.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

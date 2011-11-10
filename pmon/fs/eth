@@ -1,0 +1,56 @@
+entry:name=.,inode=97921,rec_len=12,name_len=1,file_type=2
+entry:name=..,inode=2,rec_len=12,name_len=2,file_type=2
+entry:name=kernel.h,inode=97922,rec_len=16,name_len=8,file_type=1
+entry:name=out,inode=98217,rec_len=16,name_len=3,file_type=1
+entry:name=vmlinux.nonfs,inode=98205,rec_len=24,name_len=13,file_type=1
+entry:name=gs2.v3,inode=98206,rec_len=20,name_len=6,file_type=1
+entry:name=vmlinux.ok,inode=98207,rec_len=20,name_len=10,file_type=1
+entry:name=vmlinux.ok.bin,inode=98208,rec_len=24,name_len=14,file_type=1
+entry:name=vmlinux.2,inode=98204,rec_len=20,name_len=9,file_type=1
+entry:name=core,inode=98224,rec_len=12,name_len=4,file_type=1
+entry:name=gs2.v3.bin,inode=98209,rec_len=20,name_len=10,file_type=1
+entry:name=vmlinux.1,inode=98210,rec_len=32,name_len=9,file_type=1
+entry:name=vmlinux.123,inode=98215,rec_len=20,name_len=11,file_type=1
+entry:name=vmlinux.123.bin,inode=98216,rec_len=24,name_len=15,file_type=1
+entry:name=vmlinux.1.bin,inode=98211,rec_len=24,name_len=13,file_type=1
+entry:name=vmlinux.2.bin,inode=98212,rec_len=40,name_len=13,file_type=1
+entry:name=rm7k.v3,inode=98220,rec_len=16,name_len=7,file_type=1
+entry:name=vmlinux.3,inode=98213,rec_len=20,name_len=9,file_type=1
+entry:name=rm7k.v3.bin,inode=98221,rec_len=20,name_len=11,file_type=1
+entry:name=vmlinux.3.bin,inode=98214,rec_len=24,name_len=13,file_type=1
+entry:name=vmlinux.4,inode=98218,rec_len=20,name_len=9,file_type=1
+entry:name=vmlinux.4.bin,inode=98219,rec_len=24,name_len=13,file_type=1
+entry:name=vmlinux.5,inode=98222,rec_len=20,name_len=9,file_type=1
+entry:name=vmlinux.5.bin,inode=98223,rec_len=24,name_len=13,file_type=1
+entry:name=vmlinux.uncached,inode=98225,rec_len=24,name_len=16,file_type=1
+entry:name=vmlinux.uncached.bin,inode=98226,rec_len=28,name_len=20,file_type=1
+entry:name=vmlinux.c.debug,inode=98227,rec_len=24,name_len=15,file_type=1
+entry:name=vmlinux.c.debug.bin,inode=98228,rec_len=28,name_len=19,file_type=1
+entry:name=vmlinux.7,inode=98229,rec_len=20,name_len=9,file_type=1
+entry:name=vmlinux.7.bin,inode=98230,rec_len=24,name_len=13,file_type=1
+entry:name=vmlinux.eth,inode=930460,rec_len=20,name_len=11,file_type=1
+ext2_get_inode:ino=930460,block group=57,block=1,desc=57
+ext2_group_desc -> bg_free_blocks_count=27444
+ext2_group_desc -> bg_free_inodes_count=16101
+ext2_group_desc -> bg_inode_table=1867778
+ext2_group_desc -> bg_block_bitmap=1867776
+ext2_group_desc -> bg_inode_bitmap=1867777
+ext2_get_inode: offset is 3456,block is 1867784
+inode->i_block[0]=0,the inode->i_size=0
+Loading file: /dev/fs/ext2 the pos is 0,the size is 1
+the start_block is 0x,the end_block is 12x,the remain_count is 0x
+the addr_abosolute_start is 0,the START_PARTION is 7e00position is 0,size is 1
+The remain size is 1
+The addr_start is 0,RAW_BLOCK_SIZE is 1000,start_sec is 3f
+   0
+the pos is 1,the size is 33
+the start_block is 0x,the end_block is 12x,the remain_count is 0x
+the addr_abosolute_start is 1,the START_PARTION is 7e00position is 1,size is 33
+The remain size is 33
+The addr_start is 0,RAW_BLOCK_SIZE is 1000,start_sec is 3f
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0
+
+/dev/fs/ext2: boot failed
+PMON>

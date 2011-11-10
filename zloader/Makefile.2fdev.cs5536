@@ -1,0 +1,7 @@
+TARGET=Bonito2fdev
+TARGETEL=Bonito.2fdev.cs5536
+export START=start_cs5536.o
+MEMSIZE=128
+ZLOADER_OPTIONS=-mips3
+
+include Makefile.inc

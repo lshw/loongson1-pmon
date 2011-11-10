@@ -1,0 +1,106 @@
+		<title>Windows95 Using Hyperterminal</title>
+
+		
+<h1 align="center">Windows95/98/NT Using Hyperterminal</h1>
+
+
+
+<!--INDEX Hyperterminal "Send File with Windows95" -->
+
+
+
+<h2>Setup</h2><dl><dd>
+
+
+
+<ul>
+
+<li>Select &quot;Start-&gt;Programs-&gt;Accessories-&gt;Hyperterminal&quot;<p>
+
+<li>Double Click on &quot;Hypertrm&quot;<p>
+
+<li>Enter name eg. &quot;direct1&quot;, then &quot;OK&quot;<p>
+
+<li>Set &quot;Connect using:&quot; to &quot;Direct to Com1&quot;, then &quot;OK&quot;
+
+	<ul>
+
+	<li>Set &quot;Bits per second:&quot; to &quot;9600&quot;
+
+	<li>Set &quot;Data bits:&quot; to &quot;8&quot;
+
+	<li>Set &quot;Parity:&quot; to &quot;None&quot;
+
+	<li>Set &quot;Stop bits:&quot; to &quot;1&quot;
+
+	<li>Set &quot;Flow control:&quot; to &quot;none&quot;
+
+	<li>Select &quot;OK&quot;
+
+	</ul><p>
+
+</ul>
+
+
+
+Now press reset on the <a href="mondef.htm">Monitor</a> board. If you
+
+don't see a banner message from PMON/IMON you might need a <a href="rs232.htm">special cable</a>.<p>
+
+
+
+If you get dropped characters when displaying some commands (eg &quot;r&quot;),
+
+you probably need to enable the 16550 buffer. Select
+
+File-&gt;Properties-&gt;Configure-&gt;Advanced and make sure that the FIFO
+
+buffers are enabled. Note that you must Disconnect and Connect the Call
+
+before this change will take effect.<p>
+
+
+
+If the command-line editing characters ^A, ^B etc. don't work, change
+
+Propeties-&gt;Settings to vt100.<p>
+
+
+
+</dl><h2>Sending Files</h2><dl><dd>
+
+
+
+To send a text file to the target, perform the following steps:<p>
+
+
+
+<ul>
+
+<li><tt>PMON&gt; load</tt><p>
+
+<li>Hyperterminal
+
+	<ul>
+
+	<li>Select &quot;Transfer-&gt;Send Text File&quot;
+
+	<li>Use Browser to select directory
+
+	<li>Set &quot;Files of type:&quot; to &quot;All files&quot;
+
+	<li>Select the .rec file, then &quot;Open&quot;
+
+	</ul><p>
+
+</ul>
+
+
+
+</dl><p><hr>
+
+<p><b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a></p>
+<p><!--$Id: htermhlp.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --> </p>
+<p>
+

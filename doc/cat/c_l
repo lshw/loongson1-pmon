@@ -1,0 +1,101 @@
+The l Command
+l
+
+
+
+The l command disassembles instructions from memory.
+
+Format
+
+The format for the l command is:
+
+
+l [-bctT] [adr [cnt]]
+
+
+where:
+
+
+-b	lists only branches.
+
+-c	lists only calls.
+
+-t	lists the trace buffer.
+
+-T	assume TinyRISC (MIPS16) instructions.
+
+adr	is the base address from which to disassemble instructions.
+
+cnt	is the number of lines to disassemble.
+
+
+When invoking this command with no options, disassembly starts at the 
+address in the EPC register and is output to the more command.
+
+
+Functional Description
+
+The l command disassembles the memory contents, starting either at the
+EPC register's current value or at the specified address. The output of
+this command is passed to the more command, letting the user view one
+screenful of disassembled output at a time. Optionally, the user can
+specify a count value, which limits the number of disassembled lines to
+that number.  
+
+The regstyle Variable 
+
+The regstyle environment variable determines whether the Monitor displays hardware or software register
+names. Hardware register names are simply $0 through $31. Software
+registers are defined by the MIPS software conventions. Set regstyle to
+"hw" for hardware register names. Set regstyle to "sw" for software
+register names.  
+
+Examples illustrating the use of the l command follow.
+
+
+PMON> set regstyle sw 			Normally the default. 
+
+PMON> l 9fc00240
+Pmon+0x240 3c09a07f lui 	t1,0xa07f 
+Pmon+0x244 3c08003c lui 	t0,0x3c
+Pmon+0x248 3529ff20 ori 	t1,t1,0xff20 
+Pmon+0x24c 3508c62f ori 	t0,t0,0xc62f 
+Pmon+0x250 ad280000 sw 		t0,0(t1) 
+Pmon+0x254 3c09a07f lui 	t1,0xa07f 
+Pmon+0x258 3529ff10 ori 	t1,t1,0xff10 
+Pmon+0x25c 24080025 addiu 	t0,zero,0x25 
+Pmon+0x260 ad280000 sw 		t0,0(t1) 
+Pmon+0x264 3c020040 lui 	v0,0x40 
+
+PMON> set regstyle hw 
+PMON> l 9fc00264 B
+Pmon+0x264 3c020040 lui 	$2,0x40 
+Pmon+0x268 40826000 mtc0 	$2,$12 
+Pmon+0x26c 40806800 mtc0 	$0,$13 
+Pmon+0x270 3c1d8001 lui 	$29,0x8001
+Pmon+0x274 27bd8b40 addiu 	$29,$29,0x8b40 
+Pmon+0x278 3c01a000 lui 	$1,0xa000 
+Pmon+0x27c 03a1e825 or 		$29,$29,$1
+Pmon+0x280 0ff005bc jal 	flush_cache 
+Pmon+0x284 24040000 addiu 	$4,$0,0x0 
+Pmon+0x288 0ff005bc jal 	flush_cache
+Pmon+0x28c 24040001 addiu 	$4,$0,0x1
+
+
+Files
+The l command is located in mon/dis.c.
+
+See Also
+d command,
+m command,
+dump command,
+more and 
+rdsrec commands.
+
+
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+
+

@@ -1,0 +1,164 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.72 [en] (WinNT; U) [Netscape]">
+   <title>The r Command</title>
+</head>
+<body>
+
+<h1>
+r</h1>
+<!--INDEX "r command" "display registers" "pseudo registers" -->
+<p>The r command sets or displays register values.
+<h2>
+Format</h2>
+
+<p> The format for the r command is:</p>
+<pre>
+<font size="+1">&nbsp;&nbsp;r [reg|* [val|field val]]
+</font>
+where:
+</pre>
+<table width="95%" align="left">
+  <tr bgcolor="#CCCCCC"> 
+    <td valign=TOP width="91" nowrap align="right">reg&nbsp;&nbsp;</td>
+    <td width="740" align="left" valign="top">is the name of the register or registers 
+      (specified by wildcard characters) to display or modify.&nbsp;</td>
+  </tr>
+  <tr> 
+    <td valign=TOP width="91" nowrap align="right">val&nbsp;&nbsp;</td>
+    <td width="740" align="left" valign="top">is the value to which the specified 
+      register or registers should be modified.&nbsp;</td>
+  </tr>
+  <tr bgcolor="#CCCCCC"> 
+    <td valign=TOP width="91" nowrap align="right">field val&nbsp;&nbsp;</td>
+    <td width="740" align="left" valign="top">is the value to which the specified 
+      field in the specified register should be modified.&nbsp;</td>
+  </tr>
+  <tr> 
+    <td valign=TOP width="91" nowrap align="right">*&nbsp;&nbsp;&nbsp;</td>
+    <td width="740" align="left" valign="top">displays the contents of all registers 
+      except floating-point registers.&nbsp;</td>
+  </tr>
+  <tr bgcolor="#CCCCCC"> 
+    <td valign=TOP width="91" nowrap align="right">f*&nbsp;&nbsp;&nbsp;</td>
+    <td width="740" align="left" valign="top">displays the contents of all floating-point 
+      registers.&nbsp;</td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p> Invoking the r command without any parameters or arguments displays a list 
+  of all the general-purpose registers.</p>
+<p>&nbsp;</p>
+<h2>
+Functional Description</h2>
+
+<dl> 
+  <dd> <font color="#000000">The r command sets or displays register values. </font></dd>
+  <dt>&nbsp;</dt>
+</dl>
+<p><font color="#000000">The character and word wildcards, &quot;*&quot; and &quot;?&quot;, 
+  can be used in the register name. The '?' character matches any single character, 
+  while the '*' character matches any number of any characters. This command accepts 
+  both hardware and software names. Examples illustrating the use of the r command 
+  follow.</font></p>
+<dl>
+  <dl><font color="#FF0000">&nbsp; </font> 
+    <table align="left">
+      <tr bgcolor="#CCCCCC"> 
+        <td WIDTH="132"><tt>r&nbsp;</tt></td>
+        <td width="398">Display all General-purpose registers.&nbsp;</td>
+      </tr>
+      <tr> 
+        <td width="132" height="22"><tt>r *&nbsp;</tt></td>
+        <td width="398" height="22">Display all register values.&nbsp;</td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td width="132"><tt>r 08&nbsp;</tt></td>
+        <td width="398">Display r08</td>
+      </tr>
+      <tr> 
+        <td width="132"><tt>r r*&nbsp;</tt></td>
+        <td width="398">Display r00 through r31.&nbsp;</td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td width="132"><tt><font color="#000000">r f*&nbsp;</font></tt></td>
+        <td width="398"><font color="#000000">Display all fpu registerr.&nbsp;</font></td>
+      </tr>
+      <tr> 
+        <td width="132"><font color="#000000"><tt>r f17&nbsp;</tt></font></td>
+        <td width="398"><font color="#000000">Display fpu register 17</font></td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td width="132"><font color="#000000"><tt>r 04 45&nbsp;</tt></font></td>
+        <td width="398"><font color="#000000">Set register 04 to 00000045.&nbsp;</font></td>
+      </tr>
+    </table>
+  </dl>
+</dl>
+
+<h2>&nbsp; </h2>
+<h2>&nbsp;</h2>
+<h2>&nbsp;</h2>
+<br>
+<h2>Examples</h2>
+
+<dl> 
+  <dd> <font color="#000000">Display all regular registers (PowerPC example)</font></dd>
+  <pre>
+PMON> r
+
+     r00-07  00000000 03dfffc0 00000000 00000000 00000000 00000000 00000000 0000000
+     r08-15  00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+     r16-23  00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+     r24-31  00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+</pre>
+  <font color="#000000">Display all registers. Note that the actual registers 
+  that are displayed by the "<tt>r *</tt>" command depends on what type of processor 
+  you are using. This display was generated using a PowerPC.</font> 
+  <pre>
+PMON> r *
+
+     r00-07  00000000 03dfffc0 00000000 00000000 00000000 00000000 00000000 00000000<br>     r08-15  00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+     r16-23  00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+     r24-31  00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+
+     f00-03  0000000000000000 0000000000000000 0000000000000000 0000000000000000
+     f04-07  0000000000000000 0000000000000000 0000000000000000 0000000000000000
+     f08-11  0000000000000000 0000000000000000 0000000000000000 0000000000000000
+     f12-15  0000000000000000 0000000000000000 0000000000000000 0000000000000000
+     f16-19  0000000000000000 0000000000000000 0000000000000000 0000000000000000
+     f20-23  0000000000000000 0000000000000000 0000000000000000 0000000000000000
+     f24-27  0000000000000000 0000000000000000 0000000000000000 0000000000000000
+     f28-31  0000000000000000 0000000000000000 0000000000000000 0000000000000000
+     fsr = 0000000000000000
+     cpc = 00100000, lr = 00000000, ctr = 00000000, sr = 00003032
+PMON>
+
+<font color="#000000">Set the register 'r02' to a value of 0x00000100</font> 
+  </pre>
+  <pre>
+<font color="#000000">PMON> r 02 00000100<br>PMON&gt;</font>
+
+</pre>
+  <dd>&nbsp; </dd>
+</dl>
+
+<h2>
+See Also</h2>
+
+<dl>
+<dd>
+<a href="c_l.htm">l command</a> for disassembling instructions from memory.</dd>
+</dl>
+
+<hr>
+<p><b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a> 
+<p><!--$Id: c_r.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $-->
+</body>
+</html>

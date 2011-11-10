@@ -1,0 +1,69 @@
+<html>
+
+<head>
+<title>The t Command</title>
+</head>
+
+<body>
+
+<h1>t / to</h1>
+<!--INDEX "t command" "to command" "single step" "trace command"  -->
+
+<p>The t command performs a trace (single step) operation.</p>
+
+<h2>Format</h2>
+
+<p>The format for this command is:</p>
+<blockquote>
+  <pre><font size="+1"> t [-vbci] 
+   or:<br>to [-vbci]</font> </pre>
+</blockquote>
+<p>where:</p>
+<dl>
+  <table width="95%">
+    <tr bgcolor="#CCCCCC"> 
+      <td width="32" align="right" valign="top">-v&nbsp;&nbsp; </td>
+      <td width="224" align="left" valign="top">lists each step (verbose). </td>
+    </tr>
+    <tr> 
+      <td width="32" align="right" valign="top">-b &nbsp;&nbsp;</td>
+      <td width="224" align="left" valign="top">captures only branches. </td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td width="32" align="right" valign="top">-c &nbsp;&nbsp;</td>
+      <td width="224" align="left" valign="top">captures only funtion calls. </td>
+    </tr>
+    <tr> 
+      <td width="32" align="right" valign="top">-i &nbsp;&nbsp;</td>
+      <td width="224" align="left" valign="top">stops on invalid program counter. 
+      </td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td width="32" align="right" valign="top">cnt &nbsp;&nbsp;</td>
+      <td width="224" align="left" valign="top">traces cnt instructions and stops. 
+      </td>
+    </tr>
+  </table>
+</dl>
+
+<h2>Functional Description</h2>
+
+<dl> 
+  <dd>The t command executes the instruction addressed by the current value of 
+    the <em>user PC</em> register. </dd>
+  <dt>&nbsp;</dt>
+  <dt>The to command is similar to the t command, except that the to command treats 
+    an entire procedure as a single step.The command or commands that are executed 
+    on completion of the single step is determined by the value of the environment 
+    variable <b><a href="c_set.htm#brkcmd">brkcmd</a></b>.</dt>
+</dl>
+<h2>See Also:</h2>
+<blockquote>
+  <p><a href="c_set.htm">set / unset</a> command.</p>
+</blockquote>
+<hr>
+<p> <b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a> </p>
+<p><!--$Id: c_t.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --></p>
+</body>
+</html>

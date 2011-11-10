@@ -1,0 +1,16 @@
+	Sending a File Using a Terminal Emulator
+	Sending a File Using a Terminal Emulator
+
+You must use Motorola S-records when using the
+"send File" feature of your Terminal Emulator.
+In addition the Monitor's environment variable 'hostport' must be set to 'tty0'. In some situations it might be
+necessary to use a flow-control protocol in
+order to guarantee that your Host does not send the data faster than
+the Target is able to accept it.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

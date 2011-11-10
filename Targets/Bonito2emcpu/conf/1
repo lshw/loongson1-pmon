@@ -1,0 +1,558 @@
+execve("../../../tools/pmoncfg/pmoncfg", ["../../../tools/pmoncfg/pmoncfg", "Bonito"], [/* 40 vars */]) = 0
+uname({sys="Linux", node="heart", ...}) = 0
+brk(0)                                  = 0x80588fc
+open("/etc/ld.so.preload", O_RDONLY)    = -1 ENOENT (No such file or directory)
+open("/etc/ld.so.cache", O_RDONLY)      = 3
+fstat64(3, {st_mode=S_IFREG|0644, st_size=95287, ...}) = 0
+old_mmap(NULL, 95287, PROT_READ, MAP_PRIVATE, 3, 0) = 0x40000000
+close(3)                                = 0
+open("/lib/tls/libc.so.6", O_RDONLY)    = 3
+read(3, "\177ELF\1\1\1\0\0\0\0\0\0\0\0\0\3\0\3\0\1\0\0\0@h\260H"..., 512) = 512
+fstat64(3, {st_mode=S_IFREG|0755, st_size=1575400, ...}) = 0
+old_mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40018000
+old_mmap(0x48af1000, 1279788, PROT_READ|PROT_EXEC, MAP_PRIVATE, 3, 0) = 0x48af1000
+old_mmap(0x48c24000, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED, 3, 0x132000) = 0x48c24000
+old_mmap(0x48c27000, 10028, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x48c27000
+close(3)                                = 0
+set_thread_area({entry_number:-1 -> 6, base_addr:0x40018760, limit:1048575, seg_32bit:1, contents:0, read_exec_only:0, limit_in_pages:1, seg_not_present:0, useable:1}) = 0
+munmap(0x40000000, 95287)               = 0
+brk(0)                                  = 0x80588fc
+brk(0x80798fc)                          = 0x80798fc
+brk(0)                                  = 0x80798fc
+brk(0x807a000)                          = 0x807a000
+open("Bonito", O_RDONLY)                = 3
+ioctl(3, TCGETS, 0xbffff138)            = -1 ENOTTY (Inappropriate ioctl for device)
+fstat64(3, {st_mode=S_IFREG|0644, st_size=2066, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40000000
+read(3, "# $Id: Bonito,v 1.4 2004/05/17 1"..., 8192) = 2066
+read(3, "", 4096)                       = 0
+stat64("../compile/Bonito", {st_mode=S_IFDIR|0755, st_size=4096, ...}) = 0
+chdir("../compile/Bonito")              = 0
+stat64("../../../..", {st_mode=S_IFDIR|0755, st_size=4096, ...}) = 0
+open("../../../../Targets/Bonito/conf/files.Bonito", O_RDONLY) = 4
+ioctl(4, TCGETS, 0xbfffe108)            = -1 ENOTTY (Inappropriate ioctl for device)
+open("/dev/null", O_RDONLY)             = 5
+ioctl(5, TCGETS, 0xbfffe108)            = -1 ENOTTY (Inappropriate ioctl for device)
+open("../../../../conf/files", O_RDONLY) = 6
+ioctl(6, TCGETS, 0xbfffe108)            = -1 ENOTTY (Inappropriate ioctl for device)
+fstat64(6, {st_mode=S_IFREG|0644, st_size=10780, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(6, "#\t$Id: files,v 1.2 2003/12/09 15"..., 8192) = 8192
+read(6, "\t\tmod_x86emu_int10\tneeds-flag\nfi"..., 8192) = 2588
+read(6, "", 4096)                       = 0
+read(6, "", 8192)                       = 0
+ioctl(6, TCGETS, 0xbffff0f8)            = -1 ENOTTY (Inappropriate ioctl for device)
+close(6)                                = 0
+munmap(0x40001000, 4096)                = 0
+fstat64(5, {st_mode=S_IFCHR|0666, st_rdev=makedev(1, 3), ...}) = 0
+ioctl(5, TCGETS, 0xbffff02c)            = -1 ENOTTY (Inappropriate ioctl for device)
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(5, "", 8192)                       = 0
+ioctl(5, TCGETS, 0xbffff0f8)            = -1 ENOTTY (Inappropriate ioctl for device)
+close(5)                                = 0
+munmap(0x40001000, 4096)                = 0
+fstat64(4, {st_mode=S_IFREG|0644, st_size=718, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "# $Id: files.Bonito\n#\n# Bonito T"..., 8192) = 718
+read(4, "", 4096)                       = 0
+open("../../../../sys/dev/mii/files.mii", O_RDONLY) = 5
+ioctl(5, TCGETS, 0xbffff128)            = -1 ENOTTY (Inappropriate ioctl for device)
+fstat64(5, {st_mode=S_IFREG|0644, st_size=243, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40002000
+read(5, "\nfile    sys/dev/mii/mii.c\t\t\tmii"..., 8192) = 243
+read(5, "", 4096)                       = 0
+read(5, "", 8192)                       = 0
+ioctl(5, TCGETS, 0xbffff0f8)            = -1 ENOTTY (Inappropriate ioctl for device)
+close(5)                                = 0
+munmap(0x40002000, 4096)                = 0
+open("../../../../sys/dev/pci/files.pci", O_RDONLY) = 5
+ioctl(5, TCGETS, 0xbffff128)            = -1 ENOTTY (Inappropriate ioctl for device)
+fstat64(5, {st_mode=S_IFREG|0644, st_size=1676, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40002000
+read(5, "#\t$OpenBSD: files.pci,v 1.108 20"..., 8192) = 1676
+read(5, "", 4096)                       = 0
+read(5, "", 8192)                       = 0
+ioctl(5, TCGETS, 0xbffff0f8)            = -1 ENOTTY (Inappropriate ioctl for device)
+close(5)                                = 0
+munmap(0x40002000, 4096)                = 0
+open("../../../../sys/dev/ata/files.ata", O_RDONLY) = 5
+ioctl(5, TCGETS, 0xbffff128)            = -1 ENOTTY (Inappropriate ioctl for device)
+fstat64(5, {st_mode=S_IFREG|0644, st_size=521, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40002000
+read(5, "#\t$OpenBSD: files.ata,v 1.1 1999"..., 8192) = 521
+read(5, "", 4096)                       = 0
+read(5, "", 8192)                       = 0
+ioctl(5, TCGETS, 0xbffff0f8)            = -1 ENOTTY (Inappropriate ioctl for device)
+close(5)                                = 0
+munmap(0x40002000, 4096)                = 0
+open("../../../../sys/scsi/files.scsi", O_RDONLY) = 5
+ioctl(5, TCGETS, 0xbffff128)            = -1 ENOTTY (Inappropriate ioctl for device)
+fstat64(5, {st_mode=S_IFREG|0644, st_size=522, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40002000
+read(5, "#\t$Id: files.scsi,v 1.1.1.1 2003"..., 8192) = 522
+read(5, "", 4096)                       = 0
+read(5, "", 8192)                       = 0
+ioctl(5, TCGETS, 0xbffff0f8)            = -1 ENOTTY (Inappropriate ioctl for device)
+close(5)                                = 0
+munmap(0x40002000, 4096)                = 0
+open("../../../../pmon/custom/files.custom", O_RDONLY) = 5
+ioctl(5, TCGETS, 0xbffff128)            = -1 ENOTTY (Inappropriate ioctl for device)
+fstat64(5, {st_mode=S_IFREG|0644, st_size=130, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40002000
+read(5, "#\n# Custom specific files\n#\nfile"..., 8192) = 130
+read(5, "", 4096)                       = 0
+open("../../../../pmon/custom/IPU/files.IPU", O_RDONLY) = 6
+ioctl(6, TCGETS, 0xbffff128)            = -1 ENOTTY (Inappropriate ioctl for device)
+fstat64(6, {st_mode=S_IFREG|0644, st_size=115, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40003000
+read(6, "#\n# IPU\'s Custom specific files\n"..., 8192) = 115
+read(6, "", 4096)                       = 0
+read(6, "", 8192)                       = 0
+ioctl(6, TCGETS, 0xbffff0f8)            = -1 ENOTTY (Inappropriate ioctl for device)
+close(6)                                = 0
+munmap(0x40003000, 4096)                = 0
+read(5, "", 8192)                       = 0
+ioctl(5, TCGETS, 0xbffff0f8)            = -1 ENOTTY (Inappropriate ioctl for device)
+close(5)                                = 0
+munmap(0x40002000, 4096)                = 0
+read(4, "", 8192)                       = 0
+ioctl(4, TCGETS, 0xbffff0f8)            = -1 ENOTTY (Inappropriate ioctl for device)
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("../../../../conf/GENERIC_ALL", O_RDONLY) = 4
+ioctl(4, TCGETS, 0xbffff128)            = -1 ENOTTY (Inappropriate ioctl for device)
+fstat64(4, {st_mode=S_IFREG|0644, st_size=2264, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#\n#\tGENERIC definition for a ful"..., 8192) = 2264
+read(4, "", 4096)                       = 0
+read(4, "", 8192)                       = 0
+ioctl(4, TCGETS, 0xbffff0f8)            = -1 ENOTTY (Inappropriate ioctl for device)
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+read(3, "", 8192)                       = 0
+ioctl(3, TCGETS, 0xbffff0f8)            = -1 ENOTTY (Inappropriate ioctl for device)
+unlink("target")                        = 0
+symlink("../../../../Targets/Bonito/include", "target") = 0
+unlink("machine")                       = 0
+symlink("../../../../sys/arch/mips/include", "machine") = 0
+open("../../../../Targets/Bonito/conf/Makefile.Bonito", O_RDONLY) = 4
+open("Makefile", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 5
+fstat64(5, {st_mode=S_IFREG|0644, st_size=0, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+fstat64(4, {st_mode=S_IFREG|0644, st_size=5312, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40002000
+read(4, "#\t$Id: Makefile.Bonito,v 1.2 200"..., 4096) = 4096
+write(5, "IDENT=-DBONITOEL -DMIPS -DINET -"..., 4096) = 4096
+write(5, "elper_mem.o xf86int10.o xf86x86e"..., 4096) = 4096
+read(4, "P}\n\tsh $S/conf/newvers.sh\n\t${CC}"..., 4096) = 1216
+write(5, "M_LD_TAIL=\t@${SIZE} $@; chmod 75"..., 4096) = 4096
+write(5, "ocket.o: $S/sys/kern/sys_socket."..., 4096) = 4096
+read(4, "", 4096)                       = 0
+write(5, "c\n\t${NORMAL_C}\n\npci_map.o: $S/sy"..., 386) = 386
+close(5)                                = 0
+munmap(0x40001000, 4096)                = 0
+close(4)                                = 0
+munmap(0x40002000, 4096)                = 0
+open("mainbus.h", O_RDONLY)             = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=19, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMAINBUS\t1\n", 4096) = 19
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("pcibr.h", O_RDONLY)               = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=17, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNPCIBR\t1\n", 4096)   = 17
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("uhci.h", O_RDONLY)                = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=16, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNUHCI\t0\n", 4096)    = 16
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("bridge.h", O_RDONLY)              = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=18, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNBRIDGE\t0\n", 4096)  = 18
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("bpfilter.h", O_RDONLY)            = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=20, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNBPFILTER\t0\n", 4096) = 20
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("ether.h", O_RDONLY)               = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=17, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNETHER\t1\n", 4096)   = 17
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("tcp.h", O_RDONLY)                 = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=15, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNTCP\t0\n", 4096)     = 15
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("tcp.h", O_RDONLY)                 = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=15, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNTCP\t0\n", 4096)     = 15
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("tcp.h", O_RDONLY)                 = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=15, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNTCP\t0\n", 4096)     = 15
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("tcp.h", O_RDONLY)                 = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=15, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNTCP\t0\n", 4096)     = 15
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("tcp.h", O_RDONLY)                 = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=15, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNTCP\t0\n", 4096)     = 15
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("tcp.h", O_RDONLY)                 = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=15, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNTCP\t0\n", 4096)     = 15
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("cmd_hist.h", O_RDONLY)            = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=20, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNCMD_HIST\t1\n", 4096) = 20
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_load.h", O_RDONLY)            = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=89, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_LOAD\t0\n#define\tNMOD"..., 4096) = 89
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("cmd_env.h", O_RDONLY)             = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=38, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNCMD_ENV\t1\n#define\tNCMD_"..., 4096) = 38
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_symbols.h", O_RDONLY)         = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=42, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_SYMBOLS\t1\n#define\tN"..., 4096) = 42
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_tod.h", O_RDONLY)             = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=59, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_TOD\t0\n#define\tNHAVE"..., 4096) = 59
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("cmd_shell.h", O_RDONLY)           = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=81, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNCMD_SHELL\t1\n#define\tNCM"..., 4096) = 81
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("logfile.h", O_RDONLY)             = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=39, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNLOGFILE\t0\n#define\tNRAMF"..., 4096) = 39
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_debugger.h", O_RDONLY)        = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=41, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_DEBUGGER\t1\n#define\t"..., 4096) = 41
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("cmd_more.h", O_RDONLY)            = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=20, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNCMD_MORE\t1\n", 4096) = 20
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("gzip.h", O_RDONLY)                = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=16, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNGZIP\t0\n", 4096)    = 16
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("iso9660.h", O_RDONLY)             = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=19, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNISO9660\t0\n", 4096) = 19
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_s3load.h", O_RDONLY)          = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=22, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_S3LOAD\t1\n", 4096) = 22
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_x86emu_int10.h", O_RDONLY)    = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=28, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_X86EMU_INT10\t1\n", 4096) = 28
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_x86emu_int10.h", O_RDONLY)    = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=28, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_X86EMU_INT10\t1\n", 4096) = 28
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_x86emu_int10.h", O_RDONLY)    = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=28, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_X86EMU_INT10\t1\n", 4096) = 28
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_x86emu_int10.h", O_RDONLY)    = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=28, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_X86EMU_INT10\t1\n", 4096) = 28
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_x86emu_int10.h", O_RDONLY)    = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=28, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_X86EMU_INT10\t1\n", 4096) = 28
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_x86emu_int10.h", O_RDONLY)    = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=28, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_X86EMU_INT10\t1\n", 4096) = 28
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_x86emu_int10.h", O_RDONLY)    = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=28, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_X86EMU_INT10\t1\n", 4096) = 28
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_x86emu_int10.h", O_RDONLY)    = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=28, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_X86EMU_INT10\t1\n", 4096) = 28
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_x86emu_int10.h", O_RDONLY)    = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=28, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_X86EMU_INT10\t1\n", 4096) = 28
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_x86emu_int10.h", O_RDONLY)    = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=28, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_X86EMU_INT10\t1\n", 4096) = 28
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_x86emu_int10.h", O_RDONLY)    = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=28, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_X86EMU_INT10\t1\n", 4096) = 28
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_x86emu_int10.h", O_RDONLY)    = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=28, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_X86EMU_INT10\t1\n", 4096) = 28
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_x86emu.h", O_RDONLY)          = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=22, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_X86EMU\t0\n", 4096) = 22
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_x86emu.h", O_RDONLY)          = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=22, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_X86EMU\t0\n", 4096) = 22
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_x86emu.h", O_RDONLY)          = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=22, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_X86EMU\t0\n", 4096) = 22
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_x86emu.h", O_RDONLY)          = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=22, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_X86EMU\t0\n", 4096) = 22
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_x86emu.h", O_RDONLY)          = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=22, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_X86EMU\t0\n", 4096) = 22
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_x86emu.h", O_RDONLY)          = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=22, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_X86EMU\t0\n", 4096) = 22
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_x86emu.h", O_RDONLY)          = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=22, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_X86EMU\t0\n", 4096) = 22
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_x86emu.h", O_RDONLY)          = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=22, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_X86EMU\t0\n", 4096) = 22
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_x86emu.h", O_RDONLY)          = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=22, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_X86EMU\t0\n", 4096) = 22
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_x86emu.h", O_RDONLY)          = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=22, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_X86EMU\t0\n", 4096) = 22
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_x86emu.h", O_RDONLY)          = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=22, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_X86EMU\t0\n", 4096) = 22
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_x86emu.h", O_RDONLY)          = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=22, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_X86EMU\t0\n", 4096) = 22
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_vgacon.h", O_RDONLY)          = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=22, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_VGACON\t1\n", 4096) = 22
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("mod_vgacon.h", O_RDONLY)          = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=22, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNMOD_VGACON\t1\n", 4096) = 22
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("flash.h", O_RDONLY)               = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=69, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNFLASH\t0\n#define\tNMOD_FL"..., 4096) = 69
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("wd.h", O_RDONLY)                  = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=14, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNWD\t1\n", 4096)      = 14
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("cd.h", O_RDONLY)                  = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=14, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNCD\t0\n", 4096)      = 14
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("sd.h", O_RDONLY)                  = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=14, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+read(4, "#define\tNSD\t0\n", 4096)      = 14
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+open("ioconf.c", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=0, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+open("ioconf.incl.Bonito", O_RDONLY)    = -1 ENOENT (No such file or directory)
+write(4, "/*\n * MACHINE GENERATED: DO NOT "..., 2668) = 2668
+close(4)                                = 0
+munmap(0x40001000, 4096)                = 0
+fstat64(1, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 13), ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40001000
+write(1, "Don\'t forget to run \"make depend"..., 34) = 34
+open("options", O_RDONLY)               = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=159, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40002000
+read(4, "AUTOLOAD\nBONITOEL\nCONS_BAUD=B960"..., 4096) = 159
+close(4)                                = 0
+munmap(0x40002000, 4096)                = 0
+open("options", O_RDWR|O_CREAT|O_TRUNC, 0666) = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=0, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40002000
+_llseek(4, 0, [0], SEEK_SET)            = 0
+write(4, "AUTOLOAD\nBONITOEL\nCONS_BAUD=B960"..., 159) = 159
+close(4)                                = 0
+munmap(0x40002000, 4096)                = 0
+munmap(0x40001000, 4096)                = 0
+exit_group(0)                           = ?

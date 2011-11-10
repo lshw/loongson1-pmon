@@ -1,0 +1,79 @@
+	<title>PMON Target Requirements</title>
+
+	
+<h1 align="left">PMON Target Requirements</h1>
+
+<!--INDEX "PMON Target Requirements" --> 
+<p>PMON requires somewhere between 256K and 512K Bytes of <a href="romdef.htm">ROM</a> 
+  depending on the features selected. It also requires 256K bytes of RAM. </p>
+<p>It needs to communicate with a <a href="debgs.htm">debugger</a> running on 
+  the <a href="htypes.htm">Host</a> via a UART. </p>
+<p>
+
+
+
+
+
+<h2>PMON Memory Map</h2>
+
+<h2><br>
+  RAM</h2>
+<br>
+<table width="42%" border="1" cellspacing="1" cellpadding="1">
+  <tr align="center" valign="top"> 
+    <td width="51%" height="27"><b>Top of RAM</b></td>
+    <td width="49%" height="27" bgcolor="#CCCCFF">heap</td>
+  </tr>
+  <tr> 
+    <td width="51%" height="51">&nbsp;</td>
+    <td width="49%" align="center" bgcolor="#FFCCCC" height="51">bss<br>
+      (incl stack) </td>
+  </tr>
+  <tr> 
+    <td width="51%" height="57" valign="bottom" align="center"> 
+      <pre><b><font size="+1">0x01000100</font></b></pre>
+    </td>
+    <td width="49%" align="center" height="57" bgcolor="#CCFFCC">data</td>
+  </tr>
+  <tr> 
+    <td width="51%" height="44" valign="bottom" align="center">
+      <pre><b><font size="+1">0x00000000</font></b></pre>
+    </td>
+    <td width="49%" align="center" height="44" bgcolor="#FF99FF">excep vects</td>
+  </tr>
+</table>
+<br>
+<pre>
+  ROM<br>
+</pre>
+<pre>    Approx <b>ff07ffff</b>       +---------------+
+                          |     data      |
+                          | copied to RAM |
+                          +---------------+
+                          |     text      |
+                          |    (code)     |
+                          +---------------+
+                          |  <a href="vecttbl.htm">entry points</a> |
+                          +---------------+
+                          |  ASCII text   |
+           <b>fff00000</b>       +---------------+
+     ** Based on PowerPC startup characteristics...
+</pre>
+
+
+
+
+
+
+
+
+
+<p><hr>
+
+<p><b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a></p>
+<p><!--$Id: pmreq.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --> </p>
+<p>
+
+
+

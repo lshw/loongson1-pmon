@@ -1,0 +1,96 @@
+<html>
+<head>
+<title>PMON/2000 Date Command</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body vlink="#CC0033" alink="#0000FF">
+<h1>date </h1>
+<p>The date command displays or sets the date and time. </p>
+<h2>Format </h2>
+<p>The format of the date command is: </p>
+<blockquote>
+  <pre><font size="+1">date [ yymmddHHMM.SS] </font></pre>
+</blockquote>
+<pre>where: </pre>
+<blockquote> 
+  <table width="95%" border="0" cellspacing="1" cellpadding="1">
+    <tr> 
+      <td width="21%" bgcolor="#CCCCCC" valign="middle" align="center" height="23"> 
+        <div align="right"> yymmddHHMM.SS&nbsp;</div>
+      </td>
+      <td width="79%" bgcolor="#CCCCCC" align="left" valign="middle" height="23"> 
+        &nbsp;is the new date and time.</td>
+    </tr>
+  </table>
+  <pre>&nbsp;</pre>
+</blockquote>
+<h2>Functional Description </h2>
+<blockquote>
+  <p>The date command with no arguments displays the current date and time as 
+    stored in the board’s battery-backed clock/calendar device. </p>
+</blockquote>
+<p>If an argument is given, then this sets the current date and time. </p>
+<p>The optional argument is a string of pairs of digits, with the following meaning: 
+</p>
+<blockquote> 
+  <div align="left"></div>
+  <table width="95%" border="0" cellspacing="1" cellpadding="2">
+    <tr bgcolor="#CCCCCC"> 
+      <td width="12%" align="right" valign="middle">yy&nbsp;</td>
+      <td width="95"> 
+        <div align="left">year (modulo 100)</div>
+      </td>
+    </tr>
+    <tr> 
+      <td width="12%" align="right" valign="middle">mm&nbsp;</td>
+      <td width="88%"> 
+        <div align="left">month (Januar y = 1)</div>
+      </td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td width="12%" align="right" valign="middle">dd&nbsp;</td>
+      <td width="88%"> 
+        <div align="left">day of month</div>
+      </td>
+    </tr>
+    <tr> 
+      <td width="12%" align="right" valign="middle">HH&nbsp;</td>
+      <td width="88%"> 
+        <div align="left">hour (24 hour clock)</div>
+      </td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td width="12%" align="right" valign="middle">MM&nbsp;</td>
+      <td width="88%"> 
+        <div align="left">minute</div>
+      </td>
+    </tr>
+    <tr> 
+      <td width="12%" align="right" valign="middle">.SS&nbsp;</td>
+      <td width="88%"> 
+        <div align="left">seconds</div>
+      </td>
+    </tr>
+  </table>
+</blockquote>
+<p>When setting the date and time, you only need to enter as much as needs changing, 
+  starting with the minutes, then hours, then day, etc. Any value which is omitted 
+  is unchanged, except for seconds, which will be set to zero if omitted. </p>
+<p>Some examples of the date command follow. </p>
+<pre>PMON> date&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Display current time <br>Wed Feb 23 13:29:33 1994 </pre>
+<pre>PMON> date 32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Change minutes <br>Wed Feb 23 13:32:00 1994 </pre>
+<pre>PMON> date 1405&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Change hours and minutes <br>Wed Feb 23 14:05:00 1994 </pre>
+<pre>PMON> date 9402241103&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;New date and time <br>Thu Feb 24 11:03:00 1994 </pre>
+<pre>PMON>
+</pre>
+<h2><br>
+  See Also:<br>
+</h2>
+<hr>
+<p><b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a> </p>
+<p><!--$Id Author $ --><br>
+</p>
+</body>
+</html>

@@ -1,0 +1,92 @@
+BDMR4102
+BDMR4102
+
+Description
+
+The BDMR4102 is the evaluation board for the 4102 TinyRISC Processor. It
+comes with it's own special power supply.
+
+Memory Map
+
+On the LR4102, the memory map is determined by how the chip-select
+registers have been programmed.  The only thing that's fixed is the GP
+number to which each peripheral is connected.
+
+	RAM	   GP3 SRAM 128KB
+		   GP2 SDRAM 16MB Module (optional) (must be located
+		   on a 32MB boundary).
+	ROM	   GP0 1 eprom socket
+		   bfd0.0000 when not configured as boot device
+	DUART	   GP4 16550
+	Flash	   GP0 29F080 1MB. 
+		   bfd0.0000 when not configured as boot device
+	Ethernet   PCI AMD 79C970A 10BaseT only
+
+Interrupts
+
+	int0	?
+	int1	timer0
+	int2	SerialICE Port
+	int3	timer1+(16550 scr1:cpc1en=1)
+	int4	Am79C970A Ethernet
+	int5	?
+
+External Connections
+
+	Power - 5V DC via coaxial power connector
+	RS232
+		J10 16550 (PMON console)
+		J9  SerialICE Port via level shifters
+	SerialICE 
+		J8 SerialICE Port direct
+
+Clocks
+
+U?Clock for CPU.
+U6Clock for SerialICE Port. 
+1.8432MHz=115200, 20MHz=1250000.
+
+Jumpers
+
+Jumper In		Jumper Out
+
+JP6	Little Endian		Big Endian
+
+JP9	Boot from EPROMBoot from flash
+
+JP15
+1-2 - J9 is connected to the SerialICE Port through level translators.
+This requires that the onboard osc be selected and installed.
+
+2-3 - Connect J8 (the SerialICE header) to the SerialICE Port. 
+
+JP161-2 SerialICE Port Clock comes from oscillator (U6)
+2-3 SerialICE Port Clock comes from SerialICE Port connector.
+A board will always transmit it's osc clock to the connector.
+It is swapped with the clock input on the other board in the cable.
+
+IceKernel
+
+  »  For the wiggler: JP15 2-3, JP16 1-2.
+  »  For tty1: JP15 1-2, JP16 1-2.
+
+Seven-segment Display
+
+Address: UART base + 0x20
+
+          01
+	-----
+     20	|   | 02
+	-----  40
+     10	|   | 04
+	-----  o 80
+	  08
+
+Note: the specified value turns the selected segment off.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

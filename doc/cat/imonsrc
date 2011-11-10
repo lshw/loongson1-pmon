@@ -1,0 +1,39 @@
+IMON Source Files
+IMON Source Files
+
+Makefiles
+
+readme
+makefile The main make control file.
+files.mk
+	The list of files. Used by makefile and target.mk.
+rules.mk
+	Build rules. Required because sources are in different directory
+	from the object files.
+target.mk 
+	Used to make each of the subdirectories.
+
+Source Files
+
+mips.s 
+	The start of IMON (see _start).
+
+main.c 
+	The start of the IMON C code (see imoninit).
+
+ioctl.c I/O device operations.
+
+load.c
+	The Load command.
+
+sbrk.c Used by alloc to get memory.
+
+See Also
+MON source files
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

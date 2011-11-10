@@ -1,0 +1,56 @@
+		Building the PMON package
+		Building the PMON package
+
+The steps required to build the PMON package are somewhat host dependent,
+so please refer to the appropriate section below:
+
+MSDOS Hosts
+
+  »  If you have a copy of Microsoft's Visual C++ package on your host, perform
+the following steps:
+
+  »  Set your environment.
+  »  If you don't have a set of PMON ROMS for
+your Target board, type
+
+	C nmake pmon-only
+
+   this will build all of the directories needed for PMON. The build
+   is controlled by the top-level makefile.
+   Or if you already have a set of PMON ROMS
+   for your Target board, type 
+	C nmake  
+
+  »  If you don't have a copy of Microsoft's Visual C++ package on your host,
+perform these alternative steps.
+
+  »  If you don't have a set of PMON ROMS for
+you Target board, visit the PMON Web site and collect a prebuilt ROM-image
+file. Perform the file extraction in the
+top-level directory of this package.
+
+  »  Visit the PMON Web site and pick up a copy of the appropriate prebuilt library
+file. Perform the file extraction in the
+top-level directory of this package.
+
+UNIX Hosts
+
+  »  Set your environment.
+  »  If you don't have a set of PMON ROMS for
+your Target board, type
+
+	make pmon-only
+
+   or, if you already have a set of PMON ROMS
+   for your Target board, type 
+	make  
+
+Finally, if you need to make a set of PMON ROMS
+   for your Target board, follow this procedure.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

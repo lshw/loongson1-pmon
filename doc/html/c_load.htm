@@ -1,0 +1,202 @@
+<html>
+
+<head>
+<title>The load Command</title>
+</head>
+
+<body>
+
+<h1>load</h1>
+<!--INDEX "load command" download hostport -->
+
+<p>The load command downloads programs and data from the host. </p>
+
+<h2>Format</h2>
+
+<dl>
+  <dd>The format for the load command is:
+    <pre>
+
+<font size="+1">load [-abeistB] [-baud] [offset] [-c cmdstr] <i>filename</i>
+</font>
+</pre>
+    <p>where:</p>
+    <table width="95%">
+      <tr bgcolor="#CCCCCC"> 
+        <td width="9%">-m </td>
+        <td width="91%">Only load the symbol information. </td>
+      </tr>
+      <tr>
+        <td width="9%">-a </td>
+        <td width="91%">suppresses addition of an offset to symbols. </td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td width="9%">-b </td>
+        <td width="91%">suppresses deletion of all breakpoints before the download. 
+        </td>
+      </tr>
+      <tr>
+        <td width="9%">-e </td>
+        <td width="91%">suppresses clearing of the exception handlers. </td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td width="9%">-i </td>
+        <td width="91%">ignores checksum errors. </td>
+      </tr>
+      <tr>
+        <td width="9%">-s </td>
+        <td width="91%">suppresses clearing of the symbol table before the download. 
+        </td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td width="9%">-t </td>
+        <td width="91%">loads at the top of memory. </td>
+      </tr>
+      <tr>
+        <td width="9%">-f </td>
+        <td width="91%">load into flash. </td>
+      </tr>
+      <tr bgcolor="#CCCCCC"> 
+        <td width="9%">offset&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </td>
+        <td width="91%">loads at the specified offset. </td>
+      </tr>
+      <tr>
+        <td valign="top" width="9%">-c&nbsp;cmdstr </td>
+        <td width="91%">sets a command string that the <a href="mondef.htm">Monitor</a> 
+          sends to the host to start a download operation. String cmdstr is the 
+          string that starts the download. Note that the command string must be 
+          enclosed in double quotation marks if the string contains any spaces. 
+        </td>
+      </tr>
+    </table>
+    <p>Invoking the load command with no parameters or arguments clears the symbol table,
+    deletes all current breakpoints, allows the <a href="mondef.htm">Monitor</a> to receive
+    programs or data from the host, and uses the current baud rate by default.</p>
+  </dd>
+</dl>
+
+<h2>Functional Description</h2>
+
+<dl> 
+  <dd>The load command accepts programs and data from the host port in LSI Logic's 
+    proprietary <a href="frec.htm">FastLoad format</a>, <a href="srec.htm">Motorola 
+    S-record</a>, or binary files. The user can set environment variables to change 
+    the data port, the format, and the transfer protocol. </dd>
+</dl>
+<p>The load command normally clears the symbol table, exception handlers, and 
+  all breakpoints. The -s and -b options suppress the clearing of the symbol table 
+  and breakpoints, respectively. The value of the EPC register is set automatically 
+  to the entry point of the program. Therefore, to execute the downloaded program, 
+  only the g command is required.</p>
+<p>The -c option permits a command string to be sent to the host when the load 
+  command is issued. This is intended for use in conjunction with the transparent 
+  mode. Note that if the command string contains multiple words, the command must 
+  be enclosed in double quotation marks, as shown in the example below.</p>
+<p>The load command returns the error message &quot;out of memory&quot; if there 
+  is insufficient space in the heap for the program's global symbols. To increase 
+  the size of the heap , use the set heaptop command to reserve more space in 
+  the heap, and then use the -T option with the pmcc command to set the start 
+  address of the text section to the same address that was specified for the heap. 
+  See the pmcc command on page 3-13.</p>
+<h2>The dlecho, dlproto, and hostport Variables</h2>
+
+<dl>
+  <dd>The dlecho, dlproto, and hostport variables control operation of the download. The
+    following table shows how these environment variables affect the operation of the load
+    command.</dd>
+  <dt>&nbsp;</dt>
+  <dd>
+    <div align="left">
+      <table border="1" cellpadding="5">
+        <tr bgcolor="#CCCCFF"> 
+          <th align="left">Variable</th>
+          <th align="left">Action</th>
+        </tr>
+        <tr bgcolor="#CCCCCC"> 
+          <td>dlecho off</td>
+          <td>Do not echo the lines</td>
+        </tr>
+        <tr> 
+          <td>dlecho on</td>
+          <td>Echo the lines</td>
+        </tr>
+        <tr bgcolor="#CCCCCC"> 
+          <td>dlecho lfeed</td>
+          <td>Echo only a linefeed for each line</td>
+        </tr>
+        <tr> 
+          <td>dlproto none</td>
+          <td>Do not use a protocol</td>
+        </tr>
+        <tr bgcolor="#CCCCCC"> 
+          <td>dlproto XonXoff</td>
+          <td>Send Xon and Xoff to control the host</td>
+        </tr>
+        <tr> 
+          <td>dlproto EtxAck</td>
+          <td>Expect Etx as end of record, send Ack</td>
+        </tr>
+        <tr bgcolor="#CCCCCC"> 
+          <td>hostport tty0</td>
+          <td>Select tty0 as the port to which the host is connected</td>
+        </tr>
+        <tr> 
+          <td>hostport tty1</td>
+          <td>Select tty1 as the port to which the host is connected</td>
+        </tr>
+      </table>
+    </div>
+    <p align="left">See the section on downloading for more information on these 
+      variables and the use of the load command.</p>
+  </dd>
+</dl>
+
+<h2>Examples</h2>
+
+<dl>
+  <dd>Download to tty0 using a terminal emulator.<pre>
+
+	PMON&gt; set dlecho off 
+
+	PMON&gt; set hostport tty0 
+
+	PMON&gt; set dlproto none 
+
+	PMON&gt; load 	
+
+	-- use terminal emulator's &quot;send text file&quot; command
+
+	Downloading from tty0, ^C to abort
+
+	Entry address is 80020000
+
+
+
+	Total = 0x00043C00 bytes
+
+	PMON&gt;
+
+</pre>
+    <p>When using the <a href="mondef.htm">Monitor</a> in an environment where tty1 is
+    connected to a login line on a Unix host. You will need to send a command to start the
+    download. In the following example the command &quot;<samp>cat test1.rec</samp>&quot; is
+    sent to the host.</p>
+    <pre>
+
+	PMON&gt; load -c &quot;cat test1.rec&quot;
+</pre>
+  </dd>
+</dl>
+
+<h2>See Also</h2>
+
+<dl>
+  <dd><a href="c_set.htm">set</a> command for the setup of the environment variables. </dd>
+</dl>
+
+<hr>
+<p> <b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a> </p>
+<p><!--$Id: c_load.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --></p>
+</body>
+</html>

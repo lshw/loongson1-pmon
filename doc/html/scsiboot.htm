@@ -1,0 +1,110 @@
+<HTML>
+<HEAD>
+<TITLE>PMON/2000 Boot Command</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=">
+</HEAD>
+
+<BODY vlink="#FF0000" alink="#0000FF">
+<h1>scsiboot </h1>
+<p>The scsiboot command loads binary object files over a specified local scsi 
+  interface device.</p>
+<h2>Format </h2>
+<p>The format for this command is: </p>
+<blockquote> 
+  <pre><font size="+1">scsiboot [-xbensy] [[-m]-d device] [-l len] [-a addr] [args]...</font></pre>
+</blockquote>
+<pre>where args:</pre>
+<table width="95%" border="0">
+  <tr bgcolor="#CCCCCC"> 
+    <td width="14%" align="right" valign="top">-x&nbsp;&nbsp;</td>
+    <td width="86%" align="left" valign="top">don't exec boot loaded file</td>
+  </tr>
+  <tr> 
+    <td width="14%" align="right" valign="top">-b&nbsp;&nbsp;</td>
+    <td width="86%" align="left" valign="top">suppresses deletion of all breakpoints 
+      before the load.</td>
+  </tr>
+  <tr bgcolor="#CCCCCC"> 
+    <td width="14%" align="right" valign="top">-e&nbsp;&nbsp;</td>
+    <td width="86%" align="left" valign="top">suppresses clearing of the exception 
+      handlers.</td>
+  </tr>
+  <tr>
+    <td width="14%" align="right" valign="top">-y&nbsp;&nbsp;</td>
+    <td width="86%" align="left" valign="top">loads only the symbols from the 
+      file.</td>
+  </tr>
+  <tr bgcolor="#CCCCCC"> 
+    <td width="14%" align="right" valign="top">-d&nbsp;&nbsp;</td>
+    <td width="86%" align="left" valign="top">specify scsi device (e.g., sd0)</td>
+  </tr>
+  <tr> 
+    <td width="14%" align="right" valign="top">-l&nbsp;&nbsp;</td>
+    <td width="86%" align="left" valign="top">length in disk blocks</td>
+  </tr>
+  <tr bgcolor="#CCCCCC"> 
+    <td width="14%" align="right" valign="top">-a&nbsp;&nbsp;</td>
+    <td width="86%" align="left" valign="top">memory destination for loaded file</td>
+  </tr>
+  <tr> 
+    <td width="14%" align="right" valign="top"> 
+      <div align="right">-m&nbsp;&nbsp;</div>
+    </td>
+    <td width="86%" align="left" valign="top">manually specify boot dev/file (otherwise 
+      use env var: bootdev)</td>
+  </tr>
+  <tr bgcolor="#CCCCCC"> 
+    <td width="14%" align="right" valign="top">-- [args]...&nbsp;&nbsp;</td>
+    <td width="86%" align="left" valign="top">args to be passed to client, e.g. 
+      bsd -s</td>
+  </tr>
+</table>
+<p>Invoking the scsiboot command with no parameters or arguments clears the symbol 
+  table, deletes all current breakpoints, and attempts to load the program found 
+  on the device specified by the bootdev, bootaddr, bootlen, and bootfile environment 
+  variables. </p>
+<h2>Functional Description </h2>
+<blockquote>
+  <p>The scsiboot command is used to load an executable binary file with the built-in 
+    scsi bootloader module from a local disk drive.</p>
+</blockquote>
+<p>PMON/2000 scsiboot can read files in ELF format as used in:</p>
+<ul>
+  <li>Algorithmics’ SDE­MIPS</li>
+  <li>newer SGI compilers</li>
+  <li>systems compliant with the MIPS/ABI standard</li>
+  <li>older MIPS ECOFF format</li>
+  <li><a href="http://groupbsd.openbsd.org">OpenBSD</a> PowerPC 32-Bit ELF (includes 
+    Power&#149;4e, Power&#149;4C, Denali, Palomar-II)</li>
+</ul>
+<p>PMON/2000 extracts any symbol table information from these files, and adds 
+  it to the target symbol table, unless overridden on command line.</p>
+<p>The scsiboot command normally clears the symbol table, exception handlers, 
+  and all <a href="c_b.htm">breakpoints</a>. The -s and -b options suppress the 
+  clearing of the symbol table and breakpoints, respectively. The value of the 
+  <font color="#FF0000">PC</font> register is set automatically to the entry point 
+  of the program. Therefore, to execute the downloaded program, only the <a href="c_g.htm">g 
+  command</a> is required. </p>
+<p>The scsiboot command may return a large number of different error messages, 
+  relating to disk problems or file access permissions on the local machine. </p>
+<p>When reading the symbol table PMON/2000 may complain that it does not have 
+  enough room to store the program’s symbols. To increase the size of the heap, 
+  use the set heaptop command to reserve more space and, if necessary, relink 
+  your program with a higher base address. The scsiboot command will also detect 
+  cases where the program being loaded would overwrite PMON’s crucial data or 
+  heap: again relinking your program at a different address will cure the problem. 
+</p>
+<p>While it is loading each section of the file, scsiboot displays the memory 
+  address (in hex) and size (in decimal) of that section. Typically these sections 
+  will be in the order .text, .data and .bss. </p>
+<h2>See Also:</h2>
+<blockquote>
+  <p><a href="netboot.htm">netboot</a>, <a href="boot.htm">boot</a> and <a href="c_load.htm">load</a> 
+    commands.</p>
+</blockquote>
+<hr>
+<p><b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a> </p>
+<p><!--$Id: scsiboot.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --></p>
+</BODY>
+</HTML>

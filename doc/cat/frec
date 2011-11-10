@@ -1,0 +1,70 @@
+FastLoad Format
+FastLoad Format
+
+The FastLoad Format uses a compressed ASCII format that permits files 
+to be downloaded in less than half the time taken for Motorola S-records. 
+
+The base-64 encoding used is "A-Za-z0-9,.". The data is encoded in
+groups of 4 characters (24 bits). The character '/' is used to
+introduce a special function. Special functions are:
+
+ 
+ A......
+	Defines an address.
+	
+ B..
+	Define a single byte.
+	
+ C....
+	Compare the checksums
+	
+ EAA
+	Define the program's entry point. The address will be the
+	current address as defined by the 'A' command.
+	
+ KAA
+	Clear the checksum.
+	
+ S.....,X
+	Define a symbol.  The address of the symbol will be the
+	current address as defined by the 'A' command. 
+	
+ Z..
+	Clear a number of bytes.
+	
+
+Examples:
+
+      /ACgAgAA        - addr = a0020000
+      /ZAI            - clear 8*3=24 bytes
+      /EAA            - define entry at 'addr' and exit
+      AAABAAAC        - 00 00 01 00 00 02
+      /Sfred,X        - symbol = 'addr'
+      /BAB            - byte of 01
+
+Generating FastLoad format files
+
+The PMON source package contains two mechanisms for generating
+FastLoad format files.
+
+  »  The "pmcc -fast" command.
+  »  The genfrec command.
+
+The program genfrec converts MIPS ECOFF files into FastLoad format
+records.
+Thus, if used in conjunction with the command gencoff, it is possible to convert an
+arbitrary file into FastLoad format using the following
+procedure:
+
+	gencoff -T80050000 file.bin -o file.cof
+	genfrec file.cof  file.rec
+
+This example will convert the file "file.bin" to "file.rec", which will
+download to 0x80050000.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

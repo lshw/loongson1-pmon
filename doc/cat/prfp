@@ -1,0 +1,57 @@
+The prfp Command
+The prfp Command
+
+NAME
+     prfp - convert between hex and floating-point
+
+SYNOPSIS
+
+prfp { [ -f ] fpvalue | [ hexvalue ] hexvalue }
+
+DESCRIPTION
+     prfp is a host-resident utility that
+     converts between hex  and  floating-point.  It  handles
+     both  single- and double-precision values. You can convert a
+     floating-point value to hex, or a  hex  value  to  floating-
+     point notation.
+
+OPTIONS
+
+     -f   Specify that the input floating-point value is to  
+     converted to single precision format.
+
+EXAMPLES
+     Convert the value 3.142 to hex using double  precision  for-
+     mat.
+
+     % prfp 3.142
+
+     400922d0 e5604189 dp=3.142000e+00
+
+     Convert the value 3.142 to hex using single  precision  for-
+     mat.
+
+     % prfp -f 3.142
+
+     40491687 sp=3.142000e+00
+
+     Convert the 64-bit  hex  value  to  floating-point  notation
+     using double precision format.
+
+     % prfp 400922d0 e5604189
+
+     400922d0 e5604189 dp=3.142000e+00
+
+     Convert the 64-bit  hex  value  to  floating-point  notation
+     using double precision format.
+
+     % prfp 40491687
+
+     40491687 sp=3.142000e+00
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

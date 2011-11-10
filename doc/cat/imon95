@@ -1,0 +1,37 @@
+IMON95
+IMON95
+
+IMON95 is a free, PMON-like assembly-level debugger that runs on Win9x/NT
+hosts. It communicates via a serial link to a target running
+a SerialICE Kernel.
+
+IMON95 communicates with the target via serialice1.dll.  Several other
+pieces are required in order to communicate via the wiggler.  You can
+find everything you need on the PMON5 DOWNLOAD page of the PMON Web site.
+
+IMON95 Features
+
+  »  A Powerful set of Assembly-level 
+	debugging commands
+  »  Unix-like user Interface 
+	(including command history/editing)
+  »  Display/set Registers
+  »  Display/
+	set Memory
+  »  Disassemble Memory
+  »  Search/
+	Copy/
+	Fill Memory
+  »  Multiple Breakpoints
+  »  Complex Breakpoints
+  »  Single Step Execution (including PROM) 
+  »  Downloadable Symbols.
+  »  Download via RS232 or 
+	Wiggler
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

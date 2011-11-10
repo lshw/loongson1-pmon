@@ -1,0 +1,50 @@
+The genfrec Command
+The genfrec Command
+
+NAME
+     genfrec - A fast-format download record generator  for  MIPS
+     COFF.
+
+SYNOPSIS
+
+genfrec [ -ptbdcs ] inputfile...
+
+DESCRIPTION
+     genfrec is a host-resident fast-format download record generator.
+     genfrec reads  a  MIPS-format COFF file, and generates a
+     fast-format record that can be downloaded to a target board
+     running  LSI Logic's PMON.
+
+OPTIONS
+
+     -p prom mode, start addresses at
+
+     -t omit text section
+
+     -b include bss section
+
+     -d debug mode
+
+     -c don't send checksum record
+
+     -s include symbols
+
+SEE ALSO
+     gensrec(1) pmcc(1) 
+     rdfrec(1)
+     
+FILES
+	This command is built from
+	tools/genfrec.c.
+     
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+
+
+**This file was converted from HTML to TEXT using a TRIAL version of**
+**Markup Remover 1.1 (C) 1998 by Aquatic Moon Software http://www.aquaticmoon.com/**
+**This message does not appear in files converted after the program has been liscensed.**

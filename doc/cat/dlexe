@@ -1,0 +1,50 @@
+		Downloading and Executing Your Application
+	Downloading and Executing Your Application
+
+The procedure used to download and execute your application depends on what
+debugger you are using. This debug Monitor
+supports either of the following debugger types:
+
+  »  Terminal Emulator 
+  »  Source-Level debugger
+
+Download and Execute with a Terminal Emulator
+
+Download
+
+There are three possible choices for downloading your application:
+
+  »  Your Terminal Emulator's Send File command.
+  »  Using edown to send the file via a second
+serial port.
+  »  Using the tftp command via Ethernet.
+
+Execute
+
+If you want to run the entire application to completion, type 'g'. Control
+will return to the Monitor's prompt when the
+application terminates. For example,
+
+	PMON g
+	-- program output if any
+	PMON
+
+If you would prefer to be able to single-step your application, and
+to possibly set breakpoints, you might prefer to use the following
+sequence of commands.
+
+ 
+PMON g . mainExecute until main
+PMON l . 8Disassemble the next 8 instructions
+PMON sSingle-step one instruction
+PMON c sortContinue until the label sort
+
+For a complete list of the commands available, please refer to the
+appropriate PMON or SerialICE command list.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

@@ -1,0 +1,144 @@
+The r Command
+r
+
+The r command sets or displays register values.
+
+Format
+
+The format for the r command is:
+
+	r [reg|* [val|field val]]
+
+where:
+
+regis the name of the register or registers (specified by wildcard 
+characters) to display or modify.
+
+valis the value to which the specified register or registers should 
+be modified.
+
+field valis the value to which the specified field in the specified 
+		register should be modified.
+
+*	displays the contents of all registers except floating-point 
+	registers.
+
+f*	displays the contents of all floating-point registers.
+
+Invoking the r command without any parameters or arguments displays a 
+list of all the general-purpose registers. 
+
+Functional Description
+
+The r command sets or displays register values. The character and word
+wildcards, "*" and "?", can be used in the register name. The '?'
+character matches any single character, while the '*' character matches
+any number of any characters. This command accepts both hardware and
+software names. Examples illustrating the use of the r command
+follow.
+
+r 			Display all General-purpose registers.
+ 
+r *			Display all register values.
+ 
+r 8			Display $8 (t0).
+ 
+r t0			Display t0 ($8).
+ 
+r t*			Display t0 through t9.
+ 
+r epc			Display EPC register.
+ 
+r epc start		Set EPC register to the symbol start value.
+ 
+r 4 45			Set register 4 to 45.
+ 
+r t0 45			Set register t0 to 45.
+ 
+r sr 0			Set SR to zero.
+ 
+r sr bev 1		Set the BEV bit of SR to one.
+ 
+r epc a0020000		Set EPC to a0020000.
+ 
+r a			Display the value of pseudo
+			register 'a'.
+ 
+r ?			Display the value of all pseudo
+				registers.
+
+There are 26 pseudo registers (named a thru z). These can be referenced
+in the same way as real registers, and are typically used to implement
+complex breakpoint conditions (see the when
+command).
+
+Examples
+
+Display all General Purpose registers.
+
+PMON r 
+       zero      at       v0       v1       a0       a1       a2       a3 
+ $0- 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 
+        t0       t1       t2       t3       t4       t5       t6       t7 
+ $8- 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 
+        s0       s1       s2       s3       s4       s5       s6       s7 
+$16- 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 
+        t8       t9       k0       k1       gp       sp       s8      ra 
+$24- 00000000 00000000 00000000 00000000 00000000 80008b40 00000000 00000000
+
+Display all registers.  Note that the actual registers that are
+displayed by the "r *" command depends on what type of
+processor you are using. This display was generated using a LR33000.
+
+PMON r * 
+ $0- 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 
+ $8- 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 
+$16- 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 
+$24- 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+
+C0_EPC=a0020000 C0_BADADDR=00000000 C0_BPC=00000000 C0_BDA=00000000 
+M_TIC1=000000 M_TIC2=000000 M_RTIC=025 
+   C0_SR:  CU BEV TS PE CM PZ SWC ISC  IM&SW  KUo IEo KUp IEp KUc IEc 
+          0000 0   0  0  0  0  0   0  00000000 0   0   0   0   0   0 
+C0_CAUSE: BD CE   IP   SW EXCODE
+           0  0 000000 00   Int 
+C0_PRID: IMP Rev 
+          0   0 
+C0_DCIC: TR UD KD TE DW DR DAE PCE DE D I T W R DA PC DG 
+          0  0  0  0  0  0  0   0   0 0 0 0 0 0  0  0  0 
+  M_CFG: ICD DCD IBS DBS IW IOWAIT PW PWAIT CS PE DGE BFD RGN RPC CL DCE
+          0   0   16  16  0    6    0    6   0  0  1   0   1   1   1   1
+  M_TC1: CE IE INT 
+          0  0  0 
+  M_TC2: CE IE INT 
+          0  0  0 
+
+Set the IEC bit of the Status Register.
+
+PMON r sr iec 1
+
+Display the Status Register.
+
+PMON r sr
+  C0_SR: CU BEV TS PE CM PZ SWC ISC IM&SW  KUo IEo KUp IEp KUc IEc
+        0000 1   0  0  0  0  0   0 00000000 0   0   0   0   0   1 
+
+You can use the ls command to display the Status 
+Register as a hex value. This technique can be used for any register.
+
+PMON ls -v @sr
+0x00400001 = 0t4194305 = 0o20000001
+
+Files
+The r command is located in mon/regs.c.
+
+See Also
+l command
+for disassembling instructions from memory.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

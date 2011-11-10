@@ -1,0 +1,46 @@
+The rdsrec Command
+The rdsrec Command
+
+NAME
+     rdsrec - Motorola S-record reader
+
+SYNOPSIS
+
+rdsrec [ -blnf [-T#] [-o outfile] ] inputfile
+
+DESCRIPTION
+     rdsrec is a Motorola S-record reader. 
+     It  reads  S-record files and generates a disassembly.
+
+OPTIONS
+
+     -n   don't disassemble, just list addresses and values.
+
+     -b   generate binary memory image file
+
+     -l   assume that input file has little endian byte ordering.
+
+     -f   generate fast-format records.
+
+     -o outfile
+          write output to file, instead of stdout.
+
+     -T#  add the offset # to all addresses.
+
+SEE ALSO
+     gensrec(1) pmcc(1) 
+     
+FILES
+	This command is built from 
+	tools/rdsrec.c,
+	mon/machine.c and
+	mon/dis16.c.
+     
+     
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

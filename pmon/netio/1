@@ -1,0 +1,14 @@
+111c111
+< 		//printf("bootp=%x\n",&bootp);
+---
+> 	printf("bootp=%x\n",&bootp);
+115d114
+< #if 1
+122c121
+< #endif
+---
+> 	printf("bootp=%x\n",&bootp);
+125d123
+< #if 1
+129d126
+< #endif

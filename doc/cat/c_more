@@ -1,0 +1,51 @@
+The more Command
+more
+
+The more command provides screen-at-a-time control for user input.
+
+Format
+
+The more command is an embedded command and is not accessible to the 
+user on the command line.
+
+Functional Description
+
+The more command is not specified by the user on the command line, but 
+is implicitly used by certain commands. After displaying the number of 
+lines according to the value of the moresz environment variable, the more 
+command displays the prompt "more-" Commands that use the more 
+command include h, hi, d, l, search, and ls.  
+
+The user can enter the following commands at the "more-" prompt: 
+
+CommandAction
+SpacePrint one more page
+/strSearch forward for string str
+nRepeat last executed search
+<CR>Show next line
+q
+Quit from the more prompt and return to the monitor prompt
+
+The moresz Variable
+
+moresz sets how many lines are displayed on one screen during
+screen-at-a-time output. If moresz is set to zero, the screen scrolls
+continuously. The ^S or ^Q control sequence must be used to pause the
+output, and the ^C control sequence must be used to terminate output.
+
+For example, to set the default number of lines output by the more
+command to 12, enter:  
+
+PMON set moresz 12 
+ 
+
+See Also
+set command for the setup of 
+the environment variables.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

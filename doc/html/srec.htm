@@ -1,0 +1,97 @@
+<html>
+
+<head>
+<title>Motorola S-Record Format</title>
+</head>
+
+<body>
+
+<h1 align="left">Motorola S-Record Format</h1>
+<!--INDEX symbols "S3 records" "S4 records" "Motorola S-records" -->
+<!--INDEX "S-record format" -->
+
+<p>Motorola S-records are an industry-standard format for transmitting binary files to
+target systems and PROM programmers. LSI Logic have extended this standard to include an
+S4-record containing an address and a symbol. </p>
+
+<p>The extended S-record standard is as follows:</p>
+
+<pre>
+
+S&lt;type&gt;&lt;length&gt;&lt;address&gt;&lt;data....&gt;&lt;checksum&gt;
+
+S4&lt;length&gt;&lt;address&gt;&lt;name&gt;,&lt;checksum&gt;
+
+</pre>
+
+<p>Where:
+
+<dl>
+  <dt><b>type </b></dt>
+  <dd>is the record type. Where:
+    <dl compact> 
+      <dt>0 starting record (optional) </dt>
+      <dt>1 data record with 16-bit address </dt>
+      <dt>2 data record with 24-bit address </dt>
+      <dt>3 data record with 32-bit address </dt>
+      <dt>4 symbol record (LSI extension) </dt>
+      <dt>5 number of data records in preceeding block </dt>
+      <dt>6 unused </dt>
+      <dt>7 ending record for S3 records </dt>
+      <dt>8 ending record for S2 records </dt>
+      <dt>9 ending record for S1 records </dt>
+    </dl>
+  </dd>
+  <dt><b>length </b></dt>
+  <dd>is two hex characters. This defines the length of the record in bytes (not characters).
+    It includes the address field, the data field, and the checksum field. </dd>
+  <dt><b>address </b></dt>
+  <dd>is 4, 6, or 8 characters. Corresponding to a 16-, 24-, or 32-bit address. The address
+    field for S4 records is always 32 bits. </dd>
+  <dt><b>data </b></dt>
+  <dd>Are the data bytes. Each pair of hex characters represent one byte in memory.</dd>
+  <dt><b>name </b></dt>
+  <dd>Is the symbol name. The symbol is terminated by a ','.</dd>
+  <dt><b>checksum</b> </dt>
+  <dd>Is the one's complement of the 8-bit checksum.</dd>
+</dl>
+
+<h2>Example</h2>
+
+<pre>
+
+S0030000FC
+
+.
+
+.
+
+S325000004403C0880018D08DD900000000011000026000000003C0880012508DC50C50000B401
+
+S32500000460C50100B8C50200BCC50300C0C50400C4C50500C8C50600CCC50700D0C50800D4FA
+
+S32500000480C50900D8C50A00DCC50B00E0C50C00E4C50D00E8C50E00ECC50F00F0C51000F49A
+
+S325000004A0C51100F8C51200FCC5130100C5140104C5150108C516010CC5170110C518011434
+
+.
+
+.
+
+S70500000000FA
+
+</pre>
+
+<p>The S0 record starts the file. The S3 records contain the data. The S7 record contains
+the entry address and terminates the download.</p>
+
+<h2>See Also</h2>
+<blockquote>
+  <p><a href="frec.htm">fast load</a> format definition.</p>
+</blockquote>
+<hr>
+<p> <b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a></p>
+<p><!--$Id: srec.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --> </p>
+</body>
+</html>

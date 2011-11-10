@@ -1,0 +1,11 @@
+#!/usr/bin/perl -w
+open F,$ARGV[0];
+undef $/;
+my $str=<F>;
+open D,qq(>$ARGV[1]);
+while($str=~/(0x[0-9a-f]+)[,}]/g)
+{
+print D pack("C",hex($1));
+}
+close D;
+

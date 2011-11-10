@@ -1,0 +1,191 @@
+			The SerialICE Driver
+			The SerialICE Driver
+
+The SerialICE Driver is downloaded from the host to the SerialICE Controller.
+Once the driver has been downloaded, the SerialICE Monitor is able to use it
+to communicate with the SerialICE Kernel that is resident on the Target.
+
+For more information of how to select and download an SerialICE Driver please
+refer to the section on Getting Started with
+SerialICE-1A.  
+
+SerialICE Monitor - SerialICE Kernel Communication
+
+Two tables are used to provide linkage between the SerialICE Monitor and the
+SerialICE Kernel.  The driver's table is located at 0x80020000 is used when
+the SerialICE Monitor needs to call one of the functions in the driver. These
+functions are listed below:
+
+OffsetFunctionDescription
+
+0Entry Point
+The entry point of the driver
+
+8DVRIF_VERS
+The version number of the driver
+
+12_cputype
+The address of an INT that contains the type of the CPU eg. 4001
+
+16_drivername
+The address of a string that contains the driver name
+
+20read_target(int type,Ulong addr,int size)
+The address of a function that reads a value from the target
+
+24write_target(int type,Ulong addr,Ulong value,int size)
+The address of a function that writes a value to the target
+
+28run_target(int mode,int flags,int count)
+The address of a function that starts target execution
+
+32setbp_target(int n,int type,Ulong addr)
+The address of a function that sets a breakpoint in the target
+
+36clrbp_target(int n)
+The address of a function that clears a breakpoint in the target
+
+40flush_target(int type)
+The address of a function that flushes the caches in the target
+
+440
+Not used
+
+48is_writeable_target(Ulong addr)
+The address of a function that returns TRUE if the specified
+	address is writeable
+
+The second table is located at 0xbfc00200 and is used when the driver needs
+to call functions within the SerialICE Monitor. The functions in this table are
+shown below:
+
+OffsetFunctionDescription
+
+0
+
+read(int fd, char *buf, int size)
+
+Read specified number of bytes into buf. Returns number of
+bytes read.
+
+4
+
+write(int fd, char *buf, int size)
+
+Write specified number of bytes from buf. Returns number of
+bytes written.
+
+8
+
+int open(char *name [,int mode])
+
+Open a device. Returns file descriptor.
+
+12
+
+close(int fd)
+
+Close a file descriptor.
+
+16
+
+ioctl(int fd, int request, arg)
+
+Perform I/O control operation.
+
+20
+
+printf(char *fmtstr, arg...)
+
+Print formatted to stdout.
+
+24addRegRec(RegRec *reg)
+The address of a function that adds a register to the current list
+
+28void *malloc(int size)
+The address of a function that allocates a block of memory
+
+32cpuInit
+The address of a function that ...
+
+36char*getenv(char *name)
+The address of a function that returns a pointer to the definition
+of the specified environment variable
+
+400
+Not used
+
+440
+Not used
+
+48stop(int type)
+The address of a function that returns control to the Monitor
+
+52int getBpid()
+The address of a function that returns the id of the current
+breakpoint (if any)
+
+56is_xvwmode() 
+The address of a function that returns TRUE if xvwmode is set
+
+60gdbstop(int type)
+The address of a function that returns control to the gdb command
+mode
+
+64setTrcbp(Ulong addr,int tover)
+The address of a function that sets a trace breakpoint
+
+68addCmdRec(CmdRec *cmd)
+The address of a function that adds a new command to the current
+command list
+
+72Ulong disasm(char *buf,Ulong addr,Ulong instr)
+The address of a function that disassembles an instruction
+
+76get_rsa(Ulong *dst,char *src)
+The address of a function that performs expression evaluation
+
+80is_gdbmode (read)
+The address of a function that returns TRUE if gdbmode is set
+
+84addEnvRec(EnvRec *var)
+The address of a function that adds a new environment variable 
+to the current list
+
+Once the driver has been loaded, IMON calls the routine whose address
+is located at offset 4 (_start) in the table. The routine _start first
+clears the bss section and then calls dvrInit(). 
+
+	_start()
+	{
+	clrbss();
+	dvrInit();
+	}
+
+dvrInit adds the list of registers and commands that are specific to
+this processor. Offsets 8 and 12 contain the address of an int
+that contains the processor number (eg. 4001), and the address of a
+string that describes the driver (eg. "Driver for LR4001")
+respectively.
+
+The driver is divided into a four files:
+
+	  »  Startup code (lib/crt3.s)
+	  »  Common code (bsps/iceif.c)
+	  »  Base processor code (bsps/400x.c,
+		bsps/401x.c)
+	  »  Processor-specific code (eg. 
+		bsps/d4001.c,
+		bsps/d4003.c,
+		bsps/d4101.c,
+		bsps/d4011.c etc.)
+
+Most modifications needed to support a new ASIC can be made by making changes
+to the Processor-specific code module (eg. bsps/d4001.c).
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

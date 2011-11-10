@@ -1,0 +1,133 @@
+<HTML>
+<HEAD>
+<TITLE>PMON/2000 Boot Command</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=">
+</HEAD>
+
+<BODY vlink="#FF0000" alink="#0000FF">
+<h1>boot </h1>
+<p>The boot command loads binary object files over a specified interface device, 
+  and optionally: will load an image into on-board flash ROM.</p>
+<h2>Format </h2>
+<p>The format for this command is: </p>
+<blockquote> 
+  <pre><font size="+1">boot  [-f flash_addr] [-o offset_load] [args]...</font></pre>
+</blockquote>
+<pre>where:
+</pre>
+<table width="95%" border="0">
+  <tr bgcolor="#CCCCCC"> 
+    <td width="17%">host:path</td>
+    <td width="83%">internet host name, and file name (seperated by a colon &quot;:&quot; 
+      ) </td>
+  </tr>
+  <tr> 
+    <td width="17%"> 
+      <div align="center">or</div>
+    </td>
+    <td width="83%">&nbsp;</td>
+  </tr>
+  <tr bgcolor="#CCCCCC"> 
+    <td width="17%">/dev/file </td>
+    <td width="83%">local device and file name path....e.g., /sd0/bsd</td>
+  </tr>
+  <tr>
+    <td width="17%">-f flash_addr</td>
+    <td width="83%">base address (in flash ROM) to load an image via host:path 
+      (above) </td>
+  </tr>
+  <tr bgcolor="#CCCCCC"> 
+    <td width="17%">-o offset_load</td>
+    <td width="83%">tells flash loader to assign this transfer address to the 
+      image</td>
+  </tr>
+</table>
+<p>Invoking the boot command with no parameters or arguments clears the symbol 
+  table, deletes all current breakpoints, and attempts to load the program found 
+  in the host and file specified by the bootaddr and bootfile environment variables. 
+</p>
+<h2>Functional Description </h2>
+<blockquote>
+  <p>The boot command is a <b>wrapper</b> for netboot or scsiboot and uses the 
+    TFTP (Trivial File Transfer Protocol) to load an executable binary file from 
+    a remote host over Ethernet, or the built-in scsi bootloader module for loading 
+    from a local disk drive.</p>
+</blockquote>
+<p>PMON/2000 boot can read files in ELF format as used in:</p>
+<ul>
+  <li>Algorithmics’ SDE­MIPS</li>
+  <li>newer SGI compilers</li>
+  <li>systems compliant with the MIPS/ABI standard</li>
+  <li>older MIPS ECOFF format</li>
+  <li><a href="http://groupbsd.openbsd.org">OpenBSD</a> PowerPC 32-Bit ELF (includes 
+    Power&#149;4e, Power&#149;4C, K2, Denali, Palomar-II)</li>
+  <li>Some Linux for PowerPC implementations</li>
+</ul>
+<p>PMON/2000 extracts any symbol table information from these files, and adds 
+  it to the target symbol table. </p>
+<p>The boot command normally clears the symbol table, exception handlers, and 
+  all <a href="c_b.htm">breakpoints</a>. The -s and -b options suppress the clearing 
+  of the symbol table and breakpoints, respectively. The value of the <font color="#FF0000"><b><a href="c_r.htm">pc</a></b></font> 
+  register is set automatically to the entry point of the program. Therefore, 
+  to execute the downloaded program, only the <a href="c_g.htm">g command</a> 
+  is required. This is particularly useful when an image has been loaded into 
+  <a href="flash.htm">flash</a> ROM.</p>
+<p>The boot command may return a large number of different error messages, relating 
+  to network problems or file access permissions on the remote host. For a file 
+  to be loaded via TFTP it <b>must be publicly readable</b>, and it may have to 
+  be in a directory which is acceptable to the remote server. </p>
+<p>The -f (flash_load) option tells the boot wrapper to network load an image 
+  into the flash ROM area designaed as an address argument. The are specified 
+  must be large enough to accept the image. The are specified will first be erased, 
+  then the image loaded and then verified. PMON/2000 uses some temporary RAM to 
+  hold the image so it is important that the amount of free RAM exceed the size 
+  of the image (and the the flash area). This is rearely violated.</p>
+<p>The -o (offset) option provides for assigning a transfer &amp; run (execute) 
+  address header for the image that is being loaded into flash ROM. This option 
+  is critical when the image being loaded into flash ROM is, in fact, destined 
+  to be executed later out of RAM at another address. PMON/2000 itself uses this 
+  feature becasue it is stored in flash ROM (ususally) at one address, but moved 
+  and run from a RAM address on most platforms. The -o offset value specifies 
+  the actual address where execution is to begin AFTER an image is transfered 
+  by the <a href="c_g.htm">g command</a>.</p>
+<p><b>Boot an image into Flash ROM Example:</b></p>
+<pre>PMON> boot -f ff000000 -o 10000 192.168.1.5:pmon.denali.rom
+Loading file: 192.168.1.5:pmon.denali.rom (elf)
+0x100074/447112 + 0x16d2fc/42508(z)
+Programming flash 0x00100000:0x00077894 into 0xff000000
+Erasing FLASH block  0 Done.
+Erasing FLASH block  1 Done.
+Programming FLASH. Done.
+PMON>
+</pre>
+<p>In the above example, the boot -f command was used to load a new PMON/2000 
+  image into the 8 MB on-board flashROM are of the SBS Communications Denali CompactPCI 
+  Single Board Computer. The image was resident on a local network server, in 
+  the /tftpboot directory under the name of pmon.denali.rom and was a standard 
+  PowerPC ELF-32 bit image create with GNU tools on an OpenBSD PowerPC system. 
+  The image file is loaded and we get to see the binary file characteristics echoed 
+  to the console while the load is happening. The boot -f command also informs 
+  us of the transfer address (0x00100000:0x00077894) and size, as well as confirmation 
+  of the storead location (into 0xff000000). Next it tells us which flash ROM 
+  block(s) are being erased to hold the new image, follwed by confirmation that 
+  the flash ROM is being programed, and then reports its success.<br>
+</p>
+<p>When reading the symbol table PMON/2000 may complain that it does not have 
+  enough room to store the program’s symbols. To increase the size of the heap, 
+  use the set heaptop command to reserve more space and, if necessary, relink 
+  your program with a higher base address. The boot command will also detect cases 
+  where the program being loaded would overwrite PMON’s crucial data or heap: 
+  again relinking your program at a different address will cure the problem. </p>
+<p>While it is disk loading each section of the file, boot displays the memory 
+  address (in hex) and size (in decimal) of that section. Typically these sections 
+  will be in the order .text, .dataand .bss. </p>
+<h2>See Also</h2>
+<blockquote>
+  <p>The <a href="scsiboot.htm">scsiboot</a>, <a href="netboot.htm">netboot</a> 
+    and <a href="c_flash.htm">flash</a> commands.</p>
+</blockquote>
+<p><b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a> </p>
+<p><!--$Id: boot.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --></p>
+</BODY>
+</HTML>

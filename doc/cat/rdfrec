@@ -1,0 +1,42 @@
+The rdfrec Command
+The rdfrec Command
+
+NAME
+     rdfrec - fast-format record reader
+
+SYNOPSIS
+
+rdfrec [ -ln ] inputfile
+
+DESCRIPTION
+     rdfrec is a host-resident Motorola  S-record  reader.  It  reads
+     S-record files and generates a disassembly.
+
+OPTIONS
+
+     -n   
+     
+     don't disassemble, just list addresses and values.
+
+     -l   
+
+     assume that input file has little endian byte ordering.
+
+SEE ALSO
+     genfrec(1) pmcc(1) 
+     
+     
+FILES
+	This command is built from 
+	tools/rdfrec.c,
+	mon/machine.c and
+	mon/dis16.c.
+     
+     
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

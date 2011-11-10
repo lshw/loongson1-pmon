@@ -1,0 +1,34 @@
+		Host to Monitor Connection
+		Host to Monitor Connection
+
+The connection between the Host and the debug Monitor requires one serial
+port, and optionally an Ethernet connection or a second serial port.
+
+RS232 Serial Port
+
+This connection is used for all command information that passes between
+the host and the debug monitor. This port is also used for downloading
+if there is no Ethernet link or second serial port. 
+
+The baud rate used for this connection defaults
+to 9600. However, most systems will work satisfactorily up too 38400. 
+
+Ethernet Link (optional)
+
+This connection can be used for fast 
+downloads. It only supports the UDP protocol
+used by tftp, and is not presently supported by the source-level
+debuggers.
+
+Second Serial Port (optional)
+
+This connection can be used for edown on UNIX hosts. It's advantage
+is that it provides a more reliable flowcontrol mechanism than that
+available from tip.
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

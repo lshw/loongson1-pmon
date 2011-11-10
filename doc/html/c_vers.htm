@@ -1,0 +1,71 @@
+<title>The vers Command</title>
+
+<h1>vers</h1>
+
+
+
+<!--INDEX "vers command" version --> The vers command prints the version number 
+of the PMON/2000 Monitor. 
+<p>
+
+
+
+<h2>Format</h2>
+<p> The format for the vers command is: </p>
+<blockquote>
+  <pre><font size="+1">vers [-a] </font></pre>
+</blockquote>
+<p>where:</p>
+<table width="95%" bgcolor="#CCCCCC">
+  <tr> 
+    <td width="83"> -a </td>
+    <td width="748">List all version numbers 
+  </tr>
+</table>
+<h2> Functional Description</h2>
+<dl> 
+  <dd> Entering vers without any parameters prints the primary version number 
+    of the Monitor. 
+  <dd>&nbsp;</dd>
+  <dt>This is the value of the file 'version' in either the pmon or imon directory. 
+    The -a option lists the version numbers of all the components that were used 
+    to build this Monitor.</dt>
+  <dd> 
+    <p> 
+</dl>
+<h2>Examples</h2>
+<dl> 
+  <dd> 
+    <pre>
+
+PMON&gt; vers
+
+5.1.17
+
+PMON&gt; vers -a
+
+pmon:5.1.17 mon:5.1.6 lib:5.1.7 tools:5.1.7 inc:5.1.4 cc:MIPSSUN
+</pre>
+</dl>
+<h2><br>
+  See Also:</h2>
+<blockquote>
+  <p><a href="make.htm">make</a> and <a href="c_about.htm">about</a> commands.<br>
+  </p>
+</blockquote>
+<dl>
+  <dd> 
+    <p> 
+</dl>
+<p><hr>
+
+<b>Navigation:</b> 
+
+<a href="pmon.htm">Document Home</a> | 
+
+<a href="doctoc.htm">Document Contents</a> | 
+
+<a href="docindex.htm">Document Index</a> 
+<p>
+<p><br>
+  <!--$Id: c_vers.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --> 

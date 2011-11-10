@@ -1,0 +1,23 @@
+Index: sys.c
+===================================================================
+RCS file: /cvsroot/linux-mips/arch/mips/freebiosvga/x86emu/sys.c,v
+retrieving revision 1.1
+diff -r1.1 sys.c
+47a48
+> #define USE_CHAR
+306c307
+< #ifdef __BIG_ENDIAN__
+---
+> #if defined(USE_CHAR) || defined(__BIG_ENDIAN__)
+343c344
+< #ifdef __BIG_ENDIAN__
+---
+> #if defined(USE_CHAR) || defined(__BIG_ENDIAN__)
+403c404
+< #ifdef __BIG_ENDIAN__
+---
+> #if defined(USE_CHAR) || defined(__BIG_ENDIAN__)
+437c438
+< #ifdef __BIG_ENDIAN__
+---
+> #if defined(USE_CHAR) || defined(__BIG_ENDIAN__)

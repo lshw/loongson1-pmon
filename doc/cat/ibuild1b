@@ -1,0 +1,27 @@
+		Building SerialICE-1B
+		Building SerialICE-1B
+
+The steps required to build SerialICE are shown below.
+
+  »  Set your environment.
+  »  Build the run-time library using the following command.
+
+	nmake
+
+  »  Make a set of SerialICE Kernel ROMS
+for your Target board using the following commands.
+
+	cd bsps
+	nmake kcputype
+
+Where cputype is one of the following 4101, 4011, 4102.
+
+Then use the kernel file bsp/kcputype.rec  to make a set of ROMs for
+your Target board.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

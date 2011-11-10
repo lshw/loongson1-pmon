@@ -1,0 +1,94 @@
+# $Id: Bonito,v 1.4 2004/05/17 10:39:22 wlin Exp $
+#
+#	GENERIC configuration for Galileo EV64240
+#
+#  This file is supposed to be included by target file after
+#  endian has been defined.
+#
+machine         Bonito2ecard        mips    # CPU Architecture, Platform
+config          pmon 
+
+#
+#  Define target endian
+#
+makeoptions	ENDIAN=EL		# Little endian version.
+
+
+include "conf/GENERIC_ALL"
+
+#
+# Platform options
+#
+option		BONITOEL	
+option		MIPS
+option		INET
+#option		GODSONEV1		# GALILEO GT64240 Host Bridge
+
+select		mod_uart_ns16550	# Standard UART driver
+#option		CONS_BAUD=B9600
+option		CONS_BAUD=B115200
+select		ext2
+select		mod_x86emu_int10
+#select		mod_x86emu		# X86 emulation for VGA
+select		mod_vgacon
+option		NOPCINAMES		# Save some space for x86emu
+#option		VGA_LYNX_0712
+option 		AUTOLOAD
+#option 	        NVRAM_IN_FLASH	
+#
+# Functional options.
+#
+option		NOSNOOP			# Caches are no-snooping
+
+#
+# HAVE options. What tgt level provide
+#
+option		HAVE_TOD		# Time-Of-Day clock
+option		HAVE_NVENV		#  Platform has non-volatile env mem
+option		HAVE_LOGO		# Output splash logo
+
+#
+# System Name and Target Name
+#
+option		SYSTYPE="\"Bonito\""
+option		TARGETNAME="\"Bonito\""
+
+#
+#  Now the Machine specification
+#
+mainbus0        at root
+localbus0	at mainbus0
+pcibr0		at mainbus0
+pci*		at pcibr?
+#ppb*		at pci? dev ? function ?	# PCI-PCI bridges
+#pci*		at ppb? bus ?
+
+#### USB
+#uhci*		at pci? dev ? function ?
+
+#### SCSI support
+#siop*		at pci? dev ? function ?	# Symbios/NCR 53c...
+#scsibus*	at siop?
+#sd*		at scsibus? target ? lun ? 
+#cd*		at scsibus? target ? lun ? 
+
+#### Networking Devices
+#gt0		at localbus? base 4
+#gt1		at localbus? base 5
+#gt2		at localbus? base 6
+# fxp normally only used for debugging (enable/disable both)
+fxp0            at pci? dev ? function ?        # Intel 82559 Device
+inphy*          at mii? phy ?                   # Intel 82555 PHYs
+rtl*        at pci? dev ? function ?
+
+#### IDE controllers
+pciide* 	at pci ? dev ? function ? flags 0x0000
+
+#### IDE hard drives
+wd*		at pciide? channel ? drive ? flags 0x0000
+
+#### Pseudo devices
+pseudo-device	loop	1	# network loopback
+
+option CARD2E
+

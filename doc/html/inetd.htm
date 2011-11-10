@@ -1,0 +1,178 @@
+<html>
+<head>
+<title>Untitled Document</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<pre><b>INETD(8)                OpenBSD System Manager's Manual               INETD(8)
+</b>
+
+<b>NAME</b>
+     <b>inetd</b> - internet ``super-server''
+
+
+<b>SYNOPSIS
+     inetd [-d] [-R rate] [configuration file]</b>
+
+
+<b>DESCRIPTION</b>
+     inetd should be run at boot time by /etc/rc (see rc(8)).  It then listens
+     for connections on certain internet sockets.  When a connection is found
+     on one of its sockets, it decides what service the socket corresponds to,
+     and invokes a program to service the request.  After the program is fin-
+     ished, it continues to listen on the socket (except in some cases which
+     will be described below).  Essentially, inetd allows running one daemon
+     to invoke several others, reducing load on the system.
+
+     The option available for inetd:
+
+     -d      Turns on debugging.
+
+     -R rate
+             Specify the maximum number of times a service can be invoked in
+             one minute; the default is 256.
+
+     Upon execution, inetd reads its configuration information from a configu-
+     ration file which, by default, is /etc/inetd.conf. There must be an entry
+     for each field of the configuration file, with entries for each field
+     separated by a tab or a space.  Comments are denoted by a ``#'' at the
+     beginning of a line.  There must be an entry for each field.  The fields
+     of the configuration file are as follows:
+
+           service name
+           socket type
+           protocol
+           wait/nowait[.max]
+           user[.group] or user[:group]
+           server program
+           server program arguments
+
+     To specify a Sun-RPC based service, the entry would contain these fields.
+
+           service name/version
+           socket type
+           rpc/protocol
+           wait/nowait[.max]
+           user[.group] or user[:group]
+           server program
+           server program arguments
+
+
+     For internet services, the first field of the line may also have a host
+     address specifier prefixed to it, separated from the service name by a
+     colon.  If this is done, the string before the colon in the first field
+     indicates what local address inetd should use when listening for that
+     service. Multiple local addresses can be specified on the same line, sep-
+     arated by commas. Numeric IP addresses in dotted-quad notation can be
+     used as well as symbolic hostnames. Symbolic hostnames are looked up us-
+     ing gethostbyname().  If a hostname has multiple address mappings, inetd
+     creates a socket to listen on each address.
+
+     The single character ``*'' indicates INADDR_ANY, meaning ``all local
+     addresses''. To avoid repeating an address that occurs frequently, a line
+     with a host address specifier and colon, but no further fields, causes
+     the host address specifier to be remembered and used for all further
+     lines with no explicit host specifier (until another such line or the end
+     of the file).  A line
+           *:
+     is implicitly provided at the top of the file; thus, traditional configu-
+     ration files (which have no host address specifiers) will be interpreted
+     in the traditional manner, with all services listened for on all local
+     addresses.
+
+     The service-name entry is the name of a valid service in the file
+     /etc/services. For ``internal'' services (discussed below), the service
+     name must be the official name of the service (that is, the first entry
+     in /etc/services). When used to specify a Sun-RPC based service, this
+     field is a valid RPC service name in the file /etc/rpc. The part on the
+     right of the ``/'' is the RPC version number. This can simply be a single
+     numeric argument or a range of versions.  A range is bounded by the low
+     version to the high version - ``rusers/1-3''.
+
+     The socket-type should be one of ``stream'', ``dgram'', ``raw'', ``rdm'',
+     or ``seqpacket'', depending on whether the socket is a stream, datagram,
+     raw, reliably delivered message, or sequenced packet socket.
+
+     The protocol must be a valid protocol as given in /etc/protocols. Exam-
+     ples might be ``tcp'' or ``udp''. RPC based services are specified with
+     the ``rpc/tcp'' or ``rpc/udp'' service type.
+
+     The wait/nowait entry is used to tell inetd if it should wait for the
+     server program to return, or continue processing connections on the sock-
+     et.  If a datagram server connects to its peer, freeing the socket so
+     inetd can receive further messages on the socket, it is said to be a
+     ``multi-threaded'' server, and should use the ``nowait'' entry.  For
+     datagram servers which process all incoming datagrams on a socket and
+     eventually time out, the server is said to be ``single-threaded'' and
+     should use a ``wait'' entry.  comsat(8) (biff(1))  and talkd(8) are both
+     examples of the latter type of datagram server.  tftpd(8) is an excep-
+
+     tion; it is a datagram server that establishes pseudo-connections.  It
+     must be listed as ``wait'' in order to avoid a race; the server reads the
+     first packet, creates a new socket, and then forks and exits to allow
+     inetd to check for new service requests to spawn new servers.  The op-
+     tional ``max'' suffix (separated from ``wait'' or ``nowait'' by a dot)
+     specifies the maximum number of server instances that may be spawned from
+     inetd within an interval of 60 seconds. When omitted, ``max'' defaults to
+     40.
+
+     Stream servers are usually marked as ``nowait'' but if a single server
+     process is to handle multiple connections, it may be marked as ``wait''.
+     The master socket will then be passed as fd 0 to the server, which will
+     then need to accept the incoming connection.  The server should eventual-
+     ly time out and exit when no more connections are active.  inetd will
+     continue to listen on the master socket for connections, so the server
+     should not close it when it exits.  identd(8) is usually the only stream
+     server marked as wait.
+
+     The user entry should contain the user name of the user as whom the serv-
+     er should run.  This allows for servers to be given less permission than
+     root. An optional group name can be specified by appending a dot to the
+     user name followed by the group name. This allows for servers to run with
+     a different (primary) group ID than specified in the password file. If a
+     group is specified and user is not root, the supplementary groups associ-
+     ated with that user will still be set.
+
+     The server-program entry should contain the pathname of the program which
+     is to be executed by inetd when a request is found on its socket.  If
+     inetd provides this service internally, this entry should be
+     ``internal''.
+
+     The server program arguments should be just as arguments normally are,
+     starting with argv[0], which is the name of the program.  If the service
+     is provided internally, the word ``internal'' should take the place of
+     this entry.
+
+     inetd provides several ``trivial'' services internally by use of routines
+     within itself.  These services are ``echo'', ``discard'', ``chargen''
+     (character generator), ``daytime'' (human readable time), and ``time''
+     (machine readable time, in the form of the number of seconds since mid-
+     night, January 1, 1900).  All of these services are TCP based.  For de-
+     tails of these services, consult the appropriate RFC from the Network In-
+     formation Center.
+
+     inetd rereads its configuration file when it receives a hangup signal,
+     SIGHUP. Services may be added, deleted or modified when the configuration
+     file is reread.  inetd creates a file /var/run/inetd.pid that contains
+     its process identifier.
+<b>BUGS</b>
+     Host address specifiers, while they make conceptual sense for RPC ser-
+     vices, do not work entirely correctly.  This is largely because the
+     portmapper interface does not provide a way to register different ports
+     for the same service on different local addresses.  Provided you never
+     have more than one entry for a given RPC service, everything should work
+     correctly.  (Note that default host address specifiers do apply to RPC
+     lines with no explicit specifier.)
+
+<b>SEE ALSO
+</b>     <font color="#CCCCCC">comsat(8),  fingerd(8),  ftpd(8),  rexecd(8),  rlogind(8),  rshd(8),
+     telnetd(8),</font>  <b><a href="tftpd.htm">tftpd(8)</a></b>
+
+<b>HISTORY
+</b>     The inetd command appeared in 4.3BSD. Support for Sun-RPC based services
+     is modeled after that provided by SunOS 4.1.
+
+<b>OpenBSD 2.6                     March 16, 1991</b></pre>
+</body>
+</html>

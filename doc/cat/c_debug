@@ -1,0 +1,66 @@
+The debug Command
+debug
+
+The debug command initiates the Monitor's
+gdb/dbx mode.
+
+Format
+
+The format for the debug command is:
+
+debug [-svV] [-c args] 
+
+where:
+
+-s	does not set client stack pointer.
+
+-v	shows communication errors.
+
+-V	sets the verbose option.
+
+-c args	indicates that the argument or arguments args are to be 
+passed to the client program.
+
+Functional Description
+
+The debug command causes the Monitor to enter gdb/dbx mode. It is
+intended to be used with either the GNU's gdb or MIPS' dbx source-level
+debugger. The -V option selects verbose mode. In verbose mode, each of
+the messages sent to and received from dbx are displayed on the
+terminal screen. It is not possible to leave verbose mode without
+leaving dbx mode and reentering dbx mode without the -V option. By
+default, the Monitor displays in terse mode.
+
+Examples illustrating the use of the debug command with MIPS' dbx follow. 
+
+% cat /etc/remote.pdbx		Display port information on host port1.
+port1:dv=/dev/tty1:br#9600:
+
+% cat ~/.dbxinit 		Display setup for dbx.
+set $pdbxport = "port1"
+set $usesockets=0
+set $manual_load = 1
+
+PMON set hostport tty1		Specify protocol and port for target.
+PMON set dlproto EtxAck 
+PMON set dlecho off 
+PMON load 			Prepare for download, and start.
+
+% edown /dev/tty1 < test1.rec
+% dbx -prom test1		Invoke dbx.
+
+(dbx) stop in main		Optionally set breakpoint at main.
+(dbx) run			Prepare for execution.
+
+PMON debug			Begin executing.
+
+See Also
+set
+command for the setup of the environment variables.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

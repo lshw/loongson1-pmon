@@ -1,0 +1,171 @@
+# $Id: Bonito,v 1.1.1.1 2006/03/10 03:27:14 cpu Exp $
+#
+#	GENERIC configuration for Galileo EV64240
+#
+#  This file is supposed to be included by target file after
+#  endian has been defined.
+#
+machine         Bonito2F7inch        mips    # CPU Architecture, Platform
+config          pmon 
+
+#
+#  Define target endian
+#
+makeoptions	ENDIAN=EL		# Little endian version.
+
+
+include "conf/GENERIC_ALL"
+
+#
+# Platform options
+#
+option		BONITOEL	
+option		MIPS
+option		INET
+#option		GODSONEV1		# GALILEO GT64240 Host Bridge
+#select     vt82c686        #via686a/b code
+select     cs5536 
+option     VGA_NO_ROM       # display card has no rom
+option     LOONGSON2F_7INCH
+
+#option		HAVE_FLASH		# Platform has FLASH memory.
+#option		HAVE_NVENV		# Platform has non-volatile env mem 
+
+#
+# Module selection. Selects pmon features
+#
+select		mod_flash_amd		# AMD flash device programming
+#select		mod_flash_intel		# intel flash device programming
+#select		mod_flash_sst           # sst flash device programming
+select		mod_flash_winbond       # winbond flash device programming
+select		mod_debugger		# Debugging module
+select		mod_symbols		# Symbol table handling
+select		mod_s3load		# Srecord loading
+select		mod_fastload		# LSI Fastload
+select		mod_elfload		# ELF loading
+#select		mod_tod_mc146818	# Time-Of-Day clock based on MC146818
+#select		logfile			# Enable log file support
+
+select		mod_uart_ns16550	# Standard UART driver
+#option		CONS_BAUD=B9600
+option		CONS_BAUD=B115200
+select		ext2
+select      fat
+#select		mod_x86emu_int10
+#select     mod_framebuffer
+select		mod_x86emu		# X86 emulation for VGA
+#vga monitor
+select		mod_vgacon
+option		NOPCINAMES		# Save some space for x86emu
+#option		VGA_LYNX_0712
+option 		AUTOLOAD
+#option 	        NVRAM_IN_FLASH	
+#
+# Functional options.
+#
+option		NOSNOOP			# Caches are no-snooping
+
+#
+#
+option		USB_OHCI_NO_ROM
+option 		RADEON7000
+#option         X86_LIKE_SPACE          # make pci addr == cpu addr
+#option 	NEW_PCI_WINDOW          # use 128/32/32 pci windows
+#option         VGA_BASE=0xba000000 
+option          VGA_BASE=0xb0000000 
+#option          DEBUG_EMU_VGA
+
+#behavior
+option CLEAR_WHEN_BOOT
+option ALL_OTHER_KEY_TO_STOP_BOOT
+
+
+#
+# System Name and Target Name
+#
+option		SYSTYPE="\"Bonito\""
+option		TARGETNAME="\"Bonito\""
+
+#
+# Command selection. Selects pmon commands
+#
+select          cmd_about               # Display info about PMON
+select		cmd_gui
+select          cmd_boot                # Boot wrapper
+select          cmd_mycmd
+select          cmd_newmt
+select 		cmd_test
+select          cmd_cache               # Cache enabling
+#select         cmd_call                # Call a function command
+select          cmd_date                # Time of day command
+select          cmd_env                 # Full blown environment command set
+select          cmd_flash               # Flash programming cmds
+select          cmd_hist                # Command history
+select          cmd_ifaddr              # Interface address command
+select          cmd_l                   # Disassemble
+select          cmd_mem                 # Memory manipulation commands
+select          cmd_more                # More paginator
+select          cmd_mt                  # Simple memory test command
+select          cmd_misc                # Reboot & Flush etc.
+#select         cmd_stty                # TTY setings command
+select          cmd_tr                  # Host port-through command
+select          cmd_devls               # Device list
+select          cmd_set                 # As cmd_env but not req. cmd_hist
+select          cmd_testdisk
+#
+select          cmd_shell               # Shell commands, vers, help, eval
+#
+#
+
+#
+#  Now the Machine specification
+#
+mainbus0        at root
+localbus0	at mainbus0
+pcibr0		at mainbus0
+pci*		at pcibr?
+#ppb*		at pci? dev ? function ?	# PCI-PCI bridges
+#pci*		at ppb? bus ?
+
+#### USB
+#uhci*		at pci? dev ? function ?
+
+#### SCSI support
+#siop*		at pci? dev ? function ?	# Symbios/NCR 53c...
+#scsibus*	at siop?
+#sd*		at scsibus? target ? lun ? 
+#cd*		at scsibus? target ? lun ? 
+
+#### Networking Devices
+#gt0		at localbus? base 4
+#gt1		at localbus? base 5
+#gt2		at localbus? base 6
+# fxp normally only used for debugging (enable/disable both)
+
+#fxp0            at pci? dev ? function ?        # Intel 82559 Device
+#inphy*          at mii? phy ?                   # Intel 82555 PHYs
+rtl0		 at pci? dev ? function ?
+rtk0		 at pci? dev ? function ?
+#option		 EPLC46
+#uhci0		 at pci? dev ? function ?
+ohci0		 at pci? dev ? function ?
+#usb0		 at usbbus ? 
+#ohci1		 at pci? dev ? function ?
+
+select      mod_usb
+select  	mod_usb_storage
+select 	 	mod_usb_ohci
+select      mod_usb_kbd
+#select      mod_usb_uhci
+
+#### IDE controllers
+pciide* 	at pci ? dev ? function ? flags 0x0000
+
+#### IDE hard drives
+wd*		at pciide? channel ? drive ? flags 0x0000
+
+ide_cd*		at pciide? channel ? drive ? flags 0x0001
+select 		iso9660
+
+#### Pseudo devices
+pseudo-device	loop	1	# network loopback

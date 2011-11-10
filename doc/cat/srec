@@ -1,0 +1,94 @@
+	Motorola S-Record Format
+	Motorola S-Record Format
+
+Motorola S-records are an industry-standard format for transmitting 
+binary files to target systems and PROM programmers. LSI Logic have 
+extended this standard to include an S4-record containing an address 
+and a symbol. 
+
+The extended S-record standard is as follows:
+
+S<type><length><address><data....><checksum>
+S4<length><address><name>,<checksum>
+
+Where:
+
+ type
+	is the record type. Where:
+	
+	0starting record (optional)
+	1data record with 16-bit address
+	2data record with 24-bit address
+	3data record with 32-bit address
+	4symbol record (LSI extension)
+	5number of data records in preceeding block
+	6unused
+	7ending record for S3 records
+	8ending record for S2 records
+	9ending record for S1 records
+	
+length
+	is two hex characters. This defines the length of the record
+	in bytes (not characters). It includes the address field, the data
+	field, and the checksum field.
+	
+address
+	 is 4, 6, or 8 characters. Corresponding to a 16-, 24-, or
+	32-bit address. The address field for S4 records is always
+	32 bits.
+	
+data
+	Are the data bytes. Each pair of hex characters represent
+	one byte in memory.
+name
+	Is the symbol name. The symbol is terminated by a ','.
+checksum
+	Is the one's complement of the 8-bit checksum.
+
+Example
+
+S0030000FC
+.
+.
+S325000004403C0880018D08DD900000000011000026000000003C0880012508DC50C50000B401
+S32500000460C50100B8C50200BCC50300C0C50400C4C50500C8C50600CCC50700D0C50800D4FA
+S32500000480C50900D8C50A00DCC50B00E0C50C00E4C50D00E8C50E00ECC50F00F0C51000F49A
+S325000004A0C51100F8C51200FCC5130100C5140104C5150108C516010CC5170110C518011434
+.
+.
+S70500000000FA
+
+The S0 record starts the file. The S3 records contain the data. 
+The S7 record contains the entry address and terminates the download.
+
+Generating S-record files
+
+The PMON source package contains two mechanisms for generating
+S-record files.
+
+  »  The "pmcc -srec" command.
+  »  The gensrec command.
+
+The program gensrec converts MIPS ECOFF files into Motorola S-Records.
+Thus, if used in conjunction with the command gencoff, it is possible to convert an
+arbitrary file into Motorola S-Records using the following
+procedure:
+
+	gencoff -T80050000 file.bin -o file.cof
+	gensrec file.cof  file.rec
+
+This example will convert the file "file.bin" to "file.rec", which will
+download to 0x80050000.
+
+See Also
+
+S-record reader - rdsrec
+S-record generator - gensrec
+COFF generator - gencoff
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

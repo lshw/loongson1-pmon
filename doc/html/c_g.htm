@@ -1,0 +1,140 @@
+<html>
+
+<head>
+<title>The g Command</title>
+</head>
+
+<body>
+
+<h1>g</h1>
+<!--INDEX "g command" go "start execution" -->
+
+<p>The g command starts program execution.</p>
+
+<h2>Format</h2>
+
+<dl> 
+  <dd>The format for the g command is: 
+    <pre>
+
+<font size="+1">g [-ste] [adr [bptadr]] [-c args]</font>
+
+</pre>
+  </dd>
+</dl>
+<p>where: </p>
+<dl>
+  <dl compact> 
+    <div align="left"> 
+      <table border="0" width="95%" height="158" bordercolorlight="#CCCCCC">
+        <tr bgcolor="#CCCCCC"> 
+          <td width="12%" valign="top">-s</td>
+          <td width="88%" valign="top"> 
+            <div align="left">is a flag indicating that the stack pointer, sp, 
+              should not be set</div>
+          </td>
+        </tr>
+        <tr> 
+          <td width="12%" valign="top">-t</td>
+          <td width="88%" valign="top">is a flag that causes the execution time 
+            of the client program to be displayed in seconds. </td>
+        </tr>
+        <tr bgcolor="#CCCCCC"> 
+          <td width="12%" height="20" valign="top">-e</td>
+          <td width="88%" height="20" valign="top">changes behavior of 'adr' (below) 
+            so that the actual execution address is extracted from the image.</td>
+        </tr>
+        <tr> 
+          <td width="12%" height="20" valign="top">adr</td>
+          <td width="88%" height="20" valign="top">is the address of the first 
+            instruction to be executed. </td>
+        </tr>
+        <tr bgcolor="#CCCCCC"> 
+          <td width="12%" valign="top">bptadr</td>
+          <td width="88%" valign="top">is a breakpoint address where program execution 
+            is to be stopped. This breakpoint is removed the next time that execution 
+            halts. </td>
+        </tr>
+        <tr> 
+          <td width="12%" valign="top">-c args</td>
+          <td width="88%" valign="top">indicates that the argument or arguments 
+            args are to be passed to the client program. No more options to the 
+            g command itself can be given after this option.</td>
+        </tr>
+      </table>
+    </div>
+    <dt>&nbsp;</dt>
+  </dl>
+  <dd>By default, the g command starts program execution at the address in the 
+    <em>CPC</em>&nbsp;register, and sets the stack pointer register, to the end 
+    of the stack area. Note that the stack grows downwards.</dd>
+</dl>
+
+<h2>Functional Description</h2>
+
+<dl> 
+  <dd>The g command starts program execution. If the user does not specify the 
+    starting address adr, execution starts at the current value of the <em>CPC</em> 
+    register. This command must only be used once after downloading a new program. 
+    Use the <a href="c_c.htm">c</a> command to continue execution after a breakpoint.</dd>
+</dl>
+<p>If the user specifies the -c option, the <a href="mondef.htm">Monitor</a> passes 
+  all arguments after -c to the client program by the following method. If -c 
+  is specified, the <a href="mondef.htm">Monitor</a> places the number of arguments 
+  (argc) in Register a0. The <a href="mondef.htm">Monitor</a> also places the 
+  address of an array of pointers to the command argument-strings in Register 
+  a1. The first element in the array pointed to by a1 contains a pointer to the 
+  string -c (the option on the command line). Note that if the -c is not specified, 
+  register a0 will be set to zero. The function declaration of the function called 
+  is thus:</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+  FUNC(int argc, char **argv, char **envp);</p>
+<p>If adr is specified, a temporary <a href="brkpts.htm">breakpoint</a> (bptadr) 
+  may also be specified. The temporary breakpoint remains in effect only until 
+  the next time that program execution is halted. The character '.' may be used 
+  as a placeholder for the adr if you wish to specifiy a temporary breakpoint 
+  without specifying a start address. </p>
+<p>If you use the standard start-up file for executing programs under the control 
+  of the PROM <a href="mondef.htm">Monitor</a>, the function main will receive 
+  three incoming arguments, argc, argv and envp, having the correct values to 
+  permit a program to read options from the command line, where argv[0] is a pointer 
+  to the string -c. </p>
+<p>The -e option causes 'go' to examine the embedded execution address of an executable 
+  located at 'adr' and use that embedded address as the starting point. Such code 
+  must have a front-end that relocates the code before allowing the execution 
+  to begin at the new address. Running PMON from an alternate Flash ROM area is 
+  one of the most frequent instances where this feature is employed. During development 
+  of PMON/2000 for the PowerPC processors, we would cycle through the build, copy 
+  to tftpboot dir, boot -f (flash) and &quot;g -e ff000100&quot; process while 
+  testing. This allowed us to safely burn an image of PMON/2000 into the alternate 
+  flash ROM area without overwriting the primary flash ROM space. Of course, once 
+  a revision was to a point where happiness reigned....we would then burn it into 
+  the primary flash ROM space. Enjoy!</p>
+<p>Examples illustrating the use of the g command follow.</p>
+<blockquote> 
+  <pre>
+
+PMON&gt; g&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start executing at the current value of 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the EPC register.
+
+PMON&gt; g a0020000&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start executing at 0xa0020000.
+
+PMON&gt; g a0020000 a0020008&nbsp;&nbsp;&nbsp;Start executing at 0xa0020000 and 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break at 0xa0020008.
+
+PMON&gt; g -e ff000100&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Examine code at 'adr' (ff000100) and relocate
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;it to the embedded execution address.
+</pre>
+</blockquote>
+<h2>See Also</h2>
+
+<dl>
+  <dd><a href="c_c.htm">c command</a> </dd>
+</dl>
+
+<hr>
+<p> <b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a> </p>
+<p><!--$Id: c_g.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $--></p>
+</body>
+</html>

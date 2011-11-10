@@ -1,0 +1,5 @@
+pmon/cmds/boot.c:	tgt_enable(tgt_getmachtype ()); /* set up i/u hardware */
+pmon/cmds/cmd_go.c:	tgt_enable (tgt_getmachtype ()); /* set up i/u hardware */
+pmon/cmds/go.c:	tgt_enable (tgt_getmachtype ()); /* set up i/u hardware */
+pmon/common/main.c:	initial_sr |= tgt_enable (tgt_getmachtype ());
+pmon/loaders/disk_boot.c:	tgt_enable(tgt_getmachtype ()); /* set up i/u hardware */

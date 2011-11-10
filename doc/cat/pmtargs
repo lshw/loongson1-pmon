@@ -1,0 +1,68 @@
+		PMON Targets
+		PMON Targets
+
+PMON supports any of LSI Logic's Evaluation boards as a Target.  Each
+PMON target needs to be equipped with a set of suitably configured PMON
+Proms.  This package currently builds for the following boards.
+
+BDMR400x (4001/2/3) Evaluation Board
+
+  »  Insert the four flash memories containing PMON in U8,
+	U19, U29, and U40. Note that this board can be configured for
+	big or little endian byte ordering (J1).
+  »  Connect a serial cable from U28 to the 
+	Host.
+
+BDMR4101 (4101) Evaluation Board
+
+  »  Insert the four flash memories containing PMON in U5,
+	U6, U7, and U8. Note that this board can be configured for
+	big or little endian byte ordering (J1).
+  »  Connect a serial cable from J28 to the 
+	Host.
+
+BDMR4102 (4102) Evaluation Board
+
+  »  Insert the EPROM containing PMON in U25.
+  »  Connect a serial cable from J10 to the 
+	Host.
+
+Nitro (4010) Evaluation Board
+
+  »  Insert the flash memory containing PMON in U18.
+  »  Connect a serial cable from J18 to the 
+	Host.
+
+Nitro II (4011) Evaluation Board
+
+  »  Insert the EPROM containing PMON in U4.
+  »  Connect a serial cable from J19 to the 
+	Host.
+
+SDP1000 (64008) RevA Evaluation Board
+
+  »  Insert the two flash memories containing PMON in U42 and U44.
+  »  Connect a serial cable from CON9 to the 
+	Host.
+
+SDP1000 (64108) RevB Evaluation Board
+
+  »  Insert the two flash memories containing PMON in U50 and U49.
+  »  Connect a serial cable from port1 to the 
+	Host.
+
+ATMizer-2 RT Platform
+
+  »  Build two PMON configuartions: one for the ATMizer-2 Host, and one
+    for the ATMizer-2 Sar. Insert the two flash memories in the respective
+    sockets.
+  »  Connect two serial cables to the 
+Host: one from the Host-board's tty0, and
+one from the Sar-board's tty0.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

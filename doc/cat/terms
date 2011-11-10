@@ -1,0 +1,45 @@
+	Terminal Emulators
+	Terminal Emulators
+
+A terminal emulator can provide assembly-level debugging. It permits the
+user to display/set registers and memory, and to single step and set
+breakpoints. In this mode you can use global symbols, but you can't
+use local variable names. A Terminal Emulator is often used to 
+send a file to the Target.
+
+For more program-specific information, please select the appropriate
+program below.
+
+  »  Terminal (Windows 3.x)
+  »  Hyperterminal (Windows 95)
+  »  Crosstalk (MSDOS, Windows 3.x, Windows 95)
+  »  Procomm (MSDOS, Windows 3.x, Windows 95)
+  »  tip (UNIX)
+
+Note that the Monitor does not require any
+specific type of Terminal Emulation, but vt100 is always a safe choice
+if you need to make one.
+
+You should configure the terminal emulator on your Host for 9600 baud,
+8 bits data, no parity, 1 stop bit, and whatever communication port you
+chose on the back of your Host, turn on the power to your
+SerialICE Controller/Target, and you should see a banner that looks something
+like this:
+
+	IMON version 5.1.0 [EB], LSI LOGIC Corp. Wed Mar 19 13:01:41 1997
+	This is free software, and comes with ABSOLUTELY NO WARRANTY.
+	You are welcome to redistribute it without restriction.
+	NVRAM: Am29F010. Debugger support: CROSSVIEW, DBX. 
+	Type 'h' for on-line help. 
+	 
+	IMON 
+
+If you don't see this display, you might need to use a special cable to satify the requirements of your
+host's hardware flow control scheme (even if it has been disabled).
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

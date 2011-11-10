@@ -1,0 +1,23 @@
+#ifndef _gcTESTIMAGES_H_
+#define _gcTESTIMAGES_H_
+
+extern gcIMAGEDESCRIPTOR exige_0160x108x24;
+//extern gcIMAGEDESCRIPTOR exige_1_0160x108x24;  //zgj
+extern gcIMAGEDESCRIPTOR vasiliy_476x320x24;
+extern gcIMAGEDESCRIPTOR mono_vivante_97x33x1;
+extern gcIMAGEDESCRIPTOR f430_171x128x1;
+extern gcIMAGEDESCRIPTOR f430_babe_171x128x1;
+extern gcIMAGEDESCRIPTOR f430_171x128x24;
+#if 0
+extern gcIMAGEDESCRIPTOR mono_vivante_97x33x1;
+extern gcIMAGEDESCRIPTOR f430_171x128x1;
+extern gcIMAGEDESCRIPTOR f430_babe_171x128x1;
+extern gcIMAGEDESCRIPTOR f430_171x128x24;
+extern gcIMAGEDESCRIPTOR poppy_480x325_YUY2;
+extern gcIMAGEDESCRIPTOR poppy_480x325_UYVY;
+extern gcIMAGEDESCRIPTOR vasiliy_476x320x24;
+#endif
+//extern gcIMAGEDESCRIPTOR hisilicon_800x600_UYVY;
+//extern gcIMAGEDESCRIPTOR hisilicon_1600x1200_UYVY;
+
+#endif

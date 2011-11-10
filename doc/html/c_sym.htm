@@ -1,0 +1,99 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.72 [en] (WinNT; U) [Netscape]">
+   <title>The sym Command</title>
+</head>
+<body>
+
+<h1>
+sym</h1>
+<!--INDEX "sym command" "define symbol" -->The sym command sets a symbolic
+name for a variable.
+<br>
+&nbsp; &nbsp; 
+<h2>
+Format</h2>
+
+<p> The format for this command is:</p>
+<blockquote>
+  <pre><font size="+1">sym <i>name</i> <i>value</i></font></pre>
+</blockquote>
+<p>where: </p>
+<dl> 
+  <table width="95%">
+    <tr bgcolor="#CCCCCC"> 
+      <td width="106" nowrap align="right" valign="top"> 
+        <p><i>name&nbsp;&nbsp;</i></p>
+      </td>
+      <td width="725" align="left" valign="top">is the name of the variable for 
+        which a value is to be set.&nbsp;</td>
+    </tr>
+    <tr> 
+      <td width="106" nowrap align="right" valign="top"> 
+        <p><i>value&nbsp;&nbsp;</i></p>
+      </td>
+      <td width="725" align="left" valign="top">is the value to which the variable 
+        is set.&nbsp;</td>
+    </tr>
+  </table>
+</dl>
+
+<h2>
+Functional Description</h2>
+
+<dl> 
+  <dd> The <i>sym</i> command sets a symbolic name to the specified value.</dd>
+  <dt>&nbsp;</dt>
+  <dt>Normally the file load commands clears the symbol table. However, there 
+    is an option to override the clearing of the symbol table (see the <a href="c_load.htm">load</a>, 
+    <a href="netboot.htm">netboot</a> and <a href="scsiboot.htm">scsiboot</a> 
+    commands for details).</dt>
+  <br>
+  &nbsp; 
+  <p>Symbols can be displayed using the <a href="c_ls.htm">ls</a> command. 
+  <dt>&nbsp;</dt>
+  <p>Examples illustrating the use of this command follow.<br>
+    &nbsp; 
+  <blockquote> 
+    <pre>PMON> sym start 9fc00240
+
+
+PMON> sym flush_cache 9fc016f0
+
+
+PMON> l start 4
+
+<font color="#FF0000">start+0x240 3c09a07f&nbsp;&nbsp;&nbsp; lui&nbsp;&nbsp;&nbsp;&nbsp; t1,0xa07f
+start+0x244 3c08003c&nbsp;&nbsp;&nbsp; lui&nbsp;&nbsp;&nbsp;&nbsp; t0,0x3c
+start+0x248 3529ff20&nbsp;&nbsp;&nbsp; ori&nbsp;&nbsp;&nbsp;&nbsp; t1,t1,0xff20
+
+</font>
+PMON> l 9fc0027c 5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+<font color="#FF0000">start+0x27c 03a1e825&nbsp;&nbsp;&nbsp; or&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sp,sp,at&nbsp;
+start+0x280 0ff005bc&nbsp;&nbsp;&nbsp; jal&nbsp;&nbsp;&nbsp;&nbsp; flush_cache
+start+0x284 24040000&nbsp;&nbsp;&nbsp; addiu&nbsp;&nbsp; a0,zero,0x0
+start+0x288 0ff005bc&nbsp;&nbsp;&nbsp; jal&nbsp;&nbsp;&nbsp;&nbsp; flush_cache
+start+0x28c 24040001&nbsp;&nbsp;&nbsp; addiu&nbsp;&nbsp; a0,zero,0x1</font>
+
+</pre>
+  </blockquote>
+</dl>
+
+<h2>
+See Also</h2>
+
+<dl>
+<dd>
+<a href="c_ls.htm">ls</a>, <a href="c_load.htm">load</a>, <a href="c_l.htm">l</a>,
+and <a href="c_sh.htm">sh</a> commands.</dd>
+</dl>
+
+<hr>
+<p><b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a> </p>
+<p><!--$Id: c_sym.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --></p>
+</body>
+</html>

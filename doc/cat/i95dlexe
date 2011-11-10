@@ -1,0 +1,37 @@
+	Downloading and Executing Your Application with IMON95
+Downloading and Executing Your Application with IMON95
+
+Download
+
+Use imon95's load
+command to download the S-record file to the target. For example,
+
+	IMON95 load tstapp.rec
+
+Execute
+
+If you want to run the entire application without breakpoints, type 'g'.
+For example,
+
+	IMON95 g
+	// By default program output will go to tty0.
+
+If you would prefer to be able to single-step your application, and
+to possibly set breakpoints, you might prefer to use the following
+sequence of commands.
+
+ 
+IMON95 g . mainExecute until main
+IMON95 l . 8Disassemble the next 8 instructions
+IMON95 sSingle-step one instruction
+IMON95 c sortContinue until the label sort
+
+For a complete list of the commands available, please refer to the
+appropriate IMON95 command list.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

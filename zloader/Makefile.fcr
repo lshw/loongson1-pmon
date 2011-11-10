@@ -1,0 +1,8 @@
+TARGET=fcr_soc
+TARGETEL=fcr
+START=start.o
+MEMSIZE=64
+ZLOADER_OPTIONS=-DNOCACHE2 -DNOMSG -mips2
+RAMSTARTADDR=0xffffffff80800000
+
+include Makefile.inc

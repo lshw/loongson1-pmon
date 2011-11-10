@@ -1,0 +1,98 @@
+The ls Command
+ls
+
+The ls command lists the current symbols in the symbol table. 
+
+Format
+
+The format for the ls command is:
+
+	ls [-ln] [sym|[-[v|a] adr]
+
+where:
+
+-l	provides a long listing, showing the address value for each 
+	symbol.
+
+-n	lists the symbols in ascending order of address.
+
+sym	is a pattern filter for the symbols to be shown. Both character 
+	wildcards ("?") and word wildcards ("*") are permitted.
+
+-v	is the verbose option, showing the value in hexadecimal, 
+	decimal, and octal.
+
+-a	shows the address in symbolic form.
+
+adr	is the address for which a symbol or offset from a symbol is 
+	sought.
+
+Invoking the ls command without any options or parameters lists the 
+symbols in alphabetical order without displaying the actual address 
+for each symbol.
+
+Functional Description
+
+The ls command lists the symbols in the symbol table.
+
+The -l option produces a long listing, which includes the address value of 
+each symbol. The -n option causes the symbols to be listed in ascending 
+order of address. The -a adr option lists the symbol at the next lowest 
+address. The -v adr option prints the result in hex, decimal, and octal. The 
+-v option is useful for computing the value of an expression that may 
+include registers, symbols, and absolute values. 
+
+Examples illustrating the use of the ls command follow.
+
+PMON ls	
+
+flush_cache   start
+
+List symbols in alphabetic order.
+
+PMON ls -l	
+
+9fc016f0 flush_cache 
+
+9fc00240 start
+
+List symbols in alphabetic order with addresses. 
+
+PMON ls -ln	
+
+9fc00240 start
+
+9fc016f0 flush_cache
+
+List symbols and addresses in ascending order of address.
+
+PMON ls s*	
+
+start
+
+List symbols starting with the letter "s."
+
+PMON ls -a 9fc00260	
+
+9fc00240 start+0x20
+
+List symbol at the next lowest address.
+
+PMON ls -a @epc	
+
+a0020020 = start+0x20
+
+List symbol at the next lowest address from EPC.
+
+PMON ls -v @t0+0t10*4	
+
+0x800222e8 = 0t-2147343640 = 0o20000421350
+
+Display the value of the expression "@t0+0t10*4":
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

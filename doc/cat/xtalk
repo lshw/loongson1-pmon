@@ -1,0 +1,51 @@
+	Downloading using Crosstalk on MSDOS
+	Downloading using Crosstalk on MSDOS
+
+The following example illustrates how to send files using CrossTalk XVI. 
+
+C pmcc -srec -o bubble bubble.c	
+
+Compile and link on host. 
+
+C xtalk com1				
+
+Invoke Crosstalk.
+
+PMON set hostport tty0 		
+
+Initial setup on target. 
+
+PMON set dlecho off 
+
+PMON set dlproto lfeed						
+
+PMON load				
+
+Prepare for download. 
+
+^Asend bubble.rec			
+
+Start download. 
+
+PMON g					
+Run the downloaded program. 
+
+For the above example, com1.xtk contains the following non-default 
+settings:
+
+	ATten			SOH (^A)
+	EMulate			VT-100
+	POrt			1
+	LWait			Echo
+	DAta			8
+	HAndshake		Off
+	PArity			None
+	SPeed			9600
+	GO			Local
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

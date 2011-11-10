@@ -1,0 +1,60 @@
+boot 	The boot command loads binary object files over Ethernet.
+
+Format The format for this command is:
+
+boot [-bensy] [ host:[ path]]
+
+where:
+
+-b suppresses deletion of all breakpoints before the download.
+
+-e suppresses clearing of the exception handlers.
+
+-n suppresses the loading of symbols from the file.
+
+-s suppresses clearing of the symbol table before the download.
+
+-y loads only the symbols from the file.
+
+host is the internet host from which to read the file.
+
+path is the file name to be loaded from the host.
+
+Invoking the boot command with no parameters or arguments clears the
+symbol table, deletes all current breakpoints, and attempts to load the program
+found in the host and file specified by the bootaddr and bootfile
+environment variables.
+
+Functional
+Description
+
+The boot command uses the TFTP (Trivial File Transfer Protocol) to load an
+executable binary file from a remote host over Ether net. It can read files in
+ELF for mat (as used in Algorithmics’ SDE­MIPS, newer SGI compilers, and
+systems compliant with the MIPS/ABI standard), and also the older MIPS
+ECOFF for mat. PMON extracts any symbol table infor mation from these
+files, and adds it to the target symbol table.
+
+The boot command normally clears the symbol table, exception handlers,
+and all breakpoints. The -s and -b options suppress the clearing of the sym-bol
+table and breakpoints, respectively. The value of the EPC register is set
+automatically to the entry point of the program. Therefore, to execute the
+downloaded program, only the g command is required.
+
+The boot command may return a large number of different error messages,
+relating to network problems or file access permissions on the remote host.
+For a file to be loaded via TFTP it must be publicly readable, and it may have
+to be in a directory which is acceptable to the remote server. See page X??X for
+more information about setting up and using TFTP.
+
+When reading the symbol table PMON may complain that it does not have
+enough room to store the program’s symbols. To increase the size of the
+heap, use the set heaptop command to reserve more space and, if necessary, 
+relink your program with a higher base address. The boot command
+will also detect cases where the program being loaded would overwrite
+PMON’s crucial data or heap: again relinking your program at a different
+address will cure the problem.
+
+Whilst it is loading each section of the file, boot displays the memory
+address (in hex) and size (in decimal) of that section. Typically these sections
+will be in the order .text, .dataand .bss.

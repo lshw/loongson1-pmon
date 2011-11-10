@@ -1,0 +1,132 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.72 [en] (WinNT; U) [Netscape]">
+   <title>The debug Command</title>
+</head>
+<body>
+
+<h1>
+debug</h1>
+<!--INDEX "debug command" dbx gdb --><!--INDEX "debug command" dbx gdb -->The
+debug command initiates the <a href="mondef.htm">Monitor</a>'s gdb/dbx
+mode.
+<br>&nbsp;
+<br>
+Format 
+<dl> 
+  <dd> The format for the debug command is:</dd>
+  <br>
+  &nbsp; 
+  <dt><tt>debug [-svV] [-c args]</tt>&nbsp; where: </dt>
+  <dl>&nbsp; 
+    <table width="95%">
+      <tr ALIGN=LEFT VALIGN=TOP bgcolor="#CCCCCC"> 
+        <td ALIGN=LEFT VALIGN=TOP WIDTH="100"> 
+          <dl>-s</dl>
+        </td>
+        <td> 
+          <dl>does not set client stack pointer.</dl>
+        </td>
+      </tr>
+      <tr ALIGN=LEFT VALIGN=TOP> 
+        <td> 
+          <dl>-v</dl>
+        </td>
+        <td> 
+          <dl>shows communication errors.</dl>
+        </td>
+      </tr>
+      <tr ALIGN=LEFT VALIGN=TOP bgcolor="#CCCCCC"> 
+        <td> 
+          <dl>-V</dl>
+        </td>
+        <td> 
+          <dl>sets the verbose option.</dl>
+        </td>
+      </tr>
+      <tr ALIGN=LEFT VALIGN=TOP> 
+        <td ALIGN=LEFT VALIGN=TOP> 
+          <dl>-c args</dl>
+        </td>
+        <td> 
+          <dl>indicates that the argument or arguments args are to be passedto 
+            the client program.</dl>
+        </td>
+      </tr>
+    </table>
+  </dl>
+</dl>
+
+<h2>
+Functional Description</h2>
+
+<dl> 
+  <dd> The debug command causes the <a href="mondef.htm">Monitor</a> to enter 
+    gdb/dbx mode. It is intended to be used with either the GNU's gdb or MIPS' 
+    dbx source-level debugger. The -V option selects verbose mode. In verbose 
+    mode, each of the messages sent to and received from dbx are displayed on 
+    the terminal screen. It is not possible to leave verbose mode without leaving 
+    dbx mode and reentering dbx mode without the -V option. By default, the <a href="mondef.htm">Monitor</a> 
+    displays in terse mode.</dd>
+  <br>
+  &nbsp; 
+  <dt>&nbsp;Examples illustrating the use of the debug command with MIPS' dbx 
+    follow. </dt>
+  <pre>% cat /etc/remote.pdbx&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Display port information on host port1.
+
+port1:dv=/dev/tty1:br#9600:
+
+
+% cat ~/.dbxinit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Display setup for dbx.
+
+set $pdbxport = "port1"
+
+set $usesockets=0
+
+set $manual_load = 1
+
+
+
+PMON> set hostport tty1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Specify protocol and port for target.
+
+PMON> set dlproto EtxAck&nbsp;
+
+PMON> set dlecho off&nbsp;
+
+PMON> load&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Prepare for download, and start.
+
+
+
+% edown /dev/tty1 &lt; test1.rec
+
+% dbx -prom test1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Invoke dbx.
+
+
+
+(dbx) stop in main&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Optionally set breakpoint at main.
+
+(dbx) run&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Prepare for execution.
+
+
+
+PMON> debug&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Begin executing.
+
+</pre>
+</dl>
+
+<h2>
+See Also</h2>
+
+<dl>
+<dd>
+<a href="c_set.htm">set</a> command for the setup of the environment variables.</dd>
+</dl>
+
+<hr>
+<p><b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a></p>
+<p><!--$Id: c_debug.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --> </p>
+</body>
+</html>

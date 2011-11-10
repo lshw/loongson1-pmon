@@ -1,0 +1,403 @@
+	<title>Big and Little Endian Byte Orderings </title>
+
+	<h1 align="center">Big and Little Endian Byte Orderings </h1>
+
+
+
+<!--INDEX "Gulliver's Travels" MIPSEB "MIPS Programmer's Handbook" --> <!--INDEX "Big endian" "Little endian" "Byte ordering" --> 
+<!--INDEX "Philip Bunce" "Erin Farquhar" --> The PowerPC and MIPS processor and 
+compilers support both the Big Endian and Little Endian byte-ordering conventions. 
+The names Big Endian and Little Endian are used because of the apt analogy to 
+the bloody feud in the classic children's book Gulliver's Travels (quod vide). 
+The feud was between the two mythical islands, Lilliput and Blefescu, over the 
+correct end (big or little) at which to crack an <a href="#Q1">egg</a>. In our 
+case, the issue has to do with the &quot;end&quot; (most significant or least 
+significant) of a multiple-byte data type. 
+<p>
+
+
+
+With Big Endian ordering, the address of a multiple-byte data type is
+
+of its most significant byte (its &quot;big end&quot;), whereas with Little
+
+Endian ordering, the address is of its least significant byte (its
+
+&quot;little end&quot;). This is shown in Figure A.14. For structures declared
+
+in a high-level language, the order of bytes in memory will differ
+
+depending on the byte ordering and the particular data type, as shown
+
+for a C structure in Figure A.15.  <p>
+
+
+
+<pre>
+
+<hr><!------------------------------------------------------------------>
+
+         Code                Big Endian            Little Endian
+
+                             Memory Contents       Memory Contents
+
+<hr><!------------------------------------------------------------------>
+
+struct {
+
+        long a;
+
+        short b[2];
+
+        char c[4];
+
+        } S1 = {        /*      Big Endian         Little Endian   */
+
+        0x12345678,     /*      12 34 56 78        78 56 34 12     */
+
+        0x1234,0x5678,  /*      12 34 56 78        34 12 78 56     */
+
+        &quot;ABC&quot;           /*      41 42 43 00        41 42 43 00     */
+
+	};
+
+<hr><!------------------------------------------------------------------>
+
+</pre> <b>Figure A.15</b> Big and Little Endian Byte-Ordering Example <p>
+
+
+
+Note that Endianness only affects the operation of the load and store
+
+instructions, which means when data is moved between memory or 
+
+peripheral devices and registers.  <p>
+
+
+
+Except in cases where the host and target have the same byte-ordering
+
+convention, you must explicitly define the required Endianness of the target
+
+code using the appropriate command-line option (EB or EL). This will 
+
+override the host's default byte ordering. For example,<p>
+
+
+
+	<pre>
+
+	       pmcc -EB -o prog prog.c
+
+	       pmcc -EL -o prog prog.c
+
+	</pre> <p>
+
+
+
+To write code that can be compiled/assembled to execute correctly in
+
+either a Big or a Little Endian target environment, the user must
+
+follow one basic rule: either eliminate Endian-specific code or enclose
+
+it   with #ifdef/else statements, using the appropriate preprocessor
+
+flag (MIPSEB or MIPSEL). Endian-specific code is produced whenever the
+
+data type implicit in the instruction (e.g., &quot;byte&quot; in load byte)
+
+differs from the data type of the accessed data, such as using four
+
+load-byte instructions to read a single word or using a store-word
+
+instruction to store 4 bytes. I/O addresses are also Endian-specific,
+
+because a peripheral device is hardwired to a specific part of the data
+
+bus (typically D0-D7).  <p>
+
+
+
+The example programs main.c and asm.s print Endian-sensitive values
+
+returned from the functions end1 and end2 and the contents of two
+
+Endian-sensitive I/O locations, SIOCNTL and SIODATA. For purposes of
+
+illustration, the functions return correct results when passed the
+
+value 0 and incorrect results when passed the value 1. The programs are
+
+shown in their entirety in the final section of this appendix and are
+
+discussed below.  <p>
+
+
+
+The C program defines two base addresses for the peripheral device
+
+(SIOBASE) and uses the preprocessor variable MIPSEB (Big Endian) to select
+
+between the two byte-ordering conventions.<p>
+
+
+
+<pre>
+
+      1  #if ((defined MIPSEB) || (defined PPCEB))
+      2  #define SIOBASE    0xbe000003 /* Big Endian base address */
+
+      3  #else
+
+      4  #define SIOBASE    0xbe000000 /* Little Endian base address */
+
+      5  #endif
+
+      6  #define SIOCNTL    *((volatile unsigned char *)SIOBASE+4)
+
+      7  #define SIODATA    *((volatile unsigned char *)SIOBASE+12)
+
+</pre>
+
+<p>
+
+The function main prints the results of the functions end1 and end2.
+
+Incorrect results are produced by end1 because when the function is
+
+passed a 1, it reads the word as a series of 4 bytes, rather than as a
+
+single word. Starting at the word address, each byte is read into the
+
+variable v, such that the lowest addressed byte ends up in the most
+
+significant byte of the variable. This is the correct byte ordering for
+
+Big Endian but incorrect for Little Endian:<p>
+
+
+
+<pre>
+
+     19          for (i=0;i<4;i++) { 20 v <<="8;" 21 v |="p[i];" 22 } 23 } </pre>
+
+<p> For a MIPS CPU, incorrect results are produced by end2 because the lwl and 
+  lwr instructions are used to access unaligned data; the non-Endian-sensitive 
+  solution uses the ulw instruction: (PowerPC results are similar)
+<p>
+
+
+
+<pre>
+
+      8  end2:   la      t0,dat2
+
+      9          beq     a0,zero,1f
+
+     10          nop
+
+     11          lwl     v0,0(t0)
+
+     12          lwr     v0,3(t0)
+
+     13          b       2f
+
+     14          nop
+
+     15  1:      ulw     v0,(t0)
+
+     16  2:      jr      ra
+
+</pre> <p>
+
+           For Big Endian the program prints:<p>
+
+<pre>
+
+	   12345678 12345678
+
+	   12345678 12345678
+
+	   00 3b
+
+</pre><p>
+
+            and for Little Endian it prints:<p>
+
+<pre>
+
+	   12345678 78563412
+
+	   12345678 78345612
+
+	   00 3b
+
+</pre> <p>
+
+
+
+Keep in mind that a program's binary cannot be converted from one
+
+byte-ordering convention to another by simply swapping all the bytes. This
+
+would produce correct results only if all of the program's data were of the
+
+same type (size) and the same size as the instructions. To change the byte
+
+ordering, programs must be recompiled using the appropriate compiler
+
+option.<p>
+
+
+
+<b>A.7 PROGRAM LISTINGS</b><p>
+
+<pre>
+
+main.c:
+
+      1  #if ((defined MIPSEB) || (defined PPCEB))
+
+      2  #define SIOBASE    0xbe000003 /* Big Endian base address */
+
+      3  #else
+
+      4  #define SIOBASE    0xbe000000 /* Little Endian base address */
+
+      5  #endif
+
+
+
+      6  #define SIOCNTL    *((volatile unsigned char *)SIOBASE+4)
+
+      7  #define SIODATA    *((volatile unsigned char *)SIOBASE+12)
+
+
+
+      8  int dat1 = 0x12345678;
+
+      9  end1(n)
+
+     10  int n;
+
+     11  {
+
+     12  int i,v;
+
+     13  unsigned char *p;
+
+
+
+     14  /* set up a pointer into the data */
+
+     15  p = (unsigned char *)&amp;dat1;
+
+
+
+     16  if (n==0) v = dat1;
+
+     17  else {
+
+     18          v = 0;
+
+     19          for (i=0;i&lt;4;i++) {
+
+     20                  v &lt;&lt;= 8;
+
+     21                  v |= p[i];
+
+     22                  }
+
+     23          }
+
+     24  return(v);
+
+     25  }
+
+
+
+     26  main()
+
+     27  {
+
+
+
+     28  printf(&quot;%08x %08x\n&quot;);
+
+     29  printf(&quot;%08x %08x\n&quot;);
+
+     30  printf(&quot;%02x %02x\n&quot;);
+
+     31  }
+
+
+
+asm.s:
+
+      1  #include &quot;mips.h&quot;
+
+
+
+      2          .data
+
+      3  dat2:   .word   0x12345678
+
+      4          .text
+
+      5          .globl end2
+
+      6          .ent end2
+
+      7          .set noreorder
+
+      8  end2:   la      t0,dat2
+
+      9          beq     a0,zero,1f
+
+     10          nop
+
+     11          lwl     v0,0(t0)
+
+     12          lwr     v0,3(t0)
+
+     13          b       2f
+
+     14          nop
+
+
+
+     15  1:      ulw     v0,(t0)
+
+     16  2:      jr      ra
+
+     17          nop
+
+     18          .end end2
+
+</pre>
+<a name="Q1"> <!--INDEX "Danny Cohen" --> [EGG] Danny Cohen</a>, &quot;On Holy 
+Wars and a Plea for Peace,&quot; IEEE Computer, Oct. 1981, pp. 48-54.
+<p>
+
+
+
+<hr>
+
+This explanation was extracted from Appendix A of 
+
+<a href="http://www.carmel.com/mipsbook.html">
+
+The MIPS Programmer's Handbook</a>, by Erin Farquhar and Philip Bunce.
+
+
+
+<p><hr>
+
+<p><b>Navigation:</b> <a href="pmon.htm">Document Home</a> | <a href="doctoc.htm">Document 
+  Contents</a> | <a href="docindex.htm">Document Index</a></p>
+<p><!--$Id: endian.htm,v 1.1.1.1 2006/09/14 01:59:06 root Exp $ --> </p>
+<p>
+
+
+

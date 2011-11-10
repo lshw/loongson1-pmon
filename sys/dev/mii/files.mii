@@ -1,0 +1,14 @@
+
+file    sys/dev/mii/mii.c			mii
+
+define mii_phy
+file sys/dev/mii/mii_physubr.c			mii_phy
+
+device inphy: mii_phy
+attach inphy at mii
+file sys/dev/mii/inphy.c			inphy
+
+device eephy: mii_phy
+attach eephy at mii
+file sys/dev/mii/eephy.c			eephy
+

@@ -1,0 +1,14 @@
+	This directory emulates the /usr/include function when
+	compiling what could be called 'out of kernel' code.
+	IMPORTANT! Symbolic links to sys/foo include files
+	must be retained. We don't muck around with more than
+	one version of each include file!
+
+	#include <machine/foo.h> is specially treated. Instead
+	of linking 'machine' as include/machine a a path is
+	added as an -I flag that points at the corresponding
+	arch/${MACHINE}/include directory. This directory then
+	has a symbolic link machine that points to itself '.'.
+
+
+	(pefo)

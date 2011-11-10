@@ -1,0 +1,597 @@
+.\"	$OpenBSD: config.8,v 1.23 2000/08/08 21:42:40 deraadt Exp $
+.\"	$NetBSD: config.8,v 1.10 1996/08/31 20:58:16 mycroft Exp $
+.\"
+.\" Copyright (c) 1980, 1991, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     from: @(#)config.8	8.2 (Berkeley) 4/19/94
+.\"
+.Dd October 15, 1999
+.Dt CONFIG 8
+.Os
+.Sh NAME
+.Nm config
+.Nd "build kernel compilation directories or modify a kernel"
+.Sh SYNOPSIS
+.Nm config
+.Op Fl b Ar builddir
+.Op Fl s Ar srcdir
+.Op Fl p
+.Op Ar config-file
+.Nm config
+.Fl e
+.Op Fl f | Fl o Ar outfile
+.Op Fl u
+.Ar infile
+.Sh DESCRIPTION
+In the first synopsis form, the
+.Nm
+program creates a kernel build directory from the kernel configuration file
+specified by
+.Ar config-file .
+In the second synopsis form,
+.Nm
+allows editing of the kernel binary specified by
+.Ar infile .
+.Pp
+Furthermore, devices may be enabled, disabled, or modified without
+recompiling, by editing the kernel executable using the
+.Fl e
+option.
+Similarily, you can do the same editing at boot-time, using
+the in-kernel editor, as described in
+.Xr boot_config 8 ) .
+.Pp
+.Nm
+is most commonly invoked from the directory containing
+.Ox
+kernel configuration files (i.e.,
+.Pa /sys/arch/i386/conf
+for i386 machines).
+For instance, the following steps would be followed to configure and compile
+a new GENERIC kernel (assuming a complete kernel source tree is available in
+.Pa /sys ) :
+.Bd -literal -offset indent
+# cd /sys/arch/i386/conf
+# config ./GENERIC
+# cd ../compile/GENERIC
+# make depend && make
+.Ed
+.Pp
+Replace
+.Dq i386
+with the appropriate architecture name.
+.Pp
+The options are as follows:
+.Bl -tag -width Ds
+.It Fl e
+Allows the modification of kernel device configuration (see
+.Xr boot_config 8 ) .
+Temporary changes can be made to the running kernel's configuration or a new
+kernel binary may be written for permanent changes between system reboots.
+See the section
+.Sx Kernel modification
+below for more details.
+.It Fl f
+Overwrite the
+.Ar infile
+kernel binary with the modified kernel.
+Otherwise,
+.Fl o
+should be given to specify an alternate output file.
+.It Fl o Ar outfile
+Write the modified kernel to
+.Ar outfile .
+.It Fl u
+Check to see if the kernel configuration was modified at boot-time
+(i.e.,
+.Cm boot -c
+was used).
+If so, compare the running kernel with the kernel to be edited
+.Pq Ar infile .
+If they seem to be the same, apply all configuration changes performed at
+boot.
+.It Fl b Ar builddir
+Create the build directory in the path specified by
+.Ar builddir
+instead of the default
+.Pa ../compile/SYSTEMNAME .
+.It Fl s Ar srcdir
+Use
+.Ar srcdir
+as the top-level kernel source directory instead of the default (four
+directories above the build directory).
+.It Fl p
+Configure for a system that includes profiling code; see
+.Xr kgmon 8
+and
+.Xr gprof 1 .
+When this option is specified,
+.Nm
+acts as if the lines
+.Dq makeoptions PROF="-pg"
+and
+.Dq options GPROF
+appeared in the specified kernel configuration file.
+In addition,
+.Dq .PROF
+is appended to the default compliation directory name.
+.Pp
+The
+.Fl p
+flag is expected to be used for
+.Dq one-shot
+profiles of existing systems; for regular profiling, it is probably wiser to
+make a separate configuration containing the makeoptions line.
+.El
+.Pp
+The old
+.Fl g
+flag is deprecated and no longer supported.
+Instead, add
+.Dq makeoptions DEBUG="-g"
+to the kernel configuration file, along with (typically)
+.Dq options KGDB .
+.Pp
+The output of
+.Nm
+consists of a number of files, principally
+.Pa ioconf.c
+(a description of I/O devices that may be attached to the system)
+and a
+.Pa Makefile ,
+used by
+.Xr make 1
+when building the kernel.
+.Pp
+After running
+.Nm
+it is wise to run
+.Dq make depend
+in the new build directory.
+.Nm
+prints a reminder of this when it completes.
+.Pp
+If
+.Nm
+stops due to errors, the problems reported should be corrected and
+.Nm
+should be run again.
+.Nm
+attempts to avoid changing the compilation directory if there are
+configuration errors, but this code is not well-tested and some problems
+(such as running out of disk space) are unrecoverable.
+.Pp
+If
+.Ar config-file
+is not specified,
+.Nm
+uses the current directory as the build directory, and looks in it for
+a file called
+.Pa CONFIG .
+If you run
+.Nm
+this way, you must specify the location of the top-level kernel source
+directory using the
+.Fl s
+option or by using the
+.Dq Li source
+directive at the beginning of the system configuration file.
+.Pp
+The configuration files consists of various statements which
+include the following:
+.Pp
+.Bl -tag -offset indent -width indent
+.It machine Ar var
+Required.
+Specifies the machine architecture.
+.It include Ar file
+Include another configuration file.
+.It option Ar name
+Set a kernel option.
+Kernel options may take either the form
+.Ar NAME
+or the form
+.Ar NAME=value .
+These options are passed to the compiler with the
+.Fl D
+flag.
+.It rmoption Ar name
+Delete a previously set option.
+This is useful when including another kernel configuration file.
+A typical use is to include the
+.Va GENERIC
+kernel provided with each release and remove options that are
+unwanted, thus allowing for automatic inclusion of new device
+drivers.
+.It maxusers Ar number
+Required.
+Used to size various system tables and maximum operating conditions
+in an approximate fashion.
+Multiple instances of this keyword may be specified.
+The number provided in the last instance will be used, and
+warnings will be printed for each duplicate value.
+This is convenient when used with the
+.Va include
+directive.
+.It config Ar bsd root on "dev [swap on dev [and dev ...]] [dump on dev [and dev ...]]"
+Required.
+Specifies the swap and dump devices which the system should use.
+.It config Ar bsd swap generic
+Otherwise, if generic is specified, the system follows generic routines to
+device what should happen.
+.El
+.Pp
+Many other statements exist, and the file format is fairly rich; for more
+information see the various configuration files included in the system.
+.Pp
+.Ss Kernel modification
+When
+.Fl e
+is specified, device parameters that are normally hard-coded into the kernel
+may be changed.
+This is useful to avoid the need for kernel recompilation or rebooting.
+Modifications are made to the currently running kernel and can be written to
+a new kernel binary so changes are preserved during subsequent system restarts.
+.Pp
+When invoked, the kernel identification is first shown.
+.Pp
+.Bd -literal
+.Li #\  Ic config Fl e o Ar bsd.new /bsd
+OpenBSD 2.6-beta (GENERIC.rz0) #0: Mon Oct  4 03:57:22 MEST 1999
+    root@winona:/usr/src/sys/arch/pmax/compile/GENERIC.rz0
+Enter 'help' for information
+ukc>
+.Ed
+.Pp
+One or more warnings may be printed before the
+.Li ukc>
+prompt.
+.Bd -literal -offset indent
+warning: no output file specified
+.Ed
+.Pp
+Neither the
+.Fl f
+nor
+.Fl o
+option has been specified.
+Changes will be ignored.
+.Pp
+.Bd -literal -offset indent
+WARNING this kernel doesn't contain all information needed!
+WARNING the commands add and change might not work.
+.Ed
+.Pp
+The kernel is too old (pre
+.Ox 2.6 )
+and cannot support all of the functionality needed by the
+.Fl e
+option.
+.Pp
+.Bd -literal -offset indent
+WARNING kernel mismatch. -u ignored.
+WARNING the running kernel version:
+.Ed
+.Pp
+.Nm
+does not believe the running kernel is the same as the
+.Ar infile
+specified.
+Since the log of changes (from
+.Cm boot -c )
+in the running kernel is kernel-specific, the
+.Fl u
+option is ignored.
+.Pp
+The commands are as follows:
+.Pp
+.Bl -tag -width "disable attr val | devno | dev" indent
+.It Ic add Ar dev
+Add a device through copying another.
+.It Ic base Ar 8 | 10 | 16
+Change the base of numbers displayed and entered,
+e.g., I/O addresses in a VAXen are octal.
+.It Ic change Ar devno | dev
+Modify one or more devices.
+.It Ic disable Ar attr val | devno | dev
+Disable one or more devices.
+.It Ic enable Ar attr val | devno | dev
+Enable one or more devices.
+.It Ic exit
+Exit without saving changes.
+.It Ic find Ar devno | dev
+Find one or more devices.
+.It Ic help
+Give a short summary of all commands and their arguments.
+.It Ic list
+Show all known devices, a screen at a time.
+.It Ic lines Op Ar count
+Set the number of rows per page.
+.It Ic quit
+Exit and save changes.
+.It Ic show Op Ar attr Op Ar val
+Show all devices for which attribute
+.Ar attr
+has the value
+.Ar val .
+.It Ic timezone Op Ar minuteswest Op Ar dst
+Change the
+.Va tz
+timezone structure.
+Without arguments, displays its current value.
+.El
+.Sh EXAMPLES (First synopsis)
+A custom kernel is built in the following way.
+.Pp
+To compile your own kernel from a non-writeable media (such as a CDROM)
+mounted on
+.Pa /usr/src ,
+do the following:
+.Sm off
+.Bd -literal -offset indent
+.Li #\  Xo
+.Ic cd\ /
+.Ar somedir
+.Xc
+.Li #\  Xo
+.Ic cp\ /usr/src/sys/arch/
+.Ar somearch
+.Ic /conf/
+.Ar SOMEFILE
+.Ic \ .
+.Xc
+.Li #\  Xo
+.Ic vi\ \&
+.Ar SOMEFILE
+.No \ \ \ (to\ make\ any\ changes)
+.Xc
+.Li #\  Xo
+.Ic config\ -s\ /usr/src/sys\ -b\ .\ \&
+.Ar SOMEFILE
+.Xc
+.Li #\  Xo
+.Ic make
+.Xc
+.Ed
+.Sm on
+.Pp
+To compile a kernel inside a writable source tree, do the following:
+.Sm off
+.Bd -literal -offset indent
+.Li #\  Xo
+.Ic cd\ /usr/src/sys/arch/
+.Ar somearch
+.Ic /conf
+.Xc
+.Li #\  Xo
+.Ic vi\ \&
+.Ar SOMEFILE
+.No \ \ \ (to\ make\ any\ changes)
+.Xc
+.Li #\  Xo
+.Ic config\ \&
+.Ar SOMEFILE
+.Xc
+.Li #\  Xo
+.Ic cd\ ../compile/
+.Ar SOMEFILE
+.Xc
+.Li #\  Xo
+.Ic make
+.Xc
+.Ed
+.Sm on
+.Pp
+where
+.Ar somedir
+is a writable directory,
+.Ar somearch
+is the architecture (e.g.,
+.Ic i386 ) ,
+and
+.Ar SOMEFILE
+should be a name indicative of a particular configuration (often
+that of the hostname).
+.Nm config
+will warn you if a
+.Ar "make clean"
+is required;
+you can also do a
+.Ic make depend
+so that you will have dependencies there the next time you do a compile.
+.Pp
+After either of these two methods, you can place the new kernel (called
+.Pa bsd )
+in
+.Pa /
+(i.e.,
+.Pa /bsd )
+and the system will boot it next time.
+Most people save their backup kernels as
+.Pa /bsd.1 ,
+.Pa /bsd.2 ,
+etc.
+.Sh EXAMPLES (Second synopsis)
+The Ethernet card is not detected at boot because the kernel configuration
+does not match the physical hardware configuration,
+e.g., wrong IRQ in OpenBSD/i386.
+The Ethernet card is supposed to use the
+.Xr ne 4
+driver.
+.Pp
+.Bd -literal
+.No ukc> Ic find ne
+24 ne0 at isa0 port 0x240 size 0 iomem 0xd8000 iosiz 0 irq 9 drq -1 drq2 -1 flags 0x0
+25 ne1 at isa0 port 0x300 size 0 iomem -1 iosiz 0 irq 10 drq -1 drq2 -1 flags 0x0
+26 ne* at isapnp0 port -1 size 0 iomem -1 iosiz 0 irq -1 drq -1 flags 0x0
+27 ne* at pci* dev -1 function -1 flags 0x0
+28 ne* at pcmcia* function -1 irq -1 flags 0x0
+ukc>
+.Ed
+.Pp
+ne1 seems to match the configuration except it uses IRQ 5 instead of IRQ 10.
+So the irq on ne1 should be changed via the
+.Ic change
+command.
+The device can be specified by either name or number.
+.Pp
+.Bd -literal
+.No ukc> Ic change ne1
+25 ne1 at isa0 port 0x300 size 0 iomem -1 iosiz 0 irq 10 drq -1 drq2 -1
+.No change (y/n) ? Ic y
+.No port [0x300] ?
+.No size [0] ?
+.No iomem [-1] ?
+.No iosiz [0] ?
+.No irq [10] ? Ic 5
+.No drq [-1] ?
+.No drq2 [-1] ?
+.No flags [0] ?
+25 ne1 changed
+25 ne1 at isa0 port 0x300 size 0 iomem -1 iosiz 0 irq 5 drq -1 drq2 -1 flags 0x0
+ukc>
+.Ed
+.Pp
+Another case is a mistakenly detected non-existing device instead of another
+device at the probed location.
+One known case is the Mitsumi
+CD-ROM in OpenBSD/i386.
+The simplest thing to solve that problem is to disable mcd0.
+.Pp
+.Bd -literal
+.No ukc> Ic find mcd0
+ 29 mcd0 at isa0 port 0x300 size 0 iomem -1 iosiz 0 irq 10 drq -1 drq2 -1 flags 0x0
+.No ukc> Ic disable mcd0
+ 29 mcd0 disabled
+.No ukc> Ic find 29
+ 29 mcd0 at isa0 disable port 0x300 size 0 iomem -1 iosiz 0 irq 10 drq -1 drq2 -1 flags 0x0
+.Ed
+.Pp
+It's also possible to disable all devices with a common attribute. e.g.,
+.Pp
+.Bd -literal
+.No ukc> Ic disable port 0x300
+ 25 ne1 disabled
+ 29 mcd0 alredy disabled
+ 72 we1 disabled
+ 75 el0 disabled
+ 77 ie1 disabled
+.Ed
+.Pp
+The
+.Cm show
+command is useful for finding which devices have a certain attribute.
+It can also be used to find those devices with a particular value for
+an attribute.
+.Bd -literal
+.No ukc> Ic show slot
+  2 ahc* at eisa0 slot -1
+ 10 uha* at eisa0 slot -1
+ 12 ep0 at eisa0 slot -1
+ 17 ep* at eisa0 slot -1
+102 ahb* at eisa0 slot -1
+103 fea* at eisa0 slot -1
+.No ukc> Ic show port 0x300
+ 25 ne1 at isa0 port 0x300 size 0 iomem -1 iosiz 0 irq 10 drq -1 drq2 -1 flags 0x0
+ 72 we1 at isa0 port 0x300 size 0 iomem 0xcc000 iosiz 0 irq 10 drq -1 drq2 -1 flags 0x0
+ 75 el0 at isa0 port 0x300 size 0 iomem -1 iosiz 0 irq 9 drq -1 drq2 -1 flags 0x0
+ 77 ie1 at isa0 port 0x300 size 0 iomem -1 iosiz 0 irq 10 drq -1 drq2 -1 flags 0x0
+ukc>
+.Ed
+.Pp
+It is possible to add new devices, but only devices that were linked into the
+kernel.
+If a new device is added, following devices will be renumbered.
+.Pp
+.Bd -literal
+.No ukc> Ic find ep
+ 11 ep0 at isa0 port -1 size 0 iomem -1 iosiz 0 irq -1 drq -1 drq2 -1 flags 0x0
+ 12 ep0 at eisa0 slot -1 flags 0x0
+ 13 ep0 at pci* dev -1 function -1 flags 0x0
+ 14 ep* at isapnp0 port -1 size 0 iomem -1 iosiz 0 irq -1 drq -1 flags 0x0
+ 15 ep* at isa0 port -1 size 0 iomem -1 iosiz 0 irq -1 drq -1 drq2 -1 flags 0x0
+ 16 ep* at eisa0 slot -1 flags 0x0
+ 17 ep* at pci* dev -1 function -1 flags 0x0
+ 18 ep* at pcmcia* dev -1 irq -1 flags 0x0
+.No ukc> Ic add ep1
+.No "Clone Device (DevNo, 'q' or '?') ?" Ic 13
+.No "Insert before Device (DevNo, 'q' or '?')" Ic 14
+ 14 ep1 at pci* dev -1 function -1
+.No ukc> Ic change 14
+ 14 ep1 at pci* dev -1 function -1
+.No change (y/n) ? Ic y
+.No dev [-1] ? Ic 14
+.No function [-1] ?
+.No flags [0] ? 18
+ 14 ep1 changed
+ 14 ep1 at pci* dev 14 function -1 flags 0x12
+ukc>
+.Ed
+.Pp
+When done, exit the program with the
+.Ic quit
+or
+.Ic exit
+commands.
+.Ic exit
+will ignore any changes while
+.Ic quit
+writes the changes to
+.Ar outfile
+(if
+.Fl o
+or
+.Fl f
+was given, else ignore changes).
+.Pp
+.Bd -literal
+.No ukc> Ic quit
+.Ed
+.Sh SEE ALSO
+.Xr options 4 ,
+.Xr boot_config 8
+.Pp
+The SYNOPSIS portion of each device in section 4 of the manual.
+.Pp
+.Rs
+.%T "Building 4.4 BSD Systems with Config"
+.Re
+.Sh HISTORY
+The
+.Nm
+program appeared in 4.1BSD.
+It was completely revised in 4.4BSD.
+The
+.Fl e
+option appeared in
+.Ox 2.6 .
+

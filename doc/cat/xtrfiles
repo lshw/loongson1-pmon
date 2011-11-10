@@ -1,0 +1,56 @@
+		Extracting the files from the Archive
+		Extracting the files from the Archive
+
+MSDOS Hosts
+
+The MSDOS version of this software package is
+distributed as a self-extracting archive named pmon.exe. To extract the
+files from the archive, simply type the following command in a MSDOS
+window.
+
+	  »  Create a new directory. e.g.
+
+		C mkdir \lsipkg
+
+	It is good idea to place this directory as close
+	to the root directory as possible because it helps minimise
+	the length of the path variable.
+
+	  »  Copy the MSDOS-host distribution into the new directory.
+
+		C cd \lsipkg
+		C copy &ltsomewhere>\pmon.exe
+<
+
+	  »  Extract the files from the archive file. This is a
+	   self-extracting archive that was built using tools from
+   Info-ZIP.
+
+		C pmon
+
+UNIX Hosts
+
+The UNIX-hosted version of this software package is distributed as a
+compressed tar file. To extract
+the files from the archive, perform the following steps:
+
+	  »  Create a new directory. e.g.
+
+		% mkdir ~/lsipkg
+
+	  »  Move the UNIX-host distribution into the new directory.
+
+		% cd ~/lsipkg
+		% mv &ltsomewhere>/pmon.tgz .
+
+	  »  Extract the files from the archive file
+
+		% gunzip pmon.tgz
+		% tar -xof pmon.tar
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

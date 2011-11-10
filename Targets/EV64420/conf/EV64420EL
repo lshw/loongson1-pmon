@@ -1,0 +1,17 @@
+# $Id: EV64420EL,v 1.1.1.1 2006/09/14 01:59:08 root Exp $
+#
+#	GENERIC configuration for Galileo EV64420 Little Endian
+#
+
+machine         EV64420        mips    # CPU Architecture, Platform
+config          pmon 
+
+#
+#  Define target endian
+#
+makeoptions	ENDIAN=EL		# Little endian version.
+
+#
+#  The use default configuration
+#
+include "Targets/EV64420/conf/EV64420"

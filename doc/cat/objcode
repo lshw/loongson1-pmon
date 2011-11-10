@@ -1,0 +1,21 @@
+Object Code Formats
+Object Code Formats
+
+A number of different object code formats are in use by the vendors
+of MIPS "C" compilers.
+
+VendorFormat
+MIPS TechnologyMIPS ECOFF
+AlgorithmicsELF
+BSO/Tasking
+	IEEE-695 (Can accept and generate MIPS ECOFF)
+Cygnus Support
+	MIPS ECOFF and ELF
+Embedded PerformanceAMD COFF
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

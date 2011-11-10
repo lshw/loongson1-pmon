@@ -1,0 +1,33 @@
+The dis Command
+
+The dis Command
+
+NAME
+     dis - object file disassembler
+
+SYNOPSIS
+     dis objfile
+
+DESCRIPTION
+     dis is a host-resident object file disassembler. This command is a
+     simple pass-thru  to  the  appropriate  tools-specific command
+     that performs object code disassembly.
+
+OPTIONS
+     None
+
+SEE ALSO
+     rdsrec(1) rdfrec(1) pmcc(1) 
+     
+FILES
+	This command is built from 
+	tools/dis.c.
+     
+     
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+

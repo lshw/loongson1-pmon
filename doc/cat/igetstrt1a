@@ -1,0 +1,95 @@
+		Getting Started with SerialICE-1A
+		Getting Started with SerialICE-1A
+
+ What You'll Need
+
+	  »  A Host computer system (UNIX or MSDOS)
+	  »  An SerialICE Controller board
+	  »  A Target board
+
+To run an application program on your Target using SerialICE-1A, perform the
+following steps:
+
+  »  If you haven't done so already, 
+Download 
+the PMON source from the Web site.
+
+  »  Next you need to Extract the files 
+from the archive.
+
+--
+
+SerialICE Controller
+TargetBDMR4101-beBDMR4101-le
+BDMR4101-beall-beall-be-le
+BDMR4011-beall-beall-be-le
+BDMR4102-beall-beall-be-le
+
+BDMR4101-leall-be-leall-le
+BDMR4011-leall-be-leall-le
+BDMR4102-leall-be-leall-le
+BDMR4001-beall-beall-be-le
+BDMR4003-beall-beall-be-le
+BDMR4001-leall-be-leall-le
+BDMR4003-leall-be-leall-le
+L64008all-be
+sdp1000all-le
+sdp1000
+L64363 (ATMizer2)all-be
+l64363all-le
+l64363
+--
+ Key: The "-be" means Big Endian, the "-le" means Little Endian.
+
+and sdp1000, you will need to unpack two separate copies
+of the PMON sources, each in it's own directory.
+--
+
+  »  To configure the package you need to run the Install program using the information that you
+obtained from the body of the table above.
+
+For example, if your
+selection shows "all-be", then you need to specify target type 1
+during the installation (All Big Endian Processors), if "all-le" then
+select target type 2 (All Little Endian Processors), if it shows
+"all-be-le" then select target type 1 (All Big Endian Processors), but
+when the install program presents you with a summary of all the
+selected options, select the "Endian Support" option and enter "1 2"
+to select both byte orderings. Do not change the "Default Endian".
+
+The target type information is summarized below.
+
+Target TypeTarget Name
+all-be"All Processors Big Endian"
+all-le"All Processors Little Endian"
+all-be-le"All Processors Big Endian" and
+Change "Endian Support" to "1 2"
+all-le-be"All Processors Little Endian" and
+Change "Endian Support" to "1 2"
+nitro"4011 Nitro II"
+sdp1000"SDP1000 (L64008 MPEG-2 Transport)"
+l64363"ATMizer-2 R-T SAR Engine"
+--
+
+  »  To prepare the package for use you must 
+Build the package.
+
+  »  Configure your hardware.
+SerialICE requires an RS232 link between your host and port A on the
+SerialICE Controller, and a null-modem RS232 link between port B on the
+SerialICE Controller and port A on your Target. The 
+actual hardware port names
+will depend on which host, SerialICE Controller, and Target you will be
+using.
+
+  »  Install the driver.
+
+  »  Build, 
+Download and Execute your application on the Target.
+
+««««««««««««««««««««««««««««««««««««««««»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»
+Navigation: 
+Document Home | 
+Document Contents | 
+Document Index 
+
