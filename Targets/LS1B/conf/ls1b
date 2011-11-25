@@ -194,8 +194,8 @@ select loop
 select raw_ether
 #option VGA_MEM_BASE=0xb5000000
 #option VGA_MEM_BASE=0xb7f00000
-#option		X320x240
-option		X480x272
+option		X320x240
+#option		X480x272
 #option		X640x480
 #option		X640x640
 #option		X640x768
@@ -219,7 +219,7 @@ option 	CONFIG_VIDEO_16BPP
 select		cmd_call		# Call a function command
 select		ide
 option		wait_key	#lxy
-#option HAVE_MUT_COM		#lxy
+option HAVE_MUT_COM		#lxy
 option	CONFIG_FB_DYN
 #option	CONFIG_DDR16BIT
 option		CONFIG_CHINESE

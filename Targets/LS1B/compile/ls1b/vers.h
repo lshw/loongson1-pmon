@@ -1,1 +1,1 @@
-#define VERS "PMON2000 2.1 (ls1b) #177: 2011年 11月 09日 星期三 14:43:53 CST\r\n"
+#define VERS "PMON2000 2.1 (ls1b) #189: 2011年 11月 25日 星期五 10:16:48 CST\r\n"

@@ -101,7 +101,7 @@ void initmips(unsigned int msize,int dmsize,int dctrl)
 void realinitmips(unsigned int msize)
 {
 	     asm ("li  $29,0x80010000-0x4000;\n" \
-"		       li $2,0x8008d814;\n" \
+"		       li $2,0x8008d824;\n" \
 "			   move $4,%0;\n" \
 "			   jalr $2;\n" \
 "			   nop;\n" \

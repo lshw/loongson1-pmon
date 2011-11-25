@@ -61,363 +61,363 @@ ${OBJDIR}/lib${LIB}.a: ${OBJS}
 
 # DO NOT DELETE
 
-w_acos.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-w_acos.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-w_acos.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-w_acos.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-w_acos.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-w_acos.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-w_acos.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-w_acos.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-w_acos.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-w_asin.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-w_asin.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-w_asin.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-w_asin.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-w_asin.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-w_asin.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-w_asin.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-w_asin.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-w_asin.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-s_atan.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-s_atan.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-s_atan.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-s_atan.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-s_atan.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-s_atan.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-s_atan.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-s_atan.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-s_atan.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-w_atan2.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-w_atan2.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-w_atan2.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-w_atan2.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-w_atan2.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-w_atan2.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-w_atan2.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-w_atan2.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-w_atan2.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-s_ceil.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-s_ceil.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-s_ceil.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-s_ceil.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-s_ceil.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-s_ceil.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-s_ceil.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-s_ceil.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-s_ceil.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-s_cos.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-s_cos.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-s_cos.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-s_cos.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-s_cos.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-s_cos.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-s_cos.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-s_cos.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-s_cos.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-w_cosh.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-w_cosh.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-w_cosh.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-w_cosh.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-w_cosh.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-w_cosh.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-w_cosh.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-w_cosh.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-w_cosh.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-w_exp.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-w_exp.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-w_exp.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-w_exp.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-w_exp.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-w_exp.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-w_exp.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-w_exp.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-w_exp.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-s_expm1.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-s_expm1.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-s_expm1.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-s_expm1.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-s_expm1.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-s_expm1.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-s_expm1.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-s_expm1.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-s_expm1.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-s_fabs.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-s_fabs.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-s_fabs.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-s_fabs.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-s_fabs.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-s_fabs.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-s_fabs.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-s_fabs.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-s_fabs.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-s_floor.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-s_floor.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-s_floor.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-s_floor.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-s_floor.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-s_floor.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-s_floor.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-s_floor.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-s_floor.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-w_fmod.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-w_fmod.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-w_fmod.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-w_fmod.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-w_fmod.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-w_fmod.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-w_fmod.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-w_fmod.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-w_fmod.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-s_frexp.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-s_frexp.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-s_frexp.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-s_frexp.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-s_frexp.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-s_frexp.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-s_frexp.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-s_frexp.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-s_frexp.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-w_log.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-w_log.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-w_log.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-w_log.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-w_log.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-w_log.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-w_log.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-w_log.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-w_log.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-w_log10.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-w_log10.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-w_log10.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-w_log10.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-w_log10.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-w_log10.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-w_log10.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-w_log10.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-w_log10.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-s_modf.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-s_modf.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-s_modf.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-s_modf.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-s_modf.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-s_modf.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-s_modf.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-s_modf.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-s_modf.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-w_pow.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-w_pow.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-w_pow.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-w_pow.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-w_pow.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-w_pow.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-w_pow.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-w_pow.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-w_pow.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-s_sin.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-s_sin.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-s_sin.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-s_sin.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-s_sin.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-s_sin.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-s_sin.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-s_sin.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-s_sin.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-w_sinh.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-w_sinh.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-w_sinh.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-w_sinh.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-w_sinh.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-w_sinh.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-w_sinh.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-w_sinh.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-w_sinh.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-w_sqrt.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-w_sqrt.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-w_sqrt.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-w_sqrt.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-w_sqrt.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-w_sqrt.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-w_sqrt.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-w_sqrt.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-w_sqrt.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-s_tan.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-s_tan.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-s_tan.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-s_tan.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-s_tan.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-s_tan.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-s_tan.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-s_tan.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-s_tan.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-s_tanh.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-s_tanh.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-s_tanh.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-s_tanh.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-s_tanh.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-s_tanh.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-s_tanh.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-s_tanh.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-s_tanh.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-s_scalbn.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-s_scalbn.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-s_scalbn.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-s_scalbn.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-s_scalbn.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-s_scalbn.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-s_scalbn.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-s_scalbn.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-s_scalbn.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-s_copysign.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-s_copysign.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-s_copysign.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-s_copysign.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-s_copysign.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-s_copysign.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-s_copysign.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-s_copysign.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-s_copysign.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-e_acos.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-e_acos.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-e_acos.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-e_acos.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-e_acos.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-e_acos.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-e_acos.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-e_acos.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-e_acos.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-e_asin.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-e_asin.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-e_asin.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-e_asin.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-e_asin.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-e_asin.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-e_asin.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-e_asin.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-e_asin.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-e_atan2.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-e_atan2.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-e_atan2.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-e_atan2.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-e_atan2.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-e_atan2.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-e_atan2.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-e_atan2.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-e_atan2.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-k_cos.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-k_cos.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-k_cos.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-k_cos.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-k_cos.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-k_cos.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-k_cos.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-k_cos.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-k_cos.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-e_cosh.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-e_cosh.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-e_cosh.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-e_cosh.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-e_cosh.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-e_cosh.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-e_cosh.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-e_cosh.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-e_cosh.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-e_exp.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-e_exp.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-e_exp.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-e_exp.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-e_exp.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-e_exp.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-e_exp.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-e_exp.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-e_exp.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-e_fmod.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-e_fmod.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-e_fmod.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-e_fmod.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-e_fmod.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-e_fmod.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-e_fmod.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-e_fmod.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-e_fmod.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-e_log.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-e_log.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-e_log.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-e_log.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-e_log.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-e_log.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-e_log.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-e_log.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-e_log.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-e_log10.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-e_log10.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-e_log10.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-e_log10.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-e_log10.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-e_log10.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-e_log10.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-e_log10.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-e_log10.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-e_pow.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-e_pow.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-e_pow.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-e_pow.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-e_pow.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-e_pow.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-e_pow.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-e_pow.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-e_pow.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-k_sin.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-k_sin.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-k_sin.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-k_sin.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-k_sin.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-k_sin.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-k_sin.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-k_sin.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-k_sin.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-e_sinh.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-e_sinh.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-e_sinh.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-e_sinh.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-e_sinh.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-e_sinh.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-e_sinh.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-e_sinh.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-e_sinh.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-e_sqrt.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-e_sqrt.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-e_sqrt.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-e_sqrt.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-e_sqrt.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-e_sqrt.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-e_sqrt.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-e_sqrt.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-e_sqrt.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-k_tan.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-k_tan.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-k_tan.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-k_tan.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-k_tan.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-k_tan.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-k_tan.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-k_tan.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-k_tan.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-e_rem_pio2.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-e_rem_pio2.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-e_rem_pio2.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-e_rem_pio2.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-e_rem_pio2.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-e_rem_pio2.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-e_rem_pio2.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-e_rem_pio2.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-e_rem_pio2.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
-k_rem_pio2.o: /home/1B/PMON/1b-pmon-bsp/include/math.h math_private.h
-k_rem_pio2.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/types.h
-k_rem_pio2.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/types.h
-k_rem_pio2.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/cdefs.h
-k_rem_pio2.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/cdefs.h
-k_rem_pio2.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/ansi.h
-k_rem_pio2.o: /home/1B/PMON/1b-pmon-bsp/Targets/LS1B/compile/ls1b/machine/endian.h
-k_rem_pio2.o: /home/1B/PMON/1b-pmon-bsp/sys/sys/endian.h
-k_rem_pio2.o: /home/1B/PMON/1b-pmon-bsp/sys/arch/mips/include/endian.h
+w_acos.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+w_acos.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+w_acos.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+w_acos.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+w_acos.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+w_acos.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+w_acos.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+w_acos.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+w_acos.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+w_asin.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+w_asin.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+w_asin.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+w_asin.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+w_asin.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+w_asin.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+w_asin.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+w_asin.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+w_asin.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+s_atan.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+s_atan.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+s_atan.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+s_atan.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+s_atan.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+s_atan.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+s_atan.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+s_atan.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+s_atan.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+w_atan2.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+w_atan2.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+w_atan2.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+w_atan2.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+w_atan2.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+w_atan2.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+w_atan2.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+w_atan2.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+w_atan2.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+s_ceil.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+s_ceil.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+s_ceil.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+s_ceil.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+s_ceil.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+s_ceil.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+s_ceil.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+s_ceil.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+s_ceil.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+s_cos.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+s_cos.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+s_cos.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+s_cos.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+s_cos.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+s_cos.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+s_cos.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+s_cos.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+s_cos.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+w_cosh.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+w_cosh.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+w_cosh.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+w_cosh.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+w_cosh.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+w_cosh.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+w_cosh.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+w_cosh.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+w_cosh.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+w_exp.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+w_exp.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+w_exp.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+w_exp.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+w_exp.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+w_exp.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+w_exp.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+w_exp.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+w_exp.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+s_expm1.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+s_expm1.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+s_expm1.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+s_expm1.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+s_expm1.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+s_expm1.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+s_expm1.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+s_expm1.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+s_expm1.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+s_fabs.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+s_fabs.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+s_fabs.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+s_fabs.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+s_fabs.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+s_fabs.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+s_fabs.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+s_fabs.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+s_fabs.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+s_floor.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+s_floor.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+s_floor.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+s_floor.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+s_floor.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+s_floor.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+s_floor.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+s_floor.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+s_floor.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+w_fmod.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+w_fmod.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+w_fmod.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+w_fmod.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+w_fmod.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+w_fmod.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+w_fmod.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+w_fmod.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+w_fmod.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+s_frexp.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+s_frexp.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+s_frexp.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+s_frexp.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+s_frexp.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+s_frexp.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+s_frexp.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+s_frexp.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+s_frexp.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+w_log.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+w_log.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+w_log.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+w_log.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+w_log.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+w_log.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+w_log.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+w_log.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+w_log.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+w_log10.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+w_log10.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+w_log10.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+w_log10.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+w_log10.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+w_log10.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+w_log10.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+w_log10.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+w_log10.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+s_modf.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+s_modf.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+s_modf.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+s_modf.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+s_modf.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+s_modf.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+s_modf.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+s_modf.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+s_modf.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+w_pow.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+w_pow.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+w_pow.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+w_pow.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+w_pow.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+w_pow.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+w_pow.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+w_pow.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+w_pow.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+s_sin.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+s_sin.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+s_sin.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+s_sin.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+s_sin.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+s_sin.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+s_sin.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+s_sin.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+s_sin.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+w_sinh.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+w_sinh.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+w_sinh.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+w_sinh.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+w_sinh.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+w_sinh.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+w_sinh.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+w_sinh.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+w_sinh.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+w_sqrt.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+w_sqrt.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+w_sqrt.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+w_sqrt.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+w_sqrt.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+w_sqrt.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+w_sqrt.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+w_sqrt.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+w_sqrt.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+s_tan.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+s_tan.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+s_tan.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+s_tan.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+s_tan.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+s_tan.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+s_tan.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+s_tan.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+s_tan.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+s_tanh.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+s_tanh.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+s_tanh.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+s_tanh.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+s_tanh.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+s_tanh.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+s_tanh.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+s_tanh.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+s_tanh.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+s_scalbn.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+s_scalbn.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+s_scalbn.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+s_scalbn.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+s_scalbn.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+s_scalbn.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+s_scalbn.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+s_scalbn.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+s_scalbn.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+s_copysign.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+s_copysign.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+s_copysign.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+s_copysign.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+s_copysign.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+s_copysign.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+s_copysign.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+s_copysign.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+s_copysign.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+e_acos.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+e_acos.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+e_acos.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+e_acos.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+e_acos.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+e_acos.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+e_acos.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+e_acos.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+e_acos.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+e_asin.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+e_asin.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+e_asin.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+e_asin.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+e_asin.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+e_asin.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+e_asin.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+e_asin.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+e_asin.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+e_atan2.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+e_atan2.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+e_atan2.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+e_atan2.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+e_atan2.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+e_atan2.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+e_atan2.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+e_atan2.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+e_atan2.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+k_cos.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+k_cos.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+k_cos.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+k_cos.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+k_cos.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+k_cos.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+k_cos.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+k_cos.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+k_cos.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+e_cosh.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+e_cosh.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+e_cosh.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+e_cosh.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+e_cosh.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+e_cosh.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+e_cosh.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+e_cosh.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+e_cosh.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+e_exp.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+e_exp.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+e_exp.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+e_exp.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+e_exp.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+e_exp.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+e_exp.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+e_exp.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+e_exp.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+e_fmod.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+e_fmod.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+e_fmod.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+e_fmod.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+e_fmod.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+e_fmod.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+e_fmod.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+e_fmod.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+e_fmod.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+e_log.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+e_log.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+e_log.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+e_log.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+e_log.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+e_log.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+e_log.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+e_log.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+e_log.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+e_log10.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+e_log10.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+e_log10.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+e_log10.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+e_log10.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+e_log10.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+e_log10.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+e_log10.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+e_log10.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+e_pow.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+e_pow.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+e_pow.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+e_pow.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+e_pow.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+e_pow.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+e_pow.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+e_pow.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+e_pow.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+k_sin.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+k_sin.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+k_sin.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+k_sin.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+k_sin.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+k_sin.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+k_sin.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+k_sin.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+k_sin.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+e_sinh.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+e_sinh.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+e_sinh.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+e_sinh.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+e_sinh.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+e_sinh.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+e_sinh.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+e_sinh.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+e_sinh.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+e_sqrt.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+e_sqrt.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+e_sqrt.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+e_sqrt.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+e_sqrt.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+e_sqrt.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+e_sqrt.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+e_sqrt.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+e_sqrt.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+k_tan.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+k_tan.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+k_tan.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+k_tan.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+k_tan.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+k_tan.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+k_tan.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+k_tan.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+k_tan.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+e_rem_pio2.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+e_rem_pio2.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+e_rem_pio2.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+e_rem_pio2.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+e_rem_pio2.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+e_rem_pio2.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+e_rem_pio2.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+e_rem_pio2.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+e_rem_pio2.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
+k_rem_pio2.o: /home/tanghaifeng/1B-PMON-BSP/include/math.h math_private.h
+k_rem_pio2.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/types.h
+k_rem_pio2.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
+k_rem_pio2.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/cdefs.h
+k_rem_pio2.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
+k_rem_pio2.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
+k_rem_pio2.o: /home/tanghaifeng/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
+k_rem_pio2.o: /home/tanghaifeng/1B-PMON-BSP/sys/sys/endian.h
+k_rem_pio2.o: /home/tanghaifeng/1B-PMON-BSP/sys/arch/mips/include/endian.h
