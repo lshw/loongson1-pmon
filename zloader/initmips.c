@@ -77,9 +77,9 @@ void initmips(unsigned int msize,int dmsize,int dctrl)
 	long *end=(void *)0x800f9834;
 	int *p;
 	int debug=(msize==0);
-//	CPU_TLBClear();
+	CPU_TLBClear();
 	tgt_puts("Uncompressing Bios");
-//	if(!debug||dctrl&1)enable_cache();
+	if(!debug||dctrl&1)enable_cache();
 	
 	while(1){
 		if(run_unzip(biosdata,0x80010000)>=0)break;
@@ -90,9 +90,9 @@ void initmips(unsigned int msize,int dmsize,int dctrl)
 	}
 	memset(0x80010000-0x1000,0,0x1000);//0x80010000-0x1000 for frame(registers),memset for pretty
 #ifdef NOCACHE2
-//	flush_cache();
+	flush_cache();
 #else
-//	flush_cache2();
+	flush_cache2();
 #endif
 	realinitmips(debug?dmsize:msize);
 }
