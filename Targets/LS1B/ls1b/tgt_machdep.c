@@ -1296,7 +1296,7 @@ tgt_reboot(void)
 	//	longreach = (void *)0xbfc00000;
 	//	(*longreach)();
 	*(volatile unsigned int *)0xbfe5c060 = 0x1;		//lxy: watchdog EN
-	*(volatile unsigned int *)0xbfe5c064 = 0x10;		//lxy: watchdog timer
+	*(volatile unsigned int *)0xbfe5c064 = 0x1;		//lxy: watchdog timer
 	*(volatile unsigned int *)0xbfe5c068 = 0x1;		//lxy: watchdog start
 	while(1);
 }
