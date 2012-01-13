@@ -103,7 +103,6 @@
 
 #define min_t(type,x,y) ({ type __x = (x); type __y = (y); __x < __y ? __x: __y; })
 
-//#define	DEBUG
 #undef DEBUG
 #ifdef DEBUG
 #define dbg(format, arg...) printf("DEBUG: " format "\n", ## arg)
@@ -2396,7 +2395,7 @@ static int ohci_submit_rh_msg(struct usb_device *dev, unsigned long pipe,
 
 #ifdef DEBUG
 	if (transfer_len)
-//		urb_priv.actual_length = transfer_len;		//lxy
+		urb_priv.actual_length = transfer_len;
 #else
 	wait_ms(1);
 #endif
@@ -2493,7 +2492,7 @@ int submit_common_msg(struct usb_device *dev, unsigned long pipe, void *buffer,
 	else
 		timeout = 2000;
 
-	timeout *= 40;
+	timeout *= 100;
 
 	/* wait for it to complete */
 #if 0
@@ -2798,6 +2797,7 @@ static int hc_start (ohci_t * ohci)
 
 	writel (0, &ohci->regs->ed_controlhead);
 	writel (0, &ohci->regs->ed_bulkhead);
+	writel (0, &ohci->regs->ed_periodcurrent);
 
 #ifdef CONFIG_SM502_USB_HCD
 	if(ohci->flags & 0x80)
@@ -2819,17 +2819,28 @@ static int hc_start (ohci_t * ohci)
 	ohci->disabled = 0;
 	writel (ohci->hc_control, &ohci->regs->control);
 
+	{
+		int val;	
+		val = readl(&ohci->regs->intrstatus);
+		while(val & OHCI_INTR_SF){
+			udelay(10);
+			readl(&ohci->regs->intrstatus);
+		}
+	}
+
 	/* disable all interrupts */
 	mask = (OHCI_INTR_SO | OHCI_INTR_WDH | OHCI_INTR_SF | OHCI_INTR_RD |
 			OHCI_INTR_UE | OHCI_INTR_FNO | OHCI_INTR_RHSC |
 			OHCI_INTR_OC | OHCI_INTR_MIE);
 	writel (mask, &ohci->regs->intrdisable);
+#if 0 //zenglu
 	/* clear all interrupts */
 	mask &= ~OHCI_INTR_MIE;
 	writel (mask, &ohci->regs->intrstatus);
 	/* Choose the interrupts we care about now  - but w/o MIE */
 	mask = OHCI_INTR_RHSC | OHCI_INTR_UE | OHCI_INTR_WDH | OHCI_INTR_SO | OHCI_INTR_MIE;
 	writel (mask, &ohci->regs->intrenable);
+#endif
 
 #ifdef	OHCI_USE_NPS
 	/* required for AMD-756 and some Mac platforms */
@@ -2841,6 +2852,8 @@ static int hc_start (ohci_t * ohci)
 #define mdelay(n) do {unsigned long msec=(n); while (msec--) udelay(1000);} while(0)
 	/* POTPGT delay is bits 24-31, in 2 ms units. */
 	mdelay ((roothub_a (ohci) >> 23) & 0x1fe);
+
+	mdelay(1000);
 
 	/* connect the virtual root hub */
 	ohci->rh.devnum = 0;
@@ -2935,7 +2948,7 @@ static int hc_interrupt (void *hc_data)
 			ohci->slot_name);
 		/* e.g. due to PCI Master/Target Abort */
 #ifdef	DEBUG
-//		ohci_dump (ohci, 1);	//lxy
+		ohci_dump (ohci, 1);
 #endif
 		/* FIXME: be optimistic, hope that bug won't repeat often. */
 		/* Make some non-interrupt context restart the controller. */
@@ -3409,7 +3422,7 @@ static int hc_check_ohci_controller (void *hc_data)
 			ohci->slot_name);
 		/* e.g. due to PCI Master/Target Abort */
 #ifdef	DEBUG
-//		ohci_dump (ohci, 1);		//lxy
+		ohci_dump (ohci, 1);
 #endif
 		/* FIXME: be optimistic, hope that bug won't repeat often. */
 		/* Make some non-interrupt context restart the controller. */
