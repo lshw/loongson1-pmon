@@ -110,4 +110,6 @@
 #define SIOCRDEEPROM	0x8947		/* Read EEprom	82541	*/
 #define SIOCWREEPROM	0x8948		/* Write eeprom	82541	*/
 #define SIOCGETHERADDR	0x8950		/* Ethtool interface		*/
+#define SIOCRDPHY 0x8951
+#define SIOCWRPHY 0x8952
 #endif /* !_SYS_SOCKIO_H_ */

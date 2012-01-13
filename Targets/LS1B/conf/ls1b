@@ -145,11 +145,10 @@ pci*		at pcibr?
 #### Networking Devices
 
 syn0		at localbus0
-#syn1		at localbus0
+syn1		at localbus0
 option GMAC_PHY_BASE=1
 option GMAC0_ADDR=0xbfe10000
-option GMAC1_ADDR=0xbfe11000
-#option GMAC1_ADDR=0xbfe20000
+option GMAC1_ADDR=0xbfe20000
 select      gmac
 #option		GMAC
 #gt0		at localbus? base 4
@@ -160,18 +159,17 @@ select      gmac
 sdcard0		at localbus0 flags 0
 #uhci*		 at pci? dev ? function ?
 #ohci0		 at pci? dev ? function ?
-#lohci0		at localbus0 base 0xbfe08000
+lohci0		at localbus0 base 0xbfe08000
 usb*		 at usbbus ? 
 #ohci1		 at pci? dev ? function ?
-ehci0		at localbus0
+#ehci0		at localbus0
 
 select		mod_usb
-select		mod_usb_ehci		#lxy
 select  	mod_usb_storage
-
-#select      	mod_usb_uhci
-#select 	mod_usb_ohci
-#select		mod_usb_kbd
+#select	mod_usb_uhci
+select 	mod_usb_ohci
+#select	mod_usb_ehci		#lxy
+select		mod_usb_kbd
 
 
 #### Pseudo devices
@@ -194,8 +192,8 @@ select loop
 select raw_ether
 #option VGA_MEM_BASE=0xb5000000
 #option VGA_MEM_BASE=0xb7f00000
-option		X320x240
-#option		X480x272
+#option		X320x240
+option		X480x272
 #option		X640x480
 #option		X640x640
 #option		X640x768
@@ -212,15 +210,19 @@ option		X320x240
 #option		X1280x800
 #option 		CONFIG_VIDEO_12BPP
 #option 		CONFIG_VIDEO_15BPP
-#option  CONFIG_VIDEO_LOGO
+option  CONFIG_VIDEO_LOGO
 #option	CONFIG_VIDEO_BMP_LOGO
+#option 	CONFIG_VIDEO_12BPP
+#option 	CONFIG_VIDEO_15BPP
 option 	CONFIG_VIDEO_16BPP
+#option 	CONFIG_VIDEO_24BPP
 #option 	CONFIG_VIDEO_32BPP
 select		cmd_call		# Call a function command
 select		ide
 option		wait_key	#lxy
-option HAVE_MUT_COM		#lxy
-option	CONFIG_FB_DYN
-#option	CONFIG_DDR16BIT
+#option HAVE_MUT_COM		#lxy
+#option	CONFIG_FB_DYN
+option	CONFIG_DDR16BIT
+option CONFIG_PHY100M
 option		CONFIG_CHINESE
 

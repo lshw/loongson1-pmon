@@ -70,7 +70,7 @@ void spi_initw(void)
 {
 	SET_SPI(SPSR, 0xc0); 
   	SET_SPI(PARAM, 0x00);	//espr:0100
- 	SET_SPI(SPER, 0x04);		//spre:01 
+ 	SET_SPI(SPER, 0x05);		//spre:01 
   	SET_SPI(PARAM2,0x01);
 	SET_SPI(SPCR, 0x5c);
 	SET_SPI(SOFTCS,0x11);
@@ -801,7 +801,7 @@ int spi_read_area_fast(int flashaddr,unsigned char *buffer,int size)		//lxy
 
 	SET_SPI(SPSR, 0xc0); 
   	SET_SPI(PARAM, 0x07);             //espr:0100
- 	SET_SPI(SPER, 0x04); //spre:01 
+ 	SET_SPI(SPER, 0x05); //spre:01 
   	SET_SPI(PARAM2,0x01); 
 //  	SET_SPI(SPCR, 0x50);		//lxy
 	SET_SPI(SPCR, 0x5c);     
@@ -958,6 +958,7 @@ struct fl_device *fl_devident(void *base, struct fl_map **m)
 
 	if (init_id == 0)
 	{
+		nor_dev = NULL;
 		read_jedecid(flash_id);
 		init_id = 1;
 
@@ -983,19 +984,24 @@ int fl_program_device(void *fl_base, void *data_base, int data_size, int verbose
 	fl_devident(fl_base, NULL);
 	map = fl_find_map(fl_base);
 	off = (int)(fl_base - map->fl_map_base) + map->fl_map_offset;
-	if (!strcmp(nor_dev->fl_name, "sst25vf080")){
-		printf ("flash sst25vf080.....\n");
-		spi_write_area_sst_fast(off,data_base,data_size);
-	}
-	else if (!strcmp(nor_dev->fl_name, "winb25x64")){
-		printf ("flash winb25x64.....\n");
-		spi_write_area_fast(off, data_base, data_size);
+	if (nor_dev != NULL){
+		if (!strcmp(nor_dev->fl_name, "sst25vf080")){
+			printf ("flash sst25vf080.....\n");
+			spi_write_area_sst_fast(off, data_base, data_size);
+		}
+		else if (!strcmp(nor_dev->fl_name, "winb25x64")){
+			printf ("flash winb25x64.....\n");
+			spi_write_area_fast(off, data_base, data_size);
+		}
+		else if (!strcmp(nor_dev->fl_name, "winb25x40")){
+			printf ("flash winb25x40.....\n");
+			spi_write_area_fast(off, data_base, data_size);
+		}
 	}
 	else{
-		printf ("cann't find flash.....\n");
-		return -1;
+		printf ("unknow flash type. try to program .....\n");
+		spi_write_area(off, data_base, data_size);
 	}
-	return 0;
 #else
 	map = fl_find_map(fl_base);
 	off = (int)(fl_base - map->fl_map_base) + map->fl_map_offset;

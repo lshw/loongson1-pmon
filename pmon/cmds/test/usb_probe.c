@@ -7,9 +7,9 @@
 
 int usb_probe(int argc,char **argv)
 {
-	struct device ehci_dev;
+//	struct device ehci_dev;
 	
-	usb_init(&ehci_dev);
+//	usb_init(&ehci_dev);
 	return 0;
 }
 

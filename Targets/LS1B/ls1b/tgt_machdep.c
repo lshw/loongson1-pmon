@@ -148,6 +148,7 @@ extern int memorysize_high;
 extern char MipsException[], MipsExceptionEnd[];
 
 unsigned char hwethadr[6];
+static unsigned int pll_reg0,pll_reg1;
 
 void initmips(unsigned int memsz);
 
@@ -352,7 +353,6 @@ tgt_devconfig(void)
 	printf("after fb_init\n");
 	rc=1;
 #endif
-
 #if (NMOD_FRAMEBUFFER > 0) || (NMOD_VGACON > 0 )
 	if (rc > 0){
 		if(!getenv("novga")) 
@@ -361,7 +361,6 @@ tgt_devconfig(void)
 			vga_available=0;
 	}
 #endif
-//	vga_available=0;		//lxy: disable it
 	config_init();
 
     /*end usb reset*/
@@ -372,7 +371,7 @@ tgt_devconfig(void)
 	/*ls1b usb reset stop*/
 	*(volatile int *)0xbfd00424 |= 0x80000000;
 #endif
-
+	
 	printf("====before configure\n");
 	configure();
     
@@ -840,7 +839,7 @@ tgt_mapenv(int (*func) __P((char *, char *)))
 	if(fl_devident(nvram, NULL) == 0 ||
            cksum(nvram + NVRAM_OFFS, NVRAM_SIZE, 0) != 0) {
 #else
-    nvram = (char *)malloc(NVRAM_SIZE);
+    nvram = (char *)malloc(NVRAM_SECSIZE);
 	nvram_get(nvram);
 	if(cksum(nvram, NVRAM_SIZE, 0) != 0) {
 #endif
@@ -880,6 +879,11 @@ tgt_mapenv(int (*func) __P((char *, char *)))
 	sprintf(env, "%02x:%02x:%02x:%02x:%02x:%02x", hwethadr[0], hwethadr[1],
 	    hwethadr[2], hwethadr[3], hwethadr[4], hwethadr[5]);
 	(*func)("ethaddr", env);
+
+	sprintf(env, "0x%08x",(pll_reg0=*(volatile int *)0xbfe78030));
+	(*func)("pll_reg0", env);
+	sprintf(env, "0x%08x",(pll_reg1=*(volatile int *)0xbfe78034));
+	(*func)("pll_reg1", env);
 
 #ifndef NVRAM_IN_FLASH
 	free(nvram);
@@ -934,14 +938,14 @@ tgt_unsetenv(char *name)
         memcpy(nvramsecbuf, nvram, NVRAM_SECSIZE);
 	nvrambuf = nvramsecbuf + (NVRAM_OFFS & (NVRAM_SECSIZE - 1));
 #else
-        nvramsecbuf = nvrambuf = nvram = (char *)malloc(NVRAM_SIZE);
+        nvramsecbuf = nvrambuf = nvram = (char *)malloc(NVRAM_SECSIZE);
 	nvram_get(nvram);
 #endif
 
         ep = nvrambuf + 2;
 
 	status = 0;
-        while((*ep != '\0') && (ep <= nvrambuf + NVRAM_SIZE)) {
+        while((*ep != '\0') && (ep < nvrambuf + NVRAM_SIZE)) {
                 np = name;
                 sp = ep;
 
@@ -951,7 +955,7 @@ tgt_unsetenv(char *name)
                 }
                 if((*np == '\0') && ((*ep == '\0') || (*ep == '='))) {
                         while(*ep++);
-                        while(ep <= nvrambuf + NVRAM_SIZE) {
+                        while(ep < nvrambuf + NVRAM_SIZE) {
                                 *sp++ = *ep++;
                         }
                         if(nvrambuf[2] == '\0') {
@@ -1079,7 +1083,12 @@ tgt_setenv(char *name, char *value)
 			hwethadr[i] = v;
 			s += 3;         /* Don't get to fancy here :-) */
 		} 
-	} else {
+	} 
+	else if(strcmp("pll_reg0",name) == 0)
+		pll_reg0=strtoul(value,0,0);
+	else if(strcmp("pll_reg1",name) == 0)
+		pll_reg1=strtoul(value,0,0);
+	else {
 		ep = nvrambuf+2;
 		if(*ep != '\0') {
 			do {
@@ -1130,6 +1139,8 @@ tgt_setenv(char *name, char *value)
         cksum(nvrambuf, NVRAM_SIZE, 1);
 
 	bcopy(hwethadr, &nvramsecbuf[ETHER_OFFS], 6);
+	bcopy(&pll_reg0, &nvramsecbuf[PLL_OFFS], 4);
+	bcopy(&pll_reg1, &nvramsecbuf[PLL_OFFS + 4], 4);
 #ifdef NVRAM_IN_FLASH
         if(fl_erase_device(nvram, NVRAM_SECSIZE, FALSE)) {
 		printf("Error! Nvram erase failed!\n");
@@ -1180,6 +1191,7 @@ cksum(void *p, size_t s, int set)
 /*
  *  Read and write data into non volatile memory in clock chip.
  */
+#if 0
 void
 nvram_get(char *buffer)
 {
@@ -1195,6 +1207,23 @@ nvram_put(char *buffer)
 	spi_write_area(0x00070000,buffer,NVRAM_SIZE);			//lxy
 	spi_initr();
 }
+#else
+void
+nvram_get(char *buffer)
+{
+	spi_read_area(NVRAM_POS,buffer,NVRAM_SECSIZE);
+	spi_initr();
+}
+
+void
+nvram_put(char *buffer)
+{
+	int i;
+	spi_erase_area(NVRAM_POS,NVRAM_POS+NVRAM_SECSIZE,0x10000);
+	spi_write_area(NVRAM_POS,buffer,NVRAM_SECSIZE);
+	spi_initr();
+}
+#endif
 
 #endif
 

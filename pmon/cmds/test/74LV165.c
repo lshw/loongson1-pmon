@@ -2,12 +2,7 @@
 #include <cpu.h>
 #include <target/iorw.h>
 #include <string.h>
-
-#define SOC3210_74HC165_PL  (REG_GPIO_OUT0)		//GPIO1（179）
-#define SOC3210_74HC165_CLK  (SOC3210_LPB_MISC_BASE + REG_LPB_GPIO_W)	//GPIO0（184）
-#define SOC3210_74HC165_DATA  (SOC3210_LPB_MISC_BASE + REG_LPB_GPIO_R)	//GPIO2（182）
-#define SOC3210_74HC165_WRITE(reg, val)  ((*(volatile unsigned char *)(reg)) = val)
-#define SOC3210_74HC165_READ(val, reg)   (val = *(volatile unsigned char *)(reg))
+#include "target/fcr.h"
 
 #define K1BASE 0xa0000000
 #define KSEG1(addr) ((void *)(K1BASE | (u32)(addr)))
@@ -37,11 +32,32 @@
 #define REG_GPIO_OUT0		0x1fd010f0		//GPIO 配置寄存器输出寄存器 0
 #define REG_GPIO_OUT1		0x1fd010f4		//GPIO 配置寄存器输出寄存器 1
 
-#define GPIOS 0x7
+#define REG_GPIO_CFG			REG_GPIO_CFG1
+#define REG_GPIO_OE			REG_GPIO_OE1
+#define REG_GPIO_IN			REG_GPIO_IN1
+#define REG_GPIO_OUT			REG_GPIO_OUT1
 
-#define KEY_DATA	0
-#define KEY_EN	1
-#define KEY_CLK	2
+#define GPIOS		0x07
+#define OFFSET	0x00
+
+#define GPIO0		(1<<0)
+#define GPIO1		(1<<1)
+#define GPIO2		(1<<2)
+
+#define GPIO38	(1<<(38-32))	/* 注意需要修改 */
+#define GPIO39	(1<<(39-32))	/* 注意需要修改 */
+#define GPIO41	(1<<(41-32))	/* 注意需要修改 */
+
+//#define KEY_DATA	GPIO38
+//#define KEY_EN		GPIO39
+//#define KEY_CLK		GPIO41
+
+#define KEY_DATA	GPIO41
+#define KEY_CLK	GPIO39
+#define KEY_EN	GPIO38
+
+/* 定义蜂鸣器(buzzer)使用的GPIO */
+#define BUZZER	(1<<(40-32))
 
 //根据输入参数i得到第一个为1位的位置
 static int find_first_bit(unsigned int i)
@@ -61,25 +77,28 @@ static int find_first_bit(unsigned int i)
 static void gpio_init_74LV165(int flag)
 {
 	unsigned int reg = 0;
-	if (flag){
-		//配置GPIO0
-		reg = KSEG1_LOAD32(REG_GPIO_CFG0); //GPIO0	0xbfd010c0 使能GPIO
-		reg |= GPIOS;
-		KSEG1_STORE32(REG_GPIO_CFG0, reg);
-		//
-		reg = KSEG1_LOAD32(REG_GPIO_OE0); //GPIO0	0xbfd010c0 使能GPIO
-		reg |= 0x01;
-		reg &= ~(0x06);
-		KSEG1_STORE32(REG_GPIO_OE0, reg);
 	
-		reg = KSEG1_LOAD32(REG_GPIO_OUT0); //GPIO0	0xbfd010c0 使能GPIO
-		reg &= ~(0x06);
-		KSEG1_STORE32(REG_GPIO_OUT0, reg);
+	/* 使能引脚GPIO方式 */
+	if (flag){
+		/* 配置GPIO */
+		reg = KSEG1_LOAD32(REG_GPIO_CFG);
+		reg |= (KEY_DATA | KEY_EN | KEY_CLK);
+		KSEG1_STORE32(REG_GPIO_CFG, reg);
+		/* GPIO输入输出方式 */
+		reg = KSEG1_LOAD32(REG_GPIO_OE);
+		reg |= KEY_DATA;
+		reg &= ~(KEY_EN | KEY_CLK);
+		KSEG1_STORE32(REG_GPIO_OE, reg);
+		/* 设置输出电平 */
+		reg = KSEG1_LOAD32(REG_GPIO_OUT);
+		reg &= ~(KEY_EN | KEY_CLK);
+		KSEG1_STORE32(REG_GPIO_OUT, reg);
 	}
+	/* 取消引脚GPIO方式 */
 	else{
-		reg = KSEG1_LOAD32(REG_GPIO_CFG0); //GPIO0	0xbfd010c0 使能GPIO
-		reg &= ~GPIOS;
-		KSEG1_STORE32(REG_GPIO_CFG0, reg);
+		reg = KSEG1_LOAD32(REG_GPIO_CFG);
+		reg &= ~(KEY_DATA | KEY_EN | KEY_CLK);
+		KSEG1_STORE32(REG_GPIO_CFG, reg);
 	}
 }
 
@@ -89,51 +108,89 @@ static unsigned int soc_74LV165_read(void)
 	unsigned int val = 0,reg = 0;
 	unsigned int key_val = 0;
 	
-	//printk("button_read\n");
 	/* CLK =0 */
-	reg = KSEG1_LOAD32(REG_GPIO_OUT0); //GPIO0	0xbfd010c0 使能GPIO
-	KSEG1_STORE32(REG_GPIO_OUT0, reg & (~(0x1 << KEY_CLK)));	//CLK置0 时钟低变高触发
+	reg = KSEG1_LOAD32(REG_GPIO_OUT); //GPIO0	0xbfd010c0 使能GPIO
+	KSEG1_STORE32(REG_GPIO_OUT, reg & (~KEY_CLK));	//CLK置0 时钟低变高触发
 	/* PL = 0 */
-	reg = KSEG1_LOAD32(REG_GPIO_OUT0);
-	KSEG1_STORE32(REG_GPIO_OUT0, reg & (~(0x1 << KEY_EN)));	//PL置0
-	/* delay 100 */
-//	delay(1000);
+	reg = KSEG1_LOAD32(REG_GPIO_OUT);
+	KSEG1_STORE32(REG_GPIO_OUT, reg & (~KEY_EN));	//PL置0
 	/* PL = 1 */
-	reg = KSEG1_LOAD32(REG_GPIO_OUT0);
-	KSEG1_STORE32(REG_GPIO_OUT0, reg | (0x1 << KEY_EN));	//PL置1 准备读取串行数据
+	reg = KSEG1_LOAD32(REG_GPIO_OUT);
+	KSEG1_STORE32(REG_GPIO_OUT, reg | KEY_EN);	//PL置1 准备读取串行数据
 	
-	reg = KSEG1_LOAD32(REG_GPIO_IN0);//还没有跳变沿时 DATA引脚为D7值
-	val = ((~reg) & 1);
+	reg = KSEG1_LOAD32(REG_GPIO_IN);//还没有跳变沿时 DATA引脚为D7值
+	val = ((~reg) & KEY_DATA) >> (41-32); //注意这里KEY_DATA变了这里也要变
 	key_val = val;
 	/* scanf keyboard */
 	for(time = 1; time < 16; time ++)
 	{
-		/* delay */
-//		delay(1000);
 		/* CLK = 1 */
-		reg = KSEG1_LOAD32(REG_GPIO_OUT0);
-		KSEG1_STORE32(REG_GPIO_OUT0, reg | (0x1 << KEY_CLK));//CLK置1 时钟低变高触发
-//		delay(1000);
-		reg = KSEG1_LOAD32(REG_GPIO_IN0);
-		val = ((~reg) & 1);
-//		val = val;
+		reg = KSEG1_LOAD32(REG_GPIO_OUT);
+		KSEG1_STORE32(REG_GPIO_OUT, reg | KEY_CLK);//CLK置1 时钟低变高触发
+		
+		reg = KSEG1_LOAD32(REG_GPIO_IN);
+		val = ((~reg) & KEY_DATA) >> (41-32); //注意这里KEY_DATA变了这里也要变
 		key_val |= (val << time);
 		/* CLK = 0 */
-//		delay(1000);
-		reg = KSEG1_LOAD32(REG_GPIO_OUT0);
-		KSEG1_STORE32(REG_GPIO_OUT0, reg & (~(0x1 << KEY_CLK)));//CLK置0 时钟低变高触发
+		reg = KSEG1_LOAD32(REG_GPIO_OUT);
+		KSEG1_STORE32(REG_GPIO_OUT, reg & (~KEY_CLK));//CLK置0 时钟低变高触发
 	}
 	if(key_val == 0x0000ffff){
 		return key_val;
 	}
-//	printf("BReadBuf value is 0x%08x\n", key_val);
 	val = find_first_bit(key_val);
-//		printf("BReadBuf value is %d\n", val);
 	return val;
-//	}
-//	return -1;
 }
 
+
+void buzzer_init(int flag)
+{
+	unsigned int reg = 0;
+	
+	/* 使能引脚GPIO方式 */
+	if (flag){
+		/* 配置GPIO */
+		reg = KSEG1_LOAD32(REG_GPIO_CFG1);
+		reg |= BUZZER;
+		KSEG1_STORE32(REG_GPIO_CFG1, reg);
+		/* GPIO输入输出方式 */
+		reg = KSEG1_LOAD32(REG_GPIO_OE1);
+		reg &= ~(BUZZER);
+		KSEG1_STORE32(REG_GPIO_OE1, reg);
+		/* 设置输出电平 关闭蜂鸣器 */
+		reg = KSEG1_LOAD32(REG_GPIO_OUT1);
+		reg &= ~(BUZZER);
+		KSEG1_STORE32(REG_GPIO_OUT1, reg);
+	}
+	/* 取消引脚GPIO方式 */
+	else{
+		reg = KSEG1_LOAD32(REG_GPIO_OUT1);
+		reg &= ~(BUZZER);
+		KSEG1_STORE32(REG_GPIO_OUT1, reg);
+		
+		reg = KSEG1_LOAD32(REG_GPIO_CFG1);
+		reg &= ~(BUZZER);
+		KSEG1_STORE32(REG_GPIO_CFG1, reg);
+	}
+}
+
+void buzzer_ctrl(int cmd)
+{
+	unsigned int reg = 0;
+	
+	/* 激活蜂鸣器 */
+	if (cmd){
+		reg = KSEG1_LOAD32(REG_GPIO_OUT1);
+		reg |= BUZZER;
+		KSEG1_STORE32(REG_GPIO_OUT1, reg);
+	}
+	/* 禁止蜂鸣器 */
+	else{
+		reg = KSEG1_LOAD32(REG_GPIO_OUT1);
+		reg &= ~(BUZZER);
+		KSEG1_STORE32(REG_GPIO_OUT1, reg);
+	}
+}
 
 void button_test(void)
 {
@@ -142,16 +199,17 @@ void button_test(void)
 	int count = 0;
 #ifdef CONFIG_CHINESE
 	printf("按键测试\n说明：\n");
-	printf("1.没有按键按下时\"计数值\"不变，当按键按下时\"计数值\"改变。\n");
-	printf("2.如果没有按键按下而\"计数值\"不断改变，说明该按键短路。\n");
-	printf("3.如果按键按下而\"计数值\"不变，说明该按键开路。\n");
-	printf("4.按任意键退出测试程序。\n");
+	printf("1.如果有SD插在开发板的SD卡插槽，请把SD卡退出。\n");
+	printf("2.没有按键按下时\"计数值\"不变，当按键按下时\"计数值\"改变。\n");
+	printf("3.如果没有按键按下而\"计数值\"不断改变，说明该按键短路。\n");
+	printf("4.如果按键按下而\"计数值\"不变，说明该按键开路。\n");
+	printf("5.按任意键退出测试程序。\n");
 #else
 	printf("press any key to out of button_test\n");
 #endif
 	gpio_init_74LV165(1);
-	while(1)
-	{
+	buzzer_init(1);
+	while(1){
 		val = soc_74LV165_read();
 		delay(20000);	//延时去抖
 		if (soc_74LV165_read() != val)
@@ -164,6 +222,7 @@ void button_test(void)
 				printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bbutton %d    count %d", val, count++);
 			#endif
 				key_status |= (1<<val);
+				buzzer_ctrl(1);
 				//delay(2000000);
 				//while(soc_74LV165_read() == val);
 			break;
@@ -175,6 +234,7 @@ void button_test(void)
 				printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bbutton %d    count %d", val, count++);
 			#endif
 				key_status |= (1<<val);
+				buzzer_ctrl(1);
 				//delay(2000000);
 				//while(soc_74LV165_read() == val);
 			break;
@@ -186,6 +246,7 @@ void button_test(void)
 				printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bbutton %d    count %d", val, count++);
 			#endif
 				key_status |= (1<<val);
+				buzzer_ctrl(1);
 				//delay(2000000);
 				//while(soc_74LV165_read() == val);
 			break;
@@ -197,6 +258,7 @@ void button_test(void)
 				printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bbutton %d    count %d", val, count++);
 			#endif
 				key_status |= (1<<val);
+				buzzer_ctrl(1);
 				//delay(2000000);
 				//while(soc_74LV165_read() == val);
 			break;
@@ -208,6 +270,7 @@ void button_test(void)
 				printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bbutton %d    count %d", val, count++);
 			#endif
 				key_status |= (1<<val);
+				buzzer_ctrl(1);
 				//delay(2000000);
 				//while(soc_74LV165_read() == val);
 			break;
@@ -219,6 +282,7 @@ void button_test(void)
 				printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bbutton %d    count %d", val, count++);
 			#endif
 				key_status |= (1<<val);
+				buzzer_ctrl(1);
 				//delay(2000000);
 				//while(soc_74LV165_read() == val);
 			break;
@@ -230,6 +294,7 @@ void button_test(void)
 				printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bbutton %d    count %d", val, count++);
 			#endif
 				key_status |= (1<<val);
+				buzzer_ctrl(1);
 				//delay(2000000);
 				//while(soc_74LV165_read() == val);
 			break;
@@ -241,6 +306,7 @@ void button_test(void)
 				printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bbutton %d    count %d", val, count++);
 			#endif
 				key_status |= (1<<val);
+				buzzer_ctrl(1);
 				//delay(2000000);
 				//while(soc_74LV165_read() == val);
 			break;
@@ -252,6 +318,7 @@ void button_test(void)
 				printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bbutton %d    count %d", val, count++);
 			#endif
 				key_status |= (1<<val);
+				buzzer_ctrl(1);
 				//delay(2000000);
 				//while(soc_74LV165_read() == val);
 			break;
@@ -263,6 +330,7 @@ void button_test(void)
 				printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bbutton %d    count %d", val, count++);
 			#endif
 				key_status |= (1<<val);
+				buzzer_ctrl(1);
 				//delay(2000000);
 				//while(soc_74LV165_read() == val);
 			break;
@@ -274,6 +342,7 @@ void button_test(void)
 				printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bbutton %d    count %d", val, count++);
 			#endif
 				key_status |= (1<<val);
+				buzzer_ctrl(1);
 				//delay(2000000);
 				//while(soc_74LV165_read() == val);
 			break;
@@ -285,6 +354,7 @@ void button_test(void)
 				printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bbutton %d    count %d", val, count++);
 			#endif
 				key_status |= (1<<val);
+				buzzer_ctrl(1);
 				//delay(2000000);
 				//while(soc_74LV165_read() == val);
 			break;
@@ -296,6 +366,7 @@ void button_test(void)
 				printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bbutton %d    count %d", val, count++);
 			#endif
 				key_status |= (1<<val);
+				buzzer_ctrl(1);
 				//delay(2000000);
 				//while(soc_74LV165_read() == val);
 			break;
@@ -307,6 +378,7 @@ void button_test(void)
 				printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bbutton %d    count %d", val, count++);
 			#endif
 				key_status |= (1<<val);
+				buzzer_ctrl(1);
 				//delay(2000000);
 				//while(soc_74LV165_read() == val);
 			break;
@@ -318,6 +390,7 @@ void button_test(void)
 				printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bbutton %d    count %d", val, count++);
 			#endif
 				key_status |= (1<<val);
+				buzzer_ctrl(1);
 				//delay(2000000);
 				//while(soc_74LV165_read() == val);
 			break;
@@ -329,6 +402,7 @@ void button_test(void)
 				printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bbutton %d    count %d", val, count++);
 			#endif
 				key_status |= (1<<val);
+				buzzer_ctrl(1);
 				//delay(2000000);
 				//while(soc_74LV165_read() == val);
 			break;
@@ -339,8 +413,11 @@ void button_test(void)
 				#else
 					printf("\n74LV165 Error\n");
 				#endif
+					gpio_init_74LV165(0);
+					buzzer_init(0);
 					return;
 				}
+				buzzer_ctrl(0);
 			break;
 		}
 		if(key_status == 0xFFFF){
@@ -351,7 +428,7 @@ void button_test(void)
 		#endif
 			break;
 		}
-		if (get_uart_char(0)){
+		if (get_uart_char(COM1_BASE_ADDR)){
 		#ifdef CONFIG_CHINESE
 			printf("\n退出按键测试程序\n");
 		#else
@@ -361,6 +438,8 @@ void button_test(void)
 		}
 	}
 	gpio_init_74LV165(0);
+	buzzer_ctrl(0);
+//	buzzer_init(0);
 }
 
 static const Cmd Cmds[] =

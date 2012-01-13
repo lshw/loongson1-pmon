@@ -280,22 +280,79 @@ locate:
     sb  t1, 0x4(t0)	// sfc_param
 
 #ifdef LS1ASOC/* to adjust the DDR frequency */
-    li	a0, 0xbfe78030
-#define DDRCFG_DATA (0x8888|(CPU_MULT-1)|((DDR_MULT-3)<<8))
-    li	a1, DDRCFG_DATA   // 1fboard 25MHz
-    sw	a1, 0x0(a0)
-    nop
-#else
-	li	a0, 0xbfe78030
-	/*31:dc_div_en,30-26:dc_div,25:cpu_div_en,24-20:cpu_div,19:ddr_div_en,18-14:ddr_div*/
-	li	v1, (1<<31)|(6<<26)|(1<<25)|(2<<20)|(1<<19)|(4<<14)|0x2a00
-	sw	v1, 4(a0)
-	li	a1, 0x14
-	sw	a1, (a0);
-1:
-	lw	v1, (a0)
-	bne	a1, v1, 1b
+	li v0,0xbfc00000+(NVRAM_POS+PLL_OFFS)
+	lw a1,(v0)
+
+	li v0,0xffff0000
+	and v0,a1
+	bnez v0,1f
 	nop
+
+	li  v0, 0x8888
+	or  a1, a1, v0
+
+	b 2f
+	nop
+1:
+#define DDRCFG_DATA (0x8888|(CPU_MULT-1)|((DDR_MULT-3)<<8))
+    li  a1, DDRCFG_DATA   // 1fboard 25MHz
+2:
+    li  a0, 0xbfe78030
+    sw  a1, 0x0(a0)
+    nop
+	lw	a2, 0x0(a0)
+	xor a2,a1
+	andi a2,0xf0f
+	bnez a2,2b
+	nop
+#else
+    li  a0, 0xbfe78030
+    /*31:dc_div_en,30-26:dc_div,25:cpu_div_en,24-20:cpu_div,19:ddr_div_en,18-14:ddr_div*/
+#if 0
+    li v1,0x92298000
+    li  a1, 0x39f0a
+#else
+	li v0,0xbfc00000+(NVRAM_POS+PLL_OFFS)
+	lw v1,4(v0)
+	lw a1,(v0)
+
+	li v0,0xfffc0000
+	and v0,a1
+	bnez v0,1f
+	nop
+
+	andi v0,v1,0x3f
+	bnez v0,1f
+	nop
+
+	li v0,(1<<31)|(1<<25)|(1<<19)
+	and a2,v0,v1
+	bne a2,v0,1f
+	nop
+
+	beqz v1,1f
+	nop
+	nop
+	b 2f
+	nop
+1:
+//    li v1, 0x8a290000//(1<<31)|(4<<26)|(1<<25)|(1<<20)|(1<<19)|(2<<14)|0x2a00
+    li v1, (1<<31)|(4<<26)|(1<<25)|(2<<20)|(1<<19)|(3<<14)|0x2a00
+//    li  a1, 0x31812
+    li  a1, 0x12
+
+2:
+#endif
+	or v1,0x2a00
+    sw v1,4(a0)
+    sw a1,(a0);
+
+1:
+   lw v1,(a0)
+   bne a1,v1,1b
+   nop
+    DELAY(0x3000)
+	
 #endif
 
 	/*disable all gpio*/
@@ -391,10 +448,18 @@ cpu_win_fixup:
 	li	t0,0xbfd010f8
 	li	t1,0x0
 	sw	t1,(t0)
+	
+	/* disable buzzer gpio40*/
+	li	v0, 0xbfd010c4
+	li	t0, 0x00000100
+	sw	t0, 0(v0)
+	li	v0, 0xbfd010d4
+	li	t0, 0
+	sw	t0, 0(v0)
 
 
 #	ddr2config by cww 20090901
-	li      msize,0x10000000
+	li      msize,0x04000000
 	PRINTSTR("DDR2 config begin_2\r\n")
 	bal     ddr2_config
 	nop
@@ -409,13 +474,19 @@ cpu_win_fixup:
 	sw a2,0x424(a0);
 #endif
 
-#ifdef CONFIG_PHY100M
 /*100M phy*/
 	li a0,0xbfd00000
 	lw a2,0x424(a0);
-	ori a2,5
-	sw a2,0x424(a0);
+	ori a2,0xf
+#ifndef CONFIG_PHY100M
+	xor a2,0xf	
 #endif
+	sw a2,0x424(a0);
+	/* 使能GMAC1 和UART0复用，导致UART0不能使用 */
+	li a1,0x18
+	lw a2,0x420(a0);
+	or a2,a1
+	sw a2,0x420(a0);
 
 #define CF_7_SE         (1 << 3)        /* Secondary cache enable */
 #define CF_7_SC         (1 << 31)       /* Secondary cache not present */
@@ -491,7 +562,7 @@ acpi_begin:
 
 	mfc0   a0,COP_0_CONFIG
 	and    a0,a0,~((1<<12) | 3)
-	or     a0,a0,3
+	or     a0,a0,2
 	mtc0   a0,COP_0_CONFIG
 
 #if 0
@@ -525,7 +596,6 @@ acpi_end:/* Startup as usual */
 
 PRINTSTR("begin test\r\n");
 
-#if 0	//THF
 ###lcd soft_reset and panel config&timing
 	li a0,0xbc301240
 	li a1,0x00100000
@@ -538,7 +608,6 @@ PRINTSTR("begin test\r\n");
 	sw a1,0x0(a0)
 	li a1,0x33333333
 	sw a1,0x20(a0)
-#endif	//THF
 
 //#include "newtest.32/mydebug.S"
 bootnow:

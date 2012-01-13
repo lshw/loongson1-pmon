@@ -10,6 +10,7 @@
 #include "synopGMAC_plat.h"
 #include "synopGMAC_pci_bus_interface.h"
 #include "synopGMAC_Dev.h"
+#include "mii.h"
 
 //#define ENH_DESC
 //#define ENH_DESC_8W
@@ -85,7 +86,7 @@ struct PmonInet * PInetdev;
 //} synopGMACPciNetworkAdapter;
 }synopGMACNetworkAdapter;
 #endif
-struct synopGMACNetworkAdapter{
+typedef struct synopGMACNetworkAdapter{
 
 /*Device Dependent Data structur*/
 synopGMACdevice * synopGMACdev;
@@ -100,8 +101,8 @@ struct net_device_stats synopGMACNetStats;
 
 struct PmonInet * PInetdev;
 
-//} synopGMACPciNetworkAdapter;
-};
+struct mii_if_info mii;
+} synopGMACPciNetworkAdapter;
 
 static struct mbuf * getmbuf(struct synopGMACNetworkAdapter * tp)
 {

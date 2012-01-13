@@ -82,8 +82,13 @@ typedef unsigned long dma_addr_t;
 */
 
 //sw: nothing to display
-#define TR0(fmt, args...) 		
-#define TR(fmt, args...) printf(fmt, ##args) 
+#ifdef GMAC_DEBUG
+#define TR0(fmt, args...)	printf(fmt, ##args) 
+#define TR(fmt, args...)		printf(fmt, ##args)
+#else
+#define TR0(fmt, args...)
+#define TR(fmt, args...)
+#endif
 
 //typedef int bool;
 enum synopGMAC_boolean
@@ -138,7 +143,7 @@ void   plat_delay(u32);
  * @param[in] Offset from the base
  * \return  Returns the register contents 
  */
-static u32  synopGMACReadReg(u64 RegBase, u32 RegOffset)
+static u32 inline synopGMACReadReg(u64 RegBase, u32 RegOffset)
 {
 
   u64 addr;
@@ -179,7 +184,7 @@ static u32  synopGMACReadReg(u64 RegBase, u32 RegOffset)
  * @param[in] Data to be written 
  * \return  void 
  */
-static void synopGMACWriteReg(u64 RegBase, u32 RegOffset, u32 RegData )
+static void inline synopGMACWriteReg(u64 RegBase, u32 RegOffset, u32 RegData )
 {
 
   u64 addr;

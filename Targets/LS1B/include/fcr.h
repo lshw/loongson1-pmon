@@ -54,18 +54,18 @@ extern char           *heaptop;
 #define RTC_DATA_REG 0x71
 #define RTC_NVRAM_BASE		0x0e
 
-
+#define COM1_BASE_ADDR	0xbfe48000		//1B uart8 主串口
 #define COM2_BASE_ADDR	0xbfd003f8
-#define COM3_BASE_ADDR	0xbfe6c000	//lxy
-//#define COM1_BASE_ADDR  0xbff003f8
-#define COM1_BASE_ADDR  0xbfe40000//0xbfe40000 //zgj-5-5
-//zgj-2010-7-1 #define COM1_BASE_ADDR  0xbff003f8 //cww
-//#define	NS16550HZ	1843200
-//#define	NS16550HZ	(33350000/4)
+#define COM3_BASE_ADDR	0xbfe40000		//1B uart0
+//#define COM3_BASE_ADDR	0xbfe4c000		//1B uart9
+//#define COM3_BASE_ADDR	0xbfe6c000		//1B uart10
+
 #define	NS16550HZ	(APB_CLK/4)
 /*********************************************************************/
 /*nvram define                                                       */
 /*********************************************************************/
+#if 0
+
 #ifdef NVRAM_IN_FLASH
 #	define	NVRAM_SIZE		494
 #	define	NVRAM_SECSIZE		500
@@ -78,8 +78,25 @@ extern char           *heaptop;
 #	define ETHER_OFFS		(NVRAM_SIZE-6) 	/* Ethernet address base */
 #endif
 
+#else
 
+#ifdef NVRAM_IN_FLASH
+#	define	NVRAM_SIZE		512
+#	define	NVRAM_SECSIZE		NVRAM_SECSIZE
+#	define	NVRAM_OFFS		0x00070000
+#	define	NVRAM_POS		NVRAM_OFFS
+#	define ETHER_OFFS		(NVRAM_SIZE-6) 	/* Ethernet address base */
+#	define PLL_OFFS			(ETHER_OFFS-10)
+#else	/* Use clock ram, 256 bytes only */
+#	define NVRAM_SECSIZE		512	/* Helper */
+#	define NVRAM_SIZE	        (NVRAM_SECSIZE-16)
+#	define NVRAM_OFFS		0
+#	define NVRAM_POS	    0x70000
+#	define ETHER_OFFS		(NVRAM_SECSIZE-6) 	/* Ethernet address base */
+#	define PLL_OFFS			(ETHER_OFFS-10)
+#endif
 
+#endif
 /*********************************************************************/
 /*PCI map	                                                     */
 /*********************************************************************/

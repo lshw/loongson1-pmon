@@ -73,11 +73,11 @@ asm volatile(
 #endif
 void initmips(unsigned int msize,int dmsize,int dctrl)
 {
-	long *edata=(void *)0x800d412c;
-	long *end=(void *)0x800f9834;
+	long *edata=(void *)0x800c8150;
+	long *end=(void *)0x800e2820;
 	int *p;
 	int debug=(msize==0);
-	CPU_TLBClear();
+//	CPU_TLBClear();
 	tgt_puts("Uncompressing Bios");
 	if(!debug||dctrl&1)enable_cache();
 	
@@ -101,7 +101,7 @@ void initmips(unsigned int msize,int dmsize,int dctrl)
 void realinitmips(unsigned int msize)
 {
 	     asm ("li  $29,0x80010000-0x4000;\n" \
-"		       li $2,0x8008d824;\n" \
+"		       li $2,0x8008a6bc;\n" \
 "			   move $4,%0;\n" \
 "			   jalr $2;\n" \
 "			   nop;\n" \

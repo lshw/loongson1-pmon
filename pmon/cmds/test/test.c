@@ -42,10 +42,11 @@
 #define TEST_AD		2048
 #define TEST_RTC		4096
 #define TEST_NAND		8192
+#define TEST_IR		16384
 
 #include <fb/video_font.h>		//定义了字长字宽
 #define INFO_Y  19	//该值要根据菜单的占用的行数修改
-#define INFO_W  40
+#define INFO_W  50
 extern void delay1(int);
 extern void (*__cprint)(int y, int x,int width,char color, const char *text);
 
@@ -86,6 +87,7 @@ static int printticks(int n,int d)
 
 #include "cpu.c"
 #include "mem.c"
+#include "net.c"
 //#include "serial.c"
 //#include "hd.c"
 #if NMOD_VGACON
@@ -117,7 +119,7 @@ struct setupMenu nextmenu={
 };
 */
 
-struct setupMenu videomenu={
+static struct setupMenu videomenu={
 	0,POP_W,POP_H,
 	(struct setupMenuitem [])
 	{
@@ -133,7 +135,7 @@ struct setupMenu videomenu={
 	}
 };
 
-struct setupMenu testmenu={
+static struct setupMenu testmenu={
 	0,POP_W,POP_H,
 	(struct setupMenuitem[])
 	{
@@ -156,33 +158,59 @@ struct setupMenu testmenu={
 };
 
 #ifdef CONFIG_CHINESE
-struct setupMenu testmenu1={
+static struct setupMenu testmenu1={
 	0,POP_W,POP_H,
 	(struct setupMenuitem[])
 	{
 		{POP_Y,POP_X,1,1,TYPE_NONE,		"     开发板测试(board test)"},
 		{POP_Y+1,POP_X,2,2,TYPE_CMD,	"(1)CPU测试(CPU test):${?&#mytest 1}=[on=| _or mytest 1||off=| _andn mytest 1]test 1"},
-		{POP_Y+2,POP_X,3,3,TYPE_CMD,	"(2)内存测试(memory tets):${?&#mytest 2}=[on=| _or mytest 2||off=| _andn mytest 2]test 2"},
-		{POP_Y+3,POP_X,4,4,TYPE_CMD,	"(3)网络测试(netcard net0):${?&#mytest 4}=[on=| _or mytest 4||off=| _andn mytest 4]test 4"},
-		{POP_Y+4,POP_X,5,5,TYPE_CMD,	"(4)网络测试(netcard net1):${?&#mytest 8}=[on=| _or mytest 8||off=| _andn mytest 8]test 8"},
+		{POP_Y+2,POP_X,3,3,TYPE_CMD,	"(2)内存测试(memory test):${?&#mytest 2}=[on=| _or mytest 2||off=| _andn mytest 2]test 2"},
+		{POP_Y+3,POP_X,4,4,TYPE_CMD,	"(3)网络测试1(netcard net0):${?&#mytest 4}=[on=| _or mytest 4||off=| _andn mytest 4]test 4"},
+		{POP_Y+4,POP_X,5,5,TYPE_CMD,	"(4)网络测试2(netcard net1):${?&#mytest 8}=[on=| _or mytest 8||off=| _andn mytest 8]test 8"},
 		{POP_Y+5,POP_X,6,6,TYPE_CMD,	"(5)触摸屏测试(touchscreen test):${?&#mytest 16}=[on=| _or mytest 16||off=| _andn mytest 16]test 16"},
 		{POP_Y+6,POP_X,7,7,TYPE_CMD,	"(6)SD卡测试(SD card test):${?&#mytest 32}=[on=| _or mytest 32||off=| _andn mytest 32]test 32"},
 		{POP_Y+7,POP_X,8,8,TYPE_CMD,	"(7)显示测试(video test):${?&#mytest 64}=[on=| _or mytest 64||off=| _andn mytest 64]test 64"},
-//		{POP_Y+5,POP_X,6,6,TYPE_MENU,	"(5)显示测试(video test) >", 0, &videomenu},
 		{POP_Y+8,POP_X,9,9,TYPE_CMD,	"(8)USB测试(USB test):${?&#mytest 128}=[on=| _or mytest 128||off=| _andn mytest 128]test 128"},
 		{POP_Y+9,POP_X,10,10,TYPE_CMD,	"(9)按键测试(button test):${?&#mytest 256}=[on=| _or mytest 256||off=| _andn mytest 256]test 256"},
 		{POP_Y+10,POP_X,11,11,TYPE_CMD,	"(10)串口测试(serial test):${?&#mytest 512}=[on=| _or mytest 512||off=| _andn mytest 512]test 512"},
-		{POP_Y+11,POP_X,12,12,TYPE_CMD,	"(11)AC97测试(AC97 test):${?&#mytest 1024}=[on=| _or mytest 1024||off=| _andn mytest 1024]test 1024"},
+		{POP_Y+11,POP_X,12,12,TYPE_CMD,	"(11)AC97音频测试(AC97 test):${?&#mytest 1024}=[on=| _or mytest 1024||off=| _andn mytest 1024]test 1024"},
 		{POP_Y+12,POP_X,13,13,TYPE_CMD,	"(12)AD转换测试(MCP3201 AD test):${?&#mytest 2048}=[on=| _or mytest 2048||off=| _andn mytest 2048]test 2048"},
 		{POP_Y+13,POP_X,14,14,TYPE_CMD,	"(13)RTC测试(RTC test):${?&#mytest 4096}=[on=| _or mytest 4096||off=| _andn mytest 4096]test 4096"},
 		{POP_Y+14,POP_X,15,15,TYPE_CMD,	"(14)NAND闪存测试(NAND Flash test):${?&#mytest 8192}=[on=| _or mytest 8192||off=| _andn mytest 8192]test 8192"},
+		{POP_Y+15,POP_X,16,16,TYPE_CMD,	"(15)红外接收测试(Ir test):${?&#mytest 16384}=[on=| _or mytest 16384||off=| _andn mytest 16384]test 16384"},
+		{POP_Y+16,POP_X,17,17,TYPE_CMD,	"(16)all selected=test ${#mytest}"},
+		{POP_Y+17,POP_X,1,1,TYPE_CMD,	"(17)退出=| _quit",0},
+		{}
+	}
+};
+/*
+static struct setupMenu testmenu1={
+	0,POP_W,POP_H,
+	(struct setupMenuitem[])
+	{
+		{POP_Y,POP_X,1,1,TYPE_NONE,		"     开发板测试(board test)"},
+		{POP_Y+1,POP_X,2,2,TYPE_CMD,	"(1)CPU测试(CPU test):${?&#mytest 1}                 ${#cputest}=[on=| _or mytest 1||off=| _andn mytest 1]test 1"},
+		{POP_Y+2,POP_X,3,3,TYPE_CMD,	"(2)内存测试(memory test):${?&#mytest 2}            ${#memorytest}=[on=| _or mytest 2||off=| _andn mytest 2]test 2"},
+		{POP_Y+3,POP_X,4,4,TYPE_CMD,	"(3)网络测试1(netcard net0):${?&#mytest 4}          ${#net0test}=[on=| _or mytest 4||off=| _andn mytest 4]test 4"},
+		{POP_Y+4,POP_X,5,5,TYPE_CMD,	"(4)网络测试2(netcard net1):${?&#mytest 8}          ${#net1test}=[on=| _or mytest 8||off=| _andn mytest 8]test 8"},
+		{POP_Y+5,POP_X,6,6,TYPE_CMD,	"(5)触摸屏测试(touchscreen test):${?&#mytest 16}     ${#touchscreentest}=[on=| _or mytest 16||off=| _andn mytest 16]test 16"},
+		{POP_Y+6,POP_X,7,7,TYPE_CMD,	"(6)SD卡测试(SD card test):${?&#mytest 32}           ${#SDcardtest}=[on=| _or mytest 32||off=| _andn mytest 32]test 32"},
+		{POP_Y+7,POP_X,8,8,TYPE_CMD,	"(7)显示测试(video test):${?&#mytest 64}             ${#videotest}=[on=| _or mytest 64||off=| _andn mytest 64]test 64"},
+		{POP_Y+8,POP_X,9,9,TYPE_CMD,	"(8)USB测试(USB test):${?&#mytest 128}                ${#USBtest}=[on=| _or mytest 128||off=| _andn mytest 128]test 128"},
+		{POP_Y+9,POP_X,10,10,TYPE_CMD,	"(9)按键测试(button test):${?&#mytest 256}            ${#buttontest}=[on=| _or mytest 256||off=| _andn mytest 256]test 256"},
+		{POP_Y+10,POP_X,11,11,TYPE_CMD,	"(10)串口测试(serial test):${?&#mytest 512}           ${#UARTtest}=[on=| _or mytest 512||off=| _andn mytest 512]test 512"},
+		{POP_Y+11,POP_X,12,12,TYPE_CMD,	"(11)AC97音频测试(AC97 test):${?&#mytest 1024}         ${#AC97test}=[on=| _or mytest 1024||off=| _andn mytest 1024]test 1024"},
+		{POP_Y+12,POP_X,13,13,TYPE_CMD,	"(12)AD转换测试(MCP3201 AD test):${?&#mytest 2048}     ${#ADtest}=[on=| _or mytest 2048||off=| _andn mytest 2048]test 2048"},
+		{POP_Y+13,POP_X,14,14,TYPE_CMD,	"(13)RTC测试(RTC test):${?&#mytest 4096}                ${#RTCtest}=[on=| _or mytest 4096||off=| _andn mytest 4096]test 4096"},
+		{POP_Y+14,POP_X,15,15,TYPE_CMD,	"(14)NAND闪存测试(NAND Flash test):${?&#mytest 8192}    ${#NANDFlashtest}=[on=| _or mytest 8192||off=| _andn mytest 8192]test 8192"},
 		{POP_Y+15,POP_X,16,16,TYPE_CMD,	"(15)all selected=test ${#mytest}"},
 		{POP_Y+16,POP_X,1,1,TYPE_CMD,	"(16)退出=| _quit",0},
 		{}
 	}
 };
+*/
 #else
-struct setupMenu testmenu1={
+static struct setupMenu testmenu1={
 	0,POP_W,POP_H,
 	(struct setupMenuitem[])
 	{
@@ -208,13 +236,22 @@ static int cmd_test(int ac,char **av)
 	long tests;
 	int i;
 	char *serverip;
-	char *clientip;
+	char *clientip0;
+	char *clientip1;
 	char cmd[200];
+	int vga_status;
 
+	vga_status = vga_available;
+	if (vga_status == 1){
+		vga_available = 0;
+	}
 	__console_alloc();
 	if(ac==1){
 		if(getenv("testem")) do_menu(&testmenu);
 		else do_menu(&testmenu1);
+		if (vga_status == 1){
+			vga_available = 1;
+		}
 		return 0;
 	}
 	else
@@ -222,8 +259,10 @@ static int cmd_test(int ac,char **av)
 
 	if(!(serverip=getenv("serverip")))
 		serverip="192.168.1.3";
-	if(!(clientip=getenv("clientip")))
-		clientip="192.168.1.100";
+	if(!(clientip0=getenv("clientip0")))
+		clientip0="192.168.1.100";
+	if(!(clientip1=getenv("clientip1")))
+		clientip1="192.168.1.101";
 
 	for(i=0;i<31;i++){
 		if(!(tests&(1<<i)))continue;
@@ -240,7 +279,8 @@ static int cmd_test(int ac,char **av)
 			break;
 			case TEST_AC97:
 			#ifdef CONFIG_CHINESE
-				printf("请用耳机和麦克风连接开发板的耳机和麦克风接口\n");
+				printf("AC97音频测试\n说明:\n");
+				printf("1.请用耳机和麦克风连接开发板的耳机和麦克风接口\n");
 			#else
 				printf("Plese plug net wire into syn0\n");
 			#endif
@@ -249,29 +289,46 @@ static int cmd_test(int ac,char **av)
 				ac97_test(1, NULL);
 			break;
 			case TEST_SYN0:
-			//	sprintf(cmd,"ifconfig em0 remove;ifconfig em1 remove;ifconfig fxp0 remove;ifconfig fxp0 %s;",clientip);
-			//	do_cmd(cmd);
 			#ifdef CONFIG_CHINESE
-				printf("请用网线把开发板的网络接口0和PC机连接起来\n");
-				printf("同时把PC机的IP地址设置为192.168.1.3\n");
+				printf("网络接口0测试\n说明：\n");
+				printf("1.请用网线把开发板的网络接口0和PC机连接起来\n");
+				printf("2.同时把PC机的IP地址设置为192.168.1.3\n");
 			#else
 				printf("Plese plug net wire into syn0\n");
 			#endif
 				pause();
-				sprintf(cmd,"ping -c 3 %s",serverip);
+				sprintf(cmd, "ifconfig syn0 remove;ifconfig syn1 remove;ifconfig syn0 %s;", clientip0);
 				do_cmd(cmd);
+				if (myping(serverip)){
+					printf("\n网络接口0测试失败：数据包丢失！\n");
+//					sprintf(cmd, "set net0test \"%s\"", "测试失败！");
+				}
+				else{
+					printf("\n网络接口0测试通过\n");
+//					sprintf(cmd, "set net0test \"%s\"", "测试通过");
+				}
+//				do_cmd(cmd);
 			break;
 			case TEST_SYN1:
-			//	sprintf(cmd,"ifconfig em0 remove;ifconfig em1 remove;ifconfig fxp0 remove;ifconfig em0 %s",clientip);
-			//	do_cmd(cmd);
 			#ifdef CONFIG_CHINESE
-				printf("请用网线把开发板的网络接口1和PC机连接起来\n");
-				printf("同时把PC机的IP地址设置为192.168.1.3\n");
+				printf("网络接口1测试\n说明：\n");
+				printf("1.请用网线把开发板的网络接口1和PC机连接起来\n");
+				printf("2.同时把PC机的IP地址设置为192.168.1.3\n");
+				printf("3.网络接口1测试,需要把JP2插针接上跳线帽\n");
 			#else
 				printf("Plese plug net wire into syn1\n");
 			#endif
 				pause();
-				sprintf(cmd,"ping -c 3 %s",serverip);
+				sprintf(cmd, "ifconfig syn0 remove;ifconfig syn1 remove;ifconfig syn1 %s;", clientip1);
+				do_cmd(cmd);
+				if (myping(serverip)){
+					printf("\n网络接口1测试失败：数据包丢失！\n");
+//					sprintf(cmd, "set net1test \"%s\"", "测试失败！");
+				}
+				else{
+					printf("\n网络接口1测试通过\n");
+//					sprintf(cmd, "set net1test \"%s\"", "测试通过");
+				}
 				do_cmd(cmd);
 			break;
 			case TEST_TS:
@@ -288,8 +345,18 @@ static int cmd_test(int ac,char **av)
 			#else
 				printf("USB devices information:\n");
 			#endif
+			{
+				int dev_num;
 				sprintf(cmd,"usb info");
+				dev_num = do_cmd(cmd);
+				sprintf(cmd,"usb tree");
 				do_cmd(cmd);
+				if (dev_num >= 2){
+					printf("USB测试通过\n");
+				}else{
+					printf("USB集线器(HUB)错误！\n");
+				}
+			}
 			break;
 		#if NMOD_VGACON
 			case TEST_KBD:
@@ -297,6 +364,7 @@ static int cmd_test(int ac,char **av)
 			break;
 		#endif
 			case TEST_SDCARD:
+				printf("SD卡测试\n");
 				sprintf(cmd,"test_sdcard");
 				do_cmd(cmd);
 			break;
@@ -310,9 +378,11 @@ static int cmd_test(int ac,char **av)
 			break;
 			case TEST_NAND:
 			{
-				int i, ret;
-				unsigned char *temp = (unsigned char *)0xa1000000;
-				printf("/----------------- NANA Flash test ---------------/\n");
+				int i, cont, ret;
+				unsigned char *temp1 = (unsigned char *)0xa1000000;
+				unsigned char *temp2 = (unsigned char *)0xa2000000;
+				printf("NAND Flash 测试\n");
+//				printf("/----------------- NAND Flash test ---------------/\n");
 				sprintf(cmd, "nandreadid");	//读取ID
 				ret = do_cmd(cmd);
 				if (ret == 0){
@@ -321,34 +391,50 @@ static int cmd_test(int ac,char **av)
 					sprintf(cmd, "read_nand 0xa1000000  0x0  0x800 m");	//读第0页内容
 					do_cmd(cmd);
 					//打印读取的内容
-					for (i=0; i<256; i++){
-						if((i%16) == 0)
-							printf("\n");
-					//	printf("%x ", *(unsigned int *)(ram+(i*4)));
-						printf("%02x ", *(temp+i));
+					for (i=0, cont=0; i<0x800; i++){
+						if(*(temp1+i) != 0xff){
+							printf("NAND Flash 擦除错误！\n");
+							cont++;
+						}
+//						if((i%16) == 0)
+//							printf("\n");
+//						printf("%02x ", *(temp1+i));
 					}
-					printf("\n");
+//					printf("\n");
 					//修改
-					for (i = 0; i < 0x800; i += 1){
-						*(temp + i) = i;
+					for (i=0; i<0x800; i++){
+						*(temp1 + i) = i;
 					}
 					sprintf(cmd, "write_nand 0xa1000000  0x0  0x800 m");	//写第0页内容
 					do_cmd(cmd);
-					sprintf(cmd, "read_nand 0xa1000000  0x0  0x800 m");	//读第0页内容
+					sprintf(cmd, "read_nand 0xa2000000  0x0  0x800 m");	//读第0页内容
 					do_cmd(cmd);
-					for (i=0; i<256; i++){
-						if((i%16) == 0)
-							printf("\n");
-					//	printf("%x ", *(unsigned int *)(ram+(i*4)));
-						printf("%02x ", *(temp+i));
+					for (i=0, cont=0; i<0x800; i++){
+						if (*(temp1 + i) != *(temp2 + i)){
+							printf("NAND Flash 读写错误！\n");
+							cont++;
+						}
+//						if((i%16) == 0)
+//							printf("\n");
+//						printf("%02x ", *(temp2+i));
+					}
+					if (cont == 0){
+						printf("NAND Flash 测试通过\n");
 					}
 					printf("\n");
 				}
-				printf("/--------------- NAND Flash test done -------------/\n");
+//				printf("/--------------- NAND Flash test done -------------/\n");
 			}
+			break;
+			case TEST_IR:
+				sprintf(cmd, "test_Ir");
+				do_cmd(cmd);
 			break;
 		}
 		pause();
+	}
+	if (vga_status == 1){
+		vga_available = 1;
 	}
 	return 0;
 }
@@ -358,6 +444,8 @@ static const Cmd Cmds[] =
 {
 	{"MyCmds"},
 	{"test","val",0,"hardware test",cmd_test,0,99,CMD_REPEAT},
+	{"LCD0","", 0, "LCD0", lcd0, 0, 99, CMD_REPEAT},
+	{"LCD1","", 0, "LCD1", lcd1, 0, 99, CMD_REPEAT},
 //	{"serial","val",0,"hardware test",cmd_serial,0,99,CMD_REPEAT},
 	{0,0}
 };

@@ -1,0 +1,1 @@
+commit fc2223c2a284e540c3ac296a3c4aee43c7bc662f Author: root <root@localhost.localdomain> Date: Mon Nov 7 14:59:55 2011 +0800 添加版本管理信息 在/zloader.ls1b/目录中添加脚本version.sh；修改/zloader.ls1b/Makefile.inc文件，添加运行脚本代码；修改/Targets/LS1B/conf/files.LS1B文件，添加编译version.c的选项；修改/Targets/LS1B/ls1b/tgt_machdep.c文件,添加执行打印版本信息的函数commit_message_init();

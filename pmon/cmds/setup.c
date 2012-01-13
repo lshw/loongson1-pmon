@@ -500,18 +500,18 @@ static char *expand_height(char *var) //!width:
 
 myExpand myExpands[]=
 {
-{"?&",2,expand_questionAnd},
-{"?",1,expand_question},
-{"#",1,expand_number},
-{"*",1,expand_star},
-{"%",1,expand_percent},
-{"!tm",3,expand_tm},
-{"!width:",7,expand_width},
-{"!height:",8,expand_height},
+	{"?&",2,expand_questionAnd},
+	{"?",1,expand_question},
+	{"#",1,expand_number},
+	{"*",1,expand_star},
+	{"%",1,expand_percent},
+	{"!tm",3,expand_tm},
+	{"!width:",7,expand_width},
+	{"!height:",8,expand_height},
 #ifdef BONITOEL_CPCI
-{"!gpio",5,expand_gpio},
+	{"!gpio",5,expand_gpio},
 #endif
-{}
+	{}
 };
 
 static char *expand(char *cmdline)

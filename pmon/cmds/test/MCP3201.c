@@ -1,8 +1,9 @@
 #include <pmon.h>
 #include <cpu.h>
 #include <include/types.h>
-//#include <target/iorw.h>
 #include <string.h>
+
+#include "target/fcr.h"
 
 #define SPI_REG_BASE 0x1fe80000
 #define FCR_SPCR        0x00		//控制寄存器
@@ -21,7 +22,9 @@ static void spi_init(void)
 	SET_SPI(FCR_SPSR, 0xc0);
 	//SPI Flash参数控制寄存器
 	SET_SPI(0x4, 0x00);
-	SET_SPI(FCR_SPER, 0x04);
+	//#define SPER      0x3	//外部寄存器
+	//spre:01 [2]mode spi接口模式控制 1:采样与发送时机错开半周期  [1:0]spre 与Spr一起设定分频的比率
+	SET_SPI(FCR_SPER, 0x05);
 	//SPI Flash片选控制寄存器
 //	SET_SPI(0x5, 0x01);			//softcs
 	SET_SPI(0x5, 0xFF);			//softcs
@@ -88,7 +91,7 @@ int test_MCP3201(int argc,char **argv)
 //		printf("0x%x\n", temp);
 		set_cs(1);
 		delay(100);
-		if (get_uart_char(0)){
+		if (get_uart_char(COM1_BASE_ADDR)){
 		#ifdef CONFIG_CHINESE
 			printf("\n退出MCP3201 AD 转换测试程序\n");
 		#else
@@ -111,7 +114,7 @@ int test_MCP3201(int argc,char **argv)
 				break;
 			}
 			set_cs(1);
-			if (get_uart_char(0)){
+			if (get_uart_char(COM1_BASE_ADDR)){
 				return 0;
 			}
 		}

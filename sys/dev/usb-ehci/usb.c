@@ -1126,7 +1126,7 @@ struct usb_hub_device *usb_hub_allocate(void)
 	return NULL;
 }
 
-#define MAX_TRIES 5
+#define MAX_TRIES 10
 
 static inline char *portspeed(int portstatus)
 {

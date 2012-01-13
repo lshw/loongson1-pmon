@@ -66,7 +66,7 @@
 #define USB_MAXCHILDREN			8	/* This is arbitrary */
 #define USB_MAX_HUB			16
 
-#define USB_CNTL_TIMEOUT 100 /* 100ms timeout */
+#define USB_CNTL_TIMEOUT 1000 /* 100ms timeout */
 
 /*
  * This is the timeout to allow for submitting an urb in ms. We allow more

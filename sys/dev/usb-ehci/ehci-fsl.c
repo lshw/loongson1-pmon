@@ -105,11 +105,11 @@ int ehci_hcd_init(void)
 	hccr = (struct ehci_hccr *)((uint32_t)SYS_FSL_USB_ADDR);	//lxy
 	hcor = (struct ehci_hcor *)((uint32_t) hccr + HC_LENGTH(ehci_readl(&hccr->cr_capbase)));
 
-	*(volatile unsigned int *)0xbfd00424 = 0;
+	*(volatile unsigned int *)0xbfd00424 &= ~(0x80000000);
 	*(volatile unsigned int *)0xbfd00424;
 	delay_ms(1);
 	/*ls1b usb reset stop*/
-	*(volatile unsigned int *)0xbfd00424 = 0x80000000;
+	*(volatile unsigned int *)0xbfd00424 |= 0x80000000;
 //	hcor = (struct ehci_hcor *)((uint32_t)EHCI_OPERATIONAL);
 //	ehci_writel(&hcor->or_usbcmd, CMD_ASE | CMD_RUN);		//lxy
 	

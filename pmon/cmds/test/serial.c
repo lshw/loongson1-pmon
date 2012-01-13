@@ -68,14 +68,18 @@ static int serialbase[]={0xbe000000,0xbe000020};
 static int serialbase[]={0xbfe40000, 0xbfe41000, 0xbfe42000, 0xbfe43000, 0xbfe44000, 0xbfe45000, 0xbfe46000, 0xbfe47000, 0xbfe48000, 0xbfe4c000, 0xbfe6c000, 0xbfe7c000};
 #endif
 extern void delay(int);
+
 /* memory-mapped read/write of the port */
-inline uint8 UART16550_READ(int line,int y){
-//delay(10000);
-return (*((volatile uint8*)(serialbase[line] + y)));
+inline uint8 UART16550_READ(int line,int y)
+{
+	//delay(10000);
+	return (*((volatile uint8*)(serialbase[line] + y)));
 }
-inline void  UART16550_WRITE(int line,int y, uint8 z){
-//delay(10000);
-((*((volatile uint8*)(serialbase[line] + y))) = z);
+
+inline void  UART16550_WRITE(int line,int y, uint8 z)
+{
+	//delay(10000);
+	((*((volatile uint8*)(serialbase[line] + y))) = z);
 }
 
 static void debugInit(int line,uint32 baud, uint8 data, uint8 parity, uint8 stop)
@@ -122,8 +126,50 @@ static uint8 getDebugChar(int line)
 }
 
 //非阻塞
-unsigned char get_uart_char(int line)
+unsigned char get_uart_char(int base)
 {
+	int line;
+	
+	if (base == 0xbfe40000){
+		line = 0;
+	}
+	else if (base == 0xbfe41000){
+		line = 1;
+	}
+	else if (base == 0xbfe42000){
+		line = 2;
+	}
+	else if (base == 0xbfe43000){
+		line = 3;
+	}
+	else if (base == 0xbfe44000){
+		line = 4;
+	}
+	else if (base == 0xbfe45000){
+		line = 5;
+	}
+	else if (base == 0xbfe46000){
+		line = 6;
+	}
+	else if (base == 0xbfe47000){
+		line = 7;
+	}
+	else if (base == 0xbfe48000){
+		line = 8;
+	}
+	else if (base == 0xbfe4c000){
+		line = 9;
+	}
+	else if (base == 0xbfe6c000){
+		line = 10;
+	}
+	else if (base == 0xbfe7c000){
+		line = 11;
+	}
+	else{
+		line = 8;
+	}
+	
 	while ((UART16550_READ(line, OFS_LINE_STATUS) & 0x1) == 0){
 		return 0;
 	}
@@ -155,12 +201,13 @@ int serial_selftest(int channel)
 {
 	int i,j,error=0;
 	char c;
-
+/*
 #ifdef CONFIG_CHINESE
 	printf("自检串口编号：%d\n", channel);
 #else
 	printf("serial selftest channel %d\n", channel);
 #endif
+*/
 	initserial(channel);
 	
 	for(i=0;i<16;j++)
@@ -169,13 +216,13 @@ int serial_selftest(int channel)
 			getDebugChar(channel);
 		else break;
 	}
-
+/*
 #ifdef CONFIG_CHINESE
 	printf("串口 %d 发送数据到串口 %d...", channel, channel);
 #else
 	printf("serial %d send data to serial %d...", channel, channel);
 #endif
-
+*/
 	for(i=0;i<30;i++)
 	{
 		putDebugChar(channel,'a'+i);
@@ -190,13 +237,14 @@ int serial_selftest(int channel)
 			error=1;
 			continue;
 		}
-		printf("%c",(c=getDebugChar(channel)));
+		c = getDebugChar(channel);
+//		printf("%c", c);
 		if(c!='a'+i)error=1;
 	}
 #ifdef CONFIG_CHINESE
-	printf("...%s\n",error?"错误":"OK");
+	printf("串口%d测试...%s\n", channel, error?"错误!!":"通过");
 #else
-	printf("...%s\n",error?"error":"ok");
+	printf("serial %d test...%s\n", channel, error?"error":"ok");
 #endif
 	return 0;
 }
@@ -256,16 +304,24 @@ int serialtest(void)
 int ls1b_serialtest(void)
 {
 #ifdef CONFIG_CHINESE
-	printf("请把串口的输出引脚(Tx)连接到输入引脚(Rx)\n");
+	printf("串口测试\n说明：\n");
+	printf("1.请把串口的输出引脚(Tx)连接到输入引脚(Rx)\n");
+	printf("2.COM1接口对应串口0，JP20对应串口9，JP21对应串口10\n");
+	printf("3.串口0测试需要把JP2插针的跳线帽拿掉\n");
 #else
 	printf("Plese plug net wire into fxp0\n");
 #endif
 	pause();
-	serial_selftest(4);
-	serial_selftest(8);
+	/* UART0和GMAC0复用 使能UART0 */
+	*(volatile unsigned int *)0xbfd00420 &= ~(0x18);
+	serial_selftest(0);
+	/* UART0和GMAC0复用 使能UART0 */
+	*(volatile unsigned int *)0xbfd00420 |= 0x18;
+//	serial_selftest(4);
+//	serial_selftest(8);
 	serial_selftest(9);
 	serial_selftest(10);
-	serial_selftest(11);
+//	serial_selftest(11);
 #ifdef CONFIG_CHINESE
 	printf("\n串口测试结速\n");
 #else

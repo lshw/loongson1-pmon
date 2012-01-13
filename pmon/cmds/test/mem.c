@@ -25,7 +25,7 @@ static int memtest(void)
 {
 	char cmd[20];
 #ifdef CONFIG_CHINESE
-	printf("内存测试(memory test)\n");
+	printf("内存测试\n");
 #else
 	printf("memory test\n");
 #endif

@@ -656,7 +656,7 @@ dbginit (char *adr)
 #if NWD > 0
 	printf (",IDE");
 #endif
-	printf ("]\nVersion: %s.\n", vers);
+	printf ("]\n%s.\n", vers);
 	printf ("Supported loaders [%s]\n", getExecString());
 	printf ("Supported filesystems [%s]\n", getFSString());
 	printf ("This software may be redistributed under the BSD copyright.\n");

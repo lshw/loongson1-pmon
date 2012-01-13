@@ -1,11 +1,10 @@
 #include <pmon.h>
 #include <cpu.h>
 #include <include/types.h>
-//#include <target/iorw.h>
 #include <string.h>
 #include <machine/pio.h>
-
 #include <time.h>
+#include "target/fcr.h"
 
 #define REG_TOY_READ0 0xbfe6402c
 #define REG_TOY_READ1 0xbfe64030
@@ -62,7 +61,7 @@ int test_rtc(int argc,char **argv)
 	while(1){
 		t = tgt_gettime();
 		while(tgt_gettime() == t){
-			if (get_uart_char(0)){
+			if (get_uart_char(COM1_BASE_ADDR)){
 				printf("\n");
 				return 0;
 			}

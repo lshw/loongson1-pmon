@@ -58,7 +58,9 @@ static void spi_init0(void)
 	SET_SPI(FCR_SPSR, 0xc0);
 	//SPI Flash参数控制寄存器
 	SET_SPI(FCR_PARAM, 0x00);
-	SET_SPI(FCR_SPER, 0x04);
+	//#define SPER      0x3	//外部寄存器
+	//spre:01 [2]mode spi接口模式控制 1:采样与发送时机错开半周期  [1:0]spre 与Spr一起设定分频的比率
+	SET_SPI(FCR_SPER, 0x05);
 	//SPI Flash片选控制寄存器
 	SET_SPI(FCR_SOFTCS, 0xbf);			//softcs
 	SET_SPI(FCR_SPCR, 0x5c);
@@ -172,29 +174,27 @@ unsigned int SD_CMD_Write(unsigned int CMDIndex, unsigned long CMDArg, unsigned 
 	//[3] Restore Do to High Level
 	//[4] Provide 8 extra clock after CMD
 	flash_writeb_cmd(0xff);
-	
-	switch (ResType)//[5] wait response
+	//[5] wait response
+	switch (ResType)
 	{
 		case 1://R1
 		{
-			cont = 10;
+			cont = 100;
 			do{
 				Response = SD_Read();
 				cont--;
-			}
-			while ((Response == 0xffff) && (cont != 0));
+			}while ((Response == 0xffff) && (cont != 0));
 			break;
 		}
 		case 2://R1b
 		{
-			cont = 10;
+			cont = 100;
 			do{
 				Response = SD_Read();
 				cont--;
-			}
-			while ((Response == 0xffff) && (cont != 0));//Read R1 firstly
+			}while ((Response == 0xffff) && (cont != 0));//Read R1 firstly
 			
-			cont = 10;
+			cont = 100;
 			do{
 				Response2 = SD_Read()-0xff00;
 				cont--;
@@ -221,27 +221,26 @@ unsigned int SD_Reset_Card(void)
 		flash_writeb_cmd(0xff);
 	}
 	
-	cont = 10;
-	while(cont)
+	cont = 20;
+	while(cont--)
 	{
 		for(i=0;i<10;i++)//The max initiation times is 10.
 		{
 			Response = SD_CMD_Write(0x0000, 0x00000000, 1, 0);//Send CMD0 CMD0——0x01（SD卡处于in-idle-state）
-			if (Response == 0xff01) i=10;
+			if (Response == 0xff01) break;
 		}
 		if (Response!=0xff01){
 			read_delay += DELAY_STEP;
-			cont --;
 		}
 		else break;
 	}
 	
 	if (cont == 0){
-	#ifdef CONFIG_CHINESE
-		printf("错误: 没有SD卡或者命令发送失败\n");
-	#else
-		printf("ERROR: No SD Card or command send failure\n");
-	#endif
+//	#ifdef CONFIG_CHINESE
+//		printf("错误: 没有SD卡或者命令发送失败\n");
+//	#else
+//		printf("ERROR: No SD Card or command send failure\n");
+//	#endif
 	}
 	return Response;
 }
@@ -253,7 +252,7 @@ unsigned int SD_Initiate_Card(void)
 	unsigned int i,Response;
 	unsigned int cont;
 	
-	cont = 10;
+	cont = 100;
 	while(cont){
 		for(i=0; i<30; i++)//The max initiation times is 10.
 		{
@@ -270,11 +269,11 @@ unsigned int SD_Initiate_Card(void)
 		else break;
 	}
 	if (cont == 0){
-	#ifdef CONFIG_CHINESE
-		printf("错误: 没有SD卡或者命令发送失败\n");
-	#else
-		printf("ERROR: No SD Card or command send failure\n");
-	#endif
+//	#ifdef CONFIG_CHINESE
+//		printf("错误: 没有SD卡或者命令发送失败\n");
+//	#else
+//		printf("ERROR: No SD Card or command send failure\n");
+//	#endif
 	}
 	return Response;
 }
@@ -337,8 +336,7 @@ unsigned int SD_Overall_Initiation(void)
 				//[1] Do must be High when there is no transmition
 
 	Response = SD_Reset_Card();//[2] Send CMD0
-	if (Response != 0xff01)
-	{
+	if (Response != 0xff01){
 	#ifdef CONFIG_CHINESE
 		PutPortraitChar(0, 15, "没发现SD卡..", 1);//Print MSG
 	#else
@@ -356,8 +354,7 @@ unsigned int SD_Overall_Initiation(void)
 		PutPortraitChar(0,15,"Init Success",1);//Print MSG
 	#endif
 	}
-	else
-	{
+	else{
 		Response_2 += 4;
 	#ifdef CONFIG_CHINESE
 		PutPortraitChar(0,15,"没发现SD卡..",1);//Print MSG
@@ -520,7 +517,7 @@ GPIO23 cs
 	return ret;
 }
 
-int test_sdcard(int argc,char **argv)
+int test_sdcard(int argc, char **argv)
 {
 	char str[100];
 	unsigned char ReadBuffer[16];
@@ -552,7 +549,8 @@ error1:
 #else
 	printf("SDcard Initialization failure\n");
 #endif
-	return -1;
+//	return -1;
+	return 0;
 }
 
 static const Cmd Cmds[] =

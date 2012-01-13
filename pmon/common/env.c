@@ -89,6 +89,22 @@ static struct stdenv {
     {"fpdis", "yes", "no yes"},
 	{"TZ",	"UTC8",	0},		//lxy
 	{"ifconfig", "syn0:192.168.1.2", 0},
+//	{"novga", "1", 0},	//当设置为novga=1时表示不使用vga lcd显示屏输出信息 信息只输出到串口 这样可以把菜单定位到串口，因为菜单默认定位到显示屏。
+	/* 用于记录测试结果 */
+//	{"cputest", "等待测试", 0},
+//	{"memorytest", "等待测试", 0},
+//	{"net0test", "等待测试", 0},
+//	{"net1test", "等待测试", 0},
+//	{"touchscreentest", "等待测试", 0},
+//	{"SDcardtest", "等待测试", 0},
+//	{"videotest", "等待测试", 0},
+//	{"USBtest", "等待测试", 0},
+//	{"buttontest", "等待测试", 0},
+//	{"UARTtest", "等待测试", 0},
+//	{"AC97test", "等待测试", 0},
+//	{"ADtest", "等待测试", 0},
+//	{"RTCtest", "等待测试", 0},
+//	{"NANDFlashtest", "等待测试", 0},
 #if defined(TGT_DEFENV)
     TGT_DEFENV,
 #endif

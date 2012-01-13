@@ -399,7 +399,7 @@ static int do_usb (int argc, char *argv[])
 				usb_display_desc(dev);
 				usb_display_config(dev);
 			}
-			return 0;
+			return d;
 		}
 		else {
 			int d;

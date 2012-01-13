@@ -813,14 +813,14 @@ static void ls1g_nand_init_info(struct ls1g_nand_info *info)
 int ls1g_nand_pmon_info_init(struct ls1g_nand_info *info, struct mtd_info *mtd)
 {
 //	info->drcmr_dat =  ((unsigned int)(malloc(sizeof(struct ls1g_nand_dma_desc),M_DMAMAP,M_WAITOK))&0x1fffffff) | 0xa0000000;
-	info->drcmr_dat = 0xa8000000;	//DMA描述符地址
+	info->drcmr_dat = 0xa2000000;	//DMA描述符地址
 	if(info->drcmr_dat == NULL)
 		return -1;
 	info->drcmr_dat_phys = (info->drcmr_dat) & 0x1fffffff;	//DMA描述符物理地址
 
 	info->mmio_base = 0x1fe78000 | 0xa0000000; //NAND寄存器基地址
 
-	info->data_buff = (unsigned char *)0xa8200000;//malloc(MAX_BUFF_SIZE,M_DMAMAP,M_WAITOK);	//DMA数据缓存
+	info->data_buff = (unsigned char *)0xa2200000;//malloc(MAX_BUFF_SIZE,M_DMAMAP,M_WAITOK);	//DMA数据缓存
 //	info->data_buff = ((unsigned int)(malloc(MAX_BUFF_SIZE,M_DMAMAP,M_WAITOK))&0x1fffffff)|0xa0000000;
 	if(info->data_buff == NULL)
 		return -1;
@@ -829,7 +829,7 @@ int ls1g_nand_pmon_info_init(struct ls1g_nand_info *info, struct mtd_info *mtd)
 	printf("data_buff_phys==0x%08x\n",info->data_buff_phys);
 
 //	info->data_ask = ((unsigned int)(malloc(sizeof(struct ls1g_nand_ask_regs),M_DMAMAP,M_WAITOK))&0x1fffffff)|0xa0000000;
-	info->data_ask = 0xa8400000;//malloc(sizeof(struct ls1g_nand_ask_regs),M_DMAMAP,M_WAITOK);
+	info->data_ask = 0xa2400000;//malloc(sizeof(struct ls1g_nand_ask_regs),M_DMAMAP,M_WAITOK);
 	if(info->data_ask ==NULL)
 		return -1;
 	info->data_ask_phys = info->data_ask & 0x1fffffff;
@@ -876,8 +876,8 @@ static void find_good_part(struct mtd_info *ls1g_soc_mtd)
 #define DMA_DESP        0xa0800000
 #define DMA_DESP_ORDER  0x00800008
 #define DMA_ASK_ORDER   0x00800004
-#define DDR_PHY         0x08400000
-#define DDR_ADDR        0xa8400000
+#define DDR_PHY         0x02400000
+#define DDR_ADDR        0xa2400000
 
 #define STATUS_TIME 100
 

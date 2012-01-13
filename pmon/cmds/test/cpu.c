@@ -3,6 +3,7 @@ static int cputest(void)
 //	static volatile float x=1.2342374;	//THF
 //	static volatile float y=9.153784;	//THF
 //	static volatile float z;				//THF
+	char cmd[100];
 #ifdef CONFIG_CHINESE
 	printf("CP0 寄存器读测试\n");
 #else
@@ -45,10 +46,13 @@ static int cputest(void)
 	:::"$2","$3"
 	);
 #ifdef CONFIG_CHINESE
-	printf("CP0 寄存器读测试OK\n");
+	printf("CP0 寄存器读测试通过\n");
+//	sprintf(cmd, "set cputest \"%s\"", "测试通过");
 #else
-	printf("CP0 register read test ok\n");
+	printf("CP0 register read test pass.\n");
+//	sprintf(cmd, "set cputest \"%s\"", "pass");
 #endif
+//	do_cmd(cmd);
 //	printf("cpu float calculation test\n");	//THF
 //	z=x*y*10000;	//THF
 //	if((int)z==112979) printf("cpu float calculation test ok\n");	//THF

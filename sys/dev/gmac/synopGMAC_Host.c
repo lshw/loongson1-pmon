@@ -77,13 +77,11 @@ int  SynopGMAC_Host_Interface_init(void)
         /* Initialize the Network dependent services */
 	
 	TR("======000\n");
-//        if((retval = synopGMAC_init_network_interface("syn0",0x90000c0000000000LL))){
-        if((retval = synopGMAC_init_network_interface("syn0",0xbfe10000))){
+        if((retval = synopGMAC_init_network_interface("syn0",0x90000c0000000000LL))){
 		TR("Could not initialize the Network interface.\n");
 		return retval;
 	}
-//        if((retval = synopGMAC_init_network_interface("syn1",0x90000d0000000000LL))){			
-		if((retval = synopGMAC_init_network_interface("syn1",0xbfe11000))){
+        if((retval = synopGMAC_init_network_interface("syn1",0x90000d0000000000LL))){
 		TR("Could not initialize the Network interface.\n");
 		return retval;
 	}

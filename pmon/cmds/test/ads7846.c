@@ -2,6 +2,7 @@
 #include <cpu.h>
 #include <target/iorw.h>
 #include <string.h>
+#include "target/fcr.h"
 
 #define K1BASE 0xa0000000
 #define KSEG1(addr) ((void *)(K1BASE | (u32)(addr)))
@@ -286,7 +287,7 @@ void ads7846_test(void)
 			while(ads7846_pendown_state());
 			cont = 3;
 		}
-		if (get_uart_char(0)){
+		if (get_uart_char(COM1_BASE_ADDR)){
 		#ifdef CONFIG_CHINESE
 			printf("\n退出触摸屏测试程序\n");
 		#else

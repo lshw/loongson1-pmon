@@ -7,7 +7,7 @@
 #define TYPE_CHOICE 5
 
 #if NMOD_FRAMEBUFFER ==0
-#define POP_W	40
+#define POP_W	50
 //#define POP_W	0
 #define POP_H	20
 //#define POP_H	0
@@ -15,14 +15,14 @@
 //#define POP_Y	8
 #define POP_X	0
 #define POP_Y	1
-#define MSG_W	40
+#define MSG_W	50
 #define MSG_H	20
 #define MSG_X	5
 #define MSG_Y	8
 #define INFO_Y  19
-#define INFO_W  40
+#define INFO_W  50
 #else
-#define POP_W	40
+#define POP_W	50
 //#define POP_W	0
 #define POP_H	20
 //#define POP_H	0
@@ -30,12 +30,12 @@
 //#define POP_Y	5
 #define POP_X	0
 #define POP_Y	1
-#define MSG_W	40
+#define MSG_W	50
 #define MSG_H	20
 #define MSG_X	5
 #define MSG_Y	8
 #define INFO_Y  19
-#define INFO_W  40
+#define INFO_W  50
 #endif
 
 struct setupMenuitem{

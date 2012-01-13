@@ -150,10 +150,11 @@ cmd_modify (ac, av)
 	if (datasz == 0) {
 		datasz = 1 << matchenv ("datasize");
 	}
-
+	
 	if (optind < ac) {
-	/* command mode */
+	/* command mode 命令模式 如：m -w 0x89000000 3 0x89000000*/
 		for (; optind < ac; optind++) {
+			/* 判断是否是 -s 参数 */
 			if (!strcmp(av[optind], "-s")) {
 				if (++optind >= ac) {
 					printf ("bad arg count\n");
@@ -163,7 +164,9 @@ cmd_modify (ac, av)
 					store_byte ((void *)(adr++), *p);
 				}
 			}
+			/* 非-s参数 */
 			else {
+				/* 获取修改值 */
 				if (!get_rsa_reg (&v, av[optind])) {
 					return (-1);
 				}
@@ -171,12 +174,14 @@ cmd_modify (ac, av)
 					printf ("%08x: unaligned address\n", adr);
 					return (1);
 				}
+				/* 根据数据类型修改对应的地址值 */
 				switch (datasz) {
 				case 1:
 					store_byte ((void *)adr, v);
 					break;
 
 				case 2:
+					/* 判断是否把低字节和高字节交换 */
 					if(reverse) {
 						v = swap16(v);
 					}
@@ -201,12 +206,13 @@ cmd_modify (ac, av)
 		}
 	}
 	else {
-	/* interactive mode */
+	/* interactive mode  交互模式 如：m -w 0x89000000 */
 		if (adr & (datasz - 1)) {
 			printf ("%08x: unaligned address\n", adr);
 			return (1);
 		}
 		for (;;) {
+			/* 根据数据类型从对应地址中读取值 */
 			switch (datasz) {
 			case 1:
 				v = *(u_int8_t *)adr;

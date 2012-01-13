@@ -1630,7 +1630,7 @@ struct usb_hub_device *usb_hub_allocate(void)
 	return NULL;
 }
 
-#define MAX_TRIES 5
+#define MAX_TRIES 10
 
 /*===========================================================================
 *
@@ -1691,7 +1691,7 @@ static int hub_port_reset(struct usb_device *dev, int port,
 	}
 
 	usb_clear_port_feature(dev, port + 1, USB_PORT_FEAT_C_RESET);
-	wait_ms(500);
+	wait_ms(200);
 	*portstat = portstatus;
 	return 0;
 
@@ -1747,8 +1747,7 @@ void usb_hub_port_connect_change(struct usb_device *dev, int port)
 		return;
 	}
 
-	//wait_ms(200);
-	wait_ms(400);
+	wait_ms(200);
 
 	/* Allocate a new device struct for it */
 	assert(dev->hc_private!=NULL);

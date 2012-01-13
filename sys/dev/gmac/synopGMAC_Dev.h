@@ -1208,6 +1208,7 @@ enum MMC_TX
 	GmacMmcTxDeferred		= 0x0154,	/*Successfully Tx Frames after a deferral in Half duplex mode				*/
 	GmacMmcTxLateCol		= 0x0158,	/*Frames aborted due to late collision error						*/
 	GmacMmcTxExessCol		= 0x015C,	/*Frames aborted due to excessive (16) collision errors					*/
+
 	GmacMmcTxCarrierError		= 0x0160,	/*Frames aborted due to carrier sense error (No carrier or Loss of carrier)		*/
 	GmacMmcTxOctetCountG		= 0x0164,	/*Bytes Tx excl. of preamble and retried bytes     (Good) 				*/
 	GmacMmcTxFrameCountG		= 0x0168,	/*Frames Tx 				           (Good)				*/
@@ -1633,7 +1634,6 @@ void synopGMAC_tx_activate_flow_control(synopGMACdevice * gmacdev);
 void synopGMAC_tx_deactivate_flow_control(synopGMACdevice * gmacdev);
 void synopGMAC_pause_control(synopGMACdevice *gmacdev);
 s32 synopGMAC_mac_init(synopGMACdevice * gmacdev);
-s32 synopGMAC_check_phy_init (synopGMACdevice * gmacdev);
 s32 synopGMAC_set_mac_addr(synopGMACdevice *gmacdev, u32 MacHigh, u32 MacLow, u8 *MacAddr );
 s32 synopGMAC_get_mac_addr(synopGMACdevice *gmacdev, u32 MacHigh, u32 MacLow, u8 *MacAddr );
 s32 synopGMAC_attach (synopGMACdevice * gmacdev, u64 macBase, u64 dmaBase, u32 phyBase,u8 *mac_addr);

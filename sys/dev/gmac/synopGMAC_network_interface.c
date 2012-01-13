@@ -257,6 +257,74 @@ static int rtl88e1111_config_init(synopGMACdevice *gmacdev)
 		return err;
 	return 0;
 }
+#include "mii.h"
+#include "mii.c"
+
+s32 synopGMAC_check_phy_init (synopGMACPciNetworkAdapter *adapter);
+
+static void synopGMAC_linux_cable_unplug_function(synopGMACPciNetworkAdapter *adapter)
+{
+s32 data;
+synopGMACdevice            *gmacdev = adapter->synopGMACdev;
+struct ethtool_cmd cmd;
+
+if(!mii_link_ok(&adapter->mii)){
+	if(gmacdev->LinkState)
+	TR("No Link\n");
+	gmacdev->DuplexMode = 0;
+	gmacdev->Speed = 0;
+	gmacdev->LoopBackMode = 0; 
+	gmacdev->LinkState = 0; 
+}
+else{
+	data = synopGMAC_check_phy_init(adapter);
+
+	if(gmacdev->LinkState != data){
+		gmacdev->LinkState = data;
+		synopGMAC_mac_init(gmacdev);
+	TR("Link UP data=%08x\n",data);
+	TR("Link is up in %s mode\n",(gmacdev->DuplexMode == FULLDUPLEX) ? "FULL DUPLEX": "HALF DUPLEX");
+	if(gmacdev->Speed == SPEED1000)	
+		TR("Link is with 1000M Speed \n");
+	if(gmacdev->Speed == SPEED100)	
+		TR("Link is with 100M Speed \n");
+	if(gmacdev->Speed == SPEED10)	
+		TR("Link is with 10M Speed \n");
+	}
+}
+}
+
+s32 synopGMAC_check_phy_init (synopGMACPciNetworkAdapter *adapter) 
+{	
+struct ethtool_cmd cmd;
+synopGMACdevice            *gmacdev = adapter->synopGMACdev;
+	
+
+
+	if(!mii_link_ok(&adapter->mii))
+	{
+		gmacdev->DuplexMode = FULLDUPLEX;
+		gmacdev->Speed      =   SPEED100;
+
+		return 0;
+	}
+	else
+	
+	{
+		mii_ethtool_gset(&adapter->mii, &cmd);
+
+	gmacdev->DuplexMode = (cmd.duplex == DUPLEX_FULL)  ? FULLDUPLEX: HALFDUPLEX ;
+	if(cmd.speed == SPEED_1000)
+	        gmacdev->Speed      =   SPEED1000;
+	else if(cmd.speed == SPEED_100)
+		gmacdev->Speed      =   SPEED100;
+	else
+		gmacdev->Speed      =   SPEED10;
+
+	}
+
+	return gmacdev->Speed|(gmacdev->DuplexMode<<4);
+}
 
 #if UNUSED
 static int bcm54xx_ack_interrupt(synopGMACdevice *gmacdev)
@@ -269,7 +337,7 @@ static int bcm54xx_ack_interrupt(synopGMACdevice *gmacdev)
 	if (reg < 0)
 		return reg;
 
-	printf("===phy intr status: %04x\n",data);
+	TR("===phy intr status: %04x\n",data);
 	
 	return 0;
 }
@@ -281,35 +349,6 @@ static int bcm54xx_config_intr(struct synopGMACdevice *gmacdev)
 
 
 
-static void synopGMAC_linux_cable_unplug_function(struct synopGMACNetworkAdapter *adapter )
-{
-s32 status;
-u16 data;
-//struct synopGMACdevice            *gmacdev = adapter->synopGMACdev;
-synopGMACdevice *gmacdev = adapter->synopGMACdev;
-
-status = synopGMAC_read_phy_reg(gmacdev->MacBase,gmacdev->PhyBase,PHY_SPECIFIC_STATUS_REG, &data);
-//status = synopGMAC_read_phy_reg(gmacdev->MacBase,1,PHY_SPECIFIC_STATUS_REG, &data);
-
-
-if((data & Mii_phy_status_link_up) == 0){
-	TR("No Link: %08x\n",data);
-	gmacdev->DuplexMode = 0;
-	gmacdev->Speed = 0;
-	gmacdev->LoopBackMode = 0; 
-
-}
-else{
-	TR("Link UP: %08x\n",data);
-	if(gmacdev->LinkState != data){
-		status = synopGMAC_check_phy_init(gmacdev);
-		synopGMAC_mac_init(gmacdev);
-
-	}
-}
-  	gmacdev->LinkState = data;
-	
-}
 
 
 static void synopGMAC_linux_powerdown_mac(synopGMACdevice *gmacdev)
@@ -887,6 +926,7 @@ void synop_handle_received_data(struct synopGMACNetworkAdapter* tp)
 				adapter->synopGMACNetStats.rx_bytes += len;
 			}
 			else{
+				printf("s: %08x\n",status);
 				adapter->synopGMACNetStats.rx_errors++;
 				adapter->synopGMACNetStats.collisions       += synopGMAC_is_rx_frame_collision(status);
 				adapter->synopGMACNetStats.rx_crc_errors    += synopGMAC_is_rx_crc(status);
@@ -975,29 +1015,9 @@ int synopGMAC_intr_handler(struct synopGMACNetworkAdapter * tp)
 		TR("%s:: synopGMAC_tx_int_status = %08x\n",__FUNCTION__,synopGMAC_read_mmc_tx_int_status(gmacdev));
 	}
 
-	if(dma_status_reg & GmacLineIntfIntr){
-		u16 data;
-		status = synopGMAC_read_phy_reg(gmacdev->MacBase,gmacdev->PhyBase,PHY_SPECIFIC_STATUS_REG, &data);
-		//status = synopGMAC_read_phy_reg(gmacdev->MacBase,1,PHY_SPECIFIC_STATUS_REG, &data);
-
-
-		if((data & Mii_phy_status_link_up) == 0){
-			//TR("No Link: %08x\n",data);
-			gmacdev->LinkState = 0;
-			gmacdev->DuplexMode = 0;
-			gmacdev->Speed = 0;
-			gmacdev->LoopBackMode = 0; 
-
-		}
-		else{
-			//TR("Link UP: %08x\n",data);
-			if(gmacdev->LinkState!=data)
-			{
-				status = synopGMAC_check_phy_init(gmacdev);
-				synopGMAC_mac_init(gmacdev);
-
-			}
-		}
+	//if(dma_status_reg & GmacLineIntfIntr)
+	{
+		synopGMAC_linux_cable_unplug_function(adapter);
 	}
 	/*Now lets handle the DMA interrupts*/  
         interrupt = synopGMAC_get_interrupt_type(gmacdev);
@@ -1293,7 +1313,7 @@ unsigned long synopGMAC_linux_open(struct synopGMACNetworkAdapter *tp)
 
 	
 	/*Initialize the mac interface*/
-	synopGMAC_check_phy_init(gmacdev);
+	synopGMAC_check_phy_init(adapter);
 	synopGMAC_mac_init(gmacdev);
 //	dumpreg(regbase);
 	
@@ -1358,7 +1378,7 @@ unsigned long synopGMAC_linux_open(struct synopGMACNetworkAdapter *tp)
 }
 #endif
         plat_delay(DEFAULT_LOOP_VARIABLE);
-	synopGMAC_check_phy_init(gmacdev);
+	synopGMAC_check_phy_init(adapter);
 	synopGMAC_mac_init(gmacdev);
 	
 		PInetdev->sc_ih = pci_intr_establish(0, 0, IPL_NET, synopGMAC_intr_handler, adapter, 0);
@@ -1702,7 +1722,7 @@ void set_phy_manu(synopGMACdevice * gmacdev)
 	while(i)
 		i--;
 	//dumpphyreg();
-	synopGMAC_check_phy_init(gmacdev);
+	synopGMAC_check_phy_init(adapter);
 
 
 }
@@ -1911,7 +1931,7 @@ static int gmac_ether_ioctl(struct ifnet *ifp, unsigned long cmd, caddr_t data)
 //sw: dbg. send pkg continuously
 //			while(1)
 				arp_ifinit(&(adapter->PInetdev->arpcom), ifa);
-			printf("==arp_ifinit done\n");
+			TR("==arp_ifinit done\n");
 #else
 			arp_ifinit(ifp, ifa);
 #endif
@@ -1934,7 +1954,7 @@ static int gmac_ether_ioctl(struct ifnet *ifp, unsigned long cmd, caddr_t data)
 		 * such as IFF_PROMISC are handled.
 		 */
 
-		printf("===ioctl sifflags\n");
+		TR("===ioctl sifflags\n");
 		if(ifp->if_flags & IFF_UP){
 			synopGMAC_linux_open(adapter);
 		}
@@ -1948,6 +1968,7 @@ static int gmac_ether_ioctl(struct ifnet *ifp, unsigned long cmd, caddr_t data)
         }
         break;
 */
+	   case SIOCWRPHY:
        case SIOCWREEPROM:
                 {
                 long *p=data;
@@ -1960,6 +1981,7 @@ static int gmac_ether_ioctl(struct ifnet *ifp, unsigned long cmd, caddr_t data)
 		ac = p[0];
 		av = p[1];
 		gmacdev = (synopGMACdevice *)adapter->synopGMACdev;
+		phybase = gmacdev->PhyBase;
 	if(ac>1)
 	{
 	 //offset:data,data
@@ -1982,6 +2004,7 @@ static int gmac_ether_ioctl(struct ifnet *ifp, unsigned long cmd, caddr_t data)
 	}
 		}
                 break;
+	   case	SIOCRDPHY:
        case SIOCRDEEPROM:
                 {
                 long *p=data;
@@ -1996,7 +2019,7 @@ static int gmac_ether_ioctl(struct ifnet *ifp, unsigned long cmd, caddr_t data)
 		ac = p[0];
 		av = p[1];
 		gmacdev = (synopGMACdevice *)adapter->synopGMACdev;
-		if(ac<1)phybase = gmacdev->PhyBase;
+		if(ac<2)phybase = gmacdev->PhyBase;
 		else phybase = strtoul(av[1],0,0);
 		for(i=0;i<32;i++)
 		{
@@ -2218,6 +2241,22 @@ void reg_init(synopGMACdevice * gmacdev)
 	
 }
 	
+static int mdio_read(synopGMACPciNetworkAdapter *adapter, int addr, int reg)
+{
+	synopGMACdevice * gmacdev;
+	u16 data;
+	gmacdev = adapter->synopGMACdev;
+	
+	synopGMAC_read_phy_reg((u32 *)gmacdev->MacBase,addr,reg, &data);
+	return data;
+}
+
+static void mdio_write(synopGMACPciNetworkAdapter *adapter, int addr, int reg, int data)
+{
+	synopGMACdevice * gmacdev;
+	gmacdev = adapter->synopGMACdev;
+	synopGMAC_write_phy_reg((u32 *)gmacdev->MacBase,addr,reg,data);
+}
 
 
 /**
@@ -2253,19 +2292,31 @@ s32  synopGMAC_init_network_interface(char* xname,u64 synopGMACMappedAddr)
 	struct ifnet* ifp;
 
 	static u8 mac_addr0[6] = DEFAULT_MAC_ADDRESS;
+	static int inited = 0;
 	int i;
 	u16 data;
-	unsigned int conf_val;
-		
 	struct synopGMACNetworkAdapter * synopGMACadapter;
-
-//	if (synopGMACMappedAddr == 0xbfe11000)
+	if(!inited)
 	{
-//		conf_val = *((volatile unsigned int*)0xbfd00420);
-//		*((volatile unsigned int*)0xbfd00420) = conf_val | 0x18;
-//		printf ("lxy: conf_val = 0x%x !\n", conf_val);
-//		*((volatile unsigned int*)0xbfd010c4) = 0x0;
+		u8 v;
+		char *s=getenv("ethaddr");
+		if(s){
+			int allz,allf;
+			u8 macaddr[6];
+
+			for(i = 0, allz = 1, allf = 1; i < 6; i++) {
+				gethex(&v, s, 2);
+				macaddr[i] = v;
+				s += 3;         /* Don't get to fancy here :-) */
+				if(v != 0) allz = 0;
+				if(v != 0xff) allf = 0;
+			} 
+			if(!allz && !allf)
+				memcpy(mac_addr0, macaddr, 6);
+		}
+		inited = 1;
 	}
+
 	
 	TR("Now Going to Call register_netdev to register the network interface for GMAC core\n");
 	synopGMACadapter = (struct synopGMACNetworkAdapter * )plat_alloc_memory(sizeof (struct synopGMACNetworkAdapter)); 
@@ -2343,6 +2394,17 @@ s32  synopGMAC_init_network_interface(char* xname,u64 synopGMACMappedAddr)
 //	test_tx(ifp);
 
 	mac_addr0[5]++;
+
+
+	/* MII setup */
+	synopGMACadapter->mii.phy_id_mask = 0x1F;
+	synopGMACadapter->mii.reg_num_mask = 0x1F;
+	synopGMACadapter->mii.dev = synopGMACadapter;
+	synopGMACadapter->mii.mdio_read = mdio_read;
+	synopGMACadapter->mii.mdio_write = mdio_write;
+	synopGMACadapter->mii.phy_id = synopGMACadapter->synopGMACdev->PhyBase;
+	synopGMACadapter->mii.supports_gmii = mii_check_gmii_support(&synopGMACadapter->mii);
+
 	return 0;
 }
 

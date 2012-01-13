@@ -408,7 +408,7 @@ int read_nand(u32 ram,u32 flash,u32 len,u8 flag)
 			chunkpage = 0;
 		break;
 	}    
-	printf("reading ");
+//	printf("reading ");
 	pages = (len + chunkpage - 1)/chunkpage;
 //	printf("%x:pages==0x%08x\n",__LINE__,pages);
 	b_pages = page % PAGES_A_BLOCK;	//每Block的Page数 余数为0
@@ -434,7 +434,7 @@ int read_nand(u32 ram,u32 flash,u32 len,u8 flag)
 			page += PAGES_A_BLOCK;
 		}
 		ret = read_pages(ram, page, PAGES_A_BLOCK, flag);
-		printf(". ");
+//		printf(". ");
 		if(ret) {return ret;}
 		pages -= PAGES_A_BLOCK;
 		page += PAGES_A_BLOCK ;
@@ -449,7 +449,7 @@ int read_nand(u32 ram,u32 flash,u32 len,u8 flag)
 		if(ret){return ret;}
 	}
 	
-	printf("... done\n");
+//	printf("... done\n");
 	/*
 	{
 		int i;
@@ -508,7 +508,7 @@ int write_nand(u32 ram, u32 flash, u32 len, u8 flag)
 			chunkpage = 0;
 		break;
 	}
-	printf("writing. ");    
+//	printf("writing. ");    
 	pages = (len + chunkpage - 1)/chunkpage;
 //	printf("%x:pages==0x%08x\n",__LINE__,pages);
 	start_page = page % PAGES_A_BLOCK;	//页在块中的相对起始地址
@@ -521,7 +521,7 @@ int write_nand(u32 ram, u32 flash, u32 len, u8 flag)
 		if(ret){return ret;}
 		erase_block(PAGE_TO_BLOCK(page));//擦除该块
 		ret = write_pages(NAND_TMP, page - start_page, start_page, 2);
-		printf(". ");
+//		printf(". ");
 		if(ret){return ret;}
 	}
 	if(pages > b_pages && b_pages > 0){
@@ -550,7 +550,7 @@ int write_nand(u32 ram, u32 flash, u32 len, u8 flag)
 		MYDBG
 		ret = write_pages(ram,page,PAGES_A_BLOCK,flag);
 		MYDBG
-		printf(". ");
+//		printf(". ");
 		if(ret) {return ret;}
 		pages -= PAGES_A_BLOCK;
 		page += PAGES_A_BLOCK;
@@ -567,7 +567,7 @@ int write_nand(u32 ram, u32 flash, u32 len, u8 flag)
 		ret = write_pages(ram,page,a_pages,flag);
 		if(ret){return ret;}
 	}
-	printf("... done\n");
+//	printf("... done\n");
 //	return ret;
 	return badblock_count;
 }
@@ -575,12 +575,12 @@ int write_nand(u32 ram, u32 flash, u32 len, u8 flag)
 int erase_nand(u32 start,u32 blocks)
 {
 	int i = 0;
-	printf("erasing ");
+//	printf("erasing ");
 	for(; i<blocks; i++){
 		erase_block(i+start);
-		printf(". ");
+//		printf(". ");
 	}
-	printf(" done\n");
+//	printf(" done\n");
 	MYDBG
 	return 0;
 }
@@ -644,7 +644,7 @@ int mynand_erase(int argc,char **argv)
 	blocks = strtoul(argv[2],0,0);	//擦除的块数 0为不擦除
 //	printf("start==0x%08x,blocks==0x%08x\n",start,blocks);
 	erase_nand(start, blocks);
-	printf("erase nand ops OK...\n");
+//	printf("erase nand ops OK...\n");
 	return 0;
 }
 
@@ -670,7 +670,7 @@ int mynand_read(int argc,char **argv)
 	len = strtoul(argv[3],0,0);		//读取长度
 //	printf("ram==0x%08x,flash==0x%08x\n",ram,flash,len,flag);
 	read_nand(ram, flash, len, flag);
-	printf("read nand ops OK...\n");
+//	printf("read nand ops OK...\n");
 	return 0;
 }
 
@@ -695,7 +695,7 @@ int mynand_write(int argc,char **argv)
 	len = strtoul(argv[3],0,0);	//写入长度
 //	printf("ram==0x%08x,flash==0x%08x\n",ram,flash,len,flag);
 	write_nand(ram, flash, len, flag);
-	printf("write nand ops OK...\n");
+//	printf("write nand ops OK...\n");
 	return 0;
 }
 
