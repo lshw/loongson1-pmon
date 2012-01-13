@@ -355,7 +355,7 @@ static char *memfb;
 
 static int console_col = 0; /* cursor col */
 static int console_row = 0; /* cursor row */
-//static ¸Ä³Éextern
+//static æ”¹æˆextern
 unsigned int eorx, fgx, bgx;  /* color pats */
 
 static const char video_font_draw_table2[] = {
