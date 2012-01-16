@@ -355,7 +355,7 @@ static char *memfb;
 
 static int console_col = 0; /* cursor col */
 static int console_row = 0; /* cursor row */
-//static 改成extern
+//static \B8ĳ\C9extern
 unsigned int eorx, fgx, bgx;  /* color pats */
 
 static const char video_font_draw_table2[] = {
@@ -1534,7 +1534,7 @@ void video_set_background(unsigned char r, unsigned char g, unsigned char b)
 		cnt -= 2;		
 	}
 }
-static int record = 1;
+static int record = 0;
 #ifdef CONFIG_FB_DYN
 char console_buffer[2][1280/VIDEO_FONT_HEIGHT+1][1024/VIDEO_FONT_WIDTH+1]={32};
 #else
@@ -1609,6 +1609,7 @@ SWAP16 ((unsigned short) (((255 >> 3) << 11) | ((255 >> 2) << 5) | (255 >> 3)))
 };
 static void __cprint(int y, int x,int width,char color, const char *buf)
 {
+	begin_record();
 #ifndef FB_MENU_NOCLOLOR
 	bgx = pallete[color>>4];
 	bgx |= (bgx << 16);
@@ -1668,6 +1669,9 @@ int fb_init (unsigned long fbbase,unsigned long iobase)
 #if defined(X800x600)
 	pGD->winSizeX  = 800;
 	pGD->winSizeY  = 600;
+#elif defined(X1440x900)
+        pGD->winSizeX  = 1440;
+        pGD->winSizeY  = 900;
 #elif defined(X1024x768)
         pGD->winSizeX  = 1024;
         pGD->winSizeY  = 768;
@@ -1677,6 +1681,9 @@ int fb_init (unsigned long fbbase,unsigned long iobase)
 #elif defined(X800x480)
         pGD->winSizeX  = 800;
         pGD->winSizeY  = 480;
+#elif defined(X480x272)
+        pGD->winSizeX  = 480;
+        pGD->winSizeY  = 272;
 #elif defined(X320x240)
         pGD->winSizeX  = 320;
         pGD->winSizeY  = 240;

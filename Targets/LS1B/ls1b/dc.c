@@ -253,7 +253,7 @@ int config_fb(unsigned long base)
 			*(volatile int *)0xbfd00410 = out;
 			/*output pix2 clock pll ctrl */
 			*(volatile int *)0xbfd00424 = out;
-		#elif !defined(CONFIG_FB_DYN)
+		#elif defined(CONFIG_FB_DYN)
 //			caclulatefreq(APB_CLK/1000,vgamode[i].pclk);
 			{
 			#define PLL_FREQ_REG(x) *(volatile unsigned int *)(0xbfe78030+x)
