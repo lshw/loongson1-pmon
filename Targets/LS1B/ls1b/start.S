@@ -482,11 +482,6 @@ cpu_win_fixup:
 	xor a2,0xf	
 #endif
 	sw a2,0x424(a0);
-	/* 使能GMAC1 和UART0复用，导致UART0不能使用 */
-	li a1,0x18
-	lw a2,0x420(a0);
-	or a2,a1
-	sw a2,0x420(a0);
 
 #define CF_7_SE         (1 << 3)        /* Secondary cache enable */
 #define CF_7_SC         (1 << 31)       /* Secondary cache not present */

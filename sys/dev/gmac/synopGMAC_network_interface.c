@@ -2317,6 +2317,10 @@ s32  synopGMAC_init_network_interface(char* xname,u64 synopGMACMappedAddr)
 		inited = 1;
 	}
 
+	/* GMAC2初始化 使能GMAC2 和UART0复用，导致UART0不能使用 */
+	if (synopGMACMappedAddr == 0xbfe20000){
+		*((volatile unsigned int*)0xbfd00420) |= 0x18;
+	}
 	
 	TR("Now Going to Call register_netdev to register the network interface for GMAC core\n");
 	synopGMACadapter = (struct synopGMACNetworkAdapter * )plat_alloc_memory(sizeof (struct synopGMACNetworkAdapter)); 
