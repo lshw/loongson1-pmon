@@ -361,7 +361,7 @@ int dc_init()
 
    fb_xsize  = getenv("xres")? strtoul(getenv("xres"),0,0):FB_XSIZE;
    fb_ysize  = getenv("yres")? strtoul(getenv("yres"),0,0):FB_YSIZE;
-   frame_rate  = getenv("frame_rate")? strtoul(getenv("frame_rate"),0,0):70;
+   frame_rate  = getenv("frame_rate")? strtoul(getenv("frame_rate"),0,0):60;
 
 MEM_ADDR = (long)MEM_ptr&0x0fffffff;
 

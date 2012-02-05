@@ -789,8 +789,16 @@ void video_drawsline(char *str, int rows, int cols)
 		}
 	}
 	
-	memcpyl (str, &str[cols], (rows - 1) *cols >> 2);
-	memsetl (&str[(rows - 1) * cols], cols >> 2, CONSOLE_BG_COL);
+	if(cols&3)
+	{
+		memcpy (str, &str[cols], (rows - 1) *cols);
+		memset (&str[(rows - 1) * cols], CONSOLE_BG_COL, cols);
+	}
+	else
+	{
+		memcpyl (str, &str[cols], (rows - 1) *cols >> 2);
+		memsetl (&str[(rows - 1) * cols], cols >> 2, CONSOLE_BG_COL);
+	}
 }
 
 #endif
