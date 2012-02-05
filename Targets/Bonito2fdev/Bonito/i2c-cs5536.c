@@ -168,7 +168,7 @@ static int i2c_write_smbblock(int addr,int regNo, char *buf,int len) {
 }
 
 
-int tgt_i2cread(int type,unsigned char *addr,int addrlen,unsigned char reg,unsigned char *buf,int count)
+int tgt_i2cread(int type,unsigned char *addr,int addrlen,unsigned char *buf,int count)
 {
 int i;
 if(!SMB_BASE_ADDR)SMB_BASE_ADDR=(_pci_conf_read(_pci_make_tag(0,14,0),0x10))&~3;
@@ -178,17 +178,17 @@ switch(type)
 case I2C_SINGLE:
 	for(i=0;i<count;i++)
 	{
-	i2c_read_single(addr[0],reg+i,buf+i);
+	i2c_read_single(addr[0],addr[1]+i,buf+i);
 	}
 break;
 case I2C_SMB_BLOCK:
-i2c_read_smbblock(addr[0],reg,buf,count);
+i2c_read_smbblock(addr[0],addr[1],buf,count);
 default: return 0;break;
 }
 return count;
 }
 
-int tgt_i2cwrite(int type,unsigned char *addr,int addrlen,unsigned char reg,unsigned char *buf,int count)
+int tgt_i2cwrite(int type,unsigned char *addr,int addrlen,unsigned char *buf,int count)
 {
 int i;
 if(!SMB_BASE_ADDR)SMB_BASE_ADDR=(_pci_conf_read(_pci_make_tag(0,14,0),0x10))&~3;
@@ -197,11 +197,11 @@ switch(type)
 case I2C_SINGLE:
 	for(i=0;i<count;i++)
 	{
-	i2c_write_single(addr[0],reg,buf+i);
+	i2c_write_single(addr[0],addr[1]+i,buf+i);
 	}
 break;
 case I2C_SMB_BLOCK:
-i2c_write_smbblock(addr[0],reg,buf,count);
+i2c_write_smbblock(addr[0],addr[1],buf,count);
 break;
 default:return -1;break;
 }

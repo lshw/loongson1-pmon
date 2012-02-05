@@ -2,11 +2,12 @@
  * 0 single 
  * 1 smb block
  */
-int tgt_i2cread(int type,unsigned char *addr,int addrlen,unsigned char reg,unsigned char *buf,int count)
+int tgt_i2cread(int type,unsigned char *addr,int addrlen,unsigned char *buf,int count)
 {
 int i;
 int device,offset;
 char c;
+unsigned char reg = addr[1];
 device=addr[0];
 offset=reg;
 device |= 1;
@@ -66,11 +67,12 @@ default: return 0;break;
 return count;
 }
 
-int tgt_i2cwrite(int type,unsigned char *addr,int addrlen,unsigned char reg,unsigned char *buf,int count)
+int tgt_i2cwrite(int type,unsigned char *addr,int addrlen,unsigned char *buf,int count)
 {
 int i;
 int device,offset;
 char c;
+unsigned char reg = addr[1];
 device=addr[0];
 offset=reg;
 device &= ~1;

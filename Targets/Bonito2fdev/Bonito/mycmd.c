@@ -163,11 +163,12 @@ static int i2cslot=0;
 
 static int DimmRead(int type,long long addr,union commondata *mydata)
 {
-char i2caddr[]={(i2cslot<<1)+0xa0};
+char i2caddr[]={(i2cslot<<1)+0xa0, 0};
 switch(type)
 {
 case 1:
-tgt_i2cread(I2C_SINGLE,i2caddr,1,addr,&mydata->data1,1);
+i2caddr[1] = addr;
+tgt_i2cread(I2C_SINGLE,i2caddr,2,&mydata->data1,1);
 break;
 
 default: return -1;break;
@@ -184,11 +185,12 @@ return -1;
 static int Ics950220Read(int type,long long addr,union commondata *mydata)
 {
 char c;
-char i2caddr[]={0xd2};
+char i2caddr[]={0xd2, 0};
 switch(type)
 {
 case 1:
-tgt_i2cread(I2C_SMB_BLOCK,i2caddr,1,addr,&mydata->data1,1);
+i2caddr[1] = addr;
+tgt_i2cread(I2C_SMB_BLOCK,i2caddr,2,&mydata->data1,1);
 
 break;
 
@@ -200,11 +202,12 @@ return 0;
 static int Ics950220Write(int type,long long addr,union commondata *mydata)
 {
 char c;
-char i2caddr[]={0xd2};
+char i2caddr[]={0xd2, 0};
 switch(type)
 {
 case 1:
-tgt_i2cwrite(I2C_SMB_BLOCK,i2caddr,1,addr,&mydata->data1,1);
+i2caddr[1] = addr;
+tgt_i2cwrite(I2C_SMB_BLOCK,i2caddr,2,&mydata->data1,1);
 
 break;
 
@@ -322,7 +325,7 @@ char tm_year;
 char tm_wday;
 char tm_year_hi;
 }  rtcvar;
-char i2caddr[]={0xde,0};
+char i2caddr[]={0xde,0, 0};
 
 	char a ;
 	word_addr = 1;
@@ -330,16 +333,21 @@ char i2caddr[]={0xde,0};
 	tm_binary_to_bcd(tm);
 
 //when rtc stop,can't set it ,follow 5 lines to resolve it
+	i2caddr[2] = 0x3f;
 	a = 2;
-	tgt_i2cwrite(I2C_SINGLE,i2caddr,2,0x3f,&a,1);
+	tgt_i2cwrite(I2C_SINGLE,i2caddr,3,&a,1);
+	i2caddr[2] = 0x3f;
 	a = 6;
-	tgt_i2cwrite(I2C_SINGLE,i2caddr,2,0x3f,&a,1);
-	tgt_i2cwrite(I2C_SINGLE,i2caddr,2,0x30,&a,1);
+	tgt_i2cwrite(I2C_SINGLE,i2caddr,3,&a,1);
+	i2caddr[2] = 0x30;
+	tgt_i2cwrite(I2C_SINGLE,i2caddr,3,&a,1);
 	
+	i2caddr[2] = 0x3f;
 	a = 2;
-	tgt_i2cwrite(I2C_SINGLE,i2caddr,2,0x3f,&a,1);
+	tgt_i2cwrite(I2C_SINGLE,i2caddr,3,&a,1);
+	i2caddr[2] = 0x3f;
 	a = 6;
-	tgt_i2cwrite(I2C_SINGLE,i2caddr,2,0x3f,&a,1);
+	tgt_i2cwrite(I2C_SINGLE,i2caddr,3,&a,1);
 
 //begin set
 
@@ -360,7 +368,8 @@ else
 	rtcvar.tm_year = tm->tm_year;
 	rtcvar.tm_year_hi=19;
 }
-	tgt_i2cwrite(I2C_BLOCK,i2caddr,2,0x30,&rtcvar,sizeof(rtcvar));
+	i2caddr[2] = 0x30;
+	tgt_i2cwrite(I2C_BLOCK,i2caddr,3,&rtcvar,sizeof(rtcvar));
 	
 	return 1;
 
@@ -379,7 +388,7 @@ else
 //----------------------------------------
 
 static int syscall_i2c_type,syscall_i2c_addrlen;
-static char syscall_i2c_addr[2];
+static char syscall_i2c_addr[3];
 
 static int i2c_read_syscall(int type,long long addr,union commondata *mydata)
 {
@@ -387,7 +396,8 @@ char c;
 switch(type)
 {
 case 1:
-tgt_i2cread(syscall_i2c_type,syscall_i2c_addr,syscall_i2c_addrlen,addr,&mydata->data1,1);
+syscall_i2c_addr[syscall_i2c_addrlen] = addr;
+tgt_i2cread(syscall_i2c_type,syscall_i2c_addr,syscall_i2c_addrlen+1,&mydata->data1,1);
 
 break;
 
@@ -402,7 +412,8 @@ char c;
 switch(type)
 {
 case 1:
-tgt_i2cwrite(syscall_i2c_type,syscall_i2c_addr,syscall_i2c_addrlen,addr,&mydata->data1,1);
+syscall_i2c_addr[syscall_i2c_addrlen] = addr;
+tgt_i2cwrite(syscall_i2c_type,syscall_i2c_addr,syscall_i2c_addrlen+1,&mydata->data1,1);
 
 break;
 

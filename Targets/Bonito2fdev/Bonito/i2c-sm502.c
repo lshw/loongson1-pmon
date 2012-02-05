@@ -28,11 +28,8 @@ static volatile char *mmio = 0;
 static void i2c_sleep(int ntime)
 {
 	int i,j=0;
-	for(i=0; i<300*ntime; i++)
-	{
-		j=i;
-		j+=i;
-	}
+	*GPIO_DIR_REG;
+	delay(ntime);
 }
 
 void sda_dir(int ivalue)
@@ -209,147 +206,81 @@ static unsigned char i2c_send(unsigned char value)
 	return 1;
 }
 
-unsigned char i2c_rec_s(unsigned char *addr,int addrlen,unsigned char reg,unsigned char* buf ,int count)
+unsigned char i2c_rec_s(unsigned char *addr,int addrlen,unsigned char* buf ,int count)
 {
 int i;
-int j;
 
 	
 	unsigned char value;
 		//start signal
-		for(i=0;i<count;i++)
-	{
 		i2c_start();
-		for(j=0;j<addrlen;j++)
+		for(i=0;i<addrlen;i++)
 		{
 		//write slave_addr
-		i2c_send(addr[j]);
+		i2c_send(addr[i]);
 		if(!i2c_rec_ack())
-			return 0;
+			goto out;
 		}
-
-		i2c_send(reg);
-		if(!i2c_rec_ack())
-			return 0;
 
 		//repeat start
 		i2c_start();
 		//write slave_addr+1
 		i2c_send(addr[0]|0x1);
 		if(!i2c_rec_ack())
-			return 0;
+			goto out;
 		//read data
-		buf[i]=i2c_rec();	
-//		i2c_send_ack(1);//***add in***//
+		for(i=0;i<count;i++)
+		{
+			buf[i]=i2c_rec();	
+			i2c_send_ack(i==count-1);
+		}
+out:
 		i2c_stop();
-		
-		reg++;
-	}
 
 	return count;
 }
 
-unsigned char i2c_send_s(unsigned char *addr,int addrlen,unsigned char reg,unsigned char * buf ,int count)
+unsigned char i2c_send_s(unsigned char *addr,int addrlen,unsigned char * buf ,int count)
 {
-int i;
-int j;
-	for(i=0;i<count;i++)
-	{	
+	int i;
 		i2c_start();	
-		for(j=0;j<addrlen;j++)
+		for(i=0;i<addrlen;i++)
 		{
 		//write slave_addr
-		i2c_send(addr[j]);
+		i2c_send(addr[i]);
 		if(!i2c_rec_ack())
-			return 0;
+			goto out;
 		}
 
-		i2c_send(reg);
-		if(!i2c_rec_ack())
-			return 0;
+		for(i=0;i<count;i++)
+		{	
 
-		i2c_send(buf[i]);
-		if(!i2c_rec_ack())
-			return 0;
+			i2c_send(buf[i]);
+			if(!i2c_rec_ack())
+				break;
+		}
+
+	out:
 		i2c_stop();
-		reg++;
-	}
 	return 1;
 }
 
 
-unsigned char i2c_rec_b(unsigned char *addr,int addrlen,unsigned char reg,unsigned char* buf ,int count)
+unsigned char i2c_rec_b(unsigned char *addr,int addrlen,unsigned char* buf ,int count)
 {
-int i;
-int j;
-
-	
-	unsigned char value;
-		//start signal
-		i2c_start();
-		for(j=0;j<addrlen;j++)
-		{
-		//write slave_addr
-		i2c_send(addr[j]);
-		if(!i2c_rec_ack())
-			return 0;
-		}
-
-		i2c_send(reg);
-		if(!i2c_rec_ack())
-			return 0;
-
-		//repeat start
-		i2c_start();
-		//write slave_addr+1
-		i2c_send(addr[0]|0x1);
-		if(!i2c_rec_ack())
-			return 0;
-
-		for(i=0;i<count;i++)
-		{
-		//read data
-		buf[i]=i2c_rec();	
-//		i2c_send_ack(1);//***add in***//
-		
-		}
-		i2c_stop();
-
-	return count;
+	return i2c_rec_s(addr,addrlen,buf,count);
 }
-unsigned char i2c_send_b(unsigned char *addr,int addrlen,unsigned char reg,unsigned char * buf ,int count)
+
+unsigned char i2c_send_b(unsigned char *addr,int addrlen,unsigned char * buf ,int count)
 {
-int i;
-int j;
-		i2c_start();	
-		for(j=0;j<addrlen;j++)
-		{
-		//write slave_addr
-		i2c_send(addr[j]);
-		if(!i2c_rec_ack())
-			return 0;
-		}
-
-		i2c_send(reg);
-		if(!i2c_rec_ack())
-			return 0;
-
-	for(i=0;i<count;i++)
-	{	
-
-		i2c_send(buf[i]);
-		if(!i2c_rec_ack())
-			return 0;
-	}
-		i2c_stop();
-	return count;
+	return i2c_send_b(addr,addrlen,buf,count);
 }
 //----------------------
 /*
  * 0 single: 每次读一个
  * 1 smb block
  */
-int tgt_i2cread(int type,unsigned char *addr,int addrlen,unsigned char reg,unsigned char *buf,int count)
+int tgt_i2cread(int type,unsigned char *addr,int addrlen,unsigned char *buf,int count)
 {
 int i;
 tgt_i2cinit();
@@ -357,10 +288,10 @@ memset(buf,-1,count);
 switch(type)
 {
 case I2C_SINGLE:
-return i2c_rec_s(addr,addrlen,reg,buf,count);
+return i2c_rec_s(addr,addrlen,buf,count);
 break;
 case I2C_BLOCK:
-return i2c_rec_b(addr,addrlen,reg,buf,count);
+return i2c_rec_b(addr,addrlen,buf,count);
 break;
 
 default: return 0;break;
@@ -368,16 +299,16 @@ default: return 0;break;
 return 0;
 }
 
-int tgt_i2cwrite(int type,unsigned char *addr,int addrlen,unsigned char reg,unsigned char *buf,int count)
+int tgt_i2cwrite(int type,unsigned char *addr,int addrlen,unsigned char *buf,int count)
 {
 tgt_i2cinit();
 switch(type&0xff)
 {
 case I2C_SINGLE:
-i2c_send_s(addr,addrlen,reg,buf,count);
+i2c_send_s(addr,addrlen,buf,count);
 break;
 case I2C_BLOCK:
-return i2c_send_b(addr,addrlen,reg,buf,count);
+return i2c_send_b(addr,addrlen,buf,count);
 break;
 case I2C_SMB_BLOCK:
 break;

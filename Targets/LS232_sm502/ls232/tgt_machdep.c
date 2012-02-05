@@ -533,7 +533,7 @@ static inline unsigned char CMOS_READ(unsigned char addr)
 	volatile int tmp;
 	pcitag_t tag;
 	unsigned char value;
-	char i2caddr[]={(unsigned char)0x64};
+	char i2caddr[]={(unsigned char)0x64, 0};
 	if(addr >= 0x0a)
 		return 0;
 	switch(addr)
@@ -561,10 +561,13 @@ static inline unsigned char CMOS_READ(unsigned char addr)
 		
 	}
 		
-	tgt_i2cread(I2C_SINGLE,i2caddr,1,0xe<<4,&value,1);
+	i2caddr[1] = 0xe<<4;
+	tgt_i2cread(I2C_SINGLE,i2caddr,2,&value,1);
 		value = value|0x20;
-	tgt_i2cwrite(I2C_SINGLE,i2caddr,1,0xe<<4,&value,1);
-	tgt_i2cread(I2C_SINGLE,i2caddr,1,addr<<4,&val,1);
+	i2caddr[1] = 0xe<<4;
+	tgt_i2cwrite(I2C_SINGLE,i2caddr,2,&value,1);
+	i2caddr[1] = addr<<4;
+	tgt_i2cread(I2C_SINGLE,i2caddr,2,&val,1);
 	tmp1 = ((val>>4)&0x0f)*10;
 	tmp2  = val&0x0f;
 	val = tmp1 + tmp2;
@@ -576,7 +579,7 @@ static inline void CMOS_WRITE(unsigned char val, unsigned char addr)
 	char a;
   	unsigned char tmp1,tmp2;
 	volatile int tmp;
-	char i2caddr[]={(unsigned char)0x64};
+	char i2caddr[]={(unsigned char)0x64, 0};
 	tmp1 = (val/10)<<4;
 	tmp2  = (val%10);
 	val = tmp1|tmp2;
@@ -609,10 +612,13 @@ static inline void CMOS_WRITE(unsigned char val, unsigned char addr)
 	{
 		unsigned char value;
 	
-		tgt_i2cread(I2C_SINGLE,i2caddr,1,0xe<<4,&value,1);
+		i2caddr[1] = 0xe<<4;
+		tgt_i2cread(I2C_SINGLE,i2caddr,2,&value,1);
 		value = value|0x20;
-		tgt_i2cwrite(I2C_SINGLE,i2caddr,1,0xe<<4,&value,1);
-		tgt_i2cwrite(I2C_SINGLE,i2caddr,1,addr<<4,&val,1);
+		i2caddr[1] = 0xe<<4;
+		tgt_i2cwrite(I2C_SINGLE,i2caddr,2,&value,1);
+		i2caddr[1] = addr<<4;
+		tgt_i2cwrite(I2C_SINGLE,i2caddr,2,&val,1);
 	}
 }
 

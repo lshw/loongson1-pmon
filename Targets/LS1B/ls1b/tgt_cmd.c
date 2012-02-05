@@ -16,7 +16,7 @@ extern int (*syscall2)(int type,long long addr,union commondata *mydata);
 //----------------------------------------
 
 static int syscall_i2c_type,syscall_i2c_addrlen;
-static char syscall_i2c_addr[2];
+static char syscall_i2c_addr[3];
 
 static int i2c_read_syscall(int type,long long addr,union commondata *mydata)
 {
@@ -24,7 +24,8 @@ char c;
 switch(type)
 {
 case 1:
-tgt_i2cread(syscall_i2c_type,syscall_i2c_addr,syscall_i2c_addrlen,addr,&mydata->data1,1);
+syscall_i2c_addr[syscall_i2c_addrlen] = addr;
+tgt_i2cread(syscall_i2c_type,syscall_i2c_addr,syscall_i2c_addrlen+1,&mydata->data1,1);
 
 break;
 
@@ -39,7 +40,8 @@ char c;
 switch(type)
 {
 case 1:
-tgt_i2cwrite(syscall_i2c_type,syscall_i2c_addr,syscall_i2c_addrlen,addr,&mydata->data1,1);
+syscall_i2c_addr[syscall_i2c_addrlen] = addr;
+tgt_i2cwrite(syscall_i2c_type,syscall_i2c_addr,syscall_i2c_addrlen+1,&mydata->data1,1);
 
 break;
 
@@ -85,12 +87,28 @@ sprintf(buf,"d1 0 10");
 do_cmd(buf);
 }
 }
+
+static int ehcitest(int argc,char **argv)
+{
+char str[100];
+*(volatile int *)0xbfd00424 |= 0x80000000;
+*(volatile int *)0xbfe00010 = 2;
+*(volatile int *)0xbfe00054 = 0x1000;
+*(volatile int *)0xbfe00010 = 1;
+*(volatile int *)0xbfe00050 = 1;
+delay(1000000);
+strcpy(str,"pcs 0;d4 0xbfe00000 40;");
+do_cmd(str);
+	return 0;
+}
+
 extern void spi_read_w25x_id();
 static const Cmd Cmds[] =
 {
 	{"MyCmds"},
 	{"i2cs","0 for rtc,1 for ics950220", 0, "test i2c", i2cs, 0, 99, CMD_REPEAT},
 	{"fcrtest","", 0, "fcrtest", fcrtest, 0, 99, CMD_REPEAT},
+	{"ehcitest","", 0, "ehcitest",ehcitest, 0, 99, CMD_REPEAT},
 	{"spi_read_w25x_id","",0,"spi_read_w25x_id",spi_read_w25x_id,0,99,CMD_REPEAT},
 	{0, 0}
 };
