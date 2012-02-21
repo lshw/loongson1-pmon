@@ -54,7 +54,12 @@ extern char           *heaptop;
 #define RTC_DATA_REG 0x71
 #define RTC_NVRAM_BASE		0x0e
 
-#define COM1_BASE_ADDR	0xbfe48000		//1B uart8 主串口
+#ifndef UART_BASE_ADDR
+#define COM1_BASE_ADDR	0xbfe48000
+#else
+#define COM1_BASE_ADDR	UART_BASE_ADDR
+#endif
+//#define COM1_BASE_ADDR	0xbfe48000		//1B uart8 主串口
 #define COM2_BASE_ADDR	0xbfd003f8
 #define COM3_BASE_ADDR	0xbfe40000		//1B uart0
 //#define COM3_BASE_ADDR	0xbfe4c000		//1B uart9
