@@ -54,6 +54,7 @@
 #include <machine/cpu.h>
 #include <machine/pio.h>
 #include "pflash.h"
+#include "nand.h"
 #include "dev/pflash_tgt.h"
 
 #include "include/fcr.h"
@@ -274,7 +275,10 @@ initmips(unsigned int memsz)
 	SBD_DISPLAY("BEV0",0);
 
 	printf("BEV in SR set to zero.\n");
+
+#if NNAND
 	ls1g_soc_nand_init();
+#endif
 
 #ifdef  MEMSCAN	
 	memscan();
@@ -390,8 +394,10 @@ tgt_devconfig(void)
 	psaux_init();
 #endif
 //	extern   void norflash_init();
-//	norflash_init();           //lxy
-   printf("devconfig done.\n");
+#ifdef NORFLASH_PARTITION
+	norflash_init();           //lxy
+#endif
+	printf("devconfig done.\n");
 }
 
 extern int test_icache_1(short *addr);

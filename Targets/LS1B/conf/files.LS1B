@@ -22,8 +22,8 @@ file	sys/dev/gmac/if_gmac.c gmac
 
 file	Targets/LS1B/dev/can.c
 file    Targets/LS1B/dev/spi_w.c
-file    sys/dev/nand/ls1g-nand.c  nand
-file	Targets/LS1B/dev/nand_ops.c nand
+file    sys/dev/nand/ls1g-nand.c  nand needs-flag
+file	Targets/LS1B/dev/nand_ops.c nand needs-flag
 
 #file 	sys/dev/phy/bcm5461config.c
 

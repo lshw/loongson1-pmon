@@ -81,7 +81,7 @@ option		APB_CLK=33333333
 option 		CPU_MULT=8
 option 		DDR_MULT=5
 option		CONS_BAUD=B115200
-option		UART_BASE_ADDR=0xbfe40000
+option		UART_BASE_ADDR=0xbfe4c000
 select		ext2
 select 		yaffsfs
 #select		fatfs
@@ -189,7 +189,8 @@ select fatfs
 select gzip
 option INPUT_FROM_BOTH
 option OUTPUT_TO_BOTH
-select nand
+#select nand
+select nor_flash
 select cmd_xyzmodem
 select loop
 select raw_ether
