@@ -150,6 +150,7 @@ extern char MipsException[], MipsExceptionEnd[];
 
 unsigned char hwethadr[6];
 static unsigned int pll_reg0,pll_reg1;
+static unsigned int xres,yres,depth;
 
 void initmips(unsigned int memsz);
 
@@ -891,6 +892,28 @@ tgt_mapenv(int (*func) __P((char *, char *)))
 	sprintf(env, "0x%08x",(pll_reg1=*(volatile int *)0xbfe78034));
 	(*func)("pll_reg1", env);
 
+	bcopy(&nvram[XRES_OFFS], &xres, 2);
+	bcopy(&nvram[YRES_OFFS], &yres, 2);
+	bcopy(&nvram[DEPTH_OFFS], &depth, 1);
+
+	if(xres>0 && xres<2000)
+	{
+	sprintf(env, "%d",xres);
+	(*func)("xres", env);
+	}
+
+	if(yres>0 && yres<2000)
+	{
+	sprintf(env, "%d",yres);
+	(*func)("yres", env);
+	}
+
+	if(depth == 16 || depth == 32)
+	{
+	sprintf(env, "%d",depth);
+	(*func)("depth", env);
+	}
+
 #ifndef NVRAM_IN_FLASH
 	free(nvram);
 #endif
@@ -1094,6 +1117,12 @@ tgt_setenv(char *name, char *value)
 		pll_reg0=strtoul(value,0,0);
 	else if(strcmp("pll_reg1",name) == 0)
 		pll_reg1=strtoul(value,0,0);
+	else if(strcmp("xres",name) == 0)
+		xres=strtoul(value,0,0);
+	else if(strcmp("yres",name) == 0)
+		yres=strtoul(value,0,0);
+	else if(strcmp("depth",name) == 0)
+		depth=strtoul(value,0,0);
 	else {
 		ep = nvrambuf+2;
 		if(*ep != '\0') {
@@ -1147,6 +1176,9 @@ tgt_setenv(char *name, char *value)
 	bcopy(hwethadr, &nvramsecbuf[ETHER_OFFS], 6);
 	bcopy(&pll_reg0, &nvramsecbuf[PLL_OFFS], 4);
 	bcopy(&pll_reg1, &nvramsecbuf[PLL_OFFS + 4], 4);
+	bcopy(&xres, &nvramsecbuf[XRES_OFFS], 2);
+	bcopy(&yres, &nvramsecbuf[YRES_OFFS], 2);
+	bcopy(&depth, &nvramsecbuf[DEPTH_OFFS], 1);
 #ifdef NVRAM_IN_FLASH
         if(fl_erase_device(nvram, NVRAM_SECSIZE, FALSE)) {
 		printf("Error! Nvram erase failed!\n");
