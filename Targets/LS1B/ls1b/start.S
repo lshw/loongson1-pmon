@@ -459,24 +459,25 @@ cpu_win_fixup:
 
 
 #	ddr2config by cww 20090901
-	li      msize,0x04000000
 	PRINTSTR("DDR2 config begin_2\r\n")
 	bal     ddr2_config
 	nop
 	PRINTSTR("DDR2 config end\r\n")
 
-#ifdef CONFIG_DDR16BIT
-/*16bit ddr*/ 
 	li a0,0xbfd00000
-	li a1,0x110000
 	lw a2,0x424(a0);
-	or a2,a1
-	sw a2,0x424(a0);
+#ifdef CONFIG_DDR16BIT
+/*16bit ddr and disable conf*/ 
+	li a1,0x110000
+        li      msize,0x04000000
+#else
+/*disable conf*/
+	li a2,0x100000
+        li      msize,0x08000000
 #endif
+	or a2,a1
 
 /*100M phy*/
-	li a0,0xbfd00000
-	lw a2,0x424(a0);
 	ori a2,0xf
 #ifndef CONFIG_PHY100M
 	xor a2,0xf	
