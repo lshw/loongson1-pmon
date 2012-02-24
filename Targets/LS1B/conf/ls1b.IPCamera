@@ -66,7 +66,7 @@ select		cmd_misc		# Reboot & Flush etc.
 select		cmd_tr			# Host port-through command
 select		cmd_devls		# Device list
 select		cmd_set			# As cmd_env but not req. cmd_hist
-select		cmd_testdisk
+#select		cmd_testdisk
 select		cmd_test
 #select		cmd_testfire
 select		pmon_zmodem_rz
@@ -89,9 +89,9 @@ select 		yaffsfs
 option 	    MY40IO
 #option 		GC300
 #select      gpu300_compile
-select 		mod_framebuffer
+#select 		mod_framebuffer
 #select		mod_x86emu_int10
-select		mod_vgacon
+#select		mod_vgacon
 option		NOPCINAMES		# Save some space for x86emu
 #option		FASTBOOT
 #select	    vt82c686        #via686a/b code
@@ -145,8 +145,15 @@ pci*		at pcibr?
 #sd*		at scsibus? target ? lun ? 
 #cd*		at scsibus? target ? lun ? 
 
-#### Networking Devices
+#### IDE controllers
+#pciide* 	at pci ? dev ? function ? flags 0x0000
 
+#### IDE hard drives
+#wd*		at pciide? channel ? drive ? flags 0x0000
+
+#option WDC_NORESET
+
+#### Networking Devices
 #syn0		at localbus0
 #syn1		at localbus0
 #option GMAC_PHY_BASE=1
@@ -197,7 +204,7 @@ select cmd_xyzmodem
 #option VGA_MEM_BASE=0xb5000000
 #option VGA_MEM_BASE=0xb7f00000
 #option		X320x240
-option		X480x272
+#option		X480x272
 #option		X640x480
 #option		X640x640
 #option		X640x768
@@ -213,15 +220,13 @@ option		X480x272
 #option		X1024x768
 #option		X1280x800
 #option		X1440x900
-#option 		CONFIG_VIDEO_12BPP
-#option 		CONFIG_VIDEO_15BPP
-#option  CONFIG_VIDEO_LOGO
+#option		CONFIG_VIDEO_LOGO
 #option		CONFIG_VIDEO_BMP_LOGO
-#option 		CONFIG_VIDEO_12BPP
-#option 		CONFIG_VIDEO_15BPP
-option 	CONFIG_VIDEO_16BPP
-#option 		CONFIG_VIDEO_24BPP
-#option 		CONFIG_VIDEO_32BPP
+#option		CONFIG_VIDEO_12BPP
+#option		CONFIG_VIDEO_15BPP
+#option 	CONFIG_VIDEO_16BPP
+#option		CONFIG_VIDEO_24BPP
+#option		CONFIG_VIDEO_32BPP
 #option		CONFIG_VGA_MODEM
 #option		CONFIG_VIDEO_SW_CURSOR
 
@@ -232,4 +237,3 @@ option		CONFIG_FB_DYN
 option		CONFIG_DDR16BIT
 option		CONFIG_PHY100M
 option		CONFIG_CHINESE
-

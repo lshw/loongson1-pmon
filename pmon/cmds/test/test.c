@@ -444,8 +444,10 @@ static const Cmd Cmds[] =
 {
 	{"MyCmds"},
 	{"test","val",0,"hardware test",cmd_test,0,99,CMD_REPEAT},
+#if NMOD_VGACON
 	{"LCD0","", 0, "LCD0", lcd0, 0, 99, CMD_REPEAT},
 	{"LCD1","", 0, "LCD1", lcd1, 0, 99, CMD_REPEAT},
+#endif
 //	{"serial","val",0,"hardware test",cmd_serial,0,99,CMD_REPEAT},
 	{0,0}
 };

@@ -2,7 +2,7 @@
 #
 # Bonito Target specific files
 #
-file	Targets/LS1B/ls1b/dc.c
+file	Targets/LS1B/ls1b/dc.c			mod_framebuffer
 file	Targets/LS1B/pci/pci_machdep.c
 file	Targets/LS1B/ls1b/tgt_machdep.c
 file	Targets/LS1B/dev/i2c.c
