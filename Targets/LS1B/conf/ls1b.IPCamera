@@ -26,7 +26,7 @@ option		IPCAMERA
 # Platform options
 #
 option		MIPS
-option		INET
+#option		INET
 
 select		mod_flash_amd		# AMD flash device programming
 select		mod_flash_intel		# intel flash device programming
@@ -51,7 +51,7 @@ select		cmd_mycmd_debug #test cache and TLB
 select		ramfiles
 select		cmd_newmt
 select		cmd_cache		# Cache enabling
-#select		cmd_call		# Call a function command
+select		cmd_call		# Call a function command
 select		cmd_date		# Time of day command
 select		cmd_env			# Full blown environment command set
 select		cmd_flash		# Flash programming cmds
@@ -107,7 +107,7 @@ option		NOSNOOP			# Caches are no-snooping
 option		HAVE_TOD		# Time-Of-Day clock
 option		HAVE_NVENV		#  Platform has non-volatile env mem
 #option		HAVE_LOGO		# Output splash logo
-option		USE_SUPERIO_UART
+#option		USE_SUPERIO_UART
 #option		USE_LEGACY_RTC
 #option		GODSONEV2A
 #option		LINUX_PC
@@ -128,7 +128,7 @@ option		NORFLASH_PARTITION
 #
 mainbus0        at root
 localbus0	at mainbus0
-loopdev0	at mainbus0
+#loopdev0	at mainbus0
 #fd0         at mainbus0
 pcibr*		at mainbus0
 #pcibr1		at mainbus0
@@ -147,12 +147,12 @@ pci*		at pcibr?
 
 #### Networking Devices
 
-syn0		at localbus0
+#syn0		at localbus0
 #syn1		at localbus0
-option GMAC_PHY_BASE=1
-option GMAC0_ADDR=0xbfe10000
-option GMAC1_ADDR=0xbfe20000
-select      gmac
+#option GMAC_PHY_BASE=1
+#option GMAC0_ADDR=0xbfe10000
+#option GMAC1_ADDR=0xbfe20000
+#select      gmac
 #option		GMAC
 #gt0		at localbus? base 4
 #gt1		at localbus? base 5
@@ -176,7 +176,7 @@ select		mod_usb_kbd
 
 
 #### Pseudo devices
-pseudo-device	loop	1	# network loopback
+#pseudo-device	loop	1	# network loopback
 
 #option HAVE_NB_SERIAL
 #option USE_ENVMAC
@@ -192,8 +192,8 @@ option OUTPUT_TO_BOTH
 #select nand
 select nor_flash
 select cmd_xyzmodem
-select loop
-select raw_ether
+#select loop
+#select raw_ether
 #option VGA_MEM_BASE=0xb5000000
 #option VGA_MEM_BASE=0xb7f00000
 #option		X320x240
@@ -225,12 +225,11 @@ option 	CONFIG_VIDEO_16BPP
 #option		CONFIG_VGA_MODEM
 #option		CONFIG_VIDEO_SW_CURSOR
 
-select		cmd_call		# Call a function command
 select		ide
 option		wait_key	#lxy
-#option HAVE_MUT_COM		#lxy
-option	CONFIG_FB_DYN
-option	CONFIG_DDR16BIT
-option CONFIG_PHY100M
-#option		CONFIG_CHINESE
+#option		HAVE_MUT_COM		#lxy
+option		CONFIG_FB_DYN
+option		CONFIG_DDR16BIT
+option		CONFIG_PHY100M
+option		CONFIG_CHINESE
 

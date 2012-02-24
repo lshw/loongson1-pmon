@@ -1726,11 +1726,13 @@ static const Cmd Cmds[] =
 	{"testst","n",0,"",cmd_testst,0,99,CMD_REPEAT},
 #endif
 #endif
+#ifdef INET /*THF*/
 	{"ifconfig","ifname",0,"ifconig fx0 [up|down|remove|stat|setmac|readrom|setrom|addr [netmask]",cmd_ifconfig,2,99,CMD_REPEAT},
 	{"ifup","ifname",0,"ifup fxp0",cmd_ifup,2,99,CMD_REPEAT},
 	{"ifdown","ifname",0,"ifdown fxp0",cmd_ifdown,2,99,CMD_REPEAT},
 	{"rtlist","",0,"rtlist",cmd_rtlist,0,99,CMD_REPEAT},
 	{"rtdel","",0,"rtdel",cmd_rtdel,0,99,CMD_REPEAT},
+#endif
 	{"sleep","ms",0,"sleep ms",cmd_sleep,2,2,CMD_REPEAT},
 	{"sleep1","ms",0,"sleep1 s",cmd_sleep1,2,2,CMD_REPEAT},
 	{"memcpy","src dst count",0,"mymemcpy src dst count",cmd_mymemcpy,0,99,CMD_REPEAT},

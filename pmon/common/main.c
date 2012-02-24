@@ -611,10 +611,10 @@ dbginit (char *adr)
 	SBD_DISPLAY ("SBDD", CHKPNT_SBDD);
 	tgt_devinit();
 
-#ifdef INET
+//#ifdef INET
 	SBD_DISPLAY ("NETI", CHKPNT_NETI);
 	init_net (1);
-#endif
+//#endif
 
 #if NCMD_HIST > 0
 	SBD_DISPLAY ("HSTI", CHKPNT_HSTI);

@@ -1326,6 +1326,8 @@ tgt_netpoll(void)
 
 #else
 extern void longjmp(label_t *, int);
+/* THF */
+/*
 void gsignal(label_t *jb, int sig);
 void
 gsignal(label_t *jb, int sig)
@@ -1334,6 +1336,7 @@ gsignal(label_t *jb, int sig)
 		longjmp(jb, 1);
 	}
 };
+*/
 
 int	netopen (const char *, int);
 int	netread (int, void *, int);
