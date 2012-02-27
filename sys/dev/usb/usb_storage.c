@@ -72,8 +72,8 @@
 #include "part.h"
 #include "scsi.h"
 
-//#undef USB_STOR_DEBUG
-#define USB_STOR_DEBUG
+#undef USB_STOR_DEBUG
+//#define USB_STOR_DEBUG
 #undef BBB_COMDAT_TRACE
 #undef BBB_XPORT_TRACE
 
@@ -152,7 +152,7 @@ typedef struct {
 } umass_bbb_csw_t;
 #define UMASS_BBB_CSW_SIZE	13
 
-#define USB_MAX_STOR_DEV 3
+
 static int usb_max_devs = 0; /* number of highest available usb device */
 
 static block_dev_desc_t usb_dev_desc[USB_MAX_STOR_DEV];
@@ -1331,7 +1331,7 @@ static void usb_attach(struct device *parent, struct device *self, void *aux)
 	struct usb_device * dev = aux;
 	dev->match = self;
 	dev->destruct = storage_free;
-//	usb_storage_notify(dev);
+	usb_storage_notify(dev);
 }
 
 struct cfattach usb_ca = {
