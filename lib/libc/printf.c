@@ -41,8 +41,11 @@ printf (const char *fmt, ...)
     int             len;
     va_list	    ap;
 
+#ifndef FAST_STARTUP
     va_start(ap, fmt);
     len = vfprintf (stdout, fmt, ap);
     va_end(ap);
+#endif
+    
     return (len);
 }

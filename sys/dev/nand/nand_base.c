@@ -2173,6 +2173,14 @@ static void nand_set_defaults(struct nand_chip *chip, int busw)
 
 }
 
+
+#ifdef FAST_STARTUP
+#define LP_OPTIONS (NAND_SAMSUNG_LP_OPTIONS | NAND_NO_READRDY | NAND_NO_AUTOINCR | NAND_SKIP_BBTSCAN)
+struct nand_flash_dev nand_flash_ids_1[] = {
+	{"NAND 128MiB 3,3V 8-bit",	0xF1, 0, 128, 0, LP_OPTIONS},
+};
+#endif
+
 /*
  * Get the flash and manufacturer id and lookup if the type is supported
  */
@@ -2182,6 +2190,21 @@ static struct nand_flash_dev *nand_get_flash_type(struct mtd_info *mtd,
 {
 	struct nand_flash_dev *type = NULL;
 	int i, dev_id, maf_idx;
+	
+	
+#ifdef FAST_STARTUP
+	type = &nand_flash_ids_1;
+	*maf_id	= 0xec;
+	dev_id 	= 0xf1;
+	if (!mtd->name)
+		mtd->name = type->name;
+	chip->chipsize = 4 << 20;
+	mtd->erasesize = 128 * 1024;
+	mtd->writesize = 2 * 1024;
+	mtd->oobsize = 64;
+	busw = 0;
+	
+#else
 
 	/* Select the device */
 	chip->select_chip(mtd, 0);
@@ -2238,6 +2261,7 @@ static struct nand_flash_dev *nand_get_flash_type(struct mtd_info *mtd,
 		mtd->oobsize = mtd->writesize / 32;
 		busw = type->options & NAND_BUSWIDTH_16;
 	}
+#endif
 
 	/* Try to identify manufacturer */
 	for (maf_idx = 0; nand_manuf_ids[maf_idx].id != 0x0; maf_idx++) {

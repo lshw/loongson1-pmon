@@ -73,8 +73,8 @@ asm volatile(
 #endif
 void initmips(unsigned int msize,int dmsize,int dctrl)
 {
-	long *edata=(void *)0x800c8150;
-	long *end=(void *)0x800e2820;
+	long *edata=(void *)0x80071090;
+	long *end=(void *)0x8007c5f0;
 	int *p;
 	int debug=(msize==0);
 //	CPU_TLBClear();
@@ -101,7 +101,7 @@ void initmips(unsigned int msize,int dmsize,int dctrl)
 void realinitmips(unsigned int msize)
 {
 	     asm ("li  $29,0x80010000-0x4000;\n" \
-"		       li $2,0x8008a6bc;\n" \
+"		       li $2,0x8004a938;\n" \
 "			   move $4,%0;\n" \
 "			   jalr $2;\n" \
 "			   nop;\n" \

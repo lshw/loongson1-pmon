@@ -250,6 +250,13 @@ initmips(unsigned int memsz)
 	 */
 	memorysize = memsz > 256 ? 256 << 20 : memsz << 20;
 	memorysize_high = memsz > 256 ? (memsz - 256) << 20 : 0;
+	
+	
+#ifdef FAST_STARTUP
+	cpuinfotab[0] = &DBGREG;
+	fast_startup();	//lxy
+#endif	
+	
 
 	/*
 	 *  Probe clock frequencys so delays will work properly.

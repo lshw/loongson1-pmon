@@ -583,6 +583,53 @@ autorun(char *s)
 	}
 }
 #endif
+
+
+void fast_startup()		//lxy
+{
+extern	int vga_available;
+#if NMOD_FRAMEBUFFER > 0 
+	unsigned long fbaddress;
+#endif
+
+	__init();
+	
+	CpuOnboardCacheOn = 1;
+	CpuExternalCacheOn = 1;	
+	CPU_ConfigCache();
+
+	vminit();
+	kmeminit();
+	init_proc ();
+	
+#if NMOD_FRAMEBUFFER > 0
+	printf("begin fb_init\n");
+	fbaddress = dc_init();
+	fbaddress |= 0xa0000000;
+#ifdef GC300
+extern unsigned long GPU_fbaddr;
+        GPU_fbaddr = fbaddress ;
+#endif
+	fb_init(fbaddress, 0);
+	printf("after fb_init\n");
+	vga_available = 1;
+#endif
+
+	printf ("lxy: begin nand_init....\n");
+//extern   void norflash_init();
+	ls1g_soc_nand_init();
+//	printf ("lxy: after norflash_init.....\n");
+	do_cmd("load /dev/mtd0");
+	printf ("lxy: after load mtd .....\n");
+	do_cmd("g console=ttyS2,115200 lpj=530432 root=/dev/mtdblock1 rw rootfstype=yaffs2 init=/sbin/init video=ls1bfb:1024x768-16@60 quiet");
+	printf ("lxy: after cmd_go .....\n");
+//	do_cmd("g console=ttyS0,115200 lpj=530432 rdinit=/linuxrc quiet");
+//	printf ("lxy: after go .....\n");
+
+}
+
+
+
 /*
  *  PMON2000 entrypoint. Called after initial setup.
  */

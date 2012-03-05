@@ -61,8 +61,12 @@
 #define TTYDBG(x)
 #endif
 
+#ifdef	FAST_STARTUP
+#define	PRINTSTR(x) 
+#else
 #define	PRINTSTR(x) \
 	.rdata;98: .asciz x; .text; la a0, 98b; bal stringserial; nop
+#endif
 
 /* Delay macro */
 #define	DELAY(count)	\
@@ -608,8 +612,14 @@ PRINTSTR("begin test\r\n");
 //#include "newtest.32/mydebug.S"
 bootnow:
 PRINTSTR("end test\r\n");
+
+
+#ifdef	FAST_STARTUP
+#define	FCALL_PRINTSTR(x) 
+#else
 #define	FCALL_PRINTSTR(x) \
 	.rdata;98: .asciz x; .text; la a0, 98b; la v0, stringserial; addu v0,s0;jalr v0; nop	
+#endif
 
 #undef BAL
 #define BAL(x) \

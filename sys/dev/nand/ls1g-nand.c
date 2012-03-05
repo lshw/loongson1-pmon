@@ -1243,14 +1243,19 @@ int ls1g_soc_nand_init(void)
 //	add_mtd_device(mtd_info,offset,size,name)
 //	add_mtd_device(ls1g_soc_mtd,0,0,"total");
 
-#if 1
+
+#ifdef FAST_STARTUP
+	add_mtd_device(ls1g_soc_mtd,0,0x400000,"kernel");
+#else
 	add_mtd_device(ls1g_soc_mtd,0,0x00e00000,"kernel");
 	add_mtd_device(ls1g_soc_mtd,0x00e00000,0x06700000,"os");
 	add_mtd_device(ls1g_soc_mtd,0x07500000,0x00b00000,"data");
+/*
 #else
 	add_mtd_device(ls1g_soc_mtd,0,0x00700000,"kernel");
 	add_mtd_device(ls1g_soc_mtd,0x00700000,0x06e00000,"os");
 	add_mtd_device(ls1g_soc_mtd,0x07500000,0x00b00000,"data");
+*/
 #endif
 
 //	find_good_part(ls1g_soc_mtd);
