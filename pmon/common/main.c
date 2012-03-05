@@ -400,8 +400,26 @@ main()
 {
 static int run=0;
 char *s;
+char *s1;
+int ret1 = 0;
 if(!run)
 {
+
+	s1 = getenv("update_usb");	//lxy
+	printf ("lxy: update_usb, %s !\n", s1);
+	if (!strcmp(s1, "yes"))
+	{
+		printf ("lxy: going to update vmlinuz .....\n");
+		ret1 = do_cmd("devcp /dev/fat@usb0/vmlinuz /dev/mtd3");	
+		if (ret1 != 0)
+			goto no_update;
+		setenv("al", "/dev/mtd3");
+		setenv("append", "console=ttyS2,115200 rdinit=/sbin/init");
+		setenv("update_usb", "no");
+	}
+
+no_update:
+
 	run=1;
 #ifdef AUTOLOAD
 	s = getenv ("al");

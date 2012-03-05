@@ -1,1 +1,0 @@
-#define	NMOD_FRAMEBUFFER	0

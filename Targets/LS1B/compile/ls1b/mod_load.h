@@ -1,4 +1,0 @@
-#define	NMOD_LOAD	0
-#define	NMOD_FASTLOAD	0
-#define	NMOD_ELFLOAD	1
-#define	NMOD_S3LOAD	1

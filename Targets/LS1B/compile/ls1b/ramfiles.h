@@ -1,1 +1,0 @@
-#define	NRAMFILES	1

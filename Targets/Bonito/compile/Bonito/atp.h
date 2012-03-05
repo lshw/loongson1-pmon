@@ -1,1 +1,0 @@
-#define	NATP	0

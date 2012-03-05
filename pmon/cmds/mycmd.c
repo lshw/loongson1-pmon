@@ -327,6 +327,8 @@ if(argc<3)return -1;
 #endif
 	close(fp0);
 	close(fp1);
+	if (nowcount == 0)	//lxy
+		return -1;
 return 0;
 }
 

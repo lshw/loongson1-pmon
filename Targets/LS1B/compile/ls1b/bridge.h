@@ -1,1 +1,0 @@
-#define	NBRIDGE	0

@@ -1,1 +1,0 @@
-#define	NPCIBR	1

@@ -1,6 +1,0 @@
-#define	NFLASH	0
-#define	NMOD_FLASH_AMD	1
-#define	NMOD_FLASH_INTEL	1
-#define	NMOD_FLASH_SST	1
-#define	NMOD_FLASH_WINBOND	0
-#define	NMOD_FLASH_ST	0

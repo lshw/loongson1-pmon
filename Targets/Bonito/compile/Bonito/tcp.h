@@ -1,1 +1,0 @@
-#define	NTCP	0
