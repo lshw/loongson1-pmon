@@ -254,7 +254,7 @@ initmips(unsigned int memsz)
 #ifdef ZIGBEE
 	/* 拉高GPIO52引脚 使能ZIGBEE模块供电 */
 	ls1b_gpio_direction_output(NULL, ZIGBEE_POWER);
-	gpio_set_value(LCDCS, 1);
+	gpio_set_value(ZIGBEE_POWER, 1);
 #endif
 	
 #ifdef FAST_STARTUP
