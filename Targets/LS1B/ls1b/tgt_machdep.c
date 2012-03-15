@@ -250,7 +250,12 @@ initmips(unsigned int memsz)
 	 */
 	memorysize = memsz > 256 ? 256 << 20 : memsz << 20;
 	memorysize_high = memsz > 256 ? (memsz - 256) << 20 : 0;
-	
+
+#ifdef ZIGBEE
+	/* 拉高GPIO52引脚 使能ZIGBEE模块供电 */
+	ls1b_gpio_direction_output(NULL, ZIGBEE_POWER);
+	gpio_set_value(LCDCS, 1);
+#endif
 	
 #ifdef FAST_STARTUP
 	cpuinfotab[0] = &DBGREG;

@@ -20,6 +20,7 @@ option		LS1BSOC
 option		GS232_SOC
 option		CPU_LS232
 option WAYBITS_HIGH
+option		ZIGBEE
 
 #
 # Platform options
@@ -83,7 +84,7 @@ option		CONS_BAUD=B115200
 option		UART_BASE_ADDR=0xbfe4c000
 select		ext2
 select 		yaffsfs
-#select		fatfs
+select		fatfs
 #select		mod_x86emu		# X86 emulation for VGA
 option 	    MY40IO
 #option 		GC300
@@ -182,7 +183,6 @@ pseudo-device	loop	1	# network loopback
 #select cmd_lwdhcp
 #select cmd_bootp
 #option FOR_GXEMUL
-select fatfs
 #option FLOATINGPT
 select gzip
 option INPUT_FROM_BOTH
@@ -228,3 +228,4 @@ option		CONFIG_DDR16BIT
 option		CONFIG_PHY100M
 option		CONFIG_CHINESE
 
+option		ZIGBEE_POWER=52
