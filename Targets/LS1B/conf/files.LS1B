@@ -12,6 +12,7 @@ file	Targets/LS1B/ls1b/tgt_cmd.c
 file	Targets/LS1B/ls1b/memscan.c
 file	Targets/LS1B/dev/hpet.c
 file	Targets/LS1B/dev/acpi.c
+file	Targets/LS1B/dev/gpio.c
 #sw
 file	sys/dev/gmac/synopGMAC_Host.c               gmac
 file	sys/dev/gmac/synopGMAC_Dev.c                gmac
