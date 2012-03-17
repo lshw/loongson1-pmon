@@ -229,3 +229,5 @@ option		CONFIG_PHY100M
 option		CONFIG_CHINESE
 
 option		ZIGBEE_POWER=52
+
+select		mod_ili9341
