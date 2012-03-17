@@ -11,7 +11,7 @@
 //========================================================================
 //#include "LCD_Driver_User.h"			//LCD底层驱动声明头文件
 #include "ili9341.h"					//LCD的配置文件，比如坐标轴是否倒置等的定义
-
+#include "ili9341_lcd_dis.h"
 
 #define dis_zero  0
 

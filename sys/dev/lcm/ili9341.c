@@ -8,6 +8,7 @@
 #include <stdio.h>
 
 #include "ili9341.h"
+#include "ili9341_lcd_dis.h"
 
 typedef unsigned int  u32;
 typedef unsigned short u16;
@@ -109,7 +110,6 @@ static int read_data16(void)
 {
 	u32 ret;
 	u32 tmp1;
-	u32 data1, data2;
 
 	ret = readl(0xbfd010d0);
 	ret |= 0xFFFF << 8;
