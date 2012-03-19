@@ -250,12 +250,6 @@ initmips(unsigned int memsz)
 	 */
 	memorysize = memsz > 256 ? 256 << 20 : memsz << 20;
 	memorysize_high = memsz > 256 ? (memsz - 256) << 20 : 0;
-
-#ifdef ZIGBEE
-	/* 拉高GPIO52引脚 使能ZIGBEE模块供电 */
-	ls1b_gpio_direction_output(NULL, ZIGBEE_POWER);
-	gpio_set_value(ZIGBEE_POWER, 1);
-#endif
 	
 #ifdef FAST_STARTUP
 	cpuinfotab[0] = &DBGREG;
@@ -304,6 +298,22 @@ initmips(unsigned int memsz)
 #ifdef	GMAC	
 	ls1f_gmac_init();
 #endif	
+
+#ifdef ZIGBEE
+	/* 拉高GPIO52引脚 使能ZIGBEE模块供电 */
+	ls1b_gpio_direction_output(NULL, ZIGBEE_POWER);
+	gpio_set_value(ZIGBEE_POWER, 1);
+	
+	ls1b_gpio_direction_output(NULL, MG323_RESET);
+	gpio_set_value(MG323_RESET, 1);						//MG323复位
+	ls1b_gpio_direction_output(NULL, MG323_TERM_ON);
+	gpio_set_value(MG323_TERM_ON, 0);
+	delay(1100000);
+	gpio_set_value(MG323_RESET, 0);
+	gpio_set_value(MG323_TERM_ON, 1);					//MG323启动
+	delay(1100000);
+	gpio_set_value(MG323_TERM_ON, 0);
+#endif
 
 	/*
 	 * Launch!

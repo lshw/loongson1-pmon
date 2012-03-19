@@ -228,6 +228,9 @@ option		CONFIG_DDR16BIT
 option		CONFIG_PHY100M
 option		CONFIG_CHINESE
 
+#GPIO
 option		ZIGBEE_POWER=52
+option		MG323_RESET=2	#MG323复位引脚
+option		MG323_TERM_ON=3	#MG323启动引脚
 
 select		mod_ili9341

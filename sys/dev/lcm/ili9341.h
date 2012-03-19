@@ -20,4 +20,12 @@
 
 #define LCD_INITIAL_COLOR	0x0000			//定义LCD屏初始化时的背景色
 
+void write_dot_lcd(unsigned int x,unsigned int y,unsigned int color);
+void fill_dot_lcd(unsigned int color);
+unsigned int get_dot_lcd(int x,int y);
+void clear_dot_lcd(int x,int y);
+void set_dot_addr_lcd(int x,int y);
+void lcd_fill(unsigned int a);
+void lcd_fill_s(unsigned int number,unsigned int color);
+
 #endif
