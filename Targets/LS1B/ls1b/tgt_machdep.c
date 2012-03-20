@@ -56,6 +56,7 @@
 #include "pflash.h"
 #include "nand.h"
 #include "dev/pflash_tgt.h"
+#include "include/gpio.h"
 
 #include "include/fcr.h"
 #include <pmon/dev/gt64240reg.h>
@@ -301,13 +302,10 @@ initmips(unsigned int memsz)
 
 #ifdef ZIGBEE
 	/* 拉高GPIO52引脚 使能ZIGBEE模块供电 */
-	ls1b_gpio_direction_output(NULL, ZIGBEE_POWER);
-	gpio_set_value(ZIGBEE_POWER, 1);
+	ls1b_gpio_direction_output(ZIGBEE_POWER, 1);
 	
-	ls1b_gpio_direction_output(NULL, MG323_RESET);
-	gpio_set_value(MG323_RESET, 1);						//MG323复位
-	ls1b_gpio_direction_output(NULL, MG323_TERM_ON);
-	gpio_set_value(MG323_TERM_ON, 0);
+	ls1b_gpio_direction_output(MG323_RESET, 1);//MG323复位
+	ls1b_gpio_direction_output(MG323_TERM_ON, 0);
 	delay(1100000);
 	gpio_set_value(MG323_RESET, 0);
 	gpio_set_value(MG323_TERM_ON, 1);					//MG323启动
