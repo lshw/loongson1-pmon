@@ -216,14 +216,14 @@ LEAF(CPU_ConfigCache232)
 	srl	t1,v0,16
 	andi	t1,7
 
-	sll	t2,t1
+	addiu	t1,1
+	mult	t2,t1
+	mflo	t2
 	sw	t2, CpuPrimaryInstCacheSize	# store cache size.
 
-	li	t2,1
-	sll	t2,t1
-	sw	t2, CpuNWayCache
-	sw	t2, CpuNWayICache
-	sw	t2, CpuCacheType		# Save cache attributes
+	sw	t1, CpuNWayCache
+	sw	t1, CpuNWayICache
+	sw	t1, CpuCacheType		# Save cache attributes
 	
 
 
@@ -244,12 +244,12 @@ LEAF(CPU_ConfigCache232)
 	srl	t1,v0,7
 	andi	t1,7
 
-	sll	t2,t1
+	addiu   t1,1
+	mult t2,t1
+	mflo t2
 	sw	t2, CpuPrimaryDataCacheSize	# store cache size.
 
-	li	t2,1
-	sll	t2,t1
-	sw	t2, CpuNWayDCache
+	sw	t1, CpuNWayDCache
 
 	
 	sw	zero, CpuSecondaryCacheSize
