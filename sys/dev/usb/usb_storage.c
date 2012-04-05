@@ -75,6 +75,7 @@
 #undef USB_STOR_DEBUG
 //#define USB_STOR_DEBUG
 #undef BBB_COMDAT_TRACE
+//#define BBB_COMDAT_TRACE
 #undef BBB_XPORT_TRACE
 
 #ifdef	USB_STOR_DEBUG

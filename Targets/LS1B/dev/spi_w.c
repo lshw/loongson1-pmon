@@ -1102,10 +1102,16 @@ void norflash_init(void)
 	nor_mtd->type		= MTD_NORFLASH;
 	nor_mtd->name		= "ls1b-nor";
 
-#if 1
+#if 1	//for bobodog program
+	add_mtd_device(nor_mtd, 0, 			0x80000, 	"pmon_nor");	
+	add_mtd_device(nor_mtd, 0x80000,	0x210000, 	"kernel_nor");
+	add_mtd_device(nor_mtd, 0x290000,	0x500000,	"fs_nor");
+	add_mtd_device(nor_mtd, 0x790000,	0x70000,	"data_nor");
+#if 0	//for finger program
 	add_mtd_device(nor_mtd, 0, 			0x80000, 	"pmon_nor");	
 	add_mtd_device(nor_mtd, 0x80000,	0x4a0000, 	"kernel_nor");
 	add_mtd_device(nor_mtd, 0x520000,	0x2e0000,	"data_nor");
+#endif
 #else
 	add_mtd_device(nor_mtd, 0, 			0x80000, 	"pmon_nor");	
 	add_mtd_device(nor_mtd, 0x80000,	0x2c0000, 	"kernel_nor");

@@ -33,6 +33,8 @@
 #define SET_SPI(idx,value) KSEG1_STORE8(SPI_REG_BASE+idx, value)
 #define GET_SPI(idx)    KSEG1_LOAD8(SPI_REG_BASE+idx)
 
+unsigned char sdhc_flag = 0;
+unsigned short resp[5];
 
 static unsigned char  flash_writeb_cmd(unsigned char value)
 {
@@ -58,12 +60,15 @@ static void spi_init0(void)
 	SET_SPI(FCR_SPSR, 0xc0);
 	//SPI Flash参数控制寄存器
 	SET_SPI(FCR_PARAM, 0x00);
+//	SET_SPI(FCR_PARAM, 0xf0);
 	//#define SPER      0x3	//外部寄存器
 	//spre:01 [2]mode spi接口模式控制 1:采样与发送时机错开半周期  [1:0]spre 与Spr一起设定分频的比率
 	SET_SPI(FCR_SPER, 0x05);
+//	SET_SPI(FCR_SPER, 0x07);
 	//SPI Flash片选控制寄存器
 	SET_SPI(FCR_SOFTCS, 0xbf);			//softcs
 	SET_SPI(FCR_SPCR, 0x5c);
+//	SET_SPI(FCR_SPCR, 0x53);
 }
 
 
@@ -147,8 +152,11 @@ static int read_delay = 20;
 #define DELAY_STEP 5
 unsigned short SD_Read(void)//Simulating SPI IO
 {
-	unsigned short ret = 0xff00 | flash_writeb_cmd(0xff);
-	if(read_delay) delay(read_delay); //need some delay
+	unsigned short ret;
+//	do {
+	ret = 0xff00 | flash_writeb_cmd(0xff);
+//	if(read_delay) delay(read_delay); //need some delay
+//	} while(ret == 0xffff);
 	return ret;
 }
 
@@ -245,20 +253,95 @@ unsigned int SD_Reset_Card(void)
 	return Response;
 }
 
+
+
+unsigned int SD_CMD_Write_Crc(unsigned int CMDIndex, unsigned long CMDArg, unsigned char Crc, unsigned int ResType, unsigned int CSLowRSV)
+{
+	//There are 7 steps need to do.(marked by [1]-[7])
+	unsigned int Response, Response2, CRC, MaximumTimes;
+	unsigned int cont;
+
+	Response2 = 0;	//响应
+	MaximumTimes = 10;
+	CRC = 0x0095;//0x0095 is only valid for CMD0
+	if (CMDIndex != 0) CRC = 0x00ff;
+
+	set_cs(0);//[1] CS Low
+	
+	SD_2Byte_Write(((CMDIndex|0x0040)<<8)+(CMDArg>>24));//[2] Transmit Command_Index & 1st Byte of Command_Argument.
+	SD_2Byte_Write((CMDArg&0x00ffff00)>>8);				//[2] 2nd & 3rd Byte of Command_Argument
+	SD_2Byte_Write(((CMDArg&0x000000ff)<<8)+Crc);		//[2] 4th Byte of Command_Argument & CRC only for CMD0
+
+	//[3] Do High
+	//[3] Restore Do to High Level
+	//[4] Provide 8 extra clock after CMD
+	flash_writeb_cmd(0xff);
+	//[5] wait response
+	switch (ResType)
+	{
+		case 1://R1
+		{
+			cont = 100;
+			do{
+				Response = SD_Read();
+				cont--;
+			}while ((Response == 0xffff) && (cont != 0));
+			break;
+		}
+		case 2://R1b
+		{
+			cont = 100;
+			do{
+				Response = SD_Read();
+				cont--;
+			}while ((Response == 0xffff) && (cont != 0));//Read R1 firstly
+			
+			cont = 100;
+			do{
+				Response2 = SD_Read()-0xff00;
+				cont--;
+			}
+			while ((Response2 != 0) && (cont != 0));//Wait until the Busy_Signal_Token is non-zero
+			break;	
+		}
+		case 3: Response = SD_2Byte_Read();break;//R2
+		case 4:		//R7
+			
+		resp[0] = SD_Read();
+		resp[1] = SD_Read();
+		resp[2] = SD_Read();
+		resp[3] = SD_Read();
+		resp[4] = SD_Read();
+		Response = resp[0];
+
+		printf ("resp= 0x%x, 0x%x, 0x%x, 0x%x, 0x%x !\n", resp[0], resp[1], resp[2], resp[3], resp[4]);
+			break;
+	}
+	
+	if (CSLowRSV == 0) set_cs(1);//[6] CS High (if the CMD has data block response CS should be kept low)
+	flash_writeb_cmd(0xff);
+	return Response;
+}
+
+
 //********************************************
 //Polling轮询 the card after reset
 unsigned int SD_Initiate_Card(void)
 {
 	unsigned int i,Response;
 	unsigned int cont;
+	sdhc_flag = 0;
 	
+
+	Response = SD_CMD_Write_Crc(0x0008, 0x000001aa, 0x87, 4, 0);	//lxy: check for voltage and partion
+
 	cont = 100;
 	while(cont){
 		for(i=0; i<30; i++)//The max initiation times is 10.
 		{
 			Response = SD_CMD_Write(0x0037,0x00000000,1,0);//Send CMD55	 CMD55——0x01（SD卡处于in-idle-state）
 			if (Response == 0xff01){
-				Response = SD_CMD_Write(0x0029,0x00000000,1,0);//Send ACMD41 ACMD41——0x00（SD卡跳出in-idle-state，完成初始化准备接受下一条指令）
+				Response = SD_CMD_Write(0x0029,0x40000000,1,0);//Send ACMD41 ACMD41——0x00（SD卡跳出in-idle-state，完成初始化准备接受下一条指令）//lxy: check HCS supported
 					if (Response == 0xff00) break;
 			}
 		}
@@ -362,6 +445,11 @@ unsigned int SD_Overall_Initiation(void)
 		PutPortraitChar(0,15,"No SD Card..",1);//Print MSG
 	#endif
 	}
+
+	Response = SD_CMD_Write_Crc(0x003a, 0x00000000, 0xfd, 4, 0);	//lxy: get ccs
+	if ((resp[1] & 0x40) == 0x40)
+		sdhc_flag = 1;
+
 
 	return Response_2;
 //	1111|1111||0000|0000 Response_2
@@ -608,7 +696,11 @@ static int sdcard_read (int fd, void *buf, size_t n)
 
 		indexbuf = &cachedbuffer[index*512];	
 		if(cachedaddr[index] != indexaddr)
-		Read_Single_Block(pos&~511, indexbuf);
+
+		if (sdhc_flag == 1)
+			Read_Single_Block(pos>>9, indexbuf);
+		else
+			Read_Single_Block(pos&~511, indexbuf);
 		cachedaddr[index] = indexaddr;
 
 		once = min(512 - (pos&511),left);
@@ -636,12 +728,20 @@ static int sdcard_write (int fd, const void *buf, size_t n)
 		unsigned char *indexbuf;
 		indexbuf = &cachedbuffer[index*512];	
 		if((cachedaddr[index] != indexaddr) && (pos&511))
-		Read_Single_Block(pos&~511, indexbuf);
+		if (sdhc_flag == 1)
+			Read_Single_Block(pos>>9, indexbuf);
+		else
+			Read_Single_Block(pos&~511, indexbuf);
 		cachedaddr[index] = indexaddr;
 
 		once = min(512 - (pos&511),left);
 		memcpy(indexbuf+(pos&511), buf, once);
-		Write_Single_Block(pos&~511, indexbuf);
+
+		if (sdhc_flag == 1)
+			Write_Single_Block(pos>>9, indexbuf);
+		else
+			Write_Single_Block(pos&~511, indexbuf);
+
 		buf += once;
 		pos += once;
 		left -= once;

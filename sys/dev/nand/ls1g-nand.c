@@ -313,7 +313,7 @@ static int ls1g_nand_verify_buf(struct mtd_info *mtd,const uint8_t *buf, int len
 	show_debug(info->data_buff,0x20);
 	while(len--){
 		if(buf[i++] != ls1g_nand_read_byte(mtd) ){
-			printk("?????????????????????????????????????????????????????verify error...\n\n");
+			printk("?????????????verify error..., i= %d !\n\n", i-1);
 			return -1;
 		}
 	}
@@ -422,9 +422,14 @@ static void nand_cache_wb(unsigned long base,unsigned long num)
     CPU_IOFlushDCache((base & 0x1fffffff)|0x80000000,num,1);
 }
 
+
+unsigned int data_bak[2112];
 static void dma_setup(unsigned int flags,struct ls1g_nand_info *info)
 {
 	int order;
+//	int k;
+//	unsigned int *data_uncache;
+
 	struct ls1g_nand_dma_desc *dma_base = (volatile struct ls1g_nand_dma_desc *)(info->drcmr_dat);
 	dma_base->orderad = (flags & DMA_ORDERAD)== DMA_ORDERAD ? info->dma_regs.orderad : info->dma_orderad;
 	dma_base->saddr = (flags & DMA_SADDR)== DMA_SADDR ? info->dma_regs.saddr : info->dma_saddr;
@@ -437,6 +442,16 @@ static void dma_setup(unsigned int flags,struct ls1g_nand_info *info)
 	/*flush cache before DMA operation*/
 	if((dma_base->cmd)&(0x1 << 12)){
 		nand_cache_wb((unsigned long)(info->data_buff),info->cac_size);
+#if 0
+		memcpy((unsigned char *)data_bak, info->data_buff, info->cac_size);
+		data_uncache = (unsigned int *)(((unsigned int)info->data_buff) | 0xa0000000);
+		printk ("data_uncache's addr= 0x%x ,data_buff's addr= 0x%x !\n", data_uncache, info->data_buff);
+		for (k=0; k<info->cac_size/4; k++)	//lxy
+		{
+			if (data_uncache[k] != data_bak[k])
+				printk ("lxy: cache flush fail......, 0x%x --> 0x%x !\n", data_uncache[k], data_bak[k]);
+		}
+#endif
 	}
 	nand_cache_wb((unsigned long)(info->drcmr_dat),0x20);
 
@@ -663,6 +678,13 @@ static void ls1g_nand_cmdfunc(struct mtd_info *mtd, unsigned command,int column,
 			nand_setup(NAND_ADDRL|NAND_ADDRH|NAND_OP_NUM|NAND_CMD,info);
 			dma_setup(DMA_LENGTH|DMA_CMD,info);
 			sync_dma(info);
+			while(!ls1g_nand_status(info)){		//lxy
+//				if(!(status_time--)){
+//					write_z_cmd;
+//					break;
+//				}
+				udelay(50);
+			}
 		break;
 		case NAND_CMD_RESET:
 			info->state = STATE_BUSY;
@@ -694,7 +716,7 @@ static void ls1g_nand_cmdfunc(struct mtd_info *mtd, unsigned command,int column,
 			nand_setup(NAND_ADDRL|NAND_ADDRH|NAND_OP_NUM|NAND_CMD,info);
 			status_time = STATUS_TIME_LOOP_E;
 			udelay(3000);    
-			while(!ls1g_nand_status(info)){
+			while(!ls1g_nand_status(info)){		//lxy
 				if(!(status_time--)){
 					write_z_cmd;
 					break;
@@ -734,6 +756,11 @@ static void ls1g_nand_cmdfunc(struct mtd_info *mtd, unsigned command,int column,
 			_NAND_SET_REG(0x0,0x21); 
 
 			while(((id_val_l |= _NAND_IDL) & 0xff)  == 0){
+				id_val_h = _NAND_IDH;
+			}
+
+			while (id_val_h == 0)	//lxy
+			{
 				id_val_h = _NAND_IDH;
 			}
 
@@ -1173,6 +1200,69 @@ static void nandwrite_test(int argc,char **argv)/*cmd addr(L,page num) timing op
 	}
 }
 
+void nand_oob_test()
+{
+#define	READ_LEN	(2048+64)
+
+	int k;
+	int start_addr = 0x6c54000;
+	unsigned char spi_buf[READ_LEN], flash_buf[READ_LEN], flash_buf1[READ_LEN];
+	volatile unsigned char *spi_p = ((volatile unsigned char *)(0xbf000000));
+	struct ls1g_nand_info *info = ls1g_soc_mtd->priv;
+	struct nand_chip *this = &info->nand_chip;
+	int err_flag=0;
+
+	for (k=0; k<READ_LEN; k++)
+	{
+		spi_buf[k] = *spi_p++;
+	}
+
+//	this->cmdfunc(ls1g_soc_mtd, NAND_CMD_READ0, 0, start_addr>>12);
+//	this->read_buf(ls1g_soc_mtd, flash_buf, READ_LEN);
+//	show_data(flash_buf, READ_LEN);
+
+	this->cmdfunc(ls1g_soc_mtd, NAND_CMD_ERASE1, 0, start_addr>>12);
+
+//	this->cmdfunc(ls1g_soc_mtd, NAND_CMD_READ0, 0, start_addr>>12);
+//	this->read_buf(ls1g_soc_mtd, flash_buf, READ_LEN);
+//	show_data(flash_buf, READ_LEN);
+
+	this->cmdfunc(ls1g_soc_mtd, NAND_CMD_SEQIN, 0, start_addr>>12);
+	this->write_buf(ls1g_soc_mtd, spi_buf, READ_LEN);
+	this->cmdfunc(ls1g_soc_mtd, NAND_CMD_PAGEPROG, -1, -1);
+
+	this->cmdfunc(ls1g_soc_mtd, NAND_CMD_READOOB, 2048, start_addr>>12);
+	this->read_buf(ls1g_soc_mtd, flash_buf, 64);
+	show_data(flash_buf, 64);
+
+//static void show_data(void * base,int num)
+
+	for (k=2048; k<64; k++)
+	{
+		if (spi_buf[k] != flash_buf[k-2048])
+		{
+			err_flag = 1;
+			printf ("\n%d: 0x%x --> 0x%x !\n", k, spi_buf[k], flash_buf[k]);
+		}
+	}
+	if (err_flag == 0)
+		printf("nandflash test ok !\n");
+
+	this->cmdfunc(ls1g_soc_mtd, NAND_CMD_READ0, 0, start_addr>>12);
+	this->read_buf(ls1g_soc_mtd, flash_buf1, READ_LEN);
+
+	for (k=0; k<READ_LEN; k++)
+	{
+		if (spi_buf[k] != flash_buf1[k])
+		{
+			err_flag = 1;
+			printf ("\n%d: 0x%x --> 0x%x !\n", k, spi_buf[k], flash_buf1[k]);
+		}
+	}
+	if (err_flag == 0)
+		printf("nandflash test ok !\n");
+}
+
 static const Cmd Cmds[] =
 {
 	{"MyCmds"},
@@ -1181,6 +1271,7 @@ static const Cmd Cmds[] =
 	{"nandreadid_gpio","val",0,"hardware test",nand_gpio_read_id,0,99,CMD_REPEAT},
 	{"nandreadid","val",0,"hardware test",nand_read_id,0,99,CMD_REPEAT},
 	{"nandwrite_test","val",0,"hardware test",nandwrite_test,0,99,CMD_REPEAT},
+	{"nand_oob_test","val",0,"nand_oob_test",nand_oob_test,0,99,CMD_REPEAT},
 	{0, 0}
 };
 
