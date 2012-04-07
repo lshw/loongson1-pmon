@@ -1260,7 +1260,7 @@ unsigned long synopGMAC_linux_open(struct synopGMACNetworkAdapter *tp)
 */
 	
 	/*Check for Phy initialization*/
-	synopGMAC_set_mdc_clk_div(gmacdev,GmiiCsrClk3);
+	synopGMAC_set_mdc_clk_div(gmacdev,GmiiCsrClk2);	//thf
 	gmacdev->ClockDivMdc = synopGMAC_get_mdc_clk_div(gmacdev);
 
 //	dumpphyreg(synopGMACadapter->synopGMACdev);
