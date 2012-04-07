@@ -998,8 +998,8 @@ int synopGMAC_intr_handler(struct synopGMACNetworkAdapter * tp)
 	
 	if(dma_status_reg == 0)
 		return 0;
-
-        synopGMAC_disable_interrupt_all(gmacdev);
+	//thf
+//	synopGMAC_disable_interrupt_all(gmacdev);
 
 //	dumpreg(regbase);
 	
@@ -1015,8 +1015,11 @@ int synopGMAC_intr_handler(struct synopGMACNetworkAdapter * tp)
 		TR("%s:: synopGMAC_tx_int_status = %08x\n",__FUNCTION__,synopGMAC_read_mmc_tx_int_status(gmacdev));
 	}
 
-	//if(dma_status_reg & GmacLineIntfIntr)
-	{
+	/* thf PMON中执行synopGMAC_linux_cable_unplug_function()函数来判断网络是否有连接,
+	   并获取连接信息,由于PMON使用轮询的方式来执行,所以占用很多资源，导致网络延时比较长,
+	   目前暂时屏蔽该函数的执行来提高网络速度。屏蔽该函数没有发现会影响使用.
+	*/
+	if(dma_status_reg & GmacLineIntfIntr){
 		synopGMAC_linux_cable_unplug_function(adapter);
 	}
 	/*Now lets handle the DMA interrupts*/  
