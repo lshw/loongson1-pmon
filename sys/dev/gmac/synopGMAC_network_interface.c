@@ -714,9 +714,8 @@ return;
  */
 void synop_handle_transmit_over(struct synopGMACNetworkAdapter * tp)
 {
-	struct	synopGMACNetworkAdapter *adapter;
+//	struct	synopGMACNetworkAdapter *adapter;
 	synopGMACdevice * gmacdev;
-//	struct pci_dev *pcidev;
 	s32 desc_index;
 	u32 data1, data2;
 	u32 status;
@@ -728,72 +727,53 @@ void synop_handle_transmit_over(struct synopGMACNetworkAdapter * tp)
 	u32 time_stamp_high;
 	u32 time_stamp_low;
 #endif
-	adapter = tp;
-	if(adapter == NULL){
-#if SYNOP_TX_DEBUG
-		TR("Unknown Device\n");
-#endif
-		return;
-	}
+
+//	adapter = tp;
+//	if(adapter == NULL){
+//		TR("Unknown Device\n");
+//		return;
+//	}
 	
-	gmacdev = adapter->synopGMACdev;
-	if(gmacdev == NULL){
-#if SYNOP_TX_DEBUG
-		TR("GMAC device structure is missing\n");
-#endif
-		return;
-	}
+	gmacdev = tp->synopGMACdev;
+//	if(gmacdev == NULL){
+//		TR("GMAC device structure is missing\n");
+//		return;
+//	}
 
 	/*Handle the transmit Descriptors*/
 	do {
 #ifdef ENH_DESC_8W
-	desc_index = synopGMAC_get_tx_qptr(gmacdev, &status, &dma_addr1, &length1, &data1, &dma_addr2, &length2, &data2,&ext_status,&time_stamp_high,&time_stamp_low);
+		desc_index = synopGMAC_get_tx_qptr(gmacdev, &status, &dma_addr1, &length1, &data1, &dma_addr2, &length2, &data2,&ext_status,&time_stamp_high,&time_stamp_low);
         synopGMAC_TS_read_timestamp_higher_val(gmacdev, &time_stamp_higher);
 #else
-	desc_index = synopGMAC_get_tx_qptr(gmacdev, &status, &dma_addr1, &length1, &data1, &dma_addr2, &length2, &data2);
-#if SYNOP_TX_DEBUG
-	printf("===handle transmit_over: %d\n",desc_index);
+		desc_index = synopGMAC_get_tx_qptr(gmacdev, &status, &dma_addr1, &length1, &data1, &dma_addr2, &length2, &data2);
 #endif
-#endif
-	//desc_index = synopGMAC_get_tx_qptr(gmacdev, &status, &dma_addr, &length, &data1);
+//		desc_index = synopGMAC_get_tx_qptr(gmacdev, &status, &dma_addr, &length, &data1);
 		if(desc_index >= 0 && data1 != 0){
-#if SYNOP_TX_DEBUG
-			printf("Finished Transmit at Tx Descriptor %d for skb 0x%08x and buffer = %08x whose status is %08x \n", desc_index,data1,dma_addr1,status);
-#endif
-			#ifdef	IPC_OFFLOAD
+		#ifdef	IPC_OFFLOAD
 			if(synopGMAC_is_tx_ipv4header_checksum_error(gmacdev, status)){
-#if SYNOP_TX_DEBUG
-			TR("Harware Failed to Insert IPV4 Header Checksum\n");
-#else
-			;
-#endif
+				TR("Harware Failed to Insert IPV4 Header Checksum\n");
 			}
 			if(synopGMAC_is_tx_payload_checksum_error(gmacdev, status)){
-#if SYNOP_TX_DEBUG
-			TR("Harware Failed to Insert Payload Checksum\n");
-#else
-			;
-#endif
+				TR("Harware Failed to Insert Payload Checksum\n");
 			}
-			#endif
+		#endif
 		
 			plat_free_memory((void *)(data1));	//sw:	data1 = buffer1
 			
 			if(synopGMAC_is_desc_valid(status)){
-				adapter->synopGMACNetStats.tx_bytes += length1;
-				adapter->synopGMACNetStats.tx_packets++;
+				tp->synopGMACNetStats.tx_bytes += length1;
+				tp->synopGMACNetStats.tx_packets++;
 			}
-			else {	
-#if SYNOP_TX_DEBUG
+			else {
 				TR("Error in Status %08x\n",status);
-#endif
-				adapter->synopGMACNetStats.tx_errors++;
-				adapter->synopGMACNetStats.tx_aborted_errors += synopGMAC_is_tx_aborted(status);
-				adapter->synopGMACNetStats.tx_carrier_errors += synopGMAC_is_tx_carrier_error(status);
+				tp->synopGMACNetStats.tx_errors++;
+				tp->synopGMACNetStats.tx_aborted_errors += synopGMAC_is_tx_aborted(status);
+				tp->synopGMACNetStats.tx_carrier_errors += synopGMAC_is_tx_carrier_error(status);
 			}
-		}	adapter->synopGMACNetStats.collisions += synopGMAC_get_tx_collision_count(status);
+		}
+		tp->synopGMACNetStats.collisions += synopGMAC_get_tx_collision_count(status);
 	} while(desc_index >= 0);
-//	netif_wake_queue(netdev);
 }
 
 
@@ -814,15 +794,12 @@ void synop_handle_transmit_over(struct synopGMACNetworkAdapter * tp)
 
 void synop_handle_received_data(struct synopGMACNetworkAdapter* tp)
 {
-	struct synopGMACNetworkAdapter *adapter;
+//	struct synopGMACNetworkAdapter *adapter;
 	synopGMACdevice * gmacdev;
 	struct PmonInet * pinetdev;
 	s32 desc_index;
 	struct ifnet* ifp;
 	struct ether_header * eh;
-	int i;
-	char * ptr;
-	u32 bf1;
 	u32 data1;
 	u32 data2;
 	u32 len;
@@ -831,120 +808,64 @@ void synop_handle_received_data(struct synopGMACNetworkAdapter* tp)
 	u64 dma_addr2;
 	struct mbuf *skb; //This is the pointer to hold the received data
 
-#if SYNOP_RX_DEBUG
-	TR("%s\n",__FUNCTION__);	
-#endif
+//	adapter = tp;
+//	if(adapter == NULL){
+//		TR("Unknown Device\n");
+//		return;
+//	}
 
-	adapter = tp;
-	if(adapter == NULL){
-#if SYNOP_RX_DEBUG
-		TR("Unknown Device\n");
-#endif
-		return;
-	}
+	gmacdev = tp->synopGMACdev;
+//	if(gmacdev == NULL){
+//		TR("GMAC device structure is missing\n");
+//		return;
+//	}	
 
-	gmacdev = adapter->synopGMACdev;
-	if(gmacdev == NULL){
-#if SYNOP_RX_DEBUG
-		TR("GMAC device structure is missing\n");
-#endif
-		return;
-	}	
-
-	pinetdev = adapter->PInetdev;
-	if(pinetdev == NULL){
-#if SYNOP_RX_DEBUG
-		TR("GMAC device structure is missing\n");
-#endif
-		return;
-	}
+	pinetdev = tp->PInetdev;
+//	if(pinetdev == NULL){
+//		TR("GMAC device structure is missing\n");
+//		return;
+//	}
 	ifp = &(pinetdev->arpcom.ac_if);
 
-	//dumpdesc(gmacdev);
+//	dumpdesc(gmacdev);
 
 	/*Handle the Receive Descriptors*/
 	do{
-		desc_index = synopGMAC_get_rx_qptr(gmacdev, &status,&dma_addr1,NULL, &data1,&dma_addr2,NULL,&data2);
+		desc_index = synopGMAC_get_rx_qptr(gmacdev, &status, &dma_addr1, NULL, &data1, &dma_addr2, NULL, &data2);
 
 		if(desc_index >= 0 && data1 != 0){
-#if SYNOP_RX_DEBUG
-			printf("Received Data at Rx Descriptor %d for skb 0x%08x whose status is %08x\n",desc_index,dma_addr1,status);
-#endif
-
 			if(synopGMAC_is_rx_desc_valid(status)||SYNOP_PHY_LOOPBACK){
-				skb = getmbuf(adapter);
-
-				if(skb == 0)
-#if SYNOP_RX_DEBUG
-					printf("===error in getmbuf\n");
-#else						
-				;
-#endif
+				skb = getmbuf(tp);
 
 				dma_addr1 =  plat_dma_map_single(gmacdev,data1,RX_BUF_SIZE,SYNC_R);
 				len =  synopGMAC_get_rx_desc_frame_length(status) - 4; //Not interested in Ethernet CRC bytes
-				bcopy((char *)data1, mtod(skb, char *), len); 
-
-#if SYNOP_RX_DEBUG
-				printf("==get pkg len: %d",len);
-#endif
+				bcopy((char *)data1, mtod(skb, char *), len);
 
 				skb->m_pkthdr.rcvif = ifp;
 				skb->m_pkthdr.len = skb->m_len = len - sizeof(struct ether_header);
 
 				eh = mtod(skb, struct ether_header *);
-#if SYNOP_RX_DEBUG
-				dumppkghd(eh,1);
-				{
-					int k;
-					char temp;
-					for (k=0;k<len;k++)
-					{
-						temp = (char)(*(char *)(data1 + k));
-						printf("%02x  ",temp);
-					}
-					printf("\n");
-				}
-
-				if(eh->ether_shost[1] == 0x55)
-				{
-					printf("\n\n=!!! notice !!!===\n");
-					printf("==!!! notice !!!===\n");
-					for(i = 0;i < len;i++)
-					{
-						ptr = (char *)eh;
-						printf(" %02x",*(ptr+i));
-					}
-					printf("\n\n\n\n\n\n\n\n\n");
-				}
-#endif
-
 				skb->m_data += sizeof(struct ether_header);
 
 				ether_input(ifp, eh, skb);
-				adapter->synopGMACNetStats.rx_packets++;
-				adapter->synopGMACNetStats.rx_bytes += len;
+				tp->synopGMACNetStats.rx_packets++;
+				tp->synopGMACNetStats.rx_bytes += len;
 			}
 			else{
 				printf("s: %08x\n",status);
-				adapter->synopGMACNetStats.rx_errors++;
-				adapter->synopGMACNetStats.collisions       += synopGMAC_is_rx_frame_collision(status);
-				adapter->synopGMACNetStats.rx_crc_errors    += synopGMAC_is_rx_crc(status);
-				adapter->synopGMACNetStats.rx_frame_errors  += synopGMAC_is_frame_dribbling_errors(status);
-				adapter->synopGMACNetStats.rx_length_errors += synopGMAC_is_rx_frame_length_errors(status);
+				tp->synopGMACNetStats.rx_errors++;
+				tp->synopGMACNetStats.collisions       += synopGMAC_is_rx_frame_collision(status);
+				tp->synopGMACNetStats.rx_crc_errors    += synopGMAC_is_rx_crc(status);
+				tp->synopGMACNetStats.rx_frame_errors  += synopGMAC_is_frame_dribbling_errors(status);
+				tp->synopGMACNetStats.rx_length_errors += synopGMAC_is_rx_frame_length_errors(status);
 			}
 
 			desc_index = synopGMAC_set_rx_qptr(gmacdev,dma_addr1, RX_BUF_SIZE, (u32)data1,0,0,0);
 
 			if(desc_index < 0){
-#if SYNOP_RX_DEBUG
-				TR("Cannot set Rx Descriptor for data1 %08x\n",(u32)data1);
-#endif
 				plat_free_memory((void *)data1);
 			}
-
 		}
-
 	}while(desc_index >= 0);
 }
 
