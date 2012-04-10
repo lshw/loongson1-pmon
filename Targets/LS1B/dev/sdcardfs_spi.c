@@ -335,9 +335,9 @@ unsigned int SD_Initiate_Card(void)
 
 	Response = SD_CMD_Write_Crc(0x0008, 0x000001aa, 0x87, 4, 0);	//lxy: check for voltage and partion
 
-	cont = 100;
+	cont = 200;
 	while(cont){
-		for(i=0; i<30; i++)//The max initiation times is 10.
+		for(i=0; i<60; i++)//The max initiation times is 10.
 		{
 			Response = SD_CMD_Write(0x0037,0x00000000,1,0);//Send CMD55	 CMD55——0x01（SD卡处于in-idle-state）
 			if (Response == 0xff01){
