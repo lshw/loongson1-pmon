@@ -598,6 +598,7 @@ fl_verify_device(void *fl_base, void *data_base, int data_size, int verbose)
 	int i;
 
 
+	
 	dev = fl_devident(fl_base, &map);
 	if(dev == NULL) {
 		return(-3);	/* No flash device found at address */
@@ -606,27 +607,36 @@ fl_verify_device(void *fl_base, void *data_base, int data_size, int verbose)
 	if(data_size == -1 || (int)data_base == -1) {
 		return(-4);		/* Bad parameters */
 	}
+
 	if((data_size + ((int)fl_base - map->fl_map_base)) > map->fl_map_size) {
 		return(-4);	/* Size larger than device array */
 	}
+
 
 	if(verbose) {
 		printf("Verifying FLASH. ");
 	}
 
+
 	for(i = 0; i < data_size; i += map->fl_map_width) {
 		fl_last = fl_base;
 		switch(map->fl_map_bus) {
 		case FL_BUS_8:
-			ok = (*((u_char *)fl_base)++ == *((u_char *)data_base)++);
+			ok = (*((u_char *)fl_base) == *((u_char *)data_base));
+			fl_base++;	//lxy
+			data_base++;
 			break;
 
 		case FL_BUS_16:
-			ok = (*((u_short *)fl_base)++ == *((u_short *)data_base)++);
+			ok = (*((u_short *)fl_base) == *((u_short *)data_base));
+			fl_base += 2;
+			data_base += 2;
 			break;
 
 		case FL_BUS_32:
-			ok = (*((u_int *)fl_base)++ == *((u_int *)data_base)++);
+			ok = (*((u_int *)fl_base) == *((u_int *)data_base));
+			fl_base += 4;
+			data_base += 4;
 			break;
 
 		case FL_BUS_64:

@@ -200,7 +200,7 @@ select nand
 #option		X640x768
 #option		X640x800
 #option		X800x480
-option		X800x600
+#option		X800x600
 #option		X800x640
 #option		X832x600
 #option		X832x608
@@ -230,5 +230,5 @@ option	CONFIG_FB_DYN
 option	CONFIG_DDR16BIT
 option CONFIG_PHY100M
 #option		CONFIG_CHINESE
-option		FAST_STARTUP
+#option		FAST_STARTUP
 

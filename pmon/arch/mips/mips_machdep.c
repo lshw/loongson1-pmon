@@ -75,7 +75,8 @@ void clearbss(void)
 	rdata = (u_int64_t *)CACHED_TO_UNCACHED(edata);
 	rdata = (u_int64_t *)edata;
 	while((int)rdata & (sizeof(*rdata) - 1)) {
-		*((char *)rdata)++ = 0;
+		*((char *)rdata) = 0;
+		(char *)rdata++;	//lxy
 	}
 	count = (end - edata) / sizeof(*rdata);
 	while(count--) {

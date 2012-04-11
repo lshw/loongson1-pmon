@@ -462,6 +462,7 @@ sys_setitimer(p, v, retval)
 	struct itimerval aitv;
 	register const struct itimerval *itvp;
 	int s, error;
+	int k;
 
 	if (SCARG(uap, which) > ITIMER_PROF)
 		return (EINVAL);
@@ -469,7 +470,8 @@ sys_setitimer(p, v, retval)
 	if (itvp && (error = copyin((void *)itvp, (void *)&aitv,
 	    sizeof(struct itimerval))))
 		return (error);
-	if ((SCARG(uap, itv) = SCARG(uap, oitv)) &&
+	k = SCARG(uap, itv);
+	if ((k = SCARG(uap, oitv)) &&
 	    (error = sys_getitimer(p, uap, retval)))
 		return (error);
 	if (itvp == 0)

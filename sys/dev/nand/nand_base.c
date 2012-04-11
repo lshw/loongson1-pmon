@@ -58,6 +58,7 @@
 #define ndelay(x)	udelay(((x)+999)/1000)
 #endif
 
+//#define	CONFIG_MTD_NAND_VERIFY_WRITE
 
 /* Define default oob placement schemes for large and small page devices */
 static struct nand_ecclayout nand_oob_8 = {
@@ -1532,7 +1533,15 @@ static int nand_write_page(struct mtd_info *mtd, struct nand_chip *chip,
 	chip->cmdfunc(mtd, NAND_CMD_READ0, 0, page);
 
 	if (chip->verify_buf(mtd, buf, mtd->writesize)) 
+	{
+		printf ("verify main error.....\n");
 		return -EIO;
+	}
+	if (chip->verify_buf(mtd, chip->oob_poi, mtd->oobsize)) 
+	{
+		printf ("verify oob error.....\n");
+		return -EIO;
+	}
 #endif
 	return 0;
 }
@@ -2215,6 +2224,8 @@ static struct nand_flash_dev *nand_get_flash_type(struct mtd_info *mtd,
 	/* Read manufacturer and device IDs */
 	*maf_id = chip->read_byte(mtd);
 	dev_id = chip->read_byte(mtd);
+
+
 
 	/* Lookup the flash id */
 	for (i = 0; nand_flash_ids[i].name != NULL; i++) {

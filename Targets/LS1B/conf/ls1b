@@ -81,7 +81,7 @@ option 		CPU_MULT=8
 option 		DDR_MULT=5
 option		CONS_BAUD=B115200
 select		ext2
-select 		yaffsfs
+#select 		yaffsfs		#lxy: there is a do_div error to open this with new cross-tool
 #select		fatfs
 #select		mod_x86emu		# X86 emulation for VGA
 option 	    MY40IO
@@ -228,5 +228,5 @@ option		wait_key	#lxy
 option	CONFIG_FB_DYN
 option	CONFIG_DDR16BIT
 option CONFIG_PHY100M
-option		CONFIG_CHINESE
-
+#option		CONFIG_CHINESE
+option	NORFLASH_PARTITION

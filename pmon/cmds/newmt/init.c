@@ -67,7 +67,8 @@ static void display_init(void)
         serial_echo_print("[0m");
 }
 
-static void mem_size(void)
+//static void mem_size(void)
+void mem_size(void)
 {
 	int i, n;
 	/* Build the memory map for testing */

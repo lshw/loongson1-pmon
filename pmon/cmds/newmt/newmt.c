@@ -150,7 +150,8 @@ void find_ticks(void)
 }
 
 #if 1
-static int find_ticks_for_test(unsigned long chunks, int test)
+//static int find_ticks_for_test(unsigned long chunks, int test)
+int find_ticks_for_test(unsigned long chunks, int test)
 {
 	int ticks;
 	ticks = chunks * tseq[test].ticks;

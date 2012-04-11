@@ -404,7 +404,6 @@ char *s1;
 int ret1 = 0;
 if(!run)
 {
-
 	s1 = getenv("update_usb");	//lxy
 	printf ("lxy: update_usb, %s !\n", s1);
 	if (!strcmp(s1, "yes"))
@@ -639,7 +638,8 @@ extern unsigned long GPU_fbaddr;
 //	printf ("lxy: after norflash_init.....\n");
 	do_cmd("load /dev/mtd0");
 	printf ("lxy: after load mtd .....\n");
-	do_cmd("g console=ttyS2,115200 lpj=530432 root=/dev/mtdblock1 rw rootfstype=yaffs2 init=/sbin/init video=ls1bfb:1024x768-16@60 quiet");
+	do_cmd("g console=ttyS2,115200 root=/dev/mtdblock1 rw rootfstype=yaffs2 init=/sbin/init video=ls1bfb:vga1024x768-16@60 ");
+//	do_cmd("g console=ttyS2,115200 lpj=530432 root=/dev/mtdblock1 rw rootfstype=yaffs2 init=/sbin/init video=ls1bfb:vga1024x768-16@60 quiet");
 	printf ("lxy: after cmd_go .....\n");
 //	do_cmd("g console=ttyS0,115200 lpj=530432 rdinit=/linuxrc quiet");
 //	printf ("lxy: after go .....\n");

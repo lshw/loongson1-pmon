@@ -553,10 +553,13 @@ sys_select(p, v, retval)
 	struct timeval atv;
 	int s, ncoll, error = 0, timo;
 	u_int ni;
+	int k;
 
 	if (SCARG(uap, nd) > p->p_fd->fd_nfiles) {
 		/* forgiving; slightly wrong */
-		SCARG(uap, nd) = p->p_fd->fd_nfiles;
+//		SCARG(uap, nd) = p->p_fd->fd_nfiles;
+		k = SCARG(uap, nd);
+		k = p->p_fd->fd_nfiles;
 	}
 	ni = howmany(SCARG(uap, nd), NFDBITS) * sizeof(fd_mask);
 	if (SCARG(uap, nd) > FD_SETSIZE) {
@@ -827,10 +830,15 @@ sys_poll(p, v, retval)
 	struct timeval atv;
 	int timo, ncoll, i, s, error, error2;
 	extern int nselcoll, selwait;
+	int k;
 
 	/* XXX constrain; This may not match standards */
 	if (SCARG(uap, nfds) > p->p_fd->fd_nfiles)
-		SCARG(uap, nfds) = p->p_fd->fd_nfiles;
+	{
+		k = SCARG(uap, nfds);
+		k = p->p_fd->fd_nfiles;
+	}
+//		SCARG(uap, nfds) = p->p_fd->fd_nfiles;
 	sz = sizeof(struct pollfd) * SCARG(uap, nfds);
 	
 	/* optimize for the default case, of a small nfds value */

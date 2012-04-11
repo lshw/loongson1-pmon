@@ -452,7 +452,7 @@ u_int	CpuExternalCacheOn;	/* R5K, RM7K */
 u_int	CpuOnboardCacheOn;	/* RM7K */
 
 
-extern	struct intr_tab intr_tab[];
+//extern	struct intr_tab intr_tab[];
 
 struct tlb;
 struct user;
