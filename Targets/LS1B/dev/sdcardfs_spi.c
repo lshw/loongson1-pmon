@@ -26,12 +26,14 @@
 #define FCR_SPSR        0x01		//状态寄存器
 #define FCR_SPDR        0x02		//数据传输寄存器
 #define FCR_SPER        0x03		//外部寄存器
-#define FCR_PARAM			0x04		//SPI Flash参数控制寄存器
+#define FCR_PARAM		0x04		//SPI Flash参数控制寄存器
 #define FCR_SOFTCS		0x05		//SPI Flash片选控制寄存器
 #define FCR_TIMING		0x06		//SPI Flash时序控制寄存器
 
 #define SET_SPI(idx,value) KSEG1_STORE8(SPI_REG_BASE+idx, value)
 #define GET_SPI(idx)    KSEG1_LOAD8(SPI_REG_BASE+idx)
+
+#define MAX_TRY 200
 
 unsigned char sdhc_flag = 0;
 unsigned short resp[5];
@@ -41,13 +43,11 @@ static unsigned char  flash_writeb_cmd(unsigned char value)
 	unsigned char status, ret;
 
 	SET_SPI(FCR_SPDR, value);
-	ret = GET_SPI(FCR_SPSR);
+//	ret = GET_SPI(FCR_SPSR);
 
 	//sw: make sure the rf is not empty!      
 	while ((*(volatile unsigned char *)(0xbfe80001))&0x01);
-
-	ret = GET_SPI(FCR_SPSR);
-
+//	ret = GET_SPI(FCR_SPSR);
 	ret = GET_SPI(FCR_SPDR);
 #ifdef SDCARD_DBG
 	printf("==treg ret value: %08b\n",ret);
@@ -56,19 +56,19 @@ static unsigned char  flash_writeb_cmd(unsigned char value)
 }
 
 static void spi_init0(void)
-{ 
+{
 	SET_SPI(FCR_SPSR, 0xc0);
 	//SPI Flash参数控制寄存器
 	SET_SPI(FCR_PARAM, 0x00);
-//	SET_SPI(FCR_PARAM, 0xf0);
 	//#define SPER      0x3	//外部寄存器
 	//spre:01 [2]mode spi接口模式控制 1:采样与发送时机错开半周期  [1:0]spre 与Spr一起设定分频的比率
-	SET_SPI(FCR_SPER, 0x05);
-//	SET_SPI(FCR_SPER, 0x07);
+	SET_SPI(FCR_SPER, 0x04);
 	//SPI Flash片选控制寄存器
-	SET_SPI(FCR_SOFTCS, 0xbf);			//softcs
-	SET_SPI(FCR_SPCR, 0x5c);
-//	SET_SPI(FCR_SPCR, 0x53);
+	SET_SPI(FCR_SOFTCS, 0xbf);
+//	SET_SPI(FCR_TIMING, 0x00);
+	/* [1:0]spr sclk_o分频设定，需要与sper的spre一起使用 */
+	SET_SPI(FCR_SPCR, 0x5d);
+	/* 分频系数设置为4 */
 }
 
 
@@ -102,8 +102,6 @@ static inline void set_cs(int bit)
 void PutPortraitChar(unsigned int ScreenX,unsigned int Line,unsigned char *StringPointer,unsigned int Overwrite_Back_Ground){
 	printf("%s\n",StringPointer);
 }
-
-unsigned int BlockSize;
 
 //*P_Watchdog_Clear=0x0001
 
@@ -152,11 +150,15 @@ static int read_delay = 20;
 #define DELAY_STEP 5
 unsigned short SD_Read(void)//Simulating SPI IO
 {
-	unsigned short ret;
-//	do {
-	ret = 0xff00 | flash_writeb_cmd(0xff);
-//	if(read_delay) delay(read_delay); //need some delay
-//	} while(ret == 0xffff);
+	unsigned short ret = 0xff00 | flash_writeb_cmd(0xff);
+/*
+	if(read_delay) {
+		int delay_t = read_delay;
+		while(delay_t)
+			delay_t--; //need some delay
+	}
+//	printk("===sd_read ret = %x\n",ret);
+*/
 	return ret;
 }
 
@@ -165,10 +167,11 @@ unsigned short SD_Read(void)//Simulating SPI IO
 unsigned int SD_CMD_Write(unsigned int CMDIndex, unsigned long CMDArg, unsigned int ResType, unsigned int CSLowRSV)
 {
 	//There are 7 steps need to do.(marked by [1]-[7])
-	unsigned int Response, Response2, CRC, MaximumTimes;
+	unsigned int Response, Response2, CRC;
+//	unsigned int MaximumTimes;
 	unsigned int cont;
 	Response2 = 0;	//响应
-	MaximumTimes = 10;
+//	MaximumTimes = 10;
 	CRC = 0x0095;//0x0095 is only valid for CMD0
 	if (CMDIndex != 0) CRC = 0x00ff;
 
@@ -187,7 +190,7 @@ unsigned int SD_CMD_Write(unsigned int CMDIndex, unsigned long CMDArg, unsigned 
 	{
 		case 1://R1
 		{
-			cont = 100;
+			cont = MAX_TRY;
 			do{
 				Response = SD_Read();
 				cont--;
@@ -196,13 +199,13 @@ unsigned int SD_CMD_Write(unsigned int CMDIndex, unsigned long CMDArg, unsigned 
 		}
 		case 2://R1b
 		{
-			cont = 100;
+			cont = MAX_TRY;
 			do{
 				Response = SD_Read();
 				cont--;
 			}while ((Response == 0xffff) && (cont != 0));//Read R1 firstly
 			
-			cont = 100;
+			cont = MAX_TRY;
 			do{
 				Response2 = SD_Read()-0xff00;
 				cont--;
@@ -224,7 +227,7 @@ unsigned int SD_Reset_Card(void)
 	unsigned int i,Response;
 	unsigned int cont;
 
-	for (i=0;i<10;i++)//Send 74+ Clocks
+	for (i=0; i<10; i++)//Send 74+ Clocks
 	{
 		flash_writeb_cmd(0xff);
 	}
@@ -232,7 +235,7 @@ unsigned int SD_Reset_Card(void)
 	cont = 20;
 	while(cont--)
 	{
-		for(i=0;i<10;i++)//The max initiation times is 10.
+		for(i=0; i<MAX_TRY; i++)//The max initiation times is 10.
 		{
 			Response = SD_CMD_Write(0x0000, 0x00000000, 1, 0);//Send CMD0 CMD0——0x01（SD卡处于in-idle-state）
 			if (Response == 0xff01) break;
@@ -281,7 +284,7 @@ unsigned int SD_CMD_Write_Crc(unsigned int CMDIndex, unsigned long CMDArg, unsig
 	{
 		case 1://R1
 		{
-			cont = 100;
+			cont = MAX_TRY;
 			do{
 				Response = SD_Read();
 				cont--;
@@ -290,13 +293,13 @@ unsigned int SD_CMD_Write_Crc(unsigned int CMDIndex, unsigned long CMDArg, unsig
 		}
 		case 2://R1b
 		{
-			cont = 100;
+			cont = MAX_TRY;
 			do{
 				Response = SD_Read();
 				cont--;
 			}while ((Response == 0xffff) && (cont != 0));//Read R1 firstly
 			
-			cont = 100;
+			cont = MAX_TRY;
 			do{
 				Response2 = SD_Read()-0xff00;
 				cont--;
@@ -314,7 +317,7 @@ unsigned int SD_CMD_Write_Crc(unsigned int CMDIndex, unsigned long CMDArg, unsig
 		resp[4] = SD_Read();
 		Response = resp[0];
 
-		printf ("resp= 0x%x, 0x%x, 0x%x, 0x%x, 0x%x !\n", resp[0], resp[1], resp[2], resp[3], resp[4]);
+//		printf ("resp= 0x%x, 0x%x, 0x%x, 0x%x, 0x%x !\n", resp[0], resp[1], resp[2], resp[3], resp[4]);
 			break;
 	}
 	
@@ -337,7 +340,7 @@ unsigned int SD_Initiate_Card(void)
 
 	cont = 200;
 	while(cont){
-		for(i=0; i<60; i++)//The max initiation times is 10.
+		for(i=0; i<MAX_TRY; i++)//The max initiation times is 10.
 		{
 			Response = SD_CMD_Write(0x0037,0x00000000,1,0);//Send CMD55	 CMD55——0x01（SD卡处于in-idle-state）
 			if (Response == 0xff01){
@@ -509,25 +512,23 @@ unsigned int SD_Get_CardID(unsigned char *ReadBuffer)
 unsigned int Read_Single_Block(unsigned long int ByteAddress,unsigned char *ReadBuffer)
 {
 	unsigned int temp, Response, MaximumTimes;
+	unsigned short data;
 	MaximumTimes = 10;
 	
-	for(temp=0; temp<MaximumTimes; temp++)
-	{
-		Response = SD_CMD_Write(17,ByteAddress,1,1);//Send CMD17
+	for(temp=0; temp<MaximumTimes; temp++){
+		Response = SD_CMD_Write(17, ByteAddress, 1, 1);//Send CMD17
 		if (Response == 0xff00)
-			temp=MaximumTimes;
+			break;
 	}
 	
 	if (Response!=0xff00) return Response;
 		
 	while (SD_Read()!=0xfffe) {;}
-	
-	for (temp=0; temp<256; temp++) //Get the readed data
-	{
-		unsigned short data;
-		data=SD_2Byte_Read();
-		ReadBuffer[2*temp]=(data>>8)&0xff;
-		ReadBuffer[2*temp+1]=data&0xff;
+	//Get the readed data
+	for (temp=0; temp<256; temp++) {
+		data = SD_2Byte_Read();
+		ReadBuffer[2*temp] = (data>>8) & 0xff;
+		ReadBuffer[2*temp+1] = data & 0xff;
 	}
 	
 	//Provide 16 clock to remove the last 2 bytes of data response (CRC)
@@ -547,18 +548,19 @@ unsigned int Write_Single_Block(unsigned long int ByteAddress,unsigned char *Wri
 	unsigned int temp, Response, MaximumTimes;
 	MaximumTimes = 10;
 	
-	for(temp=0; temp<MaximumTimes; temp++)
-	{
+	for(temp=0; temp<MaximumTimes; temp++) {
 		Response=SD_CMD_Write(24,ByteAddress,1,1);//Send CMD24
 		if (Response==0xff00)
-			temp=MaximumTimes;
+			break;
 	}
 	
 	//Provide 8 extra clock after CMD response
 	flash_writeb_cmd(0xff);
 	
 	SD_Write(0x00fe);//Send Start Block Token
-	for (temp=0;temp<256;temp++) SD_2Byte_Write(((WriteBuffer[2*temp])<<8)|(WriteBuffer[2*temp+1]));//Data Block
+	for (temp=0; temp<256; temp++) {
+		SD_2Byte_Write(((WriteBuffer[2*temp])<<8)|(WriteBuffer[2*temp+1]));//Data Block
+	}
 	SD_2Byte_Write(0xffff);//Send 2 Bytes CRC
 	
 	Response = SD_Read();
@@ -576,32 +578,15 @@ unsigned int Write_Single_Block(unsigned long int ByteAddress,unsigned char *Wri
 static int sdcard_init(void)
 {
 //	static int inited=0;
-	int inited = 0;
 	int ret;
 
-	if(inited)
-		return 0;
-//sw
-//	*LPB_MISC_CFG |=1;
-/*
-GPIO20 sclk
-GPIO21 si
-GPIO22 so
-GPIO23 cs
-*/
-
-/*
- * sw: do it in spi_init
- * 
-	SET_SPI(FCR_SPCR, 0x5e);
-	SET_SPI(FCR_SPER, 0x00);
-*/
-	
+//	if(inited)
+//		return 0;
+		
 	spi_init0();
-
 	set_cs(1);
 	ret = SD_Overall_Initiation();
-	inited = 1;
+//	inited = 1;
 	return ret;
 }
 
@@ -628,7 +613,7 @@ int test_sdcard(int argc, char **argv)
 #endif
 	
 	SD_Get_CardInfo(ReadBuffer);
-	sprintf(str,"pcs 0;d1 0x%x 16 ",ReadBuffer);
+	sprintf(str, "pcs 0;d1 0x%x 16 ", ReadBuffer);
 	do_cmd(str);
 	return 0;
 error1:
@@ -651,7 +636,7 @@ static const Cmd Cmds[] =
 static void init_cmd __P((void)) __attribute__ ((constructor));
 
 static void
-init_cmd()
+init_cmd(void)
 {
 	cmdlist_expand(Cmds, 1);
 }
@@ -686,24 +671,25 @@ static int sdcard_close (int fd)
 static int sdcard_read (int fd, void *buf, size_t n)
 {
 	unsigned int pos = _file[fd].posn;
-	unsigned int left = n, once;
+	unsigned int left = n;
+	unsigned int once;
+	unsigned int index = (pos>>9)&(CACHEDSECTORS-1);
+	unsigned int indexaddr = (pos>>9);
+	unsigned char *indexbuf;
 
-	while(left)
-	{
-		unsigned int index=(pos>>9)&(CACHEDSECTORS-1);
-		unsigned int indexaddr=(pos>>9);
-		unsigned char *indexbuf;
+	while(left){
+		index = (pos>>9) & (CACHEDSECTORS-1);
+		indexaddr = (pos>>9);
 
 		indexbuf = &cachedbuffer[index*512];	
 		if(cachedaddr[index] != indexaddr)
-
-		if (sdhc_flag == 1)
-			Read_Single_Block(pos>>9, indexbuf);
-		else
-			Read_Single_Block(pos&~511, indexbuf);
+			if (sdhc_flag == 1)
+				Read_Single_Block(pos>>9, indexbuf);
+			else
+				Read_Single_Block(pos&~511, indexbuf);
 		cachedaddr[index] = indexaddr;
 
-		once = min(512 - (pos&511),left);
+		once = min(512 - (pos&511), left);
 		memcpy(buf, indexbuf + (pos&511), once);
 		buf += once;
 		pos += once;
@@ -720,18 +706,19 @@ static int sdcard_write (int fd, const void *buf, size_t n)
 	unsigned int pos=_file[fd].posn;
 	unsigned long left = n;
 	unsigned long once;
+	unsigned int index = (pos>>9)&(CACHEDSECTORS-1);
+	unsigned int indexaddr = (pos>>9);
+	unsigned char *indexbuf;
 
-	while(left)
-	{
-		unsigned int index = (pos>>9)&(CACHEDSECTORS-1);
-		unsigned int indexaddr = (pos>>9);
-		unsigned char *indexbuf;
-		indexbuf = &cachedbuffer[index*512];	
+	while(left) {
+		index = (pos>>9) & (CACHEDSECTORS-1);
+		indexaddr = (pos>>9);
+		indexbuf = &cachedbuffer[index*512];
 		if((cachedaddr[index] != indexaddr) && (pos&511))
-		if (sdhc_flag == 1)
-			Read_Single_Block(pos>>9, indexbuf);
-		else
-			Read_Single_Block(pos&~511, indexbuf);
+			if (sdhc_flag == 1)
+				Read_Single_Block(pos>>9, indexbuf);
+			else
+				Read_Single_Block(pos&~511, indexbuf);
 		cachedaddr[index] = indexaddr;
 
 		once = min(512 - (pos&511),left);
@@ -785,7 +772,7 @@ static FileSystem sdcardfs =
 
 static void init_fs __P((void)) __attribute__ ((constructor));
 
-static void init_fs()
+static void init_fs(void)
 {
 	/*
 	 * Install ram based file system.
@@ -828,7 +815,7 @@ sdcardattach(parent, self, aux)
     void *aux;
 {
 	struct loopdev_softc *priv = (void *)self;
-	strncpy(priv->dev,"/dev/sdcard0",63);
+	strncpy(priv->dev, "/dev/sdcard0", 63);
 	priv->bs = DEV_BSIZE;
 	priv->seek = 0;
 	priv->count = -1;
