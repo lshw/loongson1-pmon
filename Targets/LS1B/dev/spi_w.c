@@ -70,7 +70,7 @@ void spi_initw(void)
 {
 	SET_SPI(SPSR, 0xc0); 
   	SET_SPI(PARAM, 0x00);	//espr:0100
- 	SET_SPI(SPER, 0x05);		//spre:01 
+ 	SET_SPI(SPER, 0x04);	//spre:00 
   	SET_SPI(PARAM2,0x01);
 	SET_SPI(SPCR, 0x5c);
 	SET_SPI(SOFTCS,0x11);
@@ -800,19 +800,14 @@ int spi_read_area_fast(int flashaddr,unsigned char *buffer,int size)		//lxy
 	set_wren();
 
 	SET_SPI(SPSR, 0xc0); 
-  	SET_SPI(PARAM, 0x07);             //espr:0100
- 	SET_SPI(SPER, 0x05); //spre:01 
-  	SET_SPI(PARAM2,0x01); 
-//  	SET_SPI(SPCR, 0x50);		//lxy
-	SET_SPI(SPCR, 0x5c);     
+  	SET_SPI(PARAM, 0x07);	//espr:0100
+ 	SET_SPI(SPER, 0x04);	//spre:00
+  	SET_SPI(PARAM2,0x01);
+	SET_SPI(SPCR, 0x5c);
 
-
-
-    for(i=0;i<size;i++)
-    {
+    for(i=0;i<size;i++) {
 		buffer[i] = *(volatile u8 *)(0xbf000000+flashaddr+i);
-    }
-	
+	}
 
 	SET_SPI(PARAM, 0x01);
 	return 0;
