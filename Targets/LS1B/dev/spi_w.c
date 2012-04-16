@@ -950,22 +950,15 @@ struct fl_device myflash = {
 
 struct fl_device *fl_devident(void *base, struct fl_map **m)
 {
-//	if(m)
-//	*m = fl_find_map(base);
-//	return &myflash;
-
 	struct fl_device *dev;
 
-	if (init_id == 0)
-	{
+	if (init_id == 0) {
 		nor_dev = NULL;
 		read_jedecid(flash_id);
 		init_id = 1;
 
-		for(dev = &fl_known_dev[0]; dev->fl_name != 0; dev++) 
-		{
-			if(dev->fl_mfg == (char)flash_id[0] && dev->fl_id == (char)flash_id[1]) 
-			{
+		for(dev = &fl_known_dev[0]; dev->fl_name != 0; dev++) {
+			if(dev->fl_mfg == (char)flash_id[0] && dev->fl_id == (char)flash_id[2]) {
 				nor_dev = dev;
 				return(dev);	/* GOT IT! */
 			}
