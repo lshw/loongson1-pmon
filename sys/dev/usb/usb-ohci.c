@@ -463,7 +463,7 @@ extern struct usb_device * usb_alloc_new_device(void *hc_private);
 *DESCRIPTION: This function is used to do the attachment of the USB OHCI controller,
 *             for USB OHCI controller is  accessed through PCI bus, so here it 
 *             needs do some initializations such as mapping between CPU address 
-*             and PCI address¡¢ configuring the OHCI registers¡¢enumerating the 
+*             and PCI address\A1\A2 configuring the OHCI registers\A1\A2enumerating the 
 *             USB devices attached to the USB HUB ports.In fact,this function 
 *             does the most of initial works by calling other related functions.
 *
@@ -623,6 +623,16 @@ static void lohci_attach(struct device *parent, struct device *self, void *aux)
 	struct ohci *ohci = (struct ohci*)self;
 	static int ohci_dev_index = 0;
 	struct confargs *cf = aux;
+
+	printf("usb lohci init\n");
+	/*end usb reset*/
+#if LS1ASOC
+	/*ls1a usb reset stop*/
+	*(volatile int *)0xbff10204 |= 0x40000000;
+#else
+	/*ls1b usb reset stop*/
+	*(volatile int *)0xbfd00424 |= 0x80000000;
+#endif
 
 	/* Or we just return false in the match function */
 	if(ohci_dev_index >= MAX_OHCI_C) {

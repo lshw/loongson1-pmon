@@ -386,20 +386,10 @@ tgt_devconfig(void)
 			vga_available=0;
 	}
 #endif
-	config_init();
 
-    /*end usb reset*/
-#if LS1ASOC
-	/*ls1a usb reset stop*/
-	*(volatile int *)0xbff10204 |= 0x40000000;
-#else
-	/*ls1b usb reset stop*/
-	*(volatile int *)0xbfd00424 |= 0x80000000;
-#endif
-	
-	printf("====before configure\n");
+	config_init();
 	configure();
-    
+
 #if (NMOD_VGACON >0) && defined(LS1ASOC)
 	printf("====before init ps/2 kbd\n");
 	if(getenv("nokbd"))
@@ -414,7 +404,7 @@ tgt_devconfig(void)
 	}
 	psaux_init();
 #endif
-//	extern   void norflash_init();
+
 #ifdef NORFLASH_PARTITION
 	norflash_init();           //lxy
 #endif
@@ -450,9 +440,7 @@ tgt_devinit(void)
 	else {
 		CpuExternalCacheOn = 1;
 	}
-	
-	
-	
+
     CPU_ConfigCache();
 
 #define CONFIG_DE2114X y 
@@ -467,6 +455,7 @@ tgt_devinit(void)
 }
 #endif
 
+#if LS1ASOC
 //sw: set clock delay
 	(*(volatile u32*)(0xbfd00410) = (0x24a8));
 //sw: enable gpio	
@@ -476,14 +465,13 @@ tgt_devinit(void)
 //	(*(volatile u32*)(0xbc180000+0x24) = 0x80000000;
 	printf("==pci_businit: clock delay %x\n",readl(0xbfd00410));
 	printf("==gpio: gpio status %x\n",readl(0xbfd010e8));
-	
-	if(have_pci)_pci_businit(1);	/* PCI bus initialization */
+#endif
 
+	if(have_pci)_pci_businit(1);	/* PCI bus initialization */
 	
 #ifdef GS_SOC_I2C	
 	i2c_init();
 	i2c_test();
-	
 #endif
 
 #ifdef GS_SOC_CAN
