@@ -406,7 +406,7 @@ config_attach(parent, match, aux, print)
 	if (parent == ROOT)
 		printf("%s (root)", dev->dv_xname);
 	else {
-		printf("%s at %s", dev->dv_xname, parent->dv_xname);
+		printf("%s at %s\n", dev->dv_xname, parent->dv_xname);
 		if (print)
 			(void) (*print)(aux, (char *)0);
 	}

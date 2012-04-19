@@ -17,11 +17,18 @@
 #include <sys/buf.h>
 #include <sys/uio.h>
 
+#define SPI0
+//#define SPI1
 
 //#define SDCARD_DBG
 #define NMOD_SDCARD_STORAGE 1
 
-#define SPI_REG_BASE 0x1fe80000
+#ifdef SPI0
+#define SPI_REG_BASE 0x1fe80000		/* SPI0 */
+#else
+#define SPI_REG_BASE 0x1fec0000		/* SPI1 */
+#endif
+
 #define FCR_SPCR        0x00		//控制寄存器
 #define FCR_SPSR        0x01		//状态寄存器
 #define FCR_SPDR        0x02		//数据传输寄存器
@@ -43,11 +50,10 @@ static unsigned char  flash_writeb_cmd(unsigned char value)
 	unsigned char status, ret;
 
 	SET_SPI(FCR_SPDR, value);
-//	ret = GET_SPI(FCR_SPSR);
 
-	//sw: make sure the rf is not empty!      
-	while ((*(volatile unsigned char *)(0xbfe80001))&0x01);
-//	ret = GET_SPI(FCR_SPSR);
+	//sw: make sure the rf is not empty!
+	while ((GET_SPI(FCR_SPSR)) & 0x01);
+	
 	ret = GET_SPI(FCR_SPDR);
 #ifdef SDCARD_DBG
 	printf("==treg ret value: %08b\n",ret);
@@ -57,6 +63,18 @@ static unsigned char  flash_writeb_cmd(unsigned char value)
 
 static void spi_init0(void)
 {
+#ifdef SPI1
+	/* 使能SPI1控制器，与CAN0 CAN1 GPIO38-GPIO41复用,同时占用PWM0 PWM1用于片选. */
+	/* 编程需要注意 */
+	*(volatile unsigned int *)0xbfd00424 |= (0x3 << 23);
+	/* disable gpio38-41 */
+	*(volatile unsigned int *)0xbfd010c4 &= (0xf << 6);
+#endif
+#ifdef SPI0
+	/* disable gpio24-27 */
+	*(volatile unsigned int *)0xbfd010c0 &= (0xf << 24);
+#endif
+
 	SET_SPI(FCR_SPSR, 0xc0);
 	//SPI Flash参数控制寄存器
 	SET_SPI(FCR_PARAM, 0x00);
@@ -65,6 +83,7 @@ static void spi_init0(void)
 	SET_SPI(FCR_SPER, 0x04);
 	//SPI Flash片选控制寄存器
 	SET_SPI(FCR_SOFTCS, 0xbf);
+//	SET_SPI(FCR_SOFTCS, 0xef);
 //	SET_SPI(FCR_TIMING, 0x00);
 	/* [1:0]spr sclk_o分频设定，需要与sper的spre一起使用 */
 	SET_SPI(FCR_SPCR, 0x5d);
@@ -90,12 +109,14 @@ volatile unsigned char *LPB_MISC_CFG = 0xbf004140;
 volatile unsigned char *GPIO_OE_23_16 = 0xbf004102;
 unsigned cached_gpio=0;
 
+/* 片选 需要根据具体使能那该引脚作为片选来修改 */
 static inline void set_cs(int bit)
 {
 	if(bit) 
 		SET_SPI(FCR_SOFTCS, 0xFF);		//cs high
 	else 
 		SET_SPI(FCR_SOFTCS, 0xBF);		//cs low
+//		SET_SPI(FCR_SOFTCS, 0xEF);		//cs low
 }
 
 
@@ -626,10 +647,31 @@ error1:
 	return 0;
 }
 
+/* 用于测试SPI接口,不断发送0或1数据，用示波器观察clk波形和SPI0_MOSI波形是否正确 */
+void test_spi(void)
+{
+	unsigned int i = 0;
+	unsigned char val = 0xFF;
+	
+	spi_init0();
+	set_cs(0);
+	while(1) {
+		flash_writeb_cmd(val);
+		if (i == 0x1000000) {
+			break;
+		}
+		if((i%10) == 0) {
+			val = ~val;
+		}
+		i++;
+	}
+}
+
 static const Cmd Cmds[] =
 {
 	{"MyCmds"},
 	{"test_sdcard", "", 0, "test_sdcard", test_sdcard, 0, 99, CMD_REPEAT},
+	{"test_spi", "", 0, "test spi controller", test_spi, 0, 99, CMD_REPEAT},
 	{0, 0}
 };
 
