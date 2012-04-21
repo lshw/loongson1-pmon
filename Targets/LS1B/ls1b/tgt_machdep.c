@@ -242,6 +242,7 @@ int ls1f_gmac_init(void)
 
 #endif
 
+unsigned int output_mode = 1;
 void
 initmips(unsigned int memsz)
 {
@@ -252,10 +253,20 @@ initmips(unsigned int memsz)
 	memorysize = memsz > 256 ? 256 << 20 : memsz << 20;
 	memorysize_high = memsz > 256 ? (memsz - 256) << 20 : 0;
 	
+	output_mode = *(volatile unsigned int *)(0xbfd010e4);
+	if ((output_mode & 0x03000000) == 0x03000000)
+		output_mode = 0;
+	else	
+		output_mode = 1;
+
 #ifdef FAST_STARTUP
-	cpuinfotab[0] = &DBGREG;
-	fast_startup();	//lxy
+	if (output_mode == 0)
+	{
+		cpuinfotab[0] = &DBGREG;
+		fast_startup();	//lxy
+	}
 #endif	
+
 	
 
 	/*

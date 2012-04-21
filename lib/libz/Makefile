@@ -62,73 +62,80 @@ ${OBJDIR}/lib${LIB}.a: ${OBJS}
 
 adler32.o: zlib.h zconf.h
 crc32.o: zlib.h zconf.h
-infblock.o: zutil.h zlib.h zconf.h /home/aa/1B-PMON-BSP/include/stddef.h
-infblock.o: /home/aa/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
-infblock.o: /home/aa/1B-PMON-BSP/include/string.h
-infblock.o: /home/aa/1B-PMON-BSP/sys/sys/cdefs.h
-infblock.o: /home/aa/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
-infblock.o: /home/aa/1B-PMON-BSP/include/stdlib.h
-infblock.o: /home/aa/1B-PMON-BSP/sys/sys/types.h
-infblock.o: /home/aa/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
-infblock.o: /home/aa/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
-infblock.o: /home/aa/1B-PMON-BSP/sys/sys/endian.h
-infblock.o: /home/aa/1B-PMON-BSP/include/errno.h infblock.h inftrees.h
-infblock.o: infcodes.h infutil.h
-infcodes.o: zutil.h zlib.h zconf.h /home/aa/1B-PMON-BSP/include/stddef.h
-infcodes.o: /home/aa/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
-infcodes.o: /home/aa/1B-PMON-BSP/include/string.h
-infcodes.o: /home/aa/1B-PMON-BSP/sys/sys/cdefs.h
-infcodes.o: /home/aa/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
-infcodes.o: /home/aa/1B-PMON-BSP/include/stdlib.h
-infcodes.o: /home/aa/1B-PMON-BSP/sys/sys/types.h
-infcodes.o: /home/aa/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
-infcodes.o: /home/aa/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
-infcodes.o: /home/aa/1B-PMON-BSP/sys/sys/endian.h
-infcodes.o: /home/aa/1B-PMON-BSP/include/errno.h inftrees.h infblock.h
-infcodes.o: infcodes.h infutil.h inffast.h
-inffast.o: zutil.h zlib.h zconf.h /home/aa/1B-PMON-BSP/include/stddef.h
-inffast.o: /home/aa/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
-inffast.o: /home/aa/1B-PMON-BSP/include/string.h
-inffast.o: /home/aa/1B-PMON-BSP/sys/sys/cdefs.h
-inffast.o: /home/aa/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
-inffast.o: /home/aa/1B-PMON-BSP/include/stdlib.h
-inffast.o: /home/aa/1B-PMON-BSP/sys/sys/types.h
-inffast.o: /home/aa/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
-inffast.o: /home/aa/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
-inffast.o: /home/aa/1B-PMON-BSP/sys/sys/endian.h
-inffast.o: /home/aa/1B-PMON-BSP/include/errno.h inftrees.h infblock.h
-inffast.o: infcodes.h infutil.h inffast.h
-inflate.o: zutil.h zlib.h zconf.h /home/aa/1B-PMON-BSP/include/stddef.h
-inflate.o: /home/aa/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
-inflate.o: /home/aa/1B-PMON-BSP/include/string.h
-inflate.o: /home/aa/1B-PMON-BSP/sys/sys/cdefs.h
-inflate.o: /home/aa/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
-inflate.o: /home/aa/1B-PMON-BSP/include/stdlib.h
-inflate.o: /home/aa/1B-PMON-BSP/sys/sys/types.h
-inflate.o: /home/aa/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
-inflate.o: /home/aa/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
-inflate.o: /home/aa/1B-PMON-BSP/sys/sys/endian.h
-inflate.o: /home/aa/1B-PMON-BSP/include/errno.h infblock.h
-inftrees.o: zutil.h zlib.h zconf.h /home/aa/1B-PMON-BSP/include/stddef.h
-inftrees.o: /home/aa/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
-inftrees.o: /home/aa/1B-PMON-BSP/include/string.h
-inftrees.o: /home/aa/1B-PMON-BSP/sys/sys/cdefs.h
-inftrees.o: /home/aa/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
-inftrees.o: /home/aa/1B-PMON-BSP/include/stdlib.h
-inftrees.o: /home/aa/1B-PMON-BSP/sys/sys/types.h
-inftrees.o: /home/aa/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
-inftrees.o: /home/aa/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
-inftrees.o: /home/aa/1B-PMON-BSP/sys/sys/endian.h
-inftrees.o: /home/aa/1B-PMON-BSP/include/errno.h inftrees.h inffixed.h
-infutil.o: zutil.h zlib.h zconf.h /home/aa/1B-PMON-BSP/include/stddef.h
-infutil.o: /home/aa/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/ansi.h
-infutil.o: /home/aa/1B-PMON-BSP/include/string.h
-infutil.o: /home/aa/1B-PMON-BSP/sys/sys/cdefs.h
-infutil.o: /home/aa/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/cdefs.h
-infutil.o: /home/aa/1B-PMON-BSP/include/stdlib.h
-infutil.o: /home/aa/1B-PMON-BSP/sys/sys/types.h
-infutil.o: /home/aa/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/types.h
-infutil.o: /home/aa/1B-PMON-BSP/Targets/LS1B/compile/ls1b/machine/endian.h
-infutil.o: /home/aa/1B-PMON-BSP/sys/sys/endian.h
-infutil.o: /home/aa/1B-PMON-BSP/include/errno.h infblock.h inftrees.h
-infutil.o: infcodes.h infutil.h
+infblock.o: zutil.h zlib.h zconf.h
+infblock.o: /home/aa/1a-yun-test/1B-PMON-BSP/include/stddef.h
+infblock.o: /home/aa/1a-yun-test/1B-PMON-BSP/Targets/LS1B/compile/ls1b.cloud/machine/ansi.h
+infblock.o: /home/aa/1a-yun-test/1B-PMON-BSP/include/string.h
+infblock.o: /home/aa/1a-yun-test/1B-PMON-BSP/sys/sys/cdefs.h
+infblock.o: /home/aa/1a-yun-test/1B-PMON-BSP/Targets/LS1B/compile/ls1b.cloud/machine/cdefs.h
+infblock.o: /home/aa/1a-yun-test/1B-PMON-BSP/include/stdlib.h
+infblock.o: /home/aa/1a-yun-test/1B-PMON-BSP/sys/sys/types.h
+infblock.o: /home/aa/1a-yun-test/1B-PMON-BSP/Targets/LS1B/compile/ls1b.cloud/machine/types.h
+infblock.o: /home/aa/1a-yun-test/1B-PMON-BSP/Targets/LS1B/compile/ls1b.cloud/machine/endian.h
+infblock.o: /home/aa/1a-yun-test/1B-PMON-BSP/sys/sys/endian.h
+infblock.o: /home/aa/1a-yun-test/1B-PMON-BSP/include/errno.h infblock.h
+infblock.o: inftrees.h infcodes.h infutil.h
+infcodes.o: zutil.h zlib.h zconf.h
+infcodes.o: /home/aa/1a-yun-test/1B-PMON-BSP/include/stddef.h
+infcodes.o: /home/aa/1a-yun-test/1B-PMON-BSP/Targets/LS1B/compile/ls1b.cloud/machine/ansi.h
+infcodes.o: /home/aa/1a-yun-test/1B-PMON-BSP/include/string.h
+infcodes.o: /home/aa/1a-yun-test/1B-PMON-BSP/sys/sys/cdefs.h
+infcodes.o: /home/aa/1a-yun-test/1B-PMON-BSP/Targets/LS1B/compile/ls1b.cloud/machine/cdefs.h
+infcodes.o: /home/aa/1a-yun-test/1B-PMON-BSP/include/stdlib.h
+infcodes.o: /home/aa/1a-yun-test/1B-PMON-BSP/sys/sys/types.h
+infcodes.o: /home/aa/1a-yun-test/1B-PMON-BSP/Targets/LS1B/compile/ls1b.cloud/machine/types.h
+infcodes.o: /home/aa/1a-yun-test/1B-PMON-BSP/Targets/LS1B/compile/ls1b.cloud/machine/endian.h
+infcodes.o: /home/aa/1a-yun-test/1B-PMON-BSP/sys/sys/endian.h
+infcodes.o: /home/aa/1a-yun-test/1B-PMON-BSP/include/errno.h inftrees.h
+infcodes.o: infblock.h infcodes.h infutil.h inffast.h
+inffast.o: zutil.h zlib.h zconf.h
+inffast.o: /home/aa/1a-yun-test/1B-PMON-BSP/include/stddef.h
+inffast.o: /home/aa/1a-yun-test/1B-PMON-BSP/Targets/LS1B/compile/ls1b.cloud/machine/ansi.h
+inffast.o: /home/aa/1a-yun-test/1B-PMON-BSP/include/string.h
+inffast.o: /home/aa/1a-yun-test/1B-PMON-BSP/sys/sys/cdefs.h
+inffast.o: /home/aa/1a-yun-test/1B-PMON-BSP/Targets/LS1B/compile/ls1b.cloud/machine/cdefs.h
+inffast.o: /home/aa/1a-yun-test/1B-PMON-BSP/include/stdlib.h
+inffast.o: /home/aa/1a-yun-test/1B-PMON-BSP/sys/sys/types.h
+inffast.o: /home/aa/1a-yun-test/1B-PMON-BSP/Targets/LS1B/compile/ls1b.cloud/machine/types.h
+inffast.o: /home/aa/1a-yun-test/1B-PMON-BSP/Targets/LS1B/compile/ls1b.cloud/machine/endian.h
+inffast.o: /home/aa/1a-yun-test/1B-PMON-BSP/sys/sys/endian.h
+inffast.o: /home/aa/1a-yun-test/1B-PMON-BSP/include/errno.h inftrees.h
+inffast.o: infblock.h infcodes.h infutil.h inffast.h
+inflate.o: zutil.h zlib.h zconf.h
+inflate.o: /home/aa/1a-yun-test/1B-PMON-BSP/include/stddef.h
+inflate.o: /home/aa/1a-yun-test/1B-PMON-BSP/Targets/LS1B/compile/ls1b.cloud/machine/ansi.h
+inflate.o: /home/aa/1a-yun-test/1B-PMON-BSP/include/string.h
+inflate.o: /home/aa/1a-yun-test/1B-PMON-BSP/sys/sys/cdefs.h
+inflate.o: /home/aa/1a-yun-test/1B-PMON-BSP/Targets/LS1B/compile/ls1b.cloud/machine/cdefs.h
+inflate.o: /home/aa/1a-yun-test/1B-PMON-BSP/include/stdlib.h
+inflate.o: /home/aa/1a-yun-test/1B-PMON-BSP/sys/sys/types.h
+inflate.o: /home/aa/1a-yun-test/1B-PMON-BSP/Targets/LS1B/compile/ls1b.cloud/machine/types.h
+inflate.o: /home/aa/1a-yun-test/1B-PMON-BSP/Targets/LS1B/compile/ls1b.cloud/machine/endian.h
+inflate.o: /home/aa/1a-yun-test/1B-PMON-BSP/sys/sys/endian.h
+inflate.o: /home/aa/1a-yun-test/1B-PMON-BSP/include/errno.h infblock.h
+inftrees.o: zutil.h zlib.h zconf.h
+inftrees.o: /home/aa/1a-yun-test/1B-PMON-BSP/include/stddef.h
+inftrees.o: /home/aa/1a-yun-test/1B-PMON-BSP/Targets/LS1B/compile/ls1b.cloud/machine/ansi.h
+inftrees.o: /home/aa/1a-yun-test/1B-PMON-BSP/include/string.h
+inftrees.o: /home/aa/1a-yun-test/1B-PMON-BSP/sys/sys/cdefs.h
+inftrees.o: /home/aa/1a-yun-test/1B-PMON-BSP/Targets/LS1B/compile/ls1b.cloud/machine/cdefs.h
+inftrees.o: /home/aa/1a-yun-test/1B-PMON-BSP/include/stdlib.h
+inftrees.o: /home/aa/1a-yun-test/1B-PMON-BSP/sys/sys/types.h
+inftrees.o: /home/aa/1a-yun-test/1B-PMON-BSP/Targets/LS1B/compile/ls1b.cloud/machine/types.h
+inftrees.o: /home/aa/1a-yun-test/1B-PMON-BSP/Targets/LS1B/compile/ls1b.cloud/machine/endian.h
+inftrees.o: /home/aa/1a-yun-test/1B-PMON-BSP/sys/sys/endian.h
+inftrees.o: /home/aa/1a-yun-test/1B-PMON-BSP/include/errno.h inftrees.h
+inftrees.o: inffixed.h
+infutil.o: zutil.h zlib.h zconf.h
+infutil.o: /home/aa/1a-yun-test/1B-PMON-BSP/include/stddef.h
+infutil.o: /home/aa/1a-yun-test/1B-PMON-BSP/Targets/LS1B/compile/ls1b.cloud/machine/ansi.h
+infutil.o: /home/aa/1a-yun-test/1B-PMON-BSP/include/string.h
+infutil.o: /home/aa/1a-yun-test/1B-PMON-BSP/sys/sys/cdefs.h
+infutil.o: /home/aa/1a-yun-test/1B-PMON-BSP/Targets/LS1B/compile/ls1b.cloud/machine/cdefs.h
+infutil.o: /home/aa/1a-yun-test/1B-PMON-BSP/include/stdlib.h
+infutil.o: /home/aa/1a-yun-test/1B-PMON-BSP/sys/sys/types.h
+infutil.o: /home/aa/1a-yun-test/1B-PMON-BSP/Targets/LS1B/compile/ls1b.cloud/machine/types.h
+infutil.o: /home/aa/1a-yun-test/1B-PMON-BSP/Targets/LS1B/compile/ls1b.cloud/machine/endian.h
+infutil.o: /home/aa/1a-yun-test/1B-PMON-BSP/sys/sys/endian.h
+infutil.o: /home/aa/1a-yun-test/1B-PMON-BSP/include/errno.h infblock.h
+infutil.o: inftrees.h infcodes.h infutil.h

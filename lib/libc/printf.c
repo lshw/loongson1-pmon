@@ -35,17 +35,21 @@
 #include <stdarg.h>
 
 /** printf(fmt,va_alist) -- print formatted output to stdout */
+extern unsigned int output_mode;
 int 
 printf (const char *fmt, ...)
 {
     int             len;
     va_list	    ap;
 
-#ifndef FAST_STARTUP
+#ifdef	FAST_STARTUP
+    if (output_mode == 0)
+	    return 0;
+#endif
+
     va_start(ap, fmt);
     len = vfprintf (stdout, fmt, ap);
     va_end(ap);
-#endif
     
     return (len);
 }

@@ -604,9 +604,11 @@ autorun(char *s)
 
 void fast_startup()		//lxy
 {
+#if 0
 extern	int vga_available;
 #if NMOD_FRAMEBUFFER > 0 
 	unsigned long fbaddress;
+#endif
 #endif
 
 	__init();
@@ -619,6 +621,7 @@ extern	int vga_available;
 	kmeminit();
 	init_proc ();
 	
+#if 0
 #if NMOD_FRAMEBUFFER > 0
 	printf("begin fb_init\n");
 	fbaddress = dc_init();
@@ -631,6 +634,7 @@ extern unsigned long GPU_fbaddr;
 	printf("after fb_init\n");
 	vga_available = 1;
 #endif
+#endif
 
 	printf ("lxy: begin nand_init....\n");
 //extern   void norflash_init();
@@ -638,7 +642,7 @@ extern unsigned long GPU_fbaddr;
 //	printf ("lxy: after norflash_init.....\n");
 	do_cmd("load /dev/mtd0");
 	printf ("lxy: after load mtd .....\n");
-	do_cmd("g console=ttyS2,115200 root=/dev/mtdblock1 rw rootfstype=yaffs2 init=/sbin/init video=ls1bfb:vga1024x768-16@60 ");
+	do_cmd("g console=ttyS2,115200 root=/dev/mtdblock1 rw rootfstype=yaffs2 init=/sbin/init video=ls1bfb:vga1024x768-24@60 quiet");
 //	do_cmd("g console=ttyS2,115200 lpj=530432 root=/dev/mtdblock1 rw rootfstype=yaffs2 init=/sbin/init video=ls1bfb:vga1024x768-16@60 quiet");
 	printf ("lxy: after cmd_go .....\n");
 //	do_cmd("g console=ttyS0,115200 lpj=530432 rdinit=/linuxrc quiet");
