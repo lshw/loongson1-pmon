@@ -89,7 +89,7 @@ static struct stdenv {
     {"fpdis", "yes", "no yes"},
 	{"TZ",	"UTC8",	0},		//lxy
 	{"ifconfig", "syn0:192.168.1.2", 0},
-	{"update_usb", "yes", "no yes"},	//lxy
+	{"update_usb", "no", "no yes"},	//lxy
 //	{"novga", "1", 0},	//当设置为novga=1时表示不使用vga lcd显示屏输出信息 信息只输出到串口 这样可以把菜单定位到串口，因为菜单默认定位到显示屏。
 	/* 用于记录测试结果 */
 //	{"cputest", "等待测试", 0},

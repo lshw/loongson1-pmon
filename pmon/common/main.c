@@ -419,6 +419,10 @@ if(!run)
 
 no_update:
 
+#ifdef	FAST_STARTUP
+		do_cmd("test");
+#endif
+
 	run=1;
 #ifdef AUTOLOAD
 	s = getenv ("al");
