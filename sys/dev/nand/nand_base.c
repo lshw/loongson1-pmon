@@ -2223,6 +2223,7 @@ struct nand_flash_dev nand_flash_ids_1[] = {
 		busw = 0;
 	}	
 	else
+#endif
 	{
 		/* Select the device */
 		chip->select_chip(mtd, 0);
@@ -2282,7 +2283,6 @@ struct nand_flash_dev nand_flash_ids_1[] = {
 			busw = type->options & NAND_BUSWIDTH_16;
 		}
 	}
-#endif
 
 	/* Try to identify manufacturer */
 	for (maf_idx = 0; nand_manuf_ids[maf_idx].id != 0x0; maf_idx++) {
