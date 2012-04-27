@@ -181,23 +181,23 @@ int caclulatefreq(long long XIN,long long PCLK)
 
 	for(i=start;i<=end;i++)
 	{
-	clk=(12+i+(pll&0x3f))*33333333/2;
+	clk=(12+i+(pll&0x3f))*APB_CLK/2;
 	div=clk/(long)PCLK/1000;
-	clk1=(12+i+1+(pll&0x3f))*33333333/2;
+	clk1=(12+i+1+(pll&0x3f))*APB_CLK/2;
 	div1=clk1/(long)PCLK/1000;
 	if(div!=div1)break;
 	}
 
 	if(div!=div1)
 	{
-	frac=((PCLK*1000*div1)*2*1024/33333333 - (12+i+(pll&0x3f))*1024)&0x3ff;
+	frac=((PCLK*1000*div1)*2*1024/APB_CLK - (12+i+(pll&0x3f))*1024)&0x3ff;
 	pll = (pll & ~0x3ff3f)|(frac<<8)|((pll&0x3f)+i);
 	ctrl = ctrl&~(0x1f<<26)|(div1<<26)|(1<<31);
 	}
 	else
 	{
-	clk=(12+start+(pll&0x3f))*33333333/2;
-	clk1=(12+end+(pll&0x3f))*33333333/2;
+	clk=(12+start+(pll&0x3f))*APB_CLK/2;
+	clk1=(12+end+(pll&0x3f))*APB_CLK/2;
 	if(abs((long)clk/div/1000-PCLK)<abs((long)clk1/(div+1)/1000-PCLK))
 	{
 	pll = (pll & ~0x3ff3f)|((pll&0x3f)+start);
@@ -271,7 +271,7 @@ int config_fb(unsigned long base)
 			/* 设定LCD工作频率 */
 			pll = PLL_FREQ_REG(0);
 			ctrl = PLL_FREQ_REG(4);
-			clk = (12 + (pll & 0x3f)) * 33333333 / 2;
+			clk = (12 + (pll & 0x3f)) * APB_CLK / 2;
 			div = clk / vgamode[i].pclk / 4; //参考longson1B的数据手册 LCD分频需要再除以4
 			ctrl = (ctrl & ~(0x1f<<26)) | (div<<26) | (1<<31);
 			PLL_FREQ_REG(4) = ctrl;
@@ -412,7 +412,7 @@ static int cmd_dc_freq(int argc,char **argv)
 	if(argc<2)return -1;
 	pclk=strtoul(argv[1],0,0);
 	if(argc>2) sysclk=strtoul(argv[2],0,0);
-	else sysclk=33333;
+	else sysclk=APB_CLK;
 	out = caclulatefreq(sysclk,pclk);
 	printf("out=%x\n",out);
 	/*inner gpu dc logic fifo pll ctrl,must large then outclk*/
@@ -525,7 +525,7 @@ area[idx[2]][1] += freq;
 	{
 		for(j=0;j<=1023;j++)
 		{
-				gclk=(33333*(12+i)+33333*j/1024)/2;
+				gclk=(APB_CLK*(12+i)+APB_CLK*j/1024)/2;
 				if(gclk>660000)  continue;
 
 				for(order=0;order<=2;order++)
@@ -533,7 +533,7 @@ area[idx[2]][1] += freq;
 
 					for(k=1;k<=31;k++)
 					{
-						val=(33333*(12+i)+33333*j/1024)/2/area[order][2]/k;
+						val=(APB_CLK*(12+i)+APB_CLK*j/1024)/2/area[order][2]/k;
 						if(val>=area[order][0] && val<=area[order][1]){
 							ks[order] = k;
 							break;
@@ -580,7 +580,7 @@ area[idx[2]][1] += freq;
 	ks[1]=pnode->ks[1];
 	ks[2]=pnode->ks[2];
 	
-	gclk=(33333*(12+i)+33333*j/1024)/2;
+	gclk=(APB_CLK*(12+i)+APB_CLK*j/1024)/2;
 
 	
 	cpu=gclk/area[idx[0]][2]/ks[idx[0]];

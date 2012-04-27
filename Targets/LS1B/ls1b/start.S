@@ -988,7 +988,7 @@ LEAF(initserial)
 	move	v1,a0
 	bnez	v1,2f
 	nop
-	li	v1,33333333
+	li	v1,APB_CLK
 	li	a0,0xbfe78030
 	lw	a1,4(a0)
 	li	a2,0xc00	//lxy: check ddr Bypass
@@ -1002,7 +1002,7 @@ LEAF(initserial)
 	srl a1,8
 	andi	a1,0x3ff
 	addu	a1,a2
-	li	a2,(33333333>>11)
+	li	a2,(APB_CLK>>11)
 	multu   a1,a2
 	mflo    v1	//lxy: v1=pll
 	lw	a1,4(a0)

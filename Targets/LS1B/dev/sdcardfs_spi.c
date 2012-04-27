@@ -68,11 +68,11 @@ static void spi_init0(void)
 	/* 编程需要注意 */
 	*(volatile unsigned int *)0xbfd00424 |= (0x3 << 23);
 	/* disable gpio38-41 */
-	*(volatile unsigned int *)0xbfd010c4 &= (0xf << 6);
+	*(volatile unsigned int *)0xbfd010c4 &= ~(0xf << 6);
 #endif
 #ifdef SPI0
 	/* disable gpio24-27 */
-	*(volatile unsigned int *)0xbfd010c0 &= (0xf << 24);
+	*(volatile unsigned int *)0xbfd010c0 &= ~(0xf << 24);
 #endif
 
 	SET_SPI(FCR_SPSR, 0xc0);

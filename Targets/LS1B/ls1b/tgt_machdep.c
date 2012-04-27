@@ -563,12 +563,12 @@ void _probe_frequencies(void)
 	}
 #else
 	{
-		int pll,ctrl,clk;
-		pll=PLL_FREQ_REG(0);
-		ctrl=PLL_FREQ_REG(4);
-		clk=(12+(pll&0x3f))*33333333/2 + ((pll>>8)&0x3ff)*33333333/2/1024;
-		md_pipefreq = ((ctrl&0x300)==0x300)?33333333:(ctrl&(1<<25))?clk/((ctrl>>20)&0x1f):clk/2;
-		md_cpufreq  = ((ctrl&0xc00)==0xc00)?33333333:(ctrl&(1<<19))?clk/((ctrl>>14)&0x1f):clk/2;
+		int pll, ctrl, clk;
+		pll = PLL_FREQ_REG(0);
+		ctrl = PLL_FREQ_REG(4);
+		clk = (12+(pll&0x3f))*APB_CLK/2 + ((pll>>8)&0x3ff)*APB_CLK/2/1024;
+		md_pipefreq = ((ctrl&0x300)==0x300) ? APB_CLK : (ctrl&(1<<25)) ? clk/((ctrl>>20)&0x1f) : clk/2;
+		md_cpufreq  = ((ctrl&0xc00)==0xc00) ? APB_CLK : (ctrl&(1<<19)) ? clk/((ctrl>>14)&0x1f) : clk/2;
 	}
 #endif
 

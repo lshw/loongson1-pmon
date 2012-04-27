@@ -142,8 +142,8 @@ void test_ir(int argc,char **argv)
 	/* 计算APB总线频率，为内存频率的1/2 由于PWM挂在APB总线上，所以其频率为APB总线频率 */
 	pll = PLL_FREQ_REG(0);
 	ctrl = PLL_FREQ_REG(4);
-	clk = (12+(pll&0x3f))*33333333/2 + ((pll>>8)&0x3ff)*33333333/2/1024;
-	md_pipefreq = ((ctrl&0xc00)==0xc00)?33333333:(ctrl&(1<<19))?clk/((ctrl>>14)&0x1f):clk/2;
+	clk = (12+(pll&0x3f))*APB_CLK/2 + ((pll>>8)&0x3ff)*APB_CLK/2/1024;
+	md_pipefreq = ((ctrl&0xc00)==0xc00) ? APB_CLK : (ctrl&(1<<19)) ? clk/((ctrl>>14)&0x1f) : clk/2;
 	/* 设置定时中断间隔为100usec(设置为1usec或10usec精度可能不够) */
 	write_reg(PWM_HRC, md_pipefreq/2/10000);
 	write_reg(PWM_LRC, md_pipefreq/2/10000);
