@@ -43,6 +43,8 @@
 #define TEST_RTC		4096
 #define TEST_NAND		8192
 #define TEST_IR		16384
+#define	UPDATE_KERNEL	32768
+#define	UPDATE_SYSTEM	65536
 
 #include <fb/video_font.h>		//定义了字长字宽
 #define INFO_Y  19	//该值要根据菜单的占用的行数修改
@@ -178,8 +180,10 @@ static struct setupMenu testmenu1={
 		{POP_Y+13,POP_X,14,14,TYPE_CMD,	"(13)RTC测试(RTC test):${?&#mytest 4096}=[on=| _or mytest 4096||off=| _andn mytest 4096]test 4096"},
 		{POP_Y+14,POP_X,15,15,TYPE_CMD,	"(14)NAND闪存测试(NAND Flash test):${?&#mytest 8192}=[on=| _or mytest 8192||off=| _andn mytest 8192]test 8192"},
 		{POP_Y+15,POP_X,16,16,TYPE_CMD,	"(15)红外接收测试(Ir test):${?&#mytest 16384}=[on=| _or mytest 16384||off=| _andn mytest 16384]test 16384"},
-		{POP_Y+16,POP_X,17,17,TYPE_CMD,	"(16)all selected=test ${#mytest}"},
-		{POP_Y+17,POP_X,1,1,TYPE_CMD,	"(17)退出=| _quit",0},
+		{POP_Y+16,POP_X,17,17,TYPE_CMD,	"(16)更新内核(kernel update):${?&#mytest 32768}=[on=| _or mytest 32768||off=| _andn mytest 32768]test 32768"},
+		{POP_Y+17,POP_X,18,18,TYPE_CMD,	"(17)更新文件系统(system update):${?&#mytest 65536}=[on=| _or mytest 65536||off=| _andn mytest 65536]test 65536"},
+		{POP_Y+18,POP_X,19,19,TYPE_CMD,	"(18)all selected=test ${#mytest}"},
+		{POP_Y+19,POP_X,1,1,TYPE_CMD,	"(19)退出=| _quit",0},
 		{}
 	}
 };
@@ -429,6 +433,15 @@ static int cmd_test(int ac,char **av)
 			case TEST_IR:
 				sprintf(cmd, "test_Ir");
 				do_cmd(cmd);
+			break;
+			case UPDATE_KERNEL:
+				do_cmd("devcp tftp://192.168.1.12/vmlinuz /dev/mtd0");
+				setenv("al", "/dev/mtd0");
+				setenv("append", "console=ttyS2,115200 root=/dev/mtdblock1 rw rootfstype=yaffs2 init=/sbin/init video=ls1bfb:vga1024x768-24@60");
+			break;
+			case UPDATE_SYSTEM:
+				do_cmd("mtd_erase /dev/mtd1");
+				do_cmd("devcp tftp://192.168.1.12/cloud.img /dev/mtd1 yaf nw");
 			break;
 		}
 		pause();

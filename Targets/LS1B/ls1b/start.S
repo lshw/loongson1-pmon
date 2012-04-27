@@ -77,6 +77,7 @@
 
 #define tmpsize		s1
 #define msize		s2
+#define	output_en	s3
 #define bonito		s4
 #define dbg			s5
 #define sdCfg		s6
@@ -261,7 +262,6 @@ exc_common:
 	.word nullfunction
 	.word nullfunction
 
-
 /*
  *  We get here from executing a bal to get the PC value of the current execute
  *  location into ra. Check to see if we run from ROM or if this is ramloaded.
@@ -344,7 +344,7 @@ locate:
     li v1, (1<<31)|(4<<26)|(1<<25)|(2<<20)|(1<<19)|(4<<14)|0x2a00
 //    li  a1, 0x31812
 //    li  a1, 0x14
-    li  a1, 0x10
+    li  a1, 0x14
 
 2:
 #endif
@@ -366,10 +366,33 @@ locate:
 	sw zero,0x10c4(a0)
 	//	lxy
 
+	li output_en, 0x0
+#ifdef FAST_STARTUP
+	li a1, 0x03000000
+	sw a1, 0x10c4(a0)
+	sw a1, 0x10d4(a0)
+	lw a2, 0x10e4(a0)
+	and a2, a1
+	beq a2, a1, get_pin_val_finish
+	nop
+	li output_en, 0x1
+#endif
+
+get_pin_val_finish:
 	li a0,0
 	bal	initserial
 	nop
+
+	PRINTSTR("output_en =")
+	move	a0, output_en
+	bal	hexserial
+	nop
 	
+	PRINTSTR("uart3_pin_val =")
+	li a1,0xbfd00000
+	lw a0, 0x10e4(a1)
+	bal	hexserial
+	nop
 
 	PRINTSTR("\r\nPMON2000 MIPS Initializing. Standby...\r\n")
 	PRINTSTR("ERRORPC=")
@@ -878,6 +901,8 @@ END(hexserial)
 LEAF(tgt_putchar)
 	.set	noat
 	move	AT, ra
+	beqz	output_en, 2f
+	nop
 	
 	la	v0, COM1_BASE_ADDR
 #ifdef	HAVE_MUT_COM
@@ -898,6 +923,7 @@ LEAF(tgt_putchar)
 	nop
 
 	sb	a0, NSREG(NS16550_DATA)(v0)
+2:
 	j	ra
 	nop	
 	.set	at
@@ -915,6 +941,9 @@ END(tgt_testchar)
 LEAF(tgt_getchar)
 	.set	noat
 	move	AT, ra
+
+	beqz	output_en, 2f
+	nop
 	
 	la	v0, COM1_BASE_ADDR
 #ifdef	HAVE_MUT_COM
@@ -934,6 +963,7 @@ LEAF(tgt_getchar)
 	beqz	v1, 1b
 	nop
 	lb	v0, NSREG(NS16550_DATA)(v0)
+2:
 	jr ra
 	nop
 	.set	at

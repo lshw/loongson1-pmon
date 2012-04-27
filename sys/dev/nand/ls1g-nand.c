@@ -1281,6 +1281,8 @@ static void init_cmd()
 	cmdlist_expand(Cmds, 1);
 }
 
+extern unsigned int output_mode;
+
 int ls1g_soc_nand_init(void)
 {
 //	nand_gpio_read_id();
@@ -1336,8 +1338,12 @@ int ls1g_soc_nand_init(void)
 
 
 #ifdef FAST_STARTUP
-	add_mtd_device(ls1g_soc_mtd,0,0x400000,"kernel");
-#else
+	if (output_mode == 0)
+	{
+		add_mtd_device(ls1g_soc_mtd,0,0x400000,"kernel");
+		return 0;
+	}
+#endif
 	add_mtd_device(ls1g_soc_mtd,0,0x00e00000,"kernel");
 	add_mtd_device(ls1g_soc_mtd,0x00e00000,0x06700000,"os");
 	add_mtd_device(ls1g_soc_mtd,0x07500000,0x00b00000,"data");
@@ -1347,7 +1353,6 @@ int ls1g_soc_nand_init(void)
 	add_mtd_device(ls1g_soc_mtd,0x00700000,0x06e00000,"os");
 	add_mtd_device(ls1g_soc_mtd,0x07500000,0x00b00000,"data");
 */
-#endif
 
 //	find_good_part(ls1g_soc_mtd);
 	/* Return happy */
