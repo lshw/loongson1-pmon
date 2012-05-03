@@ -76,7 +76,7 @@ select		cmd_shell		# Shell commands, vers, help, eval
 # Platform options
 #
 select		mod_uart_ns16550	# Standard UART driver
-option		APB_CLK=33333333
+option		APB_CLK=33000000
 option 		CPU_MULT=8
 option 		DDR_MULT=5
 option		CONS_BAUD=B115200
