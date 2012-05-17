@@ -500,7 +500,7 @@ cpu_win_fixup:
         li      msize,0x04000000
 #else
 /*disable conf*/
-	li a2,0x100000
+	li a1,0x100000
         li      msize,0x08000000
 #endif
 	or a2,a1
