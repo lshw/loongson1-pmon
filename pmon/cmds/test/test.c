@@ -42,12 +42,17 @@
 #define TEST_AD		2048
 #define TEST_RTC		4096
 #define TEST_NAND		8192
-#define TEST_IR		16384
-#define	UPDATE_KERNEL	32768
-#define	UPDATE_SYSTEM	65536
+#define TEST_IR			16384
+#define	UPDATE_PMON_NET		(1<<15)
+#define	UPDATE_KERNEL_NET	(1<<16)
+#define	UPDATE_SYSTEM_NET	(1<<17)	
+#define	UPDATE_PMON_USB		(1<<18)
+#define	UPDATE_KERNEL_USB	(1<<19)
+#define	UPDATE_SYSTEM_USB	(1<<20)	
+
 
 #include <fb/video_font.h>		//定义了字长字宽
-#define INFO_Y  19	//该值要根据菜单的占用的行数修改
+#define INFO_Y  25	//该值要根据菜单的占用的行数修改
 #define INFO_W  50
 extern void delay1(int);
 extern void (*__cprint)(int y, int x,int width,char color, const char *text);
@@ -214,6 +219,7 @@ static struct setupMenu testmenu1={
 };
 */
 #else
+#if 0
 static struct setupMenu testmenu1={
 	0,POP_W,POP_H,
 	(struct setupMenuitem[])
@@ -234,6 +240,38 @@ static struct setupMenu testmenu1={
 	}
 };
 #endif
+static struct setupMenu testmenu1={
+	0,POP_W,POP_H,
+	(struct setupMenuitem[])
+	{
+		{POP_Y,POP_X,1,1,TYPE_NONE,		"    cloud_board_test (board test)"},
+		{POP_Y+1,POP_X,2,2,TYPE_CMD,	"(1)(CPU test):${?&#mytest 1}=[on=| _or mytest 1||off=| _andn mytest 1]test 1"},
+		{POP_Y+2,POP_X,3,3,TYPE_CMD,	"(2)(memory test):${?&#mytest 2}=[on=| _or mytest 2||off=| _andn mytest 2]test 2"},
+		{POP_Y+3,POP_X,4,4,TYPE_CMD,	"(3)(netcard net0):${?&#mytest 4}=[on=| _or mytest 4||off=| _andn mytest 4]test 4"},
+		{POP_Y+4,POP_X,5,5,TYPE_CMD,	"(4)(netcard net1):${?&#mytest 8}=[on=| _or mytest 8||off=| _andn mytest 8]test 8"},
+		{POP_Y+5,POP_X,6,6,TYPE_CMD,	"(5)(touchscreen test):${?&#mytest 16}=[on=| _or mytest 16||off=| _andn mytest 16]test 16"},
+		{POP_Y+6,POP_X,7,7,TYPE_CMD,	"(6)(SD card test):${?&#mytest 32}=[on=| _or mytest 32||off=| _andn mytest 32]test 32"},
+		{POP_Y+7,POP_X,8,8,TYPE_CMD,	"(7)(video test):${?&#mytest 64}=[on=| _or mytest 64||off=| _andn mytest 64]test 64"},
+		{POP_Y+8,POP_X,9,9,TYPE_CMD,	"(8)(USB test):${?&#mytest 128}=[on=| _or mytest 128||off=| _andn mytest 128]test 128"},
+		{POP_Y+9,POP_X,10,10,TYPE_CMD,	"(9)(button test):${?&#mytest 256}=[on=| _or mytest 256||off=| _andn mytest 256]test 256"},
+		{POP_Y+10,POP_X,11,11,TYPE_CMD,	"(10)(serial test):${?&#mytest 512}=[on=| _or mytest 512||off=| _andn mytest 512]test 512"},
+		{POP_Y+11,POP_X,12,12,TYPE_CMD,	"(11)(AC97 test):${?&#mytest 1024}=[on=| _or mytest 1024||off=| _andn mytest 1024]test 1024"},
+		{POP_Y+12,POP_X,13,13,TYPE_CMD,	"(12)(MCP3201 AD test):${?&#mytest 2048}=[on=| _or mytest 2048||off=| _andn mytest 2048]test 2048"},
+		{POP_Y+13,POP_X,14,14,TYPE_CMD,	"(13)(RTC test):${?&#mytest 4096}=[on=| _or mytest 4096||off=| _andn mytest 4096]test 4096"},
+		{POP_Y+14,POP_X,15,15,TYPE_CMD,	"(14)(NAND Flash test):${?&#mytest 8192}=[on=| _or mytest 8192||off=| _andn mytest 8192]test 8192"},
+		{POP_Y+15,POP_X,16,16,TYPE_CMD,	"(15)(Ir test):${?&#mytest 16384}=[on=| _or mytest 16384||off=| _andn mytest 16384]test 16384"},
+		{POP_Y+16,POP_X,17,17,TYPE_CMD,	"(16)(pmon_net update):${?&#mytest 32768}=[on=| _or mytest 32768||off=| _andn mytest 32768]test 32768"},
+		{POP_Y+17,POP_X,18,18,TYPE_CMD,	"(17)(kernel_net update):${?&#mytest 65536}=[on=| _or mytest 65536||off=| _andn mytest 65536]test 65536"},
+		{POP_Y+18,POP_X,19,19,TYPE_CMD,	"(18)(system_net update):${?&#mytest 131072}=[on=| _or mytest 131072||off=| _andn mytest 131072]test 131072"},
+		{POP_Y+19,POP_X,20,20,TYPE_CMD,	"(19)(pmon_usb update):${?&#mytest 262144}=[on=| _or mytest 262144||off=| _andn mytest 262144]test 262144"},
+		{POP_Y+20,POP_X,21,21,TYPE_CMD,	"(20)(kernel_usb update):${?&#mytest 524288}=[on=| _or mytest 524288||off=| _andn mytest 524288]test 524288"},
+		{POP_Y+21,POP_X,22,22,TYPE_CMD,	"(21)(system_usb update):${?&#mytest 1048576}=[on=| _or mytest 1048576||off=| _andn mytest 1048576]test 1048576"},
+		{POP_Y+22,POP_X,23,23,TYPE_CMD,	"(22)all selected=test ${#mytest}"},
+		{POP_Y+23,POP_X,1,1,TYPE_CMD,	"(23)quit=| _quit",0},
+		{}
+	}
+};
+#endif
 
 static int cmd_test(int ac,char **av)
 {
@@ -246,9 +284,14 @@ static int cmd_test(int ac,char **av)
 	int vga_status;
 
 	vga_status = vga_available;
+
+#if 0
 	if (vga_status == 1){
 		vga_available = 0;
 	}
+#endif
+
+	vga_available = 1;
 	__console_alloc();
 	if(ac==1){
 		if(getenv("testem")) do_menu(&testmenu);
@@ -286,7 +329,7 @@ static int cmd_test(int ac,char **av)
 				printf("AC97音频测试\n说明:\n");
 				printf("1.请用耳机和麦克风连接开发板的耳机和麦克风接口\n");
 			#else
-				printf("Plese plug net wire into syn0\n");
+				printf("Plese plug microphone into the board \n");
 			#endif
 				pause();
 				ac97_read(1, NULL);
@@ -304,11 +347,19 @@ static int cmd_test(int ac,char **av)
 				sprintf(cmd, "ifconfig syn0 remove;ifconfig syn1 remove;ifconfig syn0 %s;", clientip0);
 				do_cmd(cmd);
 				if (myping(serverip)){
+				#ifdef CONFIG_CHINESE
 					printf("\n网络接口0测试失败：数据包丢失！\n");
 //					sprintf(cmd, "set net0test \"%s\"", "测试失败！");
+				#else
+					printf ("net0 test error ~_~!!!\n");
+				#endif
 				}
 				else{
+				#ifdef CONFIG_CHINESE
 					printf("\n网络接口0测试通过\n");
+				#else
+					printf ("net0 test pass ^_^ !\n");
+				#endif
 //					sprintf(cmd, "set net0test \"%s\"", "测试通过");
 				}
 //				do_cmd(cmd);
@@ -356,9 +407,17 @@ static int cmd_test(int ac,char **av)
 				sprintf(cmd,"usb tree");
 				do_cmd(cmd);
 				if (dev_num >= 2){
+				#ifdef CONFIG_CHINESE
 					printf("USB测试通过\n");
+				#else
+					printf ("usb test pass ^_^ !\n");
+				#endif
 				}else{
+				#ifdef CONFIG_CHINESE
 					printf("USB集线器(HUB)错误！\n");
+				#else
+					printf ("usb test error ~_~!!!! \n");
+				#endif
 				}
 			}
 			break;
@@ -385,7 +444,11 @@ static int cmd_test(int ac,char **av)
 				int i, cont, ret;
 				unsigned char *temp1 = (unsigned char *)0xa1000000;
 				unsigned char *temp2 = (unsigned char *)0xa2000000;
+			#ifdef CONFIG_CHINESE
 				printf("NAND Flash 测试\n");
+			#else
+				printf ("NAND Flash test begin :\n");
+			#endif
 //				printf("/----------------- NAND Flash test ---------------/\n");
 				sprintf(cmd, "nandreadid");	//读取ID
 				ret = do_cmd(cmd);
@@ -397,7 +460,11 @@ static int cmd_test(int ac,char **av)
 					//打印读取的内容
 					for (i=0, cont=0; i<0x800; i++){
 						if(*(temp1+i) != 0xff){
+					#ifdef CONFIG_CHINESE
 							printf("NAND Flash 擦除错误！\n");
+					#else
+							printf ("NAND Flash erase error ~_~!!! \n");
+					#endif
 							cont++;
 						}
 //						if((i%16) == 0)
@@ -415,7 +482,11 @@ static int cmd_test(int ac,char **av)
 					do_cmd(cmd);
 					for (i=0, cont=0; i<0x800; i++){
 						if (*(temp1 + i) != *(temp2 + i)){
+					#ifdef CONFIG_CHINESE
 							printf("NAND Flash 读写错误！\n");
+					#else
+							printf ("Nandflash read-write error ~_~!!!\n");
+					#endif
 							cont++;
 						}
 //						if((i%16) == 0)
@@ -423,7 +494,11 @@ static int cmd_test(int ac,char **av)
 //						printf("%02x ", *(temp2+i));
 					}
 					if (cont == 0){
+					#ifdef CONFIG_CHINESE
 						printf("NAND Flash 测试通过\n");
+					#else
+						printf ("Nandflash test pass ^_^ !!!!!\n");
+					#endif
 					}
 					printf("\n");
 				}
@@ -434,15 +509,43 @@ static int cmd_test(int ac,char **av)
 				sprintf(cmd, "test_Ir");
 				do_cmd(cmd);
 			break;
-			case UPDATE_KERNEL:
-				do_cmd("devcp tftp://192.168.1.12/vmlinuz /dev/mtd0");
+			case UPDATE_PMON_NET:
+				printf ("please set the host-PC's IP to 192.168.1.12 !\n");
+				do_cmd("load -r -f bfc00000 tftp://192.168.1.12/gzrom-cloud.bin");
+				break;
+
+			case UPDATE_KERNEL_NET:
+				printf ("please set the host-PC's IP to 192.168.1.12 !\n");
+				do_cmd("devcp tftp://192.168.1.12/vmlinuz-cloud /dev/mtd0");
 				setenv("al", "/dev/mtd0");
-				setenv("append", "console=ttyS2,115200 root=/dev/mtdblock1 rw rootfstype=yaffs2 init=/sbin/init video=ls1bfb:vga1024x768-24@60");
+				setenv("append", "console=ttyS2,115200 root=/dev/mtdblock1 rw rootfstype=yaffs2 init=/sbin/init video=ls1bfb:vga1024x768-24@60 quiet");
+//				setenv("append", "console=ttyS2,115200 root=/dev/mtdblock1 rw rootfstype=yaffs2 init=/sbin/init video=ls1bfb:vga1024x768-24@60");
 			break;
-			case UPDATE_SYSTEM:
+
+			case UPDATE_SYSTEM_NET:
+				printf ("please set the host-PC's IP to 192.168.1.12 !\n");
 				do_cmd("mtd_erase /dev/mtd1");
 				do_cmd("devcp tftp://192.168.1.12/cloud.img /dev/mtd1 yaf nw");
 			break;
+
+			case UPDATE_PMON_USB:
+				printf ("please plug in the USB-disk !\n");
+				do_cmd ("load -r -f bfc00000 /dev/fat@usb0/gzrom-cloud.bin");
+				break;
+
+			case UPDATE_KERNEL_USB:
+				printf ("please plug in the USB-disk !\n");
+				do_cmd ("devcp /dev/fat@usb0/vmlinuz-cloud /dev/mtd0");
+				setenv("al", "/dev/mtd0");
+				setenv("append", "console=ttyS2,115200 root=/dev/mtdblock1 rw rootfstype=yaffs2 init=/sbin/init video=ls1bfb:vga1024x768-24@60 quiet");
+//				setenv("append", "console=ttyS2,115200 root=/dev/mtdblock1 rw rootfstype=yaffs2 init=/sbin/init video=ls1bfb:vga1024x768-24@60");
+				break;
+
+			case UPDATE_SYSTEM_USB:
+				printf ("please plug in the USB-disk !\n");
+				do_cmd("mtd_erase /dev/mtd1");
+				do_cmd ("devcp /dev/fat@usb0/cloud.img /dev/mtd1 yaf nw");
+				break;
 		}
 		pause();
 	}

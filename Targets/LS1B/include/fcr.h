@@ -55,7 +55,11 @@ extern char           *heaptop;
 #define RTC_NVRAM_BASE		0x0e
 
 #ifndef UART_BASE_ADDR
-#define COM1_BASE_ADDR	0xbfe48000
+#ifdef IPCAMERA
+	#define	COM1_BASE_ADDR	0xbfe4c000
+#else
+	#define COM1_BASE_ADDR	0xbfe48000
+#endif
 #else
 #define COM1_BASE_ADDR	UART_BASE_ADDR
 #endif

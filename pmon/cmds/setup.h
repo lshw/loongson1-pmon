@@ -34,7 +34,7 @@
 #define MSG_H	20
 #define MSG_X	5
 #define MSG_Y	8
-#define INFO_Y  19
+#define INFO_Y  25//19	//lxy
 #define INFO_W  50
 #endif
 

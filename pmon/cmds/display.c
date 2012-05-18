@@ -387,6 +387,97 @@ void cprintf(int y, int x,int width,char color,const char *fmt, ...)
 	__cprint(y,x,width,color,buf);
 }
 
+static void cprint_both(int y, int x,int width,char color, const char *buf)
+{
+	int l;
+	int y_fb = y;
+	int x_fb = x;
+	int width_fb = width;
+	char color_fb = color;
+	const char *buf_fb = buf;
+	int temp = vga_available;
+
+	vga_available = 1;
+	cprintfb(y_fb, x_fb, width_fb, color_fb, buf);
+	vga_available = 0;
+	cprintS(y, x, width, color, buf);
+	vga_available = temp;
+}
+
+static void popup_both(int y, int x,int height,int width)
+{
+	int y_fb = y;
+	int x_fb = x;
+	int width_fb = width;
+	int height_fb = height;
+	int temp = vga_available;
+
+	vga_available = 1;
+	popupfb(y_fb, x_fb, height_fb, width_fb);
+	vga_available = 0;
+	popupS(y, x, height, width);
+	vga_available = temp;
+}
+
+static void popdown_both(int y, int x,int height,int width)
+{
+	int y_fb = y;
+	int x_fb = x;
+	int width_fb = width;
+	int height_fb = height;
+	int temp = vga_available;
+
+	vga_available = 1;
+	popupfb(y_fb, x_fb, height_fb, width_fb);
+	vga_available = 0;
+	popdownS(y, x, height, width);
+	vga_available = temp;
+}
+
+static void set_cursor_both(unsigned char x,unsigned char y)
+{
+	int y_fb = y;
+	int x_fb = x;
+	int temp = vga_available;
+
+	vga_available = 1;
+	set_cursor_fb(x_fb, y_fb);
+	vga_available = 0;
+	set_cursorS(x, y);
+	vga_available = temp;
+}
+
+static void scr_clear_both()
+{
+	int temp = vga_available;
+
+	vga_available = 1;
+	scr_clearfb();
+	vga_available = 0;
+	scr_clearS();
+	vga_available = temp;
+}
+
+static void msgboxS_both(int yy,int xx,int height,int width,char *msg)
+{
+	int l;
+	int y_fb = yy;
+	int x_fb = xx;
+	int width_fb = width;
+	int height_fb = height;
+	char *msg_fb = msg;
+	int temp = vga_available;
+
+	l = strlen(msg);
+	msg_fb = malloc(l);
+	strlcpy(msg_fb, msg, l);
+
+	vga_available = 1;
+	msgboxS(y_fb, x_fb, height_fb, width_fb, msg_fb);
+	vga_available = temp;
+}
+
+
 void __console_init()
 {
  if(!vga_available)
@@ -402,12 +493,21 @@ void __console_init()
  else
  {
 #if NMOD_FRAMEBUFFER
+#if 0
   __cprint=cprintfb;
   __popup=popupfb;
   __popdown=popupfb;
   __msgbox=msgboxS;
   __set_cursor=set_cursor_fb;
   __scr_clear=scr_clearfb;
+#else
+  __cprint=cprint_both;
+  __popup=popup_both;
+  __popdown=popup_both;
+  __msgbox=msgboxS;
+  __set_cursor=set_cursor_both;
+  __scr_clear=scr_clear_both;
+#endif
 #else
   __cprint=cprint;
   __popup=popup;

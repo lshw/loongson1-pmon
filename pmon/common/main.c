@@ -481,7 +481,7 @@ autoload(char *s)
 #ifdef	wait_key
 		char *d = getenv ("bootdelay");
 		if(!d || !atob (&dly, d, 10) || dly < 0 || dly > 99) {
-			dly = 5;
+			dly = 1;
 		}
 
 		SBD_DISPLAY ("AUTO", CHKPNT_AUTO);
@@ -499,6 +499,12 @@ autoload(char *s)
 
 		if(cnt > 0 && strchr("\n\r", getchar())) {
 			cnt = 0;
+		}
+		else if (cnt > 0 && strchr("u", getchar()))
+		{
+			do_cmd("test");
+			do_cmd ("load /dev/mtd0");
+			do_cmd ("g console=ttyS2,115200 root=/dev/mtdblock1 rw rootfstype=yaffs2 init=/sbin/init video=ls1bfb:vga1024x768-24@60");
 		}
 
 		ioctl (STDIN, TCSETAF, &sav);

@@ -228,6 +228,7 @@ option		wait_key	#lxy
 option	CONFIG_FB_DYN
 option	CONFIG_DDR16BIT
 option CONFIG_PHY100M
-option FAST_STARTUP
-option		CONFIG_CHINESE
+option	CONFIG_CLOUD
+#option FAST_STARTUP
+#option		CONFIG_CHINESE
 #option	NORFLASH_PARTITION
