@@ -14,7 +14,7 @@
 #define KBD_STATUS_REG		(0xbf004044)	/* Status register (R) */
 #define KBD_CNTL_REG		(0xbf004044)	/* Controller command register (W) */
 #define KBD_DATA_REG		(0xbf004040)	/* Keyboard data register (R/W) */
-#elif defined(LS1FSOC)
+#elif defined(LS1ASOC)
 #define KBD_STATUS_REG		(0xbfe60004)	/* Status register (R) */
 #define KBD_CNTL_REG		(0xbfe60004)	/* Controller command register (W) */
 #define KBD_DATA_REG		(0xbfe60000)	/* Keyboard data register (R/W) */
