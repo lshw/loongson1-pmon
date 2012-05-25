@@ -1,7 +1,7 @@
 # $Id: Bonito,v 1.1.1.1 2006/09/14 01:59:09 root Exp $ # #	GENERIC configuration for Galileo EV64240 # #  This file is supposed to be included by target file after #  endian has been defined.
 #
-machine        LS1B        mips    # CPU Architecture, Platform
-config          pmon 
+machine		LS1X        mips    # CPU Architecture, Platform
+config		pmon 
 
 #
 #  Define target endian
@@ -20,13 +20,13 @@ option		LS1BSOC
 option		GS232_SOC
 option		CPU_LS232
 option		WAYBITS_HIGH
-option		IPCAMERA
+option		ZIGBEE
 
 #
 # Platform options
 #
 option		MIPS
-#option		INET
+option		INET
 
 select		mod_flash_amd		# AMD flash device programming
 select		mod_flash_intel		# intel flash device programming
@@ -66,7 +66,7 @@ select		cmd_misc		# Reboot & Flush etc.
 select		cmd_tr			# Host port-through command
 select		cmd_devls		# Device list
 select		cmd_set			# As cmd_env but not req. cmd_hist
-#select		cmd_testdisk
+select		cmd_testdisk
 select		cmd_test
 #select		cmd_testfire
 select		pmon_zmodem_rz
@@ -77,24 +77,27 @@ select		cmd_shell		# Shell commands, vers, help, eval
 # Platform options
 #
 select		mod_uart_ns16550	# Standard UART driver
-option		APB_CLK=33000000
+option		APB_CLK=33000000	# 外部晶振频率(Hz)
 option 		CPU_MULT=8
 option 		DDR_MULT=5
 option		CONS_BAUD=B115200
-option		UART_BASE_ADDR=0xbfe4c000
+option		UART_BASE_ADDR=0xbfe4c000	#串口控制台基地址 需要不同的串口输出可以修改此值
+
 select		ext2
-select 		yaffsfs
-#select		fatfs
+#select 	yaffsfs
+select		fatfs
+select		gzip
+
 #select		mod_x86emu		# X86 emulation for VGA
-option 	    MY40IO
-#option 		GC300
-#select      gpu300_compile
-#select 		mod_framebuffer
+option		MY40IO
+#option		GC300
+#select		gpu300_compile
+select		mod_framebuffer
 #select		mod_x86emu_int10
-#select		mod_vgacon
+select		mod_vgacon
 option		NOPCINAMES		# Save some space for x86emu
 #option		FASTBOOT
-#select	    vt82c686        #via686a/b code
+#select		vt82c686        #via686a/b code
 
 #
 # Functional options.
@@ -107,7 +110,7 @@ option		NOSNOOP			# Caches are no-snooping
 option		HAVE_TOD		# Time-Of-Day clock
 option		HAVE_NVENV		#  Platform has non-volatile env mem
 #option		HAVE_LOGO		# Output splash logo
-#option		USE_SUPERIO_UART
+option		USE_SUPERIO_UART
 #option		USE_LEGACY_RTC
 #option		GODSONEV2A
 #option		LINUX_PC
@@ -119,17 +122,17 @@ option		AUTOLOAD
 #option		CONFIG_PCI0_HUGE_MEM	
 #option		CONFIG_PCI0_GAINT_MEM	
 option		CONFIG_CACHE_64K_4WAY
-#option 	    NVRAM_IN_FLASH	
+#option		NVRAM_IN_FLASH	
 #option		FLASH_READ_ONLY
-option		NORFLASH_PARTITION
+#option		NORFLASH_PARTITION	#nor flash(spi flash)分区
 
 #
 #  Now the Machine specification
 #
-mainbus0        at root
+mainbus0	at root
 localbus0	at mainbus0
-#loopdev0	at mainbus0
-#fd0         at mainbus0
+loopdev0	at mainbus0
+#fd0		at mainbus0
 pcibr*		at mainbus0
 #pcibr1		at mainbus0
 pci*		at pcibr?
@@ -145,66 +148,60 @@ pci*		at pcibr?
 #sd*		at scsibus? target ? lun ? 
 #cd*		at scsibus? target ? lun ? 
 
-#### IDE controllers
-#pciide* 	at pci ? dev ? function ? flags 0x0000
-
-#### IDE hard drives
-#wd*		at pciide? channel ? drive ? flags 0x0000
-
-#option WDC_NORESET
-
 #### Networking Devices
-#syn0		at localbus0
+
+syn0		at localbus0
 #syn1		at localbus0
-#option GMAC_PHY_BASE=1
-#option GMAC0_ADDR=0xbfe10000
-#option GMAC1_ADDR=0xbfe20000
-#select      gmac
+option		GMAC_PHY_BASE=1
+option		GMAC0_ADDR=0xbfe10000
+option		GMAC1_ADDR=0xbfe20000
+select		gmac
 #option		GMAC
 #gt0		at localbus? base 4
 #gt1		at localbus? base 5
 #gt2		at localbus? base 6
 # fxp normally only used for debugging (enable/disable both)
 #dmfe0		at localbus0
-#sdcard0		at localbus0 flags 0
-#uhci*		 at pci? dev ? function ?
-#ohci0		 at pci? dev ? function ?
-lohci0		at localbus0 base 0xbfe08000
-usb*		 at usbbus ? 
-#ohci1		 at pci? dev ? function ?
-#ehci0		at localbus0
 
+#sdcard0	at localbus0 flags 0
+
+#uhci*		at pci? dev ? function ?
+#ohci0		at pci? dev ? function ?
+#ohci1		at pci? dev ? function ?
+lohci0		at localbus0 base 0xbfe08000
+#ehci0		at localbus0
+usb*		at usbbus ?
 select		mod_usb
-select  	mod_usb_storage
-#select	mod_usb_uhci
-select 	mod_usb_ohci
-#select	mod_usb_ehci		#lxy
+select		mod_usb_storage
+#select		mod_usb_uhci
+select		mod_usb_ohci
+#select		mod_usb_ehci
 select		mod_usb_kbd
 
 
 #### Pseudo devices
-#pseudo-device	loop	1	# network loopback
+pseudo-device	loop	1	# network loopback
 
-#option HAVE_NB_SERIAL
-#option USE_ENVMAC
-#option LOOKLIKE_PC
-#select cmd_lwdhcp
-#select cmd_bootp
-#option FOR_GXEMUL
-select fatfs
-#option FLOATINGPT
-select gzip
-option INPUT_FROM_BOTH
-option OUTPUT_TO_BOTH
-#select nand
-select nor_flash
-select cmd_xyzmodem
-#select loop
-#select raw_ether
-#option VGA_MEM_BASE=0xb5000000
-#option VGA_MEM_BASE=0xb7f00000
+#option		HAVE_NB_SERIAL
+#option		USE_ENVMAC
+#option		LOOKLIKE_PC
+#select		cmd_lwdhcp
+#select		cmd_bootp
+#option		FOR_GXEMUL
+#option		FLOATINGPT
+
+option		INPUT_FROM_BOTH
+option		OUTPUT_TO_BOTH
+select		nand
+#select		nor_flash			#如果使用nor flash分区需要该选项
+select		cmd_xyzmodem
+select		loop
+select		raw_ether
+
+#option		VGA_MEM_BASE=0xb5000000
+#option		VGA_MEM_BASE=0xb7f00000
 #option		X320x240
-#option		X480x272
+option		X480x272
 #option		X640x480
 #option		X640x640
 #option		X640x768
@@ -220,21 +217,29 @@ select cmd_xyzmodem
 #option		X1024x768
 #option		X1280x800
 #option		X1440x900
-#option		CONFIG_VIDEO_LOGO
+option		CONFIG_VIDEO_LOGO
 #option		CONFIG_VIDEO_BMP_LOGO
 #option		CONFIG_VIDEO_12BPP
 #option		CONFIG_VIDEO_15BPP
-#option 	CONFIG_VIDEO_16BPP
-#option		CONFIG_VIDEO_24BPP
-#option		CONFIG_VIDEO_32BPP
-#option		CONFIG_VGA_MODEM
-#option		CONFIG_VIDEO_SW_CURSOR
+option		CONFIG_VIDEO_16BPP
+#option 	CONFIG_VIDEO_24BPP
+#option 	CONFIG_VIDEO_32BPP
+#option		CONFIG_VGA_MODEM		#VGA模式
+option		CONFIG_VIDEO_SW_CURSOR	#软件光标
+option		CONFIG_FB_DYN
 
 select		ide
-option		wait_key	#lxy
-#option		HAVE_MUT_COM		#lxy
-option		CONFIG_FB_DYN
-option		CONFIG_DDR16BIT
-option		CONFIG_PHY100M
+option		wait_key
+#option 	HAVE_MUT_COM		#多串口输入/输出,把控制台信息同时输入/输出到多个串口
+option		CONFIG_DDR16BIT		#使能16bit内存接口模式 否则32bit内存接口模式
+option		CONFIG_PHY100M		#使能百兆网络 否则千兆网络
+#option		BUZZER				#蜂鸣器
+#option		FAST_STARTUP		#快速启动
 option		CONFIG_CHINESE
-option		CONFIG_IPCAMERA
+
+#GPIO
+option		ZIGBEE_POWER=52
+option		MG323_RESET=2	#MG323复位引脚
+option		MG323_TERM_ON=3	#MG323启动引脚
+
+select		mod_ili9341

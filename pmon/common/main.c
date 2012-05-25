@@ -611,7 +611,7 @@ autorun(char *s)
 }
 #endif
 
-
+#ifdef FAST_STARTUP
 void fast_startup()		//lxy
 {
 #if 0
@@ -659,7 +659,7 @@ extern unsigned long GPU_fbaddr;
 //	printf ("lxy: after go .....\n");
 
 }
-
+#endif
 
 
 /*

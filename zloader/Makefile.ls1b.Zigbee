@@ -1,4 +1,4 @@
-TARGET=LS1B
+TARGET=LS1X
 TARGETEL=ls1b.Zigbee
 export START=start.o
 MEMSIZE=64

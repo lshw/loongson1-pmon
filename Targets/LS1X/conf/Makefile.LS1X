@@ -1,10 +1,10 @@
 ifndef S
 S:=$(shell cd ../../../..; pwd)
 endif
-TARGET= ${S}/Targets/LS1B
-SUBTARGET?=ls1b
+TARGET= ${S}/Targets/LS1X
+SUBTARGET?=ls1x
 CPPFLAGS=-mips2
-START?=start_ls1b.o
+START?=start_ls1x.o
 
 %OBJS
 
