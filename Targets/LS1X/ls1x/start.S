@@ -478,6 +478,7 @@ cpu_win_fixup:
 	li	t1,0x0
 	sw	t1,(t0)
 	
+#ifdef BUZZER
 	/* disable buzzer gpio40*/
 	li	v0, 0xbfd010c4
 	li	t0, 0x00000100
@@ -485,7 +486,7 @@ cpu_win_fixup:
 	li	v0, 0xbfd010d4
 	li	t0, 0
 	sw	t0, 0(v0)
-
+#endif
 
 #	ddr2config by cww 20090901
 	PRINTSTR("DDR2 config begin_2\r\n")
