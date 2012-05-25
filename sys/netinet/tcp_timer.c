@@ -237,7 +237,7 @@ tcp_timers(tp, timer)
 		rto = TCP_REXMTVAL(tp);
 		if (rto < tp->t_rttmin)
 			rto = tp->t_rttmin;
-		TCPT_RANGESET((long) tp->t_rxtcur,
+		TCPT_RANGESET(tp->t_rxtcur,
 		    rto * tcp_backoff[tp->t_rxtshift],
 		    tp->t_rttmin, TCPTV_REXMTMAX);
 		tp->t_timer[TCPT_REXMT] = tp->t_rxtcur;

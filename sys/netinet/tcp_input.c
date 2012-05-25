@@ -2790,7 +2790,7 @@ tcp_mss(tp, offer)
 			/* default variation is +- 1 rtt */
 			tp->t_rttvar =
 			    tp->t_srtt * TCP_RTTVAR_SCALE / TCP_RTT_SCALE;
-		TCPT_RANGESET((long) tp->t_rxtcur,
+		TCPT_RANGESET(tp->t_rxtcur,
 		    ((tp->t_srtt >> 2) + tp->t_rttvar) >> 1,
 		    tp->t_rttmin, TCPTV_REXMTMAX);
 	}
