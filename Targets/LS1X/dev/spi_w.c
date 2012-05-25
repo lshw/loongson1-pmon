@@ -1012,6 +1012,7 @@ int fl_erase_device(void *fl_base, int size, int verbose)
 }
 
 /*************************************************************************/	//lxy
+#ifdef NORFLASH_PARTITION
 int nor_mtd_read(struct mtd_info *mtd, loff_t from, size_t len,
 		     size_t *retlen, uint8_t *buf)
 {
@@ -1019,7 +1020,6 @@ int nor_mtd_read(struct mtd_info *mtd, loff_t from, size_t len,
 		return -EINVAL;
 	if (!len)
 		return 0;
-//	printf ("lxy: from = 0x%x, len = 0x%x!\n", (int)from, len);
 	spi_read_area_fast(from, buf, len);
 
 	spi_initr();
@@ -1061,14 +1061,11 @@ void print_sector(void)
 	memset (val, 0x55, 512);
 	spi_read_area_fast(0x0, val, 512);
 
-	for (i=0; i<512; i++)
-	{
-		if (i%16)
-		{
+	for (i=0; i<512; i++) {
+		if (i%16)	{
 			printf ("0x%x\t", val[i]);
 		}
-		else
-		{
+		else {
 			printf ("\n");
 			printf ("0x%x\t", val[i]);
 		}
@@ -1110,6 +1107,7 @@ void norflash_init(void)
 	wb_write_sr(0);
 	spi_initr();
 }
+#endif
 
 /*************************************************************************/	//lxy
 static const Cmd Cmds[] =
