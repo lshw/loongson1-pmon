@@ -122,7 +122,6 @@ option		AUTOLOAD
 option		CONFIG_CACHE_64K_4WAY
 #option		NVRAM_IN_FLASH	
 #option		FLASH_READ_ONLY
-#option		NORFLASH_PARTITION	#nor flash(spi flash)分区
 
 #
 #  Now the Machine specification
@@ -190,6 +189,7 @@ option		INPUT_FROM_BOTH
 option		OUTPUT_TO_BOTH
 select		nand
 #select		nor_flash			#如果使用nor flash分区需要该选项
+#option		NORFLASH_PARTITION	#nor flash(spi flash)分区
 select		cmd_xyzmodem
 select		loop
 select		raw_ether

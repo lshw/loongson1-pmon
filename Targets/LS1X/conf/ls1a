@@ -8,6 +8,7 @@ config		pmon
 #
 makeoptions	ENDIAN=EL		# Little endian version.
 
+
 #include "conf/GENERIC_ALL"
 
 #
@@ -15,17 +16,16 @@ makeoptions	ENDIAN=EL		# Little endian version.
 #
 option		SYSTYPE="\"FCR\""
 option		TARGETNAME="\"FCR\""
-option		LS1BSOC
+option		LS1ASOC
 option		GS232_SOC
 option		CPU_LS232
 option		WAYBITS_HIGH
-option		IPCAMERA
 
 #
 # Platform options
 #
 option		MIPS
-#option		INET
+option		INET
 
 select		mod_flash_amd		# AMD flash device programming
 select		mod_flash_intel		# intel flash device programming
@@ -33,7 +33,7 @@ select		mod_flash_sst		# intel flash device programming
 select		mod_debugger		# Debugging module
 select		mod_symbols		# Symbol table handling
 select		mod_s3load		# Srecord loading
-#select		mod_fastload		# LSI Fastload
+select		mod_fastload		# LSI Fastload
 select		mod_elfload		# ELF loading
 select		elf32only
 
@@ -65,7 +65,7 @@ select		cmd_misc		# Reboot & Flush etc.
 select		cmd_tr			# Host port-through command
 select		cmd_devls		# Device list
 select		cmd_set			# As cmd_env but not req. cmd_hist
-#select		cmd_testdisk
+select		cmd_testdisk
 select		cmd_test
 #select		cmd_testfire
 select		pmon_zmodem_rz
@@ -76,11 +76,11 @@ select		cmd_shell		# Shell commands, vers, help, eval
 # Platform options
 #
 select		mod_uart_ns16550	# Standard UART driver
-option		APB_CLK=33000000	# 外部晶振频率(Hz)
+option		APB_CLK=25000000	# 外部晶振频率(Hz)
 option 		CPU_MULT=8
-option 		DDR_MULT=5
+option 		DDR_MULT=4
 option		CONS_BAUD=B115200
-option		UART_BASE_ADDR=0xbfe4c000	#串口控制台基地址 需要不同的串口输出可以修改此值
+option		UART_BASE_ADDR=0xbfe40000	#串口控制台基地址 需要不同的串口输出可以修改此值
 
 select		ext2
 #select 	yaffsfs
@@ -91,9 +91,9 @@ select		gzip
 option		MY40IO
 #option		GC300
 #select		gpu300_compile
-#select		mod_framebuffer
+select		mod_framebuffer
 #select		mod_x86emu_int10
-#select		mod_vgacon
+select		mod_vgacon
 option		NOPCINAMES		# Save some space for x86emu
 #option		FASTBOOT
 #select		vt82c686        #via686a/b code
@@ -108,14 +108,14 @@ option		NOSNOOP			# Caches are no-snooping
 #
 option		HAVE_TOD		# Time-Of-Day clock
 option		HAVE_NVENV		#  Platform has non-volatile env mem
-#option		HAVE_LOGO		# Output splash logo
-#option		USE_SUPERIO_UART
+option		HAVE_LOGO		# Output splash logo
+option		USE_SUPERIO_UART
 #option		USE_LEGACY_RTC
 #option		GODSONEV2A
 #option		LINUX_PC
 #option		LONGMENG
 #option		RADEON7000
-#option 	DEBUG_EMU_VGA
+#option		DEBUG_EMU_VGA
 option		AUTOLOAD
 #option		CONFIG_PCI0_LARGE_MEM	
 #option		CONFIG_PCI0_HUGE_MEM	
@@ -129,7 +129,7 @@ option		CONFIG_CACHE_64K_4WAY
 #
 mainbus0	at root
 localbus0	at mainbus0
-#loopdev0	at mainbus0
+loopdev0	at mainbus0
 #fd0		at mainbus0
 pcibr*		at mainbus0
 #pcibr1		at mainbus0
@@ -146,22 +146,14 @@ pci*		at pcibr?
 #sd*		at scsibus? target ? lun ? 
 #cd*		at scsibus? target ? lun ? 
 
-#### IDE controllers
-#pciide* 	at pci ? dev ? function ? flags 0x0000
-
-#### IDE hard drives
-#wd*		at pciide? channel ? drive ? flags 0x0000
-
-#option WDC_NORESET
-
 #### Networking Devices
-#syn0		at localbus0
+
+syn0		at localbus0
 #syn1		at localbus0
-#option		GMAC_PHY_BASE=1
-#option		GMAC0_ADDR=0xbfe10000
-#option		GMAC1_ADDR=0xbfe20000
-#select		gmac
-#option		GMAC
+option		GMAC_PHY_BASE=1
+option		GMAC0_ADDR=0xbfe10000
+option		GMAC1_ADDR=0xbfe20000
+select		gmac
 #gt0		at localbus? base 4
 #gt1		at localbus? base 5
 #gt2		at localbus? base 6
@@ -172,19 +164,24 @@ pci*		at pcibr?
 
 #uhci*		at pci? dev ? function ?
 #ohci0		at pci? dev ? function ?
+#lohci0		at localbus0 base 0xbfe08000
+#usb*		at usbbus ? 
 #ohci1		at pci? dev ? function ?
-#ehci0		at localbus0
-lohci0		at localbus0 base 0xbfe08000
-usb*		at usbbus ? 
-select		mod_usb
-select		mod_usb_storage
+#atp*		at pci? dev ? function ?  #sata atp8620
+#ahci*		at pci? dev ? function ?
+#ahcisata*	at ahci?
+
+#lahci0		at localbus0 base 0xbfe30000
+#ahcisata*	at lahci?
+
+#select		mod_usb
+#select		mod_usb_storage
 #select		mod_usb_uhci
-select		mod_usb_ohci
-#select		mod_usb_ehci
-select		mod_usb_kbd
+#select		mod_usb_ohci
+#select		mod_usb_kbd
 
 #### Pseudo devices
-#pseudo-device	loop	1	# network loopback
+pseudo-device	loop	1	# network loopback
 
 #option		HAVE_NB_SERIAL
 #option		USE_ENVMAC
@@ -197,16 +194,14 @@ select		mod_usb_kbd
 option		INPUT_FROM_BOTH
 option		OUTPUT_TO_BOTH
 #select		nand
-select		nor_flash			#如果使用nor flash分区需要该选项
-option		NORFLASH_PARTITION	#nor flash(spi flash)分区
+#select		nor_flash			#如果使用nor flash分区需要该选项
+#option		NORFLASH_PARTITION	#nor flash(spi flash)分区
 select		cmd_xyzmodem
-#select		loop
-#select		raw_ether
+select		loop
+select		raw_ether
 
 #option		VGA_MEM_BASE=0xb5000000
 #option		VGA_MEM_BASE=0xb7f00000
-#option		X320x240
-#option		X480x272
 #option		X640x480
 #option		X640x640
 #option		X640x768
@@ -219,26 +214,29 @@ select		cmd_xyzmodem
 #option		X1024x480
 #option		X1024x600
 #option		X1024x640
-#option		X1024x768
+#option		X1152x764
+option		X1024x768
 #option		X1280x800
 #option		X1440x900
-#option		CONFIG_VIDEO_LOGO
-#option		CONFIG_VIDEO_BMP_LOGO
+option		CONFIG_VIDEO_LOGO
+option		CONFIG_VIDEO_BMP_LOGO
 #option		CONFIG_VIDEO_12BPP
 #option		CONFIG_VIDEO_15BPP
-#option 	CONFIG_VIDEO_16BPP
-#option		CONFIG_VIDEO_24BPP
-#option		CONFIG_VIDEO_32BPP
+option		CONFIG_VIDEO_16BPP
+#option 	CONFIG_VIDEO_32BPP
 #option		CONFIG_VGA_MODEM		#VGA模式
-#option		CONFIG_VIDEO_SW_CURSOR	#软件光标
+option		CONFIG_VIDEO_SW_CURSOR	#软件光标
 option		CONFIG_FB_DYN
 
 select		ide
+select		http #support load from http ???
+select		tcp
+select		inet
+
 option		wait_key
 #option		HAVE_MUT_COM		#多串口输入/输出,把控制台信息同时输入/输出到多个串口
-option		CONFIG_DDR16BIT		#使能16bit内存接口模式 否则32bit内存接口模式
-option		CONFIG_PHY100M		#使能百兆网络 否则千兆网络
+#option		CONFIG_DDR16BIT		#使能16bit内存接口模式 否则32bit内存接口模式
+#option		CONFIG_PHY100M		#使能百兆网络 否则千兆网络
 #option		BUZZER				#蜂鸣器
 #option		FAST_STARTUP		#快速启动
-option		CONFIG_CHINESE
-option		CONFIG_IPCAMERA
+#option		CONFIG_CHINESE

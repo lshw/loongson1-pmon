@@ -298,17 +298,21 @@ locate:
 	b 2f
 	nop
 1:
-#define DDRCFG_DATA (0x8888|(CPU_MULT-1)|((DDR_MULT-3)<<8))
+#define DDRCFG_DATA (0x8888|(CPU_MULT-4)|((DDR_MULT-3)<<8))
     li  a1, DDRCFG_DATA   // 1fboard 25MHz
+    li  a2, 0xa
 2:
     li  a0, 0xbfe78030
     sw  a1, 0x0(a0)
     nop
-	lw	a2, 0x0(a0)
-	xor a2,a1
-	andi a2,0xf0f
-	bnez a2,2b
-	nop
+    sub  a2, 0x1
+    bnez a2, 2b
+    nop
+//	lw	a2, 0x0(a0)
+//	xor a2,a1
+//	andi a2,0xf0f
+//	bnez a2,2b
+//	nop
 #else
     li  a0, 0xbfe78030
     /*31:dc_div_en,30-26:dc_div,25:cpu_div_en,24-20:cpu_div,19:ddr_div_en,18-14:ddr_div*/
@@ -353,10 +357,10 @@ locate:
     sw a1,(a0);
 
 1:
-   lw v1,(a0)
-   bne a1,v1,1b
-   nop
-    DELAY(0x3000)
+//	lw v1,(a0)
+//	bne a1,v1,1b
+//	nop
+//	DELAY(0x3000)
 	
 #endif
 
