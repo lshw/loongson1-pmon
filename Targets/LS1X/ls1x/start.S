@@ -1222,11 +1222,14 @@ cache_init_finish:
     .set reorder
 	.end 	cache_init
 
-#define REG_ADDRESS 0x0
-#define CONFIG_BASE 0xaffffe00
-
 #ddr2 by cww 20090901
-#if 1
+#ifdef LS1ASOC
+#include "ls1a_ddr2_param_define.h"
+#include "ls1a_ddr2_config.S"
+	.rdata
+	.align 5
+#include "ls1a_ddr2_param.S"
+#elif LS1BSOC
 #include "ddr2fconfig.S"
 #endif
 

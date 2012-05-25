@@ -1,0 +1,69 @@
+//this param apply to SDRAM < 1Gb, 1/2KB, 4/8 banks running lower then 266M
+//use CL=4
+ddr2_reg_data:
+MC0_CTL_000 : .dword 0x0100010000000101
+//0000000_1 ddrii_sdram_mode(RW) 0000000_1 concurrentap(RW) 0000000_1 bank_split_en(RW) 0000000_0 auto_refresh_mode(RW) 0000000_0 arefresh(RW) 0000000_1 ap(RW) 0000000_1 addr_cmp_en(RW) 0000000_1 active_aging(RW)
+MC0_CTL_010 : .dword 0x0000000100000000
+//0000000_0 fwc(RW) 0000000_0 fast_write(RW) 0000000_0 enable_quick_srefresh(RW) 0000000_0 eight_bank_mode(RW) 0000000_0 ecc_disable_w_uc_err(RW) 0000000_1 dqs_n_en(RW) 0000000_0 dll_bypass_mode 0000000_0(RW) dlllockreg(RW)
+MC0_CTL_020 : .dword 0x0100010000000000
+//0000000_1 priority_en(RW) 0000000_0 power_down(RW) 0000000_1 placement_en(RW) 0000000_1 odt_add_turn_clk_en(RW) 0000000_0 no_cmd_init(RW) 0000000_0 intrptwritea(RW) 0000000_0 intrptreada(RW) 0000000_0 intrptapburst(RW)
+MC0_CTL_030 : .dword 0x0001000001000100
+//0000000_1 swap_port_rw_same_en(RW) 0000000_1 swap_en(RW) 0000000_0 start(RW) 0000000_0 srefresh(RW) 0000000_1 rw_same_en(RW) 0000000_0 reg_dimm_enable(RW) 0000000_0 reduc(RW) 0000000_0 pwrup_srefresh_exit(RW)
+MC0_CTL_040 : .dword 0x0102010200000100
+//000000_01 rtt_0(RW) 000000_00 ctrl_raw(RW) 000000_10 axi0_w_priority(RW) 000000_10 axi0_r_priority(RW) 0000000_0 write_modereg(RW) 0000000_1 writeinterp(RW) 0000000_1 tref_enable(RW) 0000000_1 tras_lockout(RD)
+MC0_CTL_050 : .dword 0x0600000004040200    #CL=4
+//00000_000 q_fullness(RW) 00000_000 port_data_error_type(RD) 00000_000 out_of_range_type(RD) 00000_000 max_cs_reg(RD) 00000_100 column_size(RW) 00000_101 caslat(RW) 00000_010 addr_pins(RW) 000000_10 rtt_pad_termination(RW)
+MC0_CTL_060 : .dword 0x0a03020402020303
+//0000_1010 aprebit(RW) 00000_100 wrlat(RW) 00000_010 twtr(RW) 00000_100 twr_int(RW) 00000_010 trtp(RW) 00000_010 trrd(RW) 00000_010 temrs(RW) 00000_011 tcke(RW)
+MC0_CTL_070 : .dword 0x0000020000010809
+//0000_0000 max_row_reg 0000_0000 max_col_reg 0000_0010 initaref 0000_0000 ecc_u_id 0000_0000 ecc_c_id 0000_1111 cs_map 0000_0111 caslat_lin_gate 0000_1010 caslat_lin
+MC0_CTL_080 : .dword 0x0804020100000000
+//0000_0001 odt_wr_map_cs3 0000_0010 odt_wr_map_cs2 0000_0100 odt_wr_map_cs1 0000_1000 odt_wr_map_cs0 0000_0001 odt_rd_map_cs3 0000_0010 odt_rd_map_cs2 0000_0100 odt_rd_map_cs1 0000_1000 odt_rd_map_cs0
+MC0_CTL_090 : .dword 0x0000050900000000
+//000_00000 ocd_adjust_pup_cs_0(RW) 000_00000 ocd_adjust_pdn_cs_0(RW) 0000_0100 trp(RW) 0000_1000 tdal(RW) 0000_0000 port_data_error_id(RD) 0000_0000 port_cmd_error_type(RD) 0000_0000 port_cmd_error_id(RD) 0000_0000 out_of_range_source_id(RD)
+MC0_CTL_0a0 : .dword 0x1515153f3f10050e
+//0_0011101 dll_dqs_delay_2(RW) 0_0011101 dll_dqs_delay_1(RW) 0_0011101 dll_dqs_delay_0(RW) 00_111111 command_age_count(RW) 00_111111 age_count(RW) 000_01111 trc(RW) 000_00010 tmrd(RW) 000_00000 tfaw(RW)
+MC0_CTL_0b0 : .dword 0x4858151515151515
+//0_1011111 wr_dqs_shift(RW) 0_1111111 dqs_out_shift(RW) 0_0011101 dll_dqs_delay_8(RW) 0_0011101 dll_dqs_delay_7(RW) 0_0011101 dll_dqs_delay_6(RW) 0_0011101 dll_dqs_delay_5(RW) 0_0011101 dll_dqs_delay_4(RW) 0_0011101 dll_dqs_delay_3(RW)
+MC0_CTL_0c0 : .dword 0x002a22040c000000
+//0000000_000101010 dll_dqs_delay_bypass_0(RW) 00011100 trfc(RW) 00000100 trcd_int(RW) 00001011 tras_min(RW) 00000000 out_of_range_length(RD) 00000000 ecc_u_synd(RD) 00000000 ecc_c_synd(RD)
+MC0_CTL_0d0 : .dword 0x002a002a002a002a 
+//0000000_000101010 dll_dqs_delay_bypass_4(RW) 0000000_000101010 dll_dqs_delay_bypass_3(RW) 0000000_000101010 dll_dqs_delay_bypass_2(RW) 0000000_000101010 dll_dqs_delay_bypass_1(RW)
+MC0_CTL_0e0 : .dword 0x002a002a002a002a
+//0000000_000101010 dll_dqs_delay_bypass_8(RW) 0000000_000101010 dll_dqs_delay_bypass_7(RW) 0000000_000101010 dll_dqs_delay_bypass_6(RW) 0000000_000101010 dll_dqs_delay_bypass_5(RW)
+MC0_CTL_0f0 : .dword 0x00b40020004f0004
+//0000000_010110100 dqs_out_shift_bypass(RW) 0000000_010000111 dll_start_point(RW) 0000000_000000000 dll_lock(RD) 0000000_000100100 dll_increment(RW)
+MC0_CTL_100 : .dword 0x000007ff00000087
+//00000_00000000000 int_status(RD) 00000_00000000000 int_mask(RW) 000000_0000000000 int_ack(RW)  0000000_010000111 wr_dqs_shift_bypass(RW)
+MC0_CTL_110 : .dword 0x0000000004040300	#100M+
+//MC0_CTL_110 : .dword 0x0000000004400600	#200M+
+//MC0_CTL_110 : .dword 0x0000000000440790	#250M+
+//MC0_CTL_110 : .dword 0x0000000000440910   #300M+
+//MC0_CTL_110 : .dword 0x0000000000440a00   #330M+
+//0_000000000000000 emrs2_data_1(RW) 0_000000000000000 emrs2_data_0(RW) 0_000000000000000 emrs1_data(RW) 00_00100000011011 tref(RW)
+MC0_CTL_120 : .dword 0x001c000000000000
+//0000000000011100 axi0_en_size_lt_width_instr(RW) 0_000000000000000 emrs3_data(RW) 0_000000000000000 emrs2_data_3(RW) 0_000000000000000 emrs2_data_2(RW)
+MC0_CTL_130 : .dword 0x1b400003020000c8	#100M+
+//MC0_CTL_130 : .dword 0x36a00003020000c8	#200M+
+//MC0_CTL_130 : .dword 0x44500003020000c8 	#250M+
+//MC0_CTL_130 : .dword 0x51f00003020000c8 	#300M+
+//MC0_CTL_130 : .dword 0x5a300003020000c8 	#330M+
+//0100100011100001 tras_max(RW) 0000000000000010(RW) tpdex(RW) 0000000011001000 tdll(RW) 0000000001101011 tcpd(RW)
+MC0_CTL_140 : .dword 0x0000000000c80025
+//0000000000000000 xor_check_bits(RW) 0000000000000000 version(RD) 0000000011001000 txsr(RW) 0000000000011111 txsnr(RW)
+MC0_CTL_150 : .dword 0x0000000000027100
+//000_0000000000000000000000000000000000000 ecc_c_addr(RD) 000000000000000000110110 tinit(RW)
+MC0_CTL_160 : .dword 0x0000000000000000
+//000000000000000000000000000_0000000000000000000000000000000000000 ecc_u_addr(RD)
+MC0_CTL_170 : .dword 0x0000000000000000
+//000000000000000000000000000_0000000000000000000000000000000000000 out_of_range_addr(RD)
+MC0_CTL_180 : .dword 0x0000000000000000
+//000000000000000000000000000_0000000000000000000000000000000000000 port_cmd_error_addr(RD)
+MC0_CTL_190 : .dword 0x0000000000000000
+//0000000000000000000000000000000000000000000000000000000000000000 ecc_c_data(RD)
+MC0_CTL_1a0 : .dword 0x0000000000000000
+//0000000000000000000000000000000000000000000000000000000000000000 ecc_u_data(RD)
+MC0_CTL_1b0 : .dword 0x0000000000000000
+//0000000000000000000000000000000000000000000000000000000000000_000 cke_delay
+MC0_CTL_1c0 : .dword 0x0000000000000000
+//000000000000000000000000000000000000000000000000000000000000000_0 UB_DIMM
