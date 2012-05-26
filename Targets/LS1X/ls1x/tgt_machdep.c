@@ -61,8 +61,10 @@
 #include "include/fcr.h"
 #include <pmon/dev/gt64240reg.h>
 #include <pmon/dev/ns16550.h>
+#include <target/iorw.h>
 #include <target/types.h>
 #include <target/lcd.h>
+#include <target/regs-wdt.h>
 
 #include <pmon.h>
 
@@ -1388,9 +1390,9 @@ tgt_reboot(void)
 
 	//	longreach = (void *)0xbfc00000;
 	//	(*longreach)();
-	*(volatile unsigned int *)0xbfe5c060 = 0x1;		//lxy: watchdog EN
-	*(volatile unsigned int *)0xbfe5c064 = 0x1;		//lxy: watchdog timer
-	*(volatile unsigned int *)0xbfe5c068 = 0x1;		//lxy: watchdog start
+	writel(1, LS1X_WDT_EN);
+	writel(1, LS1X_WDT_TIMER);
+	writel(1, LS1X_WDT_SET);
 	while(1);
 }
 

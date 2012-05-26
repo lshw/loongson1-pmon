@@ -1,32 +1,18 @@
 #include <pmon.h>
 #include <cpu.h>
-#include <target/iorw.h>
 #include <string.h>
 #include "target/fcr.h"
 
 #define K1BASE 0xa0000000
-#define KSEG1(addr) ((void *)(K1BASE | (u32)(addr)))
+#define KSEG1(addr) (K1BASE | (unsigned int)(addr))
 
-#define KSEG1_STORE8(addr, value) *(volatile u8 *)(KSEG1(addr)) = (value)
-#define KSEG1_STORE16(addr, value) *(volatile u16 *)(KSEG1(addr)) = (value)
-#define KSEG1_STORE32(addr, value) *(volatile u32 *)(KSEG1(addr)) = (value)
+#define KSEG1_STORE8(addr, value) *(volatile unsigned char *)(KSEG1(addr)) = (value)
+#define KSEG1_STORE16(addr, value) *(volatile unsigned short *)(KSEG1(addr)) = (value)
+#define KSEG1_STORE32(addr, value) *(volatile unsigned int *)(KSEG1(addr)) = (value)
 
-#define KSEG1_LOAD8(addr) *(volatile u8 *)(KSEG1(addr))
-#define KSEG1_LOAD16(addr) *(volatile u16 *)(KSEG1(addr))
-#define KSEG1_LOAD32(addr) *(volatile u32 *)(KSEG1(addr))
-
-#define STORE8(addr, value) *(volatile u8 *)(addr) = value
-#define STORE16(addr, value) *(volatile u16 *)(addr) = value
-#define STORE32(addr, value) *(volatile u32 *)(addr) = value
-
-#define LOAD8(addr) *(volatile u8 *)(addr)
-#define LOAD16(addr) *(volatile u16 *)(addr)
-#define LOAD32(addr) *(volatile u32 *)(addr)
-
-#define PHY(addr) \
-    (((u32)addr >= 0x80000000 && (u32)addr < 0xa0000000)? \
-    (u32)addr-0x80000000:(u32)addr >= 0xa0000000? \
-    (u32)addr-0xa0000000:(u32)addr) 
+#define KSEG1_LOAD8(addr) *(volatile unsigned char *)(KSEG1(addr))
+#define KSEG1_LOAD16(addr) *(volatile unsigned short *)(KSEG1(addr))
+#define KSEG1_LOAD32(addr) *(volatile unsigned int *)(KSEG1(addr))
 
 #define SPI_BASE  0x1fe80000
 
@@ -151,11 +137,11 @@ void ads7846_detect_penirq(void)
 struct ads7846 {
 	int			read_cnt;
 	int			read_rep;
-	u16			last_read;
+	unsigned short			last_read;
 
-	u16			debounce_max;
-	u16			debounce_tol;
-	u16			debounce_rep;
+	unsigned short			debounce_max;
+	unsigned short			debounce_tol;
+	unsigned short			debounce_rep;
 };
 
 static int ads7846_debounce(struct ads7846 *ads, int data_idx, int *val)
@@ -203,7 +189,7 @@ static int ads7846_debounce(struct ads7846 *ads, int data_idx, int *val)
 void ads7846_test(void)
 {
 	unsigned char val;
-	u16 y, x, z1, z2;
+	unsigned short y, x, z1, z2;
 	int y_ok = 0;
 	int cont = 3;
 	struct ads7846 *ts;

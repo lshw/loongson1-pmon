@@ -1,27 +1,13 @@
 #include <pmon.h>
 #include <cpu.h>
-#include <target/iorw.h>
 #include <string.h>
 #include "target/fcr.h"
 
 #define K1BASE 0xa0000000
-#define KSEG1(addr) ((void *)(K1BASE | (u32)(addr)))
+#define KSEG1(addr) ((void *)(K1BASE | (unsigned int)(addr)))
 
-#define KSEG1_STORE8(addr, value) *(volatile u8 *)(KSEG1(addr)) = (value)
-#define KSEG1_STORE16(addr, value) *(volatile u16 *)(KSEG1(addr)) = (value)
-#define KSEG1_STORE32(addr, value) *(volatile u32 *)(KSEG1(addr)) = (value)
-
-#define KSEG1_LOAD8(addr) *(volatile u8 *)(KSEG1(addr))
-#define KSEG1_LOAD16(addr) *(volatile u16 *)(KSEG1(addr))
-#define KSEG1_LOAD32(addr) *(volatile u32 *)(KSEG1(addr))
-
-#define STORE8(addr, value) *(volatile u8 *)(addr) = value
-#define STORE16(addr, value) *(volatile u16 *)(addr) = value
-#define STORE32(addr, value) *(volatile u32 *)(addr) = value
-
-#define LOAD8(addr) *(volatile u8 *)(addr)
-#define LOAD16(addr) *(volatile u16 *)(addr)
-#define LOAD32(addr) *(volatile u32 *)(addr)
+#define KSEG1_STORE32(addr, value) *(volatile unsigned int *)(KSEG1(addr)) = (value)
+#define KSEG1_LOAD32(addr) *(volatile unsigned int *)(KSEG1(addr))
 
 #define REG_GPIO_CFG0		0x1fd010c0		//GPIO 配置寄存器 0
 #define REG_GPIO_CFG1		0x1fd010c4		//GPIO 配置寄存器 1
