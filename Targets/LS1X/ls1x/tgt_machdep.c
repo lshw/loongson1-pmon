@@ -269,12 +269,10 @@ initmips(unsigned int memsz)
 	}
 #endif	
 
-	
-
 	/*
 	 *  Probe clock frequencys so delays will work properly.
 	 */
-	tgt_cpufreq();
+//	tgt_cpufreq();
 	SBD_DISPLAY("DONE",0);
 	
 	/*
@@ -282,6 +280,7 @@ initmips(unsigned int memsz)
 	 */
 	cpuinfotab[0] = &DBGREG;
 	dbginit(NULL);
+	tgt_cpufreq();
 
 	/*
 	 *  Set up exception vectors.
@@ -574,8 +573,12 @@ void _probe_frequencies(void)
 #define PLL_FREQ_REG(x) *(volatile unsigned int *)(0xbfe78030+x)
 #ifdef LS1ASOC
 	{
-		int val= PLL_FREQ_REG(0);
-		md_pipefreq = ((val&7)+1)*APB_CLK;        /* NB FPGA*/
+//		int val= PLL_FREQ_REG(0);
+//		md_pipefreq = ((val&7)+1)*APB_CLK;        /* NB FPGA*/
+//		md_cpufreq  =  (((val>>8)&7)+3)*APB_CLK;
+
+		unsigned int val = strtoul(getenv("pll_reg0"), 0, 0);
+		md_pipefreq = ((val&7)+4)*APB_CLK;
 		md_cpufreq  =  (((val>>8)&7)+3)*APB_CLK;
 	}
 #else
@@ -912,8 +915,16 @@ tgt_mapenv(int (*func) __P((char *, char *)))
 	    hwethadr[2], hwethadr[3], hwethadr[4], hwethadr[5]);
 	(*func)("ethaddr", env);
 
+#ifdef LS1ASOC
+	bcopy(&nvram[PLL_OFFS], &pll_reg0, 4);
+	if (pll_reg0 == 0xffffffff)
+		pll_reg0 = (((DDR_MULT - 3) << 8) | (CPU_MULT - 4));
+	sprintf(env, "0x%08x", pll_reg0);
+	(*func)("pll_reg0", env);
+#elif LS1BSOC
 	sprintf(env, "0x%08x",(pll_reg0=*(volatile int *)0xbfe78030));
 	(*func)("pll_reg0", env);
+#endif
 	sprintf(env, "0x%08x",(pll_reg1=*(volatile int *)0xbfe78034));
 	(*func)("pll_reg1", env);
 

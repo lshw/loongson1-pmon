@@ -300,13 +300,14 @@ locate:
 1:
 #define DDRCFG_DATA (0x8888|(CPU_MULT-4)|((DDR_MULT-3)<<8))
     li  a1, DDRCFG_DATA   // 1fboard 25MHz
-    li  a2, 0xa
 2:
+	li  a2, 0xa
+3:
     li  a0, 0xbfe78030
     sw  a1, 0x0(a0)
     nop
     sub  a2, 0x1
-    bnez a2, 2b
+    bnez a2, 3b
     nop
 //	lw	a2, 0x0(a0)
 //	xor a2,a1
@@ -363,6 +364,10 @@ locate:
 //	DELAY(0x3000)
 	
 #endif
+	/* initialize UART */
+	li a0,0
+	bal	initserial
+	nop
 
 	/*disable all gpio*/
 	li a0,0xbfd00000
@@ -393,10 +398,6 @@ locate:
 #endif
 
 get_pin_val_finish:
-	li a0,0
-	bal	initserial
-	nop
-
 	PRINTSTR("output_en =")
 	move	a0, output_en
 	bal	hexserial
@@ -1041,7 +1042,19 @@ LEAF(initserial)
 	li	v1, CFCR_DLAB
 	sb	v1, NSREG(NS16550_CFCR)(v0)
 #ifdef LS1ASOC
- 	li	v1, ((APB_CLK*DDR_MULT)/(2*16*CONS_BAUD))     // 8MHz crystal,   M[7:3]=6     1fboard
+//	li	v1, ((APB_CLK*DDR_MULT)/(2*16*CONS_BAUD))     // 8MHz crystal,   M[7:3]=6     1fboard
+//	li a0, 0xbfe78030
+//	lw a0,(a0)
+	move a0, a1
+	and a0,0x700
+	srl a0,8
+	addiu a0,3
+	li v1,APB_CLK
+	multu a0,v1
+	mflo v1
+	li a0,2*16*CONS_BAUD
+	divu v1,a0
+	mflo v1
 #else
 	move	v1,a0
 	bnez	v1,2f
