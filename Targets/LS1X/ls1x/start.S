@@ -368,7 +368,16 @@ locate:
 	li a0,0xbfd00000
 	sw zero,0x10c0(a0)
 	sw zero,0x10c4(a0)
-	//	lxy
+
+#ifdef BUZZER
+	/* disable buzzer gpio40*/
+	li	v0, 0xbfd010c4
+	li	t0, 0x00000100
+	sw	t0, 0(v0)
+	li	v0, 0xbfd010d4
+	li	t0, 0
+	sw	t0, 0(v0)
+#endif
 
 	li output_en, 0x1
 #	li output_en, 0x0
@@ -481,16 +490,6 @@ cpu_win_fixup:
 	li	t0,0xbfd010f8
 	li	t1,0x0
 	sw	t1,(t0)
-	
-#ifdef BUZZER
-	/* disable buzzer gpio40*/
-	li	v0, 0xbfd010c4
-	li	t0, 0x00000100
-	sw	t0, 0(v0)
-	li	v0, 0xbfd010d4
-	li	t0, 0
-	sw	t0, 0(v0)
-#endif
 
 #	ddr2config by cww 20090901
 	PRINTSTR("DDR2 config begin_2\r\n")
@@ -498,25 +497,48 @@ cpu_win_fixup:
 	nop
 	PRINTSTR("DDR2 config end\r\n")
 
-	li a0,0xbfd00000
-	lw a2,0x424(a0);
+	/* memory size defined in conf */
+	li msize, MEM_SIZE
+
 #ifdef CONFIG_DDR16BIT
-/*16bit ddr and disable conf*/ 
-	li a1,0x110000
-        li      msize,0x04000000
+	/*16bit ddr and disable conf*/ 
+	#ifdef LS1ASOC
+		li a1, 0x3
+	#elif LS1BSOC
+		li a1, 0x110000
+	#endif
 #else
-/*disable conf*/
-	li a1,0x100000
-        li      msize,0x08000000
+	/*disable conf*/
+	#ifdef LS1ASOC
+		li a1, 0x2
+	#elif LS1BSOC
+		li a1, 0x100000
+	#endif
+#endif //#ifdef CONFIG_DDR16BIT
+
+#ifdef LS1ASOC
+	li a0, 0xbfd00420
+#elif LS1BSOC
+	li a0, 0xbfd00424
 #endif
-	or a2,a1
+	lw a2, 0x0(a0)
+	or a2, a1
 
 /*100M phy*/
-	ori a2,0xf
-#ifndef CONFIG_PHY100M
-	xor a2,0xf	
+#ifdef LS1ASOC
+	ori a2, 0xf00
+#elif LS1BSOC
+	ori a2, 0xf
 #endif
-	sw a2,0x424(a0);
+
+#ifndef CONFIG_PHY100M
+#ifdef LS1ASOC
+	xor a2, 0xf00
+#elif LS1BSOC
+	xor a2, 0xf
+#endif
+#endif
+	sw a2, 0x0(a0)
 
 #define CF_7_SE         (1 << 3)        /* Secondary cache enable */
 #define CF_7_SC         (1 << 31)       /* Secondary cache not present */

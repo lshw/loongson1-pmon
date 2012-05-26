@@ -82,6 +82,8 @@ option 		DDR_MULT=4
 option		CONS_BAUD=B115200
 option		UART_BASE_ADDR=0xbfe40000	#串口控制台基地址 需要不同的串口输出可以修改此值
 
+option		MEM_SIZE=0x10000000	# 256M(32bit) 定义内存大小 注意32bit和16bit内存的区别 这里指总大小
+
 select		ext2
 #select 	yaffsfs
 select		fatfs
