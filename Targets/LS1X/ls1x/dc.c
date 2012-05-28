@@ -61,22 +61,22 @@ vgamode[] = {
 	{/*"640x768_60.00"*/	39690,	640,	672,	736,	832,	768,	769,	772,	795,	0x80001311},
 	{/*"640x800_60.00"*/	42130,	640,	680,	744,	848,	800,	801,	804,	828,	0x80001311},
 	{/*"800x480_70.00"*/	35840,	800,	832,	912,	1024,	480,	481,    484,    500,	0x80001311},
-	{/*"800x600_75.00"*/	40000,	800,	816,	896,	1056,	600,	601,	604,	625,	0x80001311, 0x0080c, 0x8a28ea00},/*******/
+	{/*"800x600_75.00"*/	49500,	800,	816,	896,	1056,	600,	601,	604,	625,	0x80001311, 0x0080c, 0x8a28ea00},/*******/
 	{/*"800x640_60.00"*/	40730,	800,	832,	912,	1024,	640,	641,	644,	663,	0x80001311},
 	{/*"832x600_60.00"*/	40010,	832,	864,	952,	1072,	600,	601,	604,	622,	0x80001311},
 	{/*"832x608_60.00"*/	40520,	832,	864,	952,	1072,	608,	609,	612,	630,	0x80001311},
 	{/*"1024x480_60.00"*/	38170,	1024,	1048,	1152,	1280,	480,	481,	484,	497,	0x80001311},
 	{/*"1024x600_60.00"*/	48960,	1024,	1064,	1168,	1312,	600,	601,	604,	622,	0x80001311},
 	{/*"1024x640_60.00"*/	52830,	1024,	1072,	1176,	1328,	640,	641,	644,	663,	0x80001311},
-	{/*"1024x768_60.00"*/	64110,	1024,	1048,	1184,	1344,	768,	771,	777,	806,	0x80001311, 0x21813, 0x8a28ea00},/*******/
+	{/*"1024x768_60.00"*/	65000,	1024,	1048,	1184,	1344,	768,	771,	777,	806,	0x80001311, 0x21813, 0x8a28ea00},/*******/
 	{/*"1152x764_60.00"*/	71380,	1152,	1208,	1328,	1504,	764,	765,    768,    791,	0x80001311},
 	{/*"1280x800_60.00"*/	83460,	1280,	1344,	1480,	1680,	800,	801,    804,    828,	0x80001311},
 //	{/*"1280x1024_60.00"*/	10888,	1280,	1328,	1440,	1688,	1024,	1025,   1028,   1066,	0x80001311, 0x0080e, 0x86292a00},/*******/
-	{/*"1280x1024_75.00"*/	10888,	1280,	1296,	1440,	1688,	1024,	1025,   1028,   1066,	0x00000101, 0x21813, 0x8628ea00},/*******/
+	{/*"1280x1024_75.00"*/	135000,	1280,	1296,	1440,	1688,	1024,	1025,   1028,   1066,	0x00000101, 0x21813, 0x8628ea00},/*******/
 	{/*"1368x768_60.00"*/	85860,	1368,	1440,	1584,	1800,	768,	769,    772,    795,	0x80001311},
 	{/*"1440x800_60.00"*/	93800,	1440,	1512,	1664,	1888,	800,	801,    804,    828,	0x80001311},
 //	{/*"1440x900_60.00"*/	120280,	1440,	1520,	1672,	1904,	900,    903,    909,    934,	0x80001311, 0x0080e, 0x86292a00},/*******/
-	{/*"1440x900_75.00"*/	120280,	1440,	1536,	1688,	1936,	900,    903,    909,    942,	0x00000101, 0x21813, 0x8628ea00},/*******/
+	{/*"1440x900_75.00"*/	136750,	1440,	1536,	1688,	1936,	900,    903,    909,    942,	0x00000101, 0x21813, 0x8628ea00},/*******/
 };
 #else
 vgamode[] = {
@@ -129,32 +129,32 @@ OF_DBLBUF=0x340,
 #ifdef LS1ASOC
 int caclulatefreq(long long XIN,long long PCLK)
 {
-long N=4,NO=4,OD=2,M,FRAC;
-int flag=0;
-long  out;
-long long MF;
-printf("PCLK=%lld\n",PCLK);
+	long N=4, NO=4, OD=2, M, FRAC;
+	int flag = 0;
+	long  out;
+	long long MF;
+	printf("PCLK=%lld\n",PCLK);
 
-while(flag==0){
-flag=1;
-printf("N=%lld\n",N);
-if(XIN/N<5000) {N--;flag=0;}
-if(XIN/N>50000) {N++;flag=0;}
-}
-flag=0;
-while(flag==0){
-flag=1;
-if(PCLK*NO<200000) {NO*=2;OD++;flag=0;}
-if(PCLK*NO>700000) {NO/=2;OD--;flag=0;}
-}
-MF=PCLK*N*NO*262144/XIN;
-MF %= 262144;
-M=PCLK*N*NO/XIN;
-FRAC=(int)(MF);
-out = (FRAC<<14)+(OD<<12)+(N<<8)+M;
+	while(flag == 0) {
+		flag = 1;
+		printf("N=%lld\n",N);
+		if(XIN/N<5000) {N--; flag=0;}
+		if(XIN/N>50000) {N++; flag=0;}
+	}
+	flag = 0;
+	while(flag == 0){
+		flag = 1;
+		if(PCLK*NO<200000) {NO*=2; OD++; flag=0;}
+		if(PCLK*NO>700000) {NO/=2; OD--; flag=0;}
+	}
+	MF = PCLK*N*NO*262144/XIN;
+	MF %= 262144;
+	M = PCLK*N*NO/XIN;
+	FRAC = (int)(MF);
+	out = (FRAC<<14)+(OD<<12)+(N<<8)+M;
 
-printf("in this case, M=%llx ,N=%llx, OD=%llx, FRAC=%llx\n",M,N,OD,FRAC);
-return out;
+	printf("in this case, M=%llx ,N=%llx, OD=%llx, FRAC=%llx\n",M,N,OD,FRAC);
+	return out;
 }
 
 #else
@@ -247,12 +247,12 @@ int config_fb(unsigned long base)
 	for(i=0;i<sizeof(vgamode)/sizeof(struct vga_struc);i++){
 		int out;
 		if(vgamode[i].hr == fb_xsize && vgamode[i].vr == fb_ysize){
-			mode=i;
+			mode = i;
 		#ifdef LS1ASOC
-			out = caclulatefreq(APB_CLK/1000,vgamode[i].pclk);
+			out = caclulatefreq(APB_CLK/1000, vgamode[i].pclk);
 			printf("out=%x\n",out);
 			/*inner gpu dc logic fifo pll ctrl,must large then outclk*/
-			*(volatile int *)0xbfd00414 = out+1;
+			*(volatile int *)0xbfd00414 = out + 1;
 			/*output pix1 clock  pll ctrl*/
 			*(volatile int *)0xbfd00410 = out;
 			/*output pix2 clock pll ctrl */
@@ -313,13 +313,17 @@ int config_fb(unsigned long base)
 #if defined(CONFIG_VIDEO_32BPP)
 	write_reg((base+OF_BUF_CONFIG),0x00100004);
 	write_reg((base+OF_BUF_STRIDE),(fb_xsize*4+255)&~255); //1024
+	#ifdef LS1BSOC
 	*(volatile int *)0xbfd00420 &= ~0x18;
 	*(volatile int *)0xbfd00420 |= 0x07;
+	#endif
 #elif defined(CONFIG_VIDEO_24BPP)
 	write_reg((base+OF_BUF_CONFIG),0x00100004);
 	write_reg((base+OF_BUF_STRIDE),(fb_xsize*3+255)&~255); //1024
+	#ifdef LS1BSOC
 	*(volatile int *)0xbfd00420 &= ~0x18;
 	*(volatile int *)0xbfd00420 |= 0x07;
+	#endif
 #elif defined(CONFIG_VIDEO_16BPP)
 	write_reg((base+OF_BUF_CONFIG),0x00100003);
 	write_reg((base+OF_BUF_STRIDE),(fb_xsize*2+255)&~255); //1024
@@ -334,24 +338,24 @@ int config_fb(unsigned long base)
 	write_reg((base+OF_BUF_STRIDE),(fb_xsize*4+255)&~255); //640
 #endif //32Bits
 
+	{
+	int val;
+	val = readl((base+OF_BUF_CONFIG));
 #ifdef LS1BSOC
 	/*fix ls1g dc
 	*first switch to tile mode
 	*change origin register to 0
 	*goback nomal mode
 	*/
-	{
-	int val;
-	val = readl((base+OF_BUF_CONFIG));
-	write_reg((base+OF_BUF_CONFIG),val|0x10);
-	write_reg((base+OF_BUF_ORIG),0);
+	write_reg((base+OF_BUF_CONFIG), val|0x10);
+	write_reg((base+OF_BUF_ORIG), 0);
 	readl((base+OF_BUF_ORIG));
 //	delay(1000000);
 	delay(40000);
 	readl((base+OF_BUF_CONFIG));
-	write_reg((base+OF_BUF_CONFIG),val|0x100);
-	}
 #endif
+	write_reg((base+OF_BUF_CONFIG), val|0x100);
+	}
 }
 
 int dc_init()
