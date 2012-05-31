@@ -120,7 +120,7 @@ CONFIG_VIDEO_HW_CURSOR:	     - Uses the hardware cursor capability of the
 //#define	CONFIG_VIDEO_BMP_LOGO
 #define VIDEO_HW_BITBLT
 #define VIDEO_HW_RECTFILL
-#elif defined(SMI502)
+#elif defined(SMI502) && !defined(DEVBD2F_SM502_GOLDING)
 #define CONFIG_VIDEO_SW_CURSOR
 #define VIDEO_HW_BITBLT
 #define VIDEO_HW_RECTFILL
@@ -238,7 +238,11 @@ void	console_cursor (int state);
 
 #ifdef	CONFIG_VIDEO_LOGO
 #ifdef	CONFIG_VIDEO_BMP_LOGO
+#ifdef DEVBD2F_SM502_GOLDING
+#include "sict_logo.h"
+#else
 #include "bmp_logo.h"
+#endif
 #define VIDEO_LOGO_WIDTH	BMP_LOGO_WIDTH
 #define VIDEO_LOGO_HEIGHT	BMP_LOGO_HEIGHT
 #define VIDEO_LOGO_LUT_OFFSET	BMP_LOGO_OFFSET
