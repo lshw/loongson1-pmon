@@ -4,7 +4,7 @@
 	.global ddr2_config
 	.ent    ddr2_config
 	.set    noreorder
-#	.set    mips3
+#	.set    mips32
 ddr2_config:
     la      t0, ddr2_reg_data
     addu    t0, t0, s0
@@ -66,7 +66,7 @@ DDR2_CTL_04_DATA_LO: .word 0x01010101
 DDR2_CTL_04_DATA_HI: .word 0x01000202
 DDR2_CTL_05_DATA_LO: .word 0x04050201 #CL=5	//CASLAT=5
 DDR2_CTL_05_DATA_HI: .word 0x00000000
-DDR2_CTL_06_DATA_LO: .word 0x03030202 #800	//tRTP=3 tRRD=3
+DDR2_CTL_06_DATA_LO: .word 0x03030203 #800	//tRTP=3 tRRD=3
 //DDR2_CTL_06_DATA_LO: .word 0x07070202 #800	//
 DDR2_CTL_06_DATA_HI: .word 0x0a040306 #800	//CASLAT-1  tWR=6  tWTR=tRTP=3
 //DDR2_CTL_06_DATA_HI: .word 0x0a060707 #800	//
