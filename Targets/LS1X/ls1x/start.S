@@ -485,12 +485,12 @@ cpu_win_fixup:
 	/*
 	 * set gpio 66 to make ddr #CKE low
 	 */
-	li	t0,0xbfd010c8
+/*	li	t0,0xbfd010c8
 	li	t1,0x4
 	sw	t1,(t0)
 	li	t0,0xbfd010f8
 	li	t1,0x0
-	sw	t1,(t0)
+	sw	t1,(t0)*/
 
 #	ddr2config by cww 20090901
 	PRINTSTR("DDR2 config begin_2\r\n")
