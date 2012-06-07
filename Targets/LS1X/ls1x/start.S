@@ -1269,6 +1269,7 @@ cache_init_finish:
 	.align 5
 #include "ls1a_ddr2_param.S"
 #elif LS1BSOC
-#include "ddr2fconfig.S"
+#include "ddr2fconfig-samsung.S"
+//#include "ddr2fconfig.S"
 #endif
 
