@@ -234,16 +234,6 @@ void pci_conf_dump(void)
 
 }
 
-
-//#define GMAC
-#ifdef GMAC
-int ls1f_gmac_init(void)
-{
-	return	SynopGMAC_Host_Interface_init();	
-}
-
-#endif
-
 unsigned int output_mode = 1;
 void
 initmips(unsigned int memsz)
@@ -307,10 +297,6 @@ initmips(unsigned int memsz)
 #ifdef	HPET
 	hpet_test();
 #endif
-	
-#ifdef	GMAC	
-	ls1f_gmac_init();
-#endif	
 
 #ifdef ZIGBEE
 	/* 拉高GPIO52引脚 使能ZIGBEE模块供电 */
@@ -333,7 +319,6 @@ initmips(unsigned int memsz)
 
 
 #define FCR_PS2_BASE	0xbfe60000		//sw
-//#define FCR_PS2_BASE	0xbf508000		//sw
 #define PS2_RIBUF		0x00	/* Read */
 #define PS2_WOBUF		0x00	/* Write */
 #define PS2_RSR			0x04	/* Read */

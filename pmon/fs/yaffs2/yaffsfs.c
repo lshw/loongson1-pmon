@@ -32,7 +32,7 @@
 #include "yaffs_mtdif.h"
 #include "yaffs_mtdif2.h"
 
-//#include <machine/div64.h>
+#include <machine/div64.h>
 
 #define YAFFSFS_MAX_SYMLINK_DEREFERENCES 5
 

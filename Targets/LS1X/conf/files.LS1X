@@ -14,10 +14,10 @@ file	Targets/LS1X/dev/hpet.c
 file	Targets/LS1X/dev/acpi.c
 file	Targets/LS1X/dev/gpio.c
 #sw
-file	sys/dev/gmac/synopGMAC_Host.c               gmac
+#file	sys/dev/gmac/synopGMAC_Host.c               gmac
 file	sys/dev/gmac/synopGMAC_Dev.c                gmac
 file	sys/dev/gmac/synopGMAC_network_interface.c  gmac
-file	sys/dev/gmac/synopGMAC_pci_bus_interface.c  gmac
+#file	sys/dev/gmac/synopGMAC_pci_bus_interface.c  gmac
 file	sys/dev/gmac/synopGMAC_plat.c               gmac
 file	sys/dev/gmac/if_gmac.c gmac
 

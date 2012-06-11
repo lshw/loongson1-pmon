@@ -84,7 +84,7 @@ option		UART_BASE_ADDR=0xbfe48000	#串口控制台基地址 需要不同的串�
 option		MEM_SIZE=0x04000000	# 64M(16bit) 定义内存大小 注意32bit和16bit内存的区别 这里指总大小
 
 select		ext2
-#select		yaffsfs		#lxy: there is a do_div error to open this with new cross-tool
+select		yaffsfs		#lxy: there is a do_div error to open this with new cross-tool
 select		fatfs
 select		gzip
 
