@@ -49,8 +49,10 @@
 #include "target/isapnpreg.h"
 #define DEBUG_LOCORE
 
+/***********************************MAIN FLOW****************************************/
+
 #ifndef BOOT_FROM_EJTAG      
-#define  BOOT_FROM_EJTAG
+#define BOOT_FROM_EJTAG
 #endif
 #undef BOOT_FROM_EJTAG
 
@@ -119,7 +121,7 @@ stack = start - 0x4000		/* Place PMON stack below PMON start in RAM */
 	la	sp, stack
 	la	gp, _gp
 
-//	bal	uncached		/* Switch to uncached address space */
+	bal	uncached		/* Switch to uncached address space */
 	nop
 
 	bal	locate			/* Get current execute address */
@@ -129,6 +131,8 @@ uncached:
 	or	ra, UNCACHED_MEMORY_ADDR
 	j	ra
 	nop
+
+/***********************************EXC VECTOR***************************************/
 
 /*
  *  Reboot vector usable from outside pmon.
@@ -181,28 +185,8 @@ ext_map_and_reboot:
 	nop
 	b	exc_common
 
+/*acpi: set ddr autorefresh and suspend */
 	.align	7			/* bfc00480 */
-#la	a0, v480_msg
-#	bal	stringserial
-#	nop
-#b	exc_common
-#if 0
-	li s0,(0xbfc00000-0x81000000)
-	PRINTSTR("ACPI_MEM_CEHCK=")
-	li	a1, 0
-	li	t0, 0xa0000000
-	li	t2, 0xa0100000
-1:	lw	t1,(t0)
-	addu	a1, a1, t1
-	addiu t0, t0, 4
-	bne	t0,t2,1b
-	nop
-	addu a0,a1,zero
-	bal	hexserial
-	nop
-	PRINTSTR("\r\n")
-#endif
-
 	li	t0, 0xaffffe30
 	lw	t1, 0x4(t0)
 	li	t2, 0x1
@@ -238,7 +222,7 @@ exc_common:
 	bal	hexserial
 	nop
 
-//	bal mydebug_main	//lxy
+//	bal mydebug_main
 	nop
 1:
 	b 1b
@@ -262,6 +246,8 @@ exc_common:
 	.word nullfunction
 	.word nullfunction
 
+/****************************************LOCATE*********************************/
+
 /*
  *  We get here from executing a bal to get the PC value of the current execute
  *  location into ra. Check to see if we run from ROM or if this is ramloaded.
@@ -269,9 +255,6 @@ exc_common:
 locate:
 	la		s0,uncached
 	subu	s0,ra,s0
-
-#	bal		CPU_TLBClear
-#	nop
 
 	li		t0,SR_BOOT_EXC_VEC
 	mtc0	t0,COP_0_STATUS_REG
@@ -284,12 +267,12 @@ locate:
     sb  t1, 0x4(t0)	// sfc_param
 
 #ifdef LS1ASOC/* to adjust the DDR frequency */
-	li v0,0xbfc00000+(NVRAM_POS+PLL_OFFS)
-	lw a1,(v0)
+	li v0, 0xbfc00000+(NVRAM_POS+PLL_OFFS)
+	lw a1, (v0)
 
-	li v0,0xffff0000
-	and v0,a1
-	bnez v0,1f
+	li v0, 0xffff0000
+	and v0, a1
+	bnez v0, 1f
 	nop
 
 	li  v0, 0x8888
@@ -317,62 +300,49 @@ locate:
 #else
     li  a0, 0xbfe78030
     /*31:dc_div_en,30-26:dc_div,25:cpu_div_en,24-20:cpu_div,19:ddr_div_en,18-14:ddr_div*/
-#if 0
-    li v1,0x92298000
-    li  a1, 0x39f0a
-#else
-	li v0,0xbfc00000+(NVRAM_POS+PLL_OFFS)
-	lw v1,4(v0)
-	lw a1,(v0)
+	li v0, 0xbfc00000+(NVRAM_POS+PLL_OFFS)
+	lw v1, 4(v0)
+	lw a1, (v0)
 
-	li v0,0xfffc0000
-	and v0,a1
-	bnez v0,1f
+	li v0, 0xfffc0000
+	and v0, a1
+	bnez v0, 1f
 	nop
 
-	andi v0,v1,0x3f
-	bnez v0,1f
+	andi v0, v1, 0x3f
+	bnez v0, 1f
 	nop
 
-	li v0,(1<<31)|(1<<25)|(1<<19)
-	and a2,v0,v1
-	bne a2,v0,1f
+	li v0, (1<<31)|(1<<25)|(1<<19)
+	and a2, v0, v1
+	bne a2, v0, 1f
 	nop
 
-	beqz v1,1f
+	beqz v1, 1f
 	nop
 	nop
 	b 2f
 	nop
 1:
-//    li v1, 0x8a290000//(1<<31)|(4<<26)|(1<<25)|(1<<20)|(1<<19)|(2<<14)|0x2a00
     li v1, (1<<31)|(4<<26)|(1<<25)|(2<<20)|(1<<19)|(3<<14)|0x2a00
-//    li  a1, 0x31812
-//    li  a1, 0x14
-    li  a1, 0x13
+    li a1, 0x13
 
 2:
 #endif
-	or v1,0x2a00
-    sw v1,4(a0)
-    sw a1,(a0);
+	or v1, 0x2a00
+    sw v1, 4(a0)
+    sw a1, (a0);
 
-1:
-//	lw v1,(a0)
-//	bne a1,v1,1b
-//	nop
-//	DELAY(0x3000)
-	
-#endif
+
 	/* initialize UART */
-	li a0,0
+	li a0, 0
 	bal	initserial
 	nop
 
 	/*disable all gpio*/
-	li a0,0xbfd00000
-	sw zero,0x10c0(a0)
-	sw zero,0x10c4(a0)
+	li a0, 0xbfd00000
+	sw zero, 0x10c0(a0)
+	sw zero, 0x10c4(a0)
 
 #ifdef BUZZER
 	/* disable buzzer gpio40*/
@@ -385,7 +355,6 @@ locate:
 #endif
 
 	li output_en, 0x1
-#	li output_en, 0x0
 #ifdef FAST_STARTUP
 	li a1, 0x03000000
 	sw a1, 0x10c4(a0)
@@ -427,9 +396,9 @@ get_pin_val_finish:
 	nop
 	PRINTSTR("\r\n")
 
-	bnez s0,1f
+	bnez s0, 1f
 	nop
-	li a0,128
+	li a0, 128
 	jal initmips
 	nop
 1:
@@ -482,16 +451,6 @@ cpu_win_fixup:
 	 * reading the I2C EEROM on the DIMMS
 	 */
 
-	/*
-	 * set gpio 66 to make ddr #CKE low
-	 */
-/*	li	t0,0xbfd010c8
-	li	t1,0x4
-	sw	t1,(t0)
-	li	t0,0xbfd010f8
-	li	t1,0x0
-	sw	t1,(t0)*/
-
 #	ddr2config by cww 20090901
 	PRINTSTR("DDR2 config begin_2\r\n")
 	bal     ddr2_config
@@ -541,6 +500,8 @@ cpu_win_fixup:
 #endif
 	sw a2, 0x0(a0)
 
+/**************************************CACHE*****************************/
+
 #define CF_7_SE         (1 << 3)        /* Secondary cache enable */
 #define CF_7_SC         (1 << 31)       /* Secondary cache not present */
 #define CF_7_TE         (1 << 12)       /* Tertiary cache enable */
@@ -563,12 +524,12 @@ do_caches:
 	mfc0	a0, COP_0_CONFIG
 	bal	hexserial
 	nop
-	TTYDBG("\r\n\r\n")
+	TTYDBG("\r\n")
 
 
 	mfc0   a0,COP_0_CONFIG
 	and    a0,a0,~((1<<12) | 3)
-	or     a0,a0,3
+	or     a0,a0,2
 	mtc0   a0,COP_0_CONFIG
 	
 #ifdef LS1ASOC
@@ -647,8 +608,9 @@ acpi_begin:
 acpi_end:/* Startup as usual */
 #endif
 
-PRINTSTR("begin test\r\n");
+/***********************MEMORY DEBUGGING AND COPY SELF TO RAM***********************/
 
+PRINTSTR("begin test\r\n");
 ###lcd soft_reset and panel config&timing
 	li a0,0xbc301240
 	li a1,0x00100000
@@ -870,6 +832,8 @@ LEAF(suspend_resume)
 	nop
 END(suspend_resume)
 
+/***********************************FUNCTIONS**********************************/
+
 LEAF(stringserial)
 	nop
 	move	a2, ra
@@ -1089,12 +1053,6 @@ LEAF(initserial)
 1:
 	srl v1,1	
 2:
-#if 0
-/*save div,for serial debug*/
-	.set mips32
-	mtc0 v1,$25,1
-	.set mips0
-#endif
 	li a1,2*16*CONS_BAUD
 	divu v1,v1,a1
 #endif
@@ -1108,10 +1066,10 @@ LEAF(initserial)
 	li	v1, 0x0
 	sb	v1, NSREG(NS16550_IER)(v0)
         
-        #disable all interrupt
-        li      v1, 0x0
-        sb      v1, NSREG(NS16550_IER)(v0)
-	j	ra
+	#disable all interrupt
+	li  v1, 0x0
+	sb  v1, NSREG(NS16550_IER)(v0)
+	j   ra
 	nop
 	.set at
 END(initserial)

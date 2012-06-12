@@ -262,7 +262,7 @@ initmips(unsigned int memsz)
 	/*
 	 *  Probe clock frequencys so delays will work properly.
 	 */
-//	tgt_cpufreq();
+	tgt_cpufreq();
 	SBD_DISPLAY("DONE",0);
 	
 	/*
@@ -270,7 +270,6 @@ initmips(unsigned int memsz)
 	 */
 	cpuinfotab[0] = &DBGREG;
 	dbginit(NULL);
-	tgt_cpufreq();
 
 	/*
 	 *  Set up exception vectors.
