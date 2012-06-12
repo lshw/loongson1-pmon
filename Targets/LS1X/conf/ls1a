@@ -77,10 +77,12 @@ select		cmd_shell		# Shell commands, vers, help, eval
 #
 select		mod_uart_ns16550	# Standard UART driver
 option		APB_CLK=25000000	# 外部晶振频率(Hz)
+#option		APB_CLK=12000000	# 外部晶振频率(Hz)
 option 		CPU_MULT=8
 option 		DDR_MULT=4
 option		CONS_BAUD=B115200
 option		UART_BASE_ADDR=0xbfe40000	#串口控制台基地址 需要不同的串口输出可以修改此值
+#option		UART_BASE_ADDR=0xbfe44000	#串口控制台基地址 需要不同的串口输出可以修改此值
 
 option		MEM_SIZE=0x10000000	# 256M(32bit) 定义内存大小 注意32bit和16bit内存的区别 这里指总大小
 
@@ -169,18 +171,18 @@ select		gmac
 #ohci1		at pci? dev ? function ?
 #atp*		at pci? dev ? function ?  #sata atp8620
 #ahci*		at pci? dev ? function ?
-lohci0		at localbus0 base 0xbfe08000
-usb*		at usbbus ? 
+#lohci0		at localbus0 base 0xbfe08000
+#usb*		at usbbus ? 
 #ahcisata*	at ahci?
 
 #lahci0		at localbus0 base 0xbfe30000
 #ahcisata*	at lahci?
 
-select		mod_usb
-select		mod_usb_storage
+#select		mod_usb
+#select		mod_usb_storage
 #select		mod_usb_uhci
-select		mod_usb_ohci
-select		mod_usb_kbd
+#select		mod_usb_ohci
+#select		mod_usb_kbd
 
 #### Pseudo devices
 pseudo-device	loop	1	# network loopback
@@ -195,7 +197,7 @@ pseudo-device	loop	1	# network loopback
 
 option		INPUT_FROM_BOTH
 option		OUTPUT_TO_BOTH
-#select		nand
+select		nand
 #select		nor_flash			#如果使用nor flash分区需要该选项
 #option		NORFLASH_PARTITION	#nor flash(spi flash)分区
 select		cmd_xyzmodem

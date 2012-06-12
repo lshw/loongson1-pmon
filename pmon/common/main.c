@@ -681,6 +681,9 @@ dbginit (char *adr)
 	SBD_DISPLAY ("ENVI", CHKPNT_ENVI);
 	envinit ();
 
+	tgt_cpufreq();	//lxy
+	envinit ();
+
 #if defined(SMP)
 	/* Turn on caches unless opted out */
 	if (!getenv("nocache"))

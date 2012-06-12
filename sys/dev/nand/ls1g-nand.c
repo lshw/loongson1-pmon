@@ -14,10 +14,17 @@
 #define ORDER_REG_ADDR      (0xbfd01160)
 #define MAX_BUFF_SIZE	4096
 #define PAGE_SHIFT      12
-#define NO_SPARE_ADDRH(x)   ((x) >> (32 - (PAGE_SHIFT - 1 )))   
-#define NO_SPARE_ADDRL(x)   ((x) << (PAGE_SHIFT - 1))
-#define SPARE_ADDRH(x)      ((x) >> (32 - (PAGE_SHIFT )))   
-#define SPARE_ADDRL(x)      ((x) << (PAGE_SHIFT ))
+#ifdef	LS1ASOC 
+	#define NO_SPARE_ADDRH(x)   ((x))   
+	#define NO_SPARE_ADDRL(x)   ((x) << (PAGE_SHIFT))
+	#define SPARE_ADDRH(x)      ((x))   
+	#define SPARE_ADDRL(x)      ((x) << (PAGE_SHIFT))
+#else
+	#define NO_SPARE_ADDRH(x)   ((x) >> (32 - (PAGE_SHIFT - 1 )))   
+	#define NO_SPARE_ADDRL(x)   ((x) << (PAGE_SHIFT - 1))
+	#define SPARE_ADDRH(x)      ((x) >> (32 - (PAGE_SHIFT )))   
+	#define SPARE_ADDRL(x)      ((x) << (PAGE_SHIFT ))
+#endif
 #define ALIGN_DMA(x)       (((x)+ 3)/4)
 #define CHIP_DELAY_TIMEOUT (2*HZ/10)
 
@@ -177,6 +184,8 @@ struct ls1g_nand_ask_regs{
         unsigned int dma_step_times;
         unsigned int dma_state_tmp;
 };
+
+int ls1g_soc_nand_init(void);
 
 static struct mtd_info *ls1g_soc_mtd = NULL;
 #if 0
@@ -542,6 +551,7 @@ static void ls1g_nand_cmdfunc(struct mtd_info *mtd, unsigned command,int column,
 	//show_dma_regs((void *)(info->mmio_base),0); 
 	switch(command){
 		case NAND_CMD_READOOB:
+//			printf ("in NAND_CMD_READOOB! \n");
 			if(info->state == STATE_BUSY){
 				printk("nandflash chip if busy...\n");
 				return;
@@ -557,6 +567,7 @@ static void ls1g_nand_cmdfunc(struct mtd_info *mtd, unsigned command,int column,
 			info->nand_regs.cmd = 0;		//
 			info->nand_regs.addrh = SPARE_ADDRH(page_addr);	//读、写、擦除操作起始地址高8位
 			info->nand_regs.addrl = SPARE_ADDRL(page_addr) + mtd->writesize;	//读、写、擦除操作起始地址低32位
+//			printf ("addrh = 0x%x , addrl = 0x%x !\n", info->nand_regs.addrh, info->nand_regs.addrl);
 			info->nand_regs.op_num = info->buf_count;	//NAND读写操作Byte数；擦除为块数
 			/*nand cmd set */ 
 			((struct ls1g_nand_cmdset*)&(info->nand_regs.cmd))->read = 1;
@@ -566,8 +577,8 @@ static void ls1g_nand_cmdfunc(struct mtd_info *mtd, unsigned command,int column,
 			info->dma_regs.length = ALIGN_DMA(info->buf_count);	//传输数据长度寄存器 代表一块被搬运内容的长度，单位是字
 			((struct ls1g_nand_dma_cmd *)&(info->dma_regs.cmd))->dma_int_mask = 0;
 			/*dma GO set*/       
-			nand_setup(NAND_ADDRL|NAND_ADDRH|NAND_OP_NUM|NAND_CMD, info);
 			dma_setup(DMA_LENGTH|DMA_CMD, info);
+			nand_setup(NAND_ADDRL|NAND_ADDRH|NAND_OP_NUM|NAND_CMD, info);
 			sync_dma(info);
 		break;
 	#if 0            
@@ -811,7 +822,7 @@ int ls1g_nand_detect(struct mtd_info *mtd)
 }
 static void ls1g_nand_init_info(struct ls1g_nand_info *info)
 {
-    *((volatile unsigned int *)0xbfe78018) = 0x30000;	//外部颗粒容量大小
+//    *((volatile unsigned int *)0xbfe78018) = 0x30000;	//外部颗粒容量大小
     info->num=0;
     info->size=0;
     info->cac_size = 0; 
@@ -1205,7 +1216,8 @@ void nand_oob_test()
 #define	READ_LEN	(2048+64)
 
 	int k;
-	int start_addr = 0x6c54000;
+//	int start_addr = 0x6c54000;
+	int start_addr = 0x0;
 	unsigned char spi_buf[READ_LEN], flash_buf[READ_LEN], flash_buf1[READ_LEN];
 	volatile unsigned char *spi_p = ((volatile unsigned char *)(0xbf000000));
 	struct ls1g_nand_info *info = ls1g_soc_mtd->priv;
@@ -1216,6 +1228,14 @@ void nand_oob_test()
 	{
 		spi_buf[k] = *spi_p++;
 	}
+
+	printf ("lxy: spi_flash's data : \n");
+	show_data(spi_buf, READ_LEN);
+
+	printf ("oob's data: \n");
+	this->cmdfunc(ls1g_soc_mtd, NAND_CMD_READOOB, 2048, start_addr>>12);
+	this->read_buf(ls1g_soc_mtd, flash_buf, 64);
+	show_data(flash_buf, 64);
 
 //	this->cmdfunc(ls1g_soc_mtd, NAND_CMD_READ0, 0, start_addr>>12);
 //	this->read_buf(ls1g_soc_mtd, flash_buf, READ_LEN);
@@ -1230,6 +1250,13 @@ void nand_oob_test()
 	this->cmdfunc(ls1g_soc_mtd, NAND_CMD_SEQIN, 0, start_addr>>12);
 	this->write_buf(ls1g_soc_mtd, spi_buf, READ_LEN);
 	this->cmdfunc(ls1g_soc_mtd, NAND_CMD_PAGEPROG, -1, -1);
+
+	printf ("flash_buf's data: \n");
+	this->cmdfunc(ls1g_soc_mtd, NAND_CMD_READ0, 0, start_addr>>12);
+	this->read_buf(ls1g_soc_mtd, flash_buf, READ_LEN);
+	show_data(flash_buf, READ_LEN);
+
+	return 0;
 
 	this->cmdfunc(ls1g_soc_mtd, NAND_CMD_READOOB, 2048, start_addr>>12);
 	this->read_buf(ls1g_soc_mtd, flash_buf, 64);
@@ -1272,6 +1299,7 @@ static const Cmd Cmds[] =
 	{"nandreadid","val",0,"hardware test",nand_read_id,0,99,CMD_REPEAT},
 	{"nandwrite_test","val",0,"hardware test",nandwrite_test,0,99,CMD_REPEAT},
 	{"nand_oob_test","val",0,"nand_oob_test",nand_oob_test,0,99,CMD_REPEAT},
+	{"nand_init","val",0,"ls1g_soc_nand_init",ls1g_soc_nand_init,0,99,CMD_REPEAT},
 	{0, 0}
 };
 
@@ -1294,6 +1322,19 @@ int ls1g_soc_nand_init(void)
 //	if(__rw(0xbfd00420,val) != 0x0a000000)	//lxy
 //		__ww(0xbfd00420,0x0a000000);		//lxy
 
+#ifdef	LS1ASOC
+	__rw(0xbfd00420, val);
+	val |= 0x14000000;
+	__ww(0xbfd00420, val);
+
+	__rw(0xbfd010c4, val);
+	val &= ~(0xf<<12);	//nand_D0~D3
+	__ww(0xbfd010c4, val);
+
+	__rw(0xbfd010c8, val);
+	val &= ~(0xfff<<12);	//nand_D4~D7 & nand_control pin
+	__ww(0xbfd010c8, val);
+#endif
 
 	/* Allocate memory for MTD device structure and private data */
 	/* 为MTD设备结构体和nand_chip分配内存 */

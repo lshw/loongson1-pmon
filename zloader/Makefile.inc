@@ -1,7 +1,7 @@
 ifndef PMONCC
 CC=$(CROSS_COMPILE)gcc -fexec-charset=GB2312 
-CROSS_COMPILE ?= mipsel-linux-
-#CROSS_COMPILE ?= mipsel-loongson-linux-gnu-
+CROSS_COMPILE ?= mipsel-linux-#mips-elf-
+#CROSS_COMPILE ?= mipsel-loongson-linux-gnu-#mips-elf-
 else
 CC=${PMONCC}
 endif

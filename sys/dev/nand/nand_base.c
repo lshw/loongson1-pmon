@@ -2224,6 +2224,25 @@ struct nand_flash_dev nand_flash_ids_1[] = {
 	}	
 	else
 #endif
+	if (0)
+	{
+		#define LP_OPTIONS (NAND_SAMSUNG_LP_OPTIONS | NAND_NO_READRDY | NAND_NO_AUTOINCR | NAND_SKIP_BBTSCAN)
+		struct nand_flash_dev nand_flash_ids_1[] = {
+			{"NAND 128MiB 3,3V 8-bit",	0xF1, 0, 128, 0, LP_OPTIONS},
+		};
+
+		type = &nand_flash_ids_1;
+		*maf_id	= 0xec;
+		dev_id 	= 0xf1;
+		if (!mtd->name)
+			mtd->name = type->name;
+		chip->chipsize = 128 << 20;
+		mtd->erasesize = 128 * 1024;
+		mtd->writesize = 2 * 1024;
+		mtd->oobsize = 64;
+		busw = 0;
+	}
+	else
 	{
 		/* Select the device */
 		chip->select_chip(mtd, 0);

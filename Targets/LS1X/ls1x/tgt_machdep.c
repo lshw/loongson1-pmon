@@ -262,7 +262,7 @@ initmips(unsigned int memsz)
 	/*
 	 *  Probe clock frequencys so delays will work properly.
 	 */
-	tgt_cpufreq();
+//	tgt_cpufreq();
 	SBD_DISPLAY("DONE",0);
 	
 	/*
@@ -389,7 +389,7 @@ tgt_devconfig(void)
 
 	config_init();
 	configure();
-
+/*
 #if (NMOD_VGACON >0) && defined(LS1ASOC)
 	printf("====before init ps/2 kbd\n");
 	if(getenv("nokbd"))
@@ -404,6 +404,7 @@ tgt_devconfig(void)
 	}
 	psaux_init();
 #endif
+*/
 
 #ifdef NORFLASH_PARTITION
 	norflash_init();           //lxy
