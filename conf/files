@@ -245,8 +245,8 @@ file pmon/fs/termio.c
 file pmon/fs/socket.c			inet
 file pmon/fs/gzip.c			gzip		needs-flag
 file pmon/fs/iso9660fs.c		iso9660		needs-flag
-file pmon/fs/devfs.c			(scsi | ide)
-file pmon/fs/diskfs.c			(scsi | ide)
+file pmon/fs/devfs.c			(scsi | ide | usbbus)
+file pmon/fs/diskfs.c			(scsi | ide | usbbus)
 file pmon/fs/fatfs.c			fatfs
 file pmon/fs/ext2fs.c			ext2
 #file pmon/fs/yaffsfs.c			yaffsfs

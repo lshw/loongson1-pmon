@@ -456,7 +456,8 @@ tgt_devinit(void)
 }
 #endif
 
-#if LS1ASOC
+#if 0
+//#if LS1ASOC
 //sw: set clock delay
 	(*(volatile u32*)(0xbfd00410) = (0x24a8));
 //sw: enable gpio	

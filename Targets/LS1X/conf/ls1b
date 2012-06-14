@@ -26,13 +26,13 @@ option		WAYBITS_HIGH
 option		MIPS
 option		INET
 
-select		mod_flash_amd		# AMD flash device programming
-select		mod_flash_intel		# intel flash device programming
+#select		mod_flash_amd		# AMD flash device programming
+#select		mod_flash_intel		# intel flash device programming
 select		mod_flash_sst		# intel flash device programming
 select		mod_debugger		# Debugging module
 select		mod_symbols		# Symbol table handling
 select		mod_s3load		# Srecord loading
-#select		mod_fastload		# LSI Fastload
+select		mod_fastload		# LSI Fastload
 select		mod_elfload		# ELF loading
 select		elf32only
 
@@ -46,7 +46,6 @@ select		cmd_about		# Display info about PMON
 select		cmd_boot		# Boot wrapper
 select		cmd_mycmd
 select		cmd_mycmd_debug #test cache and TLB
-select		ramfiles
 select		cmd_newmt
 select		cmd_cache		# Cache enabling
 select		cmd_call		# Call a function command
@@ -67,6 +66,7 @@ select		cmd_set			# As cmd_env but not req. cmd_hist
 select		cmd_testdisk
 select		cmd_test
 #select		cmd_testfire
+select		cmd_xyzmodem
 select		pmon_zmodem_rz
 #
 select		cmd_shell		# Shell commands, vers, help, eval
@@ -87,9 +87,10 @@ select		ext2
 select		yaffsfs		#lxy: there is a do_div error to open this with new cross-tool
 select		fatfs
 select		gzip
+select		ramfiles
 
 #select		mod_x86emu		# X86 emulation for VGA
-option		MY40IO
+#option		MY40IO
 #option		GC300
 #select		gpu300_compile
 select 		mod_framebuffer
@@ -110,7 +111,7 @@ option		NOSNOOP			# Caches are no-snooping
 option		HAVE_TOD		# Time-Of-Day clock
 option		HAVE_NVENV		#  Platform has non-volatile env mem
 #option		HAVE_LOGO		# Output splash logo
-option		USE_SUPERIO_UART
+#option		USE_SUPERIO_UART
 #option		USE_LEGACY_RTC
 #option		GODSONEV2A
 #option		LINUX_PC
@@ -192,9 +193,8 @@ option		OUTPUT_TO_BOTH
 select		nand
 #select		nor_flash			#如果使用nor flash分区需要该选项
 #option		NORFLASH_PARTITION	#nor flash(spi flash)分区
-select		cmd_xyzmodem
-select		loop
-select		raw_ether
+#select		loop
+#select		raw_ether
 
 #option		VGA_MEM_BASE=0xb5000000
 #option		VGA_MEM_BASE=0xb7f00000
@@ -226,7 +226,6 @@ option		CONFIG_VIDEO_16BPP
 option		CONFIG_VIDEO_SW_CURSOR	#软件光标
 option		CONFIG_FB_DYN
 
-select		ide
 option		wait_key
 #option		HAVE_MUT_COM		#多串口输入/输出,把控制台信息同时输入/输出到多个串口
 option		CONFIG_DDR16BIT		#使能16bit内存接口模式 否则32bit内存接口模式
