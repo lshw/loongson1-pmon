@@ -972,7 +972,6 @@ void nanderase_verify(int argc, char ** argv)
 //	all =strtoul(argv[1],0,0);
 	detail = argv[1];
 	flag = strncmp(detail, "detail", 6);
-//	__ww(0xbfd00420,0x0a000000);		//lxy
 	__ww(NAND_REG_BASE+0x0, 0x0);
 	__ww(NAND_REG_BASE+0x0, 0x41);	//NAND复位，命令有效
 	__ww(NAND_REG_BASE+0x4, 0x00);	//读、写、擦除操作起始地址低32位
@@ -1045,25 +1044,24 @@ void nanderase(void)
 {
 	int i=0;
 	int status_time ;
-	
-//	__ww(0xbfd00420,0x0a000000);		//lxy
+
 	__ww(NAND_REG_BASE+0x0, 0x0);   
-	__ww(NAND_REG_BASE+0x0, 0x41);	//NAND复位，命令有效
-	__ww(NAND_REG_BASE+0x4, 0x00);	//读、写、擦除操作起始地址低32位
+	__ww(NAND_REG_BASE+0x0, 0x41);
+	__ww(NAND_REG_BASE+0x4, 0x00);
 
 	status_time = STATUS_TIME;
 
 	printf("erase blockaddr: 0x%08x", i);
-	for(i=0;i<1024;i++){
+	for (i=0; i<1024; i++) {
 		printf("\b\b\b\b\b\b\b\b");
 		printf("%08x", i<<(11+6));
-		__ww(NAND_REG_BASE+0x4, i<<(11+6));   //128K？
-		__ww(NAND_REG_BASE+0x0, 0x8);	//擦除操作
-		__ww(NAND_REG_BASE+0x0, 0x9);	//擦除操作 命令有效
+		__ww(NAND_REG_BASE+0x4, i<<(11+6));
+		__ww(NAND_REG_BASE+0x0, 0x8);
+		__ww(NAND_REG_BASE+0x0, 0x9);
 		udelay(2000);
-		//外部NAND芯片RDY情况
-		while((*((volatile unsigned int *)(NAND_REG_BASE)) & 0x1<<16) == 0){
-			if(!(status_time--)){
+
+		while ((*((volatile unsigned int *)(NAND_REG_BASE)) & 0x1<<16) == 0) {
+			if (!(status_time--)) {
 				cmd_to_zero;
 				status_time = STATUS_TIME;
 				break;
@@ -1163,7 +1161,6 @@ static void nandwrite_test(int argc,char **argv)/*cmd addr(L,page num) timing op
 		return;
 	}
 	nand_num = 0;
-//	__ww(0xbfd00420,0x0a000000);		//lxy
 	cmd = strtoul(argv[1],0,0);
 	addr = strtoul(argv[2],0,0);
 	timing = strtoul(argv[3],0,0);
@@ -1174,23 +1171,22 @@ static void nandwrite_test(int argc,char **argv)/*cmd addr(L,page num) timing op
 //	pages = (op_num>>11)+1;
 	pages = op_num;
 	for(i=0;i<pages;i++){
-		__ww(NAND_REG_BASE+TIMING, timing);	//0xbfe7800c NAND命令有效需等待的周期数 NAND一次读写所需总时钟周期数
-		__ww(NAND_REG_BASE+OP_NUM, 0x840);		//0xbfe7801c NAND读写操作Byte数；擦除为块数
-		__ww(NAND_REG_BASE+ADDR, addr);			//读、写、擦除操作起始地址低32位
+		__ww(NAND_REG_BASE+TIMING, timing);
+		__ww(NAND_REG_BASE+OP_NUM, 0x840);
+		__ww(NAND_REG_BASE+ADDR, addr);
 		__ww(DDR_ADDR, 0xffffffff);
 		/*dma configure*/
-		__ww(DMA_DESP, 0xa0081100);		//下一个描述符地址寄存器 这里设置为无效
-		__ww(DMA_DESP+0x4, DDR_PHY);	//内存地址寄存器
-		__ww(DMA_DESP+0x8, NAND_DEV);	//设备地址寄存器
-		__ww(DMA_DESP+0xc, 0x210);		//长度寄存器 代表一块被搬运内容的长度，单位是字
-		__ww(DMA_DESP+0x10, 0x0);		//间隔长度寄存器 间隔长度说明两块被搬运内存数据块之间的长度，前一个step的结束地址与后一个step的开始地址之间的间隔
-		__ww(DMA_DESP+0x14, 0x1);		//循环次数寄存器 循环次数说明在一次DMA操作中需要搬运的块的数目
-		__ww(DMA_DESP+0x18, 0x1000);	//控制寄存器 DMA操作类型，“1”为读ddr2写设备，“0”为读设备写ddr2
-		__ww(0xbfd01160, DMA_DESP_ORDER);	//DMA模块控制寄存器位 在confreg模块，存放第一个DMA描述符地址寄存器
-												//#define DMA_DESP_ORDER  0x00800008
-												//可以开始读描述符链的第一个DMA描述符
+		__ww(DMA_DESP, 0xa0081100);
+		__ww(DMA_DESP+0x4, DDR_PHY);
+		__ww(DMA_DESP+0x8, NAND_DEV);
+		__ww(DMA_DESP+0xc, 0x210);
+		__ww(DMA_DESP+0x10, 0x0);
+		__ww(DMA_DESP+0x14, 0x1);
+		__ww(DMA_DESP+0x18, 0x1000);
+		__ww(0xbfd01160, DMA_DESP_ORDER);
+
 		/*send cmd*/ 
-		__ww(NAND_REG_BASE+CMD, cmd&0x200);	//操作发生在NAND的SPARE(备用)区
+		__ww(NAND_REG_BASE+CMD, cmd&0x200);
 		__ww(NAND_REG_BASE+CMD, cmd);	
 		udelay(100);
 		while(1){
@@ -1313,46 +1309,48 @@ extern unsigned int output_mode;
 
 int ls1g_soc_nand_init(void)
 {
-//	nand_gpio_read_id();
-//	return 0;
-	int val;
+	unsigned int val;
 	struct nand_chip *this;
 	printf("\nNAND DETE\n");
-//	nand_test();    
-//	if(__rw(0xbfd00420,val) != 0x0a000000)	//lxy
-//		__ww(0xbfd00420,0x0a000000);		//lxy
 
 #ifdef	LS1ASOC
+#if 1	//NAND复用LPC
+	__rw(0xbfd00420, val);
+	val |= 0x2a000000;
+	__ww(0xbfd00420, val);
+
+	__rw(0xbfd010c8, val);
+	val &= ~(0xffff<<6);	//nand_D0~D7 & nand_control pin
+	__ww(0xbfd010c8, val);
+#else //NAND复用SPI1
 	__rw(0xbfd00420, val);
 	val |= 0x14000000;
 	__ww(0xbfd00420, val);
 
 	__rw(0xbfd010c4, val);
-	val &= ~(0xf<<12);	//nand_D0~D3
+	val &= ~(0xf<<12);		//nand_D0~D3
 	__ww(0xbfd010c4, val);
 
 	__rw(0xbfd010c8, val);
 	val &= ~(0xfff<<12);	//nand_D4~D7 & nand_control pin
 	__ww(0xbfd010c8, val);
 #endif
+#endif	//LS1ASOC
 
 	/* Allocate memory for MTD device structure and private data */
-	/* 为MTD设备结构体和nand_chip分配内存 */
 	ls1g_soc_mtd = malloc(sizeof(struct mtd_info) + sizeof(struct nand_chip), M_DEVBUF, M_WAITOK);
 	if (!ls1g_soc_mtd) {
 		printk("Unable to allocate fcr_soc NAND MTD device structure.\n");
 		return -ENOMEM;
 	}
-	/* Get pointer to private data 获得私有数据(nand_chip)指针*/
-	this = (struct nand_chip *)(&ls1g_soc_mtd[1]);/*分配内存后的nand_chip结构体指针*/
-	/*由于soc_soc_mtd是mtd_info结构体指针 在kmalloc内存分配时加上了+ sizeof(struct nand_chip) 所以&soc_soc_mtd[1]地址相当于指向nand_chip结构体*/
+	/* Get pointer to private data */
+	this = (struct nand_chip *)(&ls1g_soc_mtd[1]);
 
-	/* Initialize structures 初始化结构体 清零 */
+	/* Initialize structures */
 	memset(ls1g_soc_mtd, 0, sizeof(struct mtd_info));
 	memset(this, 0, sizeof(struct nand_chip));
 
-	/* Link(连接) the private(私有的) data with the MTD structure */
-	/*将nand_chip赋予mtd_info私有指针*/
+	/* Link the private data with the MTD structure */
 	ls1g_soc_mtd->priv = this;
 	/* 15 us command delay time 从数据手册获知命令延迟时间 */
 	this->chip_delay = 15;
@@ -1361,9 +1359,9 @@ int ls1g_soc_nand_init(void)
 		return -ENXIO;
 	}
 
-	/* Scan to find existence of the device 扫描以确定器件的存在*/
+	/* Scan to find existence of the device */
 	if (nand_scan(ls1g_soc_mtd, 1)) {
-		free(ls1g_soc_mtd,M_DEVBUF);	/*扫描失败 soc_soc_mtd可以释放*/
+		free(ls1g_soc_mtd,M_DEVBUF);
 		return -ENXIO;
 	}
 	if(ls1g_nand_detect(ls1g_soc_mtd)){
@@ -1372,12 +1370,6 @@ int ls1g_soc_nand_init(void)
 	}
 
 	/* Register the partitions */
-//	add_mtd_partitions(fcr_soc_mtd, partition_info, NUM_PARTITIONS);
-//
-//	add_mtd_device(mtd_info,offset,size,name)
-//	add_mtd_device(ls1g_soc_mtd,0,0,"total");
-
-
 #ifdef FAST_STARTUP
 	if (output_mode == 0)
 	{
@@ -1385,15 +1377,9 @@ int ls1g_soc_nand_init(void)
 		return 0;
 	}
 #endif
-	add_mtd_device(ls1g_soc_mtd,0,0x00e00000,"kernel");
-	add_mtd_device(ls1g_soc_mtd,0x00e00000,0x06700000,"os");
-	add_mtd_device(ls1g_soc_mtd,0x07500000,0x00b00000,"data");
-/*
-#else
-	add_mtd_device(ls1g_soc_mtd,0,0x00700000,"kernel");
-	add_mtd_device(ls1g_soc_mtd,0x00700000,0x06e00000,"os");
-	add_mtd_device(ls1g_soc_mtd,0x07500000,0x00b00000,"data");
-*/
+	add_mtd_device(ls1g_soc_mtd, 0, 14*1024*1024, "kernel");				//14MB
+	add_mtd_device(ls1g_soc_mtd, 14*1024*1024, 100*1024*1024, "os");		//100MB
+	add_mtd_device(ls1g_soc_mtd, (100+14)*1024*1024, 14*1024*1024, "data");	//14MB
 
 //	find_good_part(ls1g_soc_mtd);
 	/* Return happy */

@@ -3,9 +3,9 @@
 ddr2_reg_data:
 MC0_CTL_000 : .dword 0x0100010000000101
 //0000000_1 ddrii_sdram_mode(RW) 0000000_1 concurrentap(RW) 0000000_1 bank_split_en(RW) 0000000_0 auto_refresh_mode(RW) 0000000_0 arefresh(RW) 0000000_1 ap(RW) 0000000_1 addr_cmp_en(RW) 0000000_1 active_aging(RW)
-MC0_CTL_010 : .dword 0x0000000100000000
+MC0_CTL_010 : .dword 0x0000000000000000
 //0000000_0 fwc(RW) 0000000_0 fast_write(RW) 0000000_0 enable_quick_srefresh(RW) 0000000_0 eight_bank_mode(RW) 0000000_0 ecc_disable_w_uc_err(RW) 0000000_1 dqs_n_en(RW) 0000000_0 dll_bypass_mode 0000000_0(RW) dlllockreg(RW)
-MC0_CTL_020 : .dword 0x0100010000000000
+MC0_CTL_020 : .dword 0x0100010100000000
 //0000000_1 priority_en(RW) 0000000_0 power_down(RW) 0000000_1 placement_en(RW) 0000000_1 odt_add_turn_clk_en(RW) 0000000_0 no_cmd_init(RW) 0000000_0 intrptwritea(RW) 0000000_0 intrptreada(RW) 0000000_0 intrptapburst(RW)
 MC0_CTL_030 : .dword 0x0001000001000100
 //0000000_1 swap_port_rw_same_en(RW) 0000000_1 swap_en(RW) 0000000_0 start(RW) 0000000_0 srefresh(RW) 0000000_1 rw_same_en(RW) 0000000_0 reg_dimm_enable(RW) 0000000_0 reduc(RW) 0000000_0 pwrup_srefresh_exit(RW)

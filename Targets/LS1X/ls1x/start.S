@@ -343,7 +343,7 @@ locate:
 	li a0,0xbfd00000
 	sw zero,0x10c0(a0)
 	sw zero,0x10c4(a0)
-#	sw zero,0x10c8(a0)
+	sw zero,0x10c8(a0)
 
 #ifdef BUZZER
 	/* disable buzzer gpio40*/
