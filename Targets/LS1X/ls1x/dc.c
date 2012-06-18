@@ -252,7 +252,8 @@ int config_fb(unsigned long base)
 			out = caclulatefreq(APB_CLK/1000, vgamode[i].pclk);
 			printf("out=%x\n",out);
 			/*inner gpu dc logic fifo pll ctrl,must large then outclk*/
-			*(volatile int *)0xbfd00414 = out + 1;
+//			*(volatile int *)0xbfd00414 = out + 1;
+			*(volatile int *)0xbfd00414 = out;
 			/*output pix1 clock  pll ctrl*/
 			*(volatile int *)0xbfd00410 = out;
 			/*output pix2 clock pll ctrl */
