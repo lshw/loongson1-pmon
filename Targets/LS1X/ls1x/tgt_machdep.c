@@ -152,8 +152,8 @@ extern int memorysize_high;
 extern char MipsException[], MipsExceptionEnd[];
 
 unsigned char hwethadr[6];
-static unsigned int pll_reg0,pll_reg1;
-static unsigned int xres,yres,depth;
+static unsigned int pll_reg0, pll_reg1;
+static unsigned int xres, yres, depth;
 
 void initmips(unsigned int memsz);
 
@@ -690,8 +690,7 @@ tgt_gettime(void)
 /*
  *  Set the current time if a TOD clock is present
  */
-void
-tgt_settime(time_t t)
+void tgt_settime(time_t t)
 {
 	struct tm *tm;
 
@@ -711,8 +710,7 @@ tgt_settime(time_t t)
 /*
  *  Print out any target specific memory information
  */
-void
-tgt_memprint(void)
+void tgt_memprint(void)
 {
 	printf("Primary Instruction cache size %dkb (%d line, %d way)\n",
 		CpuPrimaryInstCacheSize / 1024, CpuPrimaryInstCacheLSize, CpuNWayCache);
@@ -726,8 +724,7 @@ tgt_memprint(void)
 	}
 }
 
-void
-tgt_machprint(void)
+void tgt_machprint(void)
 {
 	printf("Copyright 2000-2002, Opsycon AB, Sweden.\n");
 	printf("Copyright 2005, ICT CAS.\n");
@@ -739,8 +736,7 @@ tgt_machprint(void)
  *  Usually top of RAM memory.
  */
 
-register_t
-tgt_clienttos(void)
+register_t tgt_clienttos(void)
 {
 	return((register_t)(int)PHYS_TO_UNCACHED(memorysize & ~7) - 64);
 }
@@ -759,18 +755,16 @@ struct fl_map tgt_fl_map_boot16[]={
 };
 
 
-struct fl_map *
-tgt_flashmap(void)
+struct fl_map * tgt_flashmap(void)
 {
 	return tgt_fl_map_boot16;
-}   
-void
-tgt_flashwrite_disable(void)
+}
+
+void tgt_flashwrite_disable(void)
 {
 }
 
-int
-tgt_flashwrite_enable(void)
+int tgt_flashwrite_enable(void)
 {
 #ifdef FLASH_READ_ONLY
 	return 0;
@@ -779,8 +773,7 @@ tgt_flashwrite_enable(void)
 #endif
 }
 
-void
-tgt_flashinfo(void *p, size_t *t)
+void tgt_flashinfo(void *p, size_t *t)
 {
 	struct fl_map *map;
 
@@ -793,8 +786,7 @@ tgt_flashinfo(void *p, size_t *t)
 	}
 }
 
-void
-tgt_flashprogram(void *p, int size, void *s, int endian)
+void tgt_flashprogram(void *p, int size, void *s, int endian)
 {
 	printf("Programming flash %x:%x into %x\n", s, size, p);
 	if(fl_erase_device(p, size, TRUE)) {
@@ -811,20 +803,17 @@ tgt_flashprogram(void *p, int size, void *s, int endian)
 /*
  *  Network stuff.
  */
-void
-tgt_netinit(void)
+void tgt_netinit(void)
 {
 }
 
-int
-tgt_ethaddr(char *p)
+int tgt_ethaddr(char *p)
 {
 	bcopy((void *)&hwethadr, p, 6);
 	return(0);
 }
 
-void
-tgt_netreset(void)
+void tgt_netreset(void)
 {
 }
 
@@ -841,18 +830,17 @@ tgt_netreset(void)
 /*
  *  Read in environment from NV-ram and set.
  */
-void
-tgt_mapenv(int (*func) __P((char *, char *)))
+void tgt_mapenv(int (*func) __P((char *, char *)))
 {
 	char *ep;
 	char env[512];
 	char *nvram;
 	int i;
 
-        /*
-         *  Check integrity of the NVRAM env area. If not in order
-         *  initialize it to empty.
-         */
+	/*
+	 *  Check integrity of the NVRAM env area. If not in order
+	 *  initialize it to empty.
+	 */
 	printf("in envinit\n");
 #ifdef NVRAM_IN_FLASH
     nvram = (char *)(tgt_flashmap())->fl_map_base;
@@ -890,7 +878,7 @@ tgt_mapenv(int (*func) __P((char *, char *)))
                 }
         }
 
-	printf("NVRAM@%x\n",(u_int32_t)nvram);
+	printf("NVRAM@%x\n", (u_int32_t)nvram);
 
 	/*
 	 *  Ethernet address for Galileo ethernet is stored in the last
@@ -908,33 +896,34 @@ tgt_mapenv(int (*func) __P((char *, char *)))
 	sprintf(env, "0x%08x", pll_reg0);
 	(*func)("pll_reg0", env);
 #elif LS1BSOC
-	sprintf(env, "0x%08x",(pll_reg0=*(volatile int *)0xbfe78030));
+	sprintf(env, "0x%08x", (pll_reg0=*(volatile int *)0xbfe78030));
 	(*func)("pll_reg0", env);
 #endif
-	sprintf(env, "0x%08x",(pll_reg1=*(volatile int *)0xbfe78034));
+	sprintf(env, "0x%08x", (pll_reg1=*(volatile int *)0xbfe78034));
 	(*func)("pll_reg1", env);
 
 	bcopy(&nvram[XRES_OFFS], &xres, 2);
 	bcopy(&nvram[YRES_OFFS], &yres, 2);
 	bcopy(&nvram[DEPTH_OFFS], &depth, 1);
 
-	if(xres>0 && xres<2000)
-	{
-	sprintf(env, "%d",xres);
+	if (xres>0 && xres<2000) {
+		sprintf(env, "%d", xres);
+	} else {
+		sprintf(env, "%d", FB_XSIZE);
+	}
 	(*func)("xres", env);
+	
+	if (yres>0 && yres<2000) {
+		sprintf(env, "%d", yres);
+	} else {
+		sprintf(env, "%d", FB_YSIZE);
 	}
-
-	if(yres>0 && yres<2000)
-	{
-	sprintf(env, "%d",yres);
 	(*func)("yres", env);
-	}
-
-	if(depth == 16 || depth == 32)
-	{
-	sprintf(env, "%d",depth);
-	(*func)("depth", env);
-	}
+	
+//	if (depth == 16 || depth == 32) {
+		sprintf(env, "%d", 16);
+		(*func)("depth", env);
+//	}
 
 #ifndef NVRAM_IN_FLASH
 	free(nvram);
@@ -958,95 +947,91 @@ tgt_mapenv(int (*func) __P((char *, char *)))
 	(*func)("busclock", env);
 
 	(*func)("systype", SYSTYPE);
-	
-
 }
 
-int
-tgt_unsetenv(char *name)
+int tgt_unsetenv(char *name)
 {
-        char *ep, *np, *sp;
-        char *nvram;
-        char *nvrambuf;
-        char *nvramsecbuf;
+	char *ep, *np, *sp;
+	char *nvram;
+	char *nvrambuf;
+	char *nvramsecbuf;
 	int status;
 
-        if(nvram_invalid) {
-                return(0);
-        }
+	if(nvram_invalid) {
+		return(0);
+	}
 
 	/* Use first defined flash device (we probably have only one) */
 #ifdef NVRAM_IN_FLASH
-        nvram = (char *)(tgt_flashmap())->fl_map_base;
+	nvram = (char *)(tgt_flashmap())->fl_map_base;
 
 	/* Map. Deal with an entire sector even if we only use part of it */
-        nvram += NVRAM_OFFS & ~(NVRAM_SECSIZE - 1);
+	nvram += NVRAM_OFFS & ~(NVRAM_SECSIZE - 1);
 	nvramsecbuf = (char *)malloc(NVRAM_SECSIZE);
 	if(nvramsecbuf == 0) {
 		printf("Warning! Unable to malloc nvrambuffer!\n");
 		return(-1);
 	}
-        memcpy(nvramsecbuf, nvram, NVRAM_SECSIZE);
+	memcpy(nvramsecbuf, nvram, NVRAM_SECSIZE);
 	nvrambuf = nvramsecbuf + (NVRAM_OFFS & (NVRAM_SECSIZE - 1));
 #else
-        nvramsecbuf = nvrambuf = nvram = (char *)malloc(NVRAM_SECSIZE);
+	nvramsecbuf = nvrambuf = nvram = (char *)malloc(NVRAM_SECSIZE);
 	nvram_get(nvram);
 #endif
 
-        ep = nvrambuf + 2;
+	ep = nvrambuf + 2;
 
 	status = 0;
-        while((*ep != '\0') && (ep < nvrambuf + NVRAM_SIZE)) {
-                np = name;
-                sp = ep;
+	while((*ep != '\0') && (ep < nvrambuf + NVRAM_SIZE)) {
+		np = name;
+		sp = ep;
 
-                while((*ep == *np) && (*ep != '=') && (*np != '\0')) {
-                        ep++;
-                        np++;
-                }
-                if((*np == '\0') && ((*ep == '\0') || (*ep == '='))) {
-                        while(*ep++);
-                        while(ep < nvrambuf + NVRAM_SIZE) {
-                                *sp++ = *ep++;
-                        }
-                        if(nvrambuf[2] == '\0') {
-                                nvrambuf[3] = '\0';
-                        }
-                        cksum(nvrambuf, NVRAM_SIZE, 1);
+		while((*ep == *np) && (*ep != '=') && (*np != '\0')) {
+			ep++;
+			np++;
+		}
+		if((*np == '\0') && ((*ep == '\0') || (*ep == '='))) {
+			while(*ep++);
+			while(ep < nvrambuf + NVRAM_SIZE) {
+				*sp++ = *ep++;
+			}
+			if(nvrambuf[2] == '\0') {
+				nvrambuf[3] = '\0';
+			}
+			cksum(nvrambuf, NVRAM_SIZE, 1);
 #ifdef NVRAM_IN_FLASH
-                        if(fl_erase_device(nvram, NVRAM_SECSIZE, FALSE)) {
-                                status = -1;
+			if(fl_erase_device(nvram, NVRAM_SECSIZE, FALSE)) {
+				status = -1;
 				break;
-                        }
+			}
 
-                        if(fl_program_device(nvram, nvramsecbuf, NVRAM_SECSIZE, FALSE)) {
-                                status = -1;
+			if(fl_program_device(nvram, nvramsecbuf, NVRAM_SECSIZE, FALSE)) {
+				status = -1;
 				break;
-                        }
+			}
 #else
 			nvram_put(nvram);
 #endif
 			status = 1;
 			break;
-                }
-                else if(*ep != '\0') {
-                        while(*ep++ != '\0');
-                }
-        }
+		}
+		else if(*ep != '\0') {
+			while(*ep++ != '\0');
+		}
+	}
 
 	free(nvramsecbuf);
-        return(status);
+	return(status);
 }
 
-int
-tgt_setenv(char *name, char *value)
+int tgt_setenv(char *name, char *value)
 {
-        char *ep;
-        int envlen;
-        char *nvrambuf;
-        char *nvramsecbuf;
+	char *ep;
+	int envlen;
+	char *nvrambuf;
+	char *nvramsecbuf;
 #ifdef NVRAM_IN_FLASH
-        char *nvram;
+	char *nvram;
 #endif
 
 	/* Non permanent vars. */
@@ -1054,28 +1039,28 @@ tgt_setenv(char *name, char *value)
 		return(1);
 	}
 
-        /* Calculate total env mem size requiered */
-        envlen = strlen(name);
-        if(envlen == 0) {
-                return(0);
-        }
-        if(value != NULL) {
-                envlen += strlen(value);
-        }
-        envlen += 2;    /* '=' + null byte */
-        if(envlen > 255) {
-                return(0);      /* Are you crazy!? */
-        }
+	/* Calculate total env mem size requiered */
+	envlen = strlen(name);
+	if(envlen == 0) {
+		return(0);
+	}
+	if(value != NULL) {
+		envlen += strlen(value);
+	}
+	envlen += 2;	/* '=' + null byte */
+	if(envlen > 255) {
+		return(0);	/* Are you crazy!? */
+	}
 
 	/* Use first defined flash device (we probably have only one) */
 #ifdef NVRAM_IN_FLASH
-        nvram = (char *)(tgt_flashmap())->fl_map_base;
+	nvram = (char *)(tgt_flashmap())->fl_map_base;
 
 	/* Deal with an entire sector even if we only use part of it */
-        nvram += NVRAM_OFFS & ~(NVRAM_SECSIZE - 1);
+	nvram += NVRAM_OFFS & ~(NVRAM_SECSIZE - 1);
 #endif
 
-        /* If NVRAM is found to be uninitialized, reinit it. */
+	/* If NVRAM is found to be uninitialized, reinit it. */
 	if(nvram_invalid) {
 		nvramsecbuf = (char *)malloc(NVRAM_SECSIZE);
 		if(nvramsecbuf == 0) {
@@ -1086,33 +1071,33 @@ tgt_setenv(char *name, char *value)
 		memcpy(nvramsecbuf, nvram, NVRAM_SECSIZE);
 #endif
 		nvrambuf = nvramsecbuf + (NVRAM_OFFS & (NVRAM_SECSIZE - 1));
-                memset(nvrambuf, -1, NVRAM_SIZE);
-                nvrambuf[2] = '\0';
-                nvrambuf[3] = '\0';
-                cksum((void *)nvrambuf, NVRAM_SIZE, 1);
+		memset(nvrambuf, -1, NVRAM_SIZE);
+		nvrambuf[2] = '\0';
+		nvrambuf[3] = '\0';
+		cksum((void *)nvrambuf, NVRAM_SIZE, 1);
 		printf("Warning! NVRAM checksum fail. Reset!\n");
 #ifdef NVRAM_IN_FLASH
-                if(fl_erase_device(nvram, NVRAM_SECSIZE, FALSE)) {
+		if(fl_erase_device(nvram, NVRAM_SECSIZE, FALSE)) {
 			printf("Error! Nvram erase failed!\n");
 			free(nvramsecbuf);
-                        return(-1);
-                }
-                if(fl_program_device(nvram, nvramsecbuf, NVRAM_SECSIZE, FALSE)) {
+			return(-1);
+		}
+		if(fl_program_device(nvram, nvramsecbuf, NVRAM_SECSIZE, FALSE)) {
 			printf("Error! Nvram init failed!\n");
 			free(nvramsecbuf);
-                        return(-1);
-                }
+			return(-1);
+		}
 #else
 		nvram_put(nvramsecbuf);
 #endif
-                nvram_invalid = 0;
+		nvram_invalid = 0;
 		free(nvramsecbuf);
-        }
+	}
 
-        /* Remove any current setting */
-        tgt_unsetenv(name);
+	/* Remove any current setting */
+	tgt_unsetenv(name);
 
-        /* Find end of evironment strings */
+	/* Find end of evironment strings */
 	nvramsecbuf = (char *)malloc(NVRAM_SECSIZE);
 	if(nvramsecbuf == 0) {
 		printf("Warning! Unable to malloc nvrambuffer!\n");
@@ -1121,7 +1106,7 @@ tgt_setenv(char *name, char *value)
 #ifndef NVRAM_IN_FLASH
 	nvram_get(nvramsecbuf);
 #else
-        memcpy(nvramsecbuf, nvram, NVRAM_SECSIZE);
+	memcpy(nvramsecbuf, nvram, NVRAM_SECSIZE);
 #endif
 	nvrambuf = nvramsecbuf + (NVRAM_OFFS & (NVRAM_SECSIZE - 1));
 	/* Etheraddr is special case to save space */
@@ -1135,16 +1120,16 @@ tgt_setenv(char *name, char *value)
 			s += 3;         /* Don't get to fancy here :-) */
 		} 
 	} 
-	else if(strcmp("pll_reg0",name) == 0)
-		pll_reg0=strtoul(value,0,0);
-	else if(strcmp("pll_reg1",name) == 0)
-		pll_reg1=strtoul(value,0,0);
-	else if(strcmp("xres",name) == 0)
-		xres=strtoul(value,0,0);
-	else if(strcmp("yres",name) == 0)
-		yres=strtoul(value,0,0);
-	else if(strcmp("depth",name) == 0)
-		depth=strtoul(value,0,0);
+	else if(strcmp("pll_reg0", name) == 0)
+		pll_reg0 = strtoul(value, 0, 0);
+	else if(strcmp("pll_reg1", name) == 0)
+		pll_reg1 = strtoul(value, 0, 0);
+	else if(strcmp("xres", name) == 0)
+		xres = strtoul(value, 0, 0);
+	else if(strcmp("yres", name) == 0)
+		yres = strtoul(value, 0, 0);
+	else if(strcmp("depth", name) == 0)
+		depth = strtoul(value, 0, 0);
 	else {
 		ep = nvrambuf+2;
 		if(*ep != '\0') {
@@ -1193,7 +1178,7 @@ tgt_setenv(char *name, char *value)
 			*ep++ = '\0';   /* End of env strings */
 		}
 	}
-        cksum(nvrambuf, NVRAM_SIZE, 1);
+	cksum(nvrambuf, NVRAM_SIZE, 1);
 
 	bcopy(hwethadr, &nvramsecbuf[ETHER_OFFS], 6);
 	bcopy(&pll_reg0, &nvramsecbuf[PLL_OFFS], 4);
@@ -1202,29 +1187,28 @@ tgt_setenv(char *name, char *value)
 	bcopy(&yres, &nvramsecbuf[YRES_OFFS], 2);
 	bcopy(&depth, &nvramsecbuf[DEPTH_OFFS], 1);
 #ifdef NVRAM_IN_FLASH
-        if(fl_erase_device(nvram, NVRAM_SECSIZE, FALSE)) {
+	if(fl_erase_device(nvram, NVRAM_SECSIZE, FALSE)) {
 		printf("Error! Nvram erase failed!\n");
 		free(nvramsecbuf);
-                return(0);
-        }
-        if(fl_program_device(nvram, nvramsecbuf, NVRAM_SECSIZE, FALSE)) {
+		return(0);
+	}
+	if(fl_program_device(nvram, nvramsecbuf, NVRAM_SECSIZE, FALSE)) {
 		printf("Error! Nvram program failed!\n");
 		free(nvramsecbuf);
-                return(0);
-        }
+		return(0);
+	}
 #else
 	nvram_put(nvramsecbuf);
 #endif
 	free(nvramsecbuf);
-        return(1);
+	return(1);
 }
 
 
 /*
  *  Calculate checksum. If 'set' checksum is calculated and set.
  */
-static int
-cksum(void *p, size_t s, int set)
+static int cksum(void *p, size_t s, int set)
 {
 	u_int16_t sum = 0;
 	u_int8_t *sp = p;
