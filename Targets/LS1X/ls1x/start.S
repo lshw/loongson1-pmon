@@ -446,11 +446,18 @@ cpu_win_fixup:
 	// uncached instruction fetch patch
 #endif 
 
-
-	/* 
-	 * Now determine DRAM configuration and size by
-	 * reading the I2C EEROM on the DIMMS
+	/*
+	 * set *_ssel and *_tsel
+	 * *_ssel参数用于配置DDR IO的驱动强度 01: 弱驱动 11: 强驱动
+	 * *_tsel参数用于配置DDR IO的ODT输入匹配阻抗 00: disable 01: 75ohm 10: 150ohm 11: 50ohm
+	 * pad_st不用于SSTL18模式，应保持为0
 	 */
+	li	t0, 0xbfd010c8
+	li	t1, 0xfc000000
+	sw	t1, (t0)
+	li	t0, 0xbfd010f8
+	li	t1, 0x14000000
+	sw	t1, (t0)
 
 #	ddr2config by cww 20090901
 	PRINTSTR("DDR2 config begin_2\r\n")
