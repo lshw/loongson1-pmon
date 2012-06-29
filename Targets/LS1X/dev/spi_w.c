@@ -822,33 +822,32 @@ int spi_read_area_fast(int flashaddr,char *buffer,int size)
 
 	SET_SPI(TXFIFO,0x0b);
 
-        while((GET_SPI(SPSR))&RFEMPTY);
-        GET_SPI(RXFIFO);
-        
-        SET_SPI(TXFIFO,flashaddr>>16);     
-        while((GET_SPI(SPSR))&RFEMPTY);
-        GET_SPI(RXFIFO);
+	while((GET_SPI(SPSR))&RFEMPTY);
+	GET_SPI(RXFIFO);
 
-        SET_SPI(TXFIFO,flashaddr>>8);     
-        while((GET_SPI(SPSR))&RFEMPTY);
-        GET_SPI(RXFIFO);
+	SET_SPI(TXFIFO,flashaddr>>16);     
+	while((GET_SPI(SPSR))&RFEMPTY);
+	GET_SPI(RXFIFO);
 
-        SET_SPI(TXFIFO,flashaddr);     
-        while((GET_SPI(SPSR))&RFEMPTY);
-        GET_SPI(RXFIFO);
+	SET_SPI(TXFIFO,flashaddr>>8);     
+	while((GET_SPI(SPSR))&RFEMPTY);
+	GET_SPI(RXFIFO);
 
-		SET_SPI(TXFIFO,0x00);     
-        while((GET_SPI(SPSR))&RFEMPTY);
-        GET_SPI(RXFIFO);
+	SET_SPI(TXFIFO,flashaddr);     
+	while((GET_SPI(SPSR))&RFEMPTY);
+	GET_SPI(RXFIFO);
 
-        for(i=0;i<size;i++)
-        {
-	        SET_SPI(TXFIFO,0);     
-	        while((GET_SPI(SPSR))&RFEMPTY);
-	        buffer[i] = GET_SPI(RXFIFO);
-        }
+	SET_SPI(TXFIFO,0x00);     
+	while((GET_SPI(SPSR))&RFEMPTY);
+	GET_SPI(RXFIFO);
 
-        SET_SPI(SOFTCS,0x11);
+	for(i=0;i<size;i++) {
+		SET_SPI(TXFIFO,0);     
+		while((GET_SPI(SPSR))&RFEMPTY);
+		buffer[i] = GET_SPI(RXFIFO);
+	}
+
+	SET_SPI(SOFTCS,0x11);
 	return 0;
 }
 #else
@@ -860,35 +859,34 @@ int spi_read_area_fast(int flashaddr,char *buffer,int size)
 	spi_initw();
 	SET_SPI(SOFTCS,0x01);
 
-		SET_SPI(TXFIFO,0xbb);
-        while((GET_SPI(SPSR))&RFEMPTY);
-        GET_SPI(RXFIFO);
-        
-        SET_SPI(TXFIFO,flashaddr>>16);     
-        while((GET_SPI(SPSR))&TFFULL);
-//        GET_SPI(RXFIFO);
+	SET_SPI(TXFIFO,0xbb);
+	while((GET_SPI(SPSR))&RFEMPTY);
+	GET_SPI(RXFIFO);
 
-        SET_SPI(TXFIFO,flashaddr>>8);     
-        while((GET_SPI(SPSR))&TFFULL);
-//        GET_SPI(RXFIFO);
+	SET_SPI(TXFIFO,flashaddr>>16);     
+	while((GET_SPI(SPSR))&TFFULL);
+//	GET_SPI(RXFIFO);
 
-        SET_SPI(TXFIFO,flashaddr);     
-        while((GET_SPI(SPSR))&TFFULL);
-//        GET_SPI(RXFIFO);
+	SET_SPI(TXFIFO,flashaddr>>8);     
+	while((GET_SPI(SPSR))&TFFULL);
+//	GET_SPI(RXFIFO);
 
-		SET_SPI(TXFIFO,0xa0);     
-        while((GET_SPI(SPSR))&TFFULL);
-//        GET_SPI(RXFIFO);
-		
+	SET_SPI(TXFIFO,flashaddr);     
+	while((GET_SPI(SPSR))&TFFULL);
+//	GET_SPI(RXFIFO);
 
-        for(i=0;i<size;i++)
-        {
-//        SET_SPI(TXFIFO,0);     
-//        while((GET_SPI(SPSR))&RFEMPTY);
-        buffer[i] = GET_SPI(RXFIFO);
-        }
+	SET_SPI(TXFIFO,0xa0);     
+	while((GET_SPI(SPSR))&TFFULL);
+//	GET_SPI(RXFIFO);
 
-        SET_SPI(SOFTCS,0x11);
+
+	for(i=0;i<size;i++) {
+//		SET_SPI(TXFIFO,0);     
+//	while((GET_SPI(SPSR))&RFEMPTY);
+		buffer[i] = GET_SPI(RXFIFO);
+	}
+
+	SET_SPI(SOFTCS,0x11);
 	delay(10);
 	return 0;
 }
@@ -906,30 +904,29 @@ int spi_read_area(int flashaddr,char *buffer,int size)
 
 	SET_SPI(TXFIFO,0x03);
 
-        while((GET_SPI(SPSR))&RFEMPTY);
-        GET_SPI(RXFIFO);
-        
-        SET_SPI(TXFIFO,flashaddr>>16);     
-        while((GET_SPI(SPSR))&RFEMPTY);
-        GET_SPI(RXFIFO);
+	while((GET_SPI(SPSR))&RFEMPTY);
+	GET_SPI(RXFIFO);
 
-        SET_SPI(TXFIFO,flashaddr>>8);     
-        while((GET_SPI(SPSR))&RFEMPTY);
-        GET_SPI(RXFIFO);
+	SET_SPI(TXFIFO,flashaddr>>16);     
+	while((GET_SPI(SPSR))&RFEMPTY);
+	GET_SPI(RXFIFO);
 
-        SET_SPI(TXFIFO,flashaddr);     
-        while((GET_SPI(SPSR))&RFEMPTY);
-        GET_SPI(RXFIFO);
-        
+	SET_SPI(TXFIFO,flashaddr>>8);     
+	while((GET_SPI(SPSR))&RFEMPTY);
+	GET_SPI(RXFIFO);
 
-        for(i=0;i<size;i++)
-        {
-        SET_SPI(TXFIFO,0);     
-        while((GET_SPI(SPSR))&RFEMPTY);
-        buffer[i] = GET_SPI(RXFIFO);
-        }
+	SET_SPI(TXFIFO,flashaddr);     
+	while((GET_SPI(SPSR))&RFEMPTY);
+	GET_SPI(RXFIFO);
 
-        SET_SPI(SOFTCS,0x11);
+
+	for(i=0;i<size;i++) {
+		SET_SPI(TXFIFO,0);     
+		while((GET_SPI(SPSR))&RFEMPTY);
+		buffer[i] = GET_SPI(RXFIFO);
+	}
+
+	SET_SPI(SOFTCS,0x11);
 	delay(10);
 	return 0;
 }
@@ -976,6 +973,11 @@ int fl_program_device(void *fl_base, void *data_base, int data_size, int verbose
 		if (!strcmp(nor_dev->fl_name, "sst25vf080")){
 			printf ("flash sst25vf080.....\n");
 			spi_write_area_sst_fast(off, data_base, data_size);
+		}
+		//使用winb25x128bf 可能需要修改SPI控制器的SPER寄存器，提高分频值，winb25x128bf的工作频率不能太高
+		else if (!strcmp(nor_dev->fl_name, "winb25x128")){
+			printf ("flash winb25x128.....\n");
+			spi_write_area_fast(off, data_base, data_size);
 		}
 		else if (!strcmp(nor_dev->fl_name, "winb25x64")){
 			printf ("flash winb25x64.....\n");
@@ -1083,20 +1085,25 @@ void norflash_init(void)
 	nor_mtd->write		= nor_mtd_write;
 	nor_mtd->erase		= nor_mtd_erase;
 	nor_mtd->size		= 0x800000;
+#ifdef W25Q128
+	nor_mtd->size		= 0x1000000;
+#endif
 	nor_mtd->erasesize	= 64 * 1024;
 	nor_mtd->type		= MTD_NORFLASH;
 	nor_mtd->name		= "ls1b-nor";
+
+	//W25Q128
+#ifdef W25Q128
+	add_mtd_device(nor_mtd, 0, 512*1024, "pmon_nor");				//512KB
+	add_mtd_device(nor_mtd, 512*1024, 10*1024*1024, "kernel_nor");	//10MB
+	add_mtd_device(nor_mtd, (512+10*1024)*1024, (512+5*1024)*1024, "fs_nor");	//5.5MB
+#endif
 
 #if 1	//for bobodog program
 	add_mtd_device(nor_mtd, 0, 			0x80000, 	"pmon_nor");	
 	add_mtd_device(nor_mtd, 0x80000,	0x210000, 	"kernel_nor");
 	add_mtd_device(nor_mtd, 0x290000,	0x500000,	"fs_nor");
 	add_mtd_device(nor_mtd, 0x790000,	0x70000,	"data_nor");
-#if 0	//for finger program
-	add_mtd_device(nor_mtd, 0, 			0x80000, 	"pmon_nor");	
-	add_mtd_device(nor_mtd, 0x80000,	0x4a0000, 	"kernel_nor");
-	add_mtd_device(nor_mtd, 0x520000,	0x2e0000,	"data_nor");
-#endif
 #else
 	add_mtd_device(nor_mtd, 0, 			0x80000, 	"pmon_nor");	
 	add_mtd_device(nor_mtd, 0x80000,	0x2c0000, 	"kernel_nor");

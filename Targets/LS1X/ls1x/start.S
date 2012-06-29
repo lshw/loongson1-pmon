@@ -328,11 +328,10 @@ locate:
     li a1, 0x13
 
 2:
-#endif
 	or v1, 0x2a00
     sw v1, 4(a0)
     sw a1, (a0);
-
+#endif //#ifdef LS1ASOC
 
 	/* initialize UART */
 	li a0, 0

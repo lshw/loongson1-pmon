@@ -70,6 +70,8 @@ int secsize_am29LV008bt[] = {64*__KB, 64*__KB, 64*__KB, 64*__KB, 64*__KB,
 struct fl_device fl_known_dev[] = {
 	{ "sst25vf080",	0xbf, 0x8E, FL_PROTO_AMD, FL_CAP_DE,		//lxy
 	1024*__KB, 64*__KB,  NULL, NULL},	//&fl_func_sst8 },
+	{ "winb25x128",	0xef, 0x18, FL_PROTO_AMD, FL_CAP_DE,
+	16384*__KB, 64*__KB,  NULL, NULL},	//&fl_func_winb },
 	{ "winb25x64",	0xef, 0x17, FL_PROTO_AMD, FL_CAP_DE,
 	8192*__KB, 64*__KB,  NULL, NULL},	//&fl_func_winb },
 	{ "winb25x40",	0xef, 0x13, FL_PROTO_AMD, FL_CAP_DE,
