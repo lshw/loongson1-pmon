@@ -194,11 +194,6 @@ void read_jedecid(unsigned char *p)
 	SET_SPI(TXFIFO,0x9F);	//command = read_id
 	while(((GET_SPI(SPSR)) & RFEMPTY) == RFEMPTY);
 	GET_SPI(RXFIFO);
-#if 0
-	SET_SPI(TXFIFO,0x00);	//command = read_id
-	while((GET_SPI(SPSR))&RFEMPTY == RFEMPTY);
-	GET_SPI(RXFIFO);
-#endif
 
 	for(i=0; i<3; i++){
 		SET_SPI(TXFIFO,0);     
@@ -279,19 +274,11 @@ int erase_all(void)
 	return 1;
 }
 
-
-
 void spi_read_id(void)
 {
 	unsigned char val;
 	
 	spi_initw();
-#if 0		//lxy
-	val = read_sr();
-	while(val&0x01 == 1){
-		val = read_sr();
-	}
-#endif
 	/*CE 0*/
 	SET_SPI(SOFTCS,0x01);
 	/*READ ID CMD*/
@@ -764,134 +751,59 @@ int spi_write_area_fast(int flashaddr,char *buffer,int size)		//lxy
 	return 0;
 }
 
-void spi_set_hp(void)		//lxy
+int spi_read_area_fast(loff_t flashaddr, unsigned char *buffer, size_t size)
 {
-	spi_initw();
-	SET_SPI(SOFTCS,0x01);
+	unsigned int i;
 
-	SET_SPI(TXFIFO,0xa3);     
-    while((GET_SPI(SPSR))&RFEMPTY);
-    GET_SPI(RXFIFO);
+	/* 1A/1B 的SPI控制器 支持SPI Flash快速(高速 双IO)读取 但只支持最大8MB容量
+	   所以需要快速读取的分区如内核区，尽量设置在8MB内
+	*/
+	if (flashaddr+size < 0x800000) {
+		SET_SPI(SPSR, 0xc0); 
+	  	SET_SPI(PARAM, 0x0f);	//double I/O 模式 部分SPI flash可能不支持
+	 	SET_SPI(SPER, 0x04);	//spre:00
+	  	SET_SPI(PARAM2, 0x01);
+		SET_SPI(SPCR, 0x5c);
+		unsigned char *flash_addr = 0xbf000000 + flashaddr;
+		for(i=0; i<size; i++) {
+			*(buffer++) = *(flash_addr++);
+		}
+		SET_SPI(PARAM, 0x01);
+	} else {
+		spi_initw();
 
-	SET_SPI(TXFIFO,0x00);     
-    while((GET_SPI(SPSR))&RFEMPTY);
-    GET_SPI(RXFIFO);
-
-	SET_SPI(TXFIFO,0x00);     
-    while((GET_SPI(SPSR))&RFEMPTY);
-    GET_SPI(RXFIFO);
-
-	SET_SPI(TXFIFO,0x00);     
-    while((GET_SPI(SPSR))&RFEMPTY);
-    GET_SPI(RXFIFO);
-
-	SET_SPI(SOFTCS,0x11);
-	delay(2000);
-}
-
-
-#if 1
-int spi_read_area_fast(int flashaddr,unsigned char *buffer,int size)		//lxy
-{
-	int i;
-
-//	spi_set_hp();
-	spi_initw();
-	set_wren();
-
-	SET_SPI(SPSR, 0xc0); 
-  	SET_SPI(PARAM, 0x07);	//espr:0100
- 	SET_SPI(SPER, 0x04);	//spre:00
-  	SET_SPI(PARAM2,0x01);
-	SET_SPI(SPCR, 0x5c);
-
-    for(i=0;i<size;i++) {
-		buffer[i] = *(volatile u8 *)(0xbf000000+flashaddr+i);
-	}
-
-	SET_SPI(PARAM, 0x01);
-	return 0;
-}
-#else
-#if 1
-int spi_read_area_fast(int flashaddr,char *buffer,int size)
-{
-	int i;
-	spi_initw();
-	SET_SPI(SOFTCS,0x01);
-
-	SET_SPI(TXFIFO,0x0b);
-
-	while((GET_SPI(SPSR))&RFEMPTY);
-	GET_SPI(RXFIFO);
-
-	SET_SPI(TXFIFO,flashaddr>>16);     
-	while((GET_SPI(SPSR))&RFEMPTY);
-	GET_SPI(RXFIFO);
-
-	SET_SPI(TXFIFO,flashaddr>>8);     
-	while((GET_SPI(SPSR))&RFEMPTY);
-	GET_SPI(RXFIFO);
-
-	SET_SPI(TXFIFO,flashaddr);     
-	while((GET_SPI(SPSR))&RFEMPTY);
-	GET_SPI(RXFIFO);
-
-	SET_SPI(TXFIFO,0x00);     
-	while((GET_SPI(SPSR))&RFEMPTY);
-	GET_SPI(RXFIFO);
-
-	for(i=0;i<size;i++) {
-		SET_SPI(TXFIFO,0);     
+		SET_SPI(SOFTCS, 0x01);
+		SET_SPI(TXFIFO, 0x0b);
 		while((GET_SPI(SPSR))&RFEMPTY);
-		buffer[i] = GET_SPI(RXFIFO);
+		GET_SPI(RXFIFO);
+
+		SET_SPI(TXFIFO,flashaddr>>16);     
+		while((GET_SPI(SPSR))&RFEMPTY);
+		GET_SPI(RXFIFO);
+
+		SET_SPI(TXFIFO,flashaddr>>8);     
+		while((GET_SPI(SPSR))&RFEMPTY);
+		GET_SPI(RXFIFO);
+
+		SET_SPI(TXFIFO,flashaddr);     
+		while((GET_SPI(SPSR))&RFEMPTY);
+		GET_SPI(RXFIFO);
+
+		SET_SPI(TXFIFO, 0x00);     
+		while((GET_SPI(SPSR))&RFEMPTY);
+		GET_SPI(RXFIFO);
+
+		for(i=0; i<size; i++) {
+			SET_SPI(TXFIFO,0);     
+			while((GET_SPI(SPSR))&RFEMPTY);
+			buffer[i] = GET_SPI(RXFIFO);
+		}
+
+		SET_SPI(SOFTCS, 0x11);
 	}
 
-	SET_SPI(SOFTCS,0x11);
 	return 0;
 }
-#else
-int spi_read_area_fast(int flashaddr,char *buffer,int size)
-{
-	int i;
-
-	spi_set_hp();
-	spi_initw();
-	SET_SPI(SOFTCS,0x01);
-
-	SET_SPI(TXFIFO,0xbb);
-	while((GET_SPI(SPSR))&RFEMPTY);
-	GET_SPI(RXFIFO);
-
-	SET_SPI(TXFIFO,flashaddr>>16);     
-	while((GET_SPI(SPSR))&TFFULL);
-//	GET_SPI(RXFIFO);
-
-	SET_SPI(TXFIFO,flashaddr>>8);     
-	while((GET_SPI(SPSR))&TFFULL);
-//	GET_SPI(RXFIFO);
-
-	SET_SPI(TXFIFO,flashaddr);     
-	while((GET_SPI(SPSR))&TFFULL);
-//	GET_SPI(RXFIFO);
-
-	SET_SPI(TXFIFO,0xa0);     
-	while((GET_SPI(SPSR))&TFFULL);
-//	GET_SPI(RXFIFO);
-
-
-	for(i=0;i<size;i++) {
-//		SET_SPI(TXFIFO,0);     
-//	while((GET_SPI(SPSR))&RFEMPTY);
-		buffer[i] = GET_SPI(RXFIFO);
-	}
-
-	SET_SPI(SOFTCS,0x11);
-	delay(10);
-	return 0;
-}
-#endif
-#endif
 /***********************************************************/	//lxy
 
 
@@ -1092,11 +1004,14 @@ void norflash_init(void)
 	nor_mtd->type		= MTD_NORFLASH;
 	nor_mtd->name		= "ls1b-nor";
 
-	//W25Q128
+	//W25Q128 16MB
 #ifdef W25Q128
-	add_mtd_device(nor_mtd, 0, 512*1024, "pmon_nor");				//512KB
-	add_mtd_device(nor_mtd, 512*1024, 10*1024*1024, "kernel_nor");	//10MB
-	add_mtd_device(nor_mtd, (512+10*1024)*1024, (512+5*1024)*1024, "fs_nor");	//5.5MB
+	/* 1A/1B 的SPI控制器 支持SPI Flash快速(高速 双IO)读取 但只支持最大8MB容量
+	   所以需要快速读取的分区如内核区，尽量设置在8MB内
+	*/
+	add_mtd_device(nor_mtd, 0, 512*1024, "pmon_nor");					//512KB
+	add_mtd_device(nor_mtd, 512*1024, (512+7*1024)*1024, "kernel_nor");	//7.5MB
+	add_mtd_device(nor_mtd, 8*1024*1024, 8*1024*1024, "fs_nor");		//8MB
 #endif
 
 #if 1	//for bobodog program
@@ -1136,8 +1051,4 @@ init_cmd()
 {
 	cmdlist_expand(Cmds,1);
 }
-
-
-
-
 

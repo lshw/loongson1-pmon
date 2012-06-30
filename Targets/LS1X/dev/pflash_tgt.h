@@ -47,8 +47,12 @@
  *  boot device.
  */
 
-//    { PHYS_TO_UNCACHED(0x1fc00000), 0x00100000, 1, 1, FL_BUS_8  },	\	//lxy
+#ifdef W25Q128
 #define	TARGET_FLASH_DEVICES_16 \
+    { PHYS_TO_UNCACHED(0x1fc00000), 0x01000000, 1, 1, FL_BUS_8  },	\
+    { 0x00000000, 0x00000000 }
+#else
+	#define	TARGET_FLASH_DEVICES_16 \
     { PHYS_TO_UNCACHED(0x1fc00000), 0x00800000, 1, 1, FL_BUS_8  },	\
     { 0x00000000, 0x00000000 }
-
+#endif

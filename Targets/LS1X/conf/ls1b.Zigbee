@@ -196,6 +196,7 @@ option		OUTPUT_TO_BOTH
 select		nand
 #select		nor_flash			#如果使用nor flash分区需要该选项
 #option		NORFLASH_PARTITION	#nor flash(spi flash)分区
+#option		W25Q128
 select		cmd_xyzmodem
 select		loop
 select		raw_ether
