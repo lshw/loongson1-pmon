@@ -78,7 +78,7 @@ void spi_initw(void)
 
 void spi_initr(void)
 {
-  	SET_SPI(PARAM, 0x07);             //espr:0100
+  	SET_SPI(PARAM, 0x0f);             //espr:0100
 }
 
 ///////////////////read status reg /////////////////
@@ -86,16 +86,17 @@ int read_sr(void)
 {
 	int val;
 	
-	SET_SPI(SOFTCS,0x01);
-	SET_SPI(TXFIFO,0x05);
-	while((GET_SPI(SPSR))&RFEMPTY);
+	SET_SPI(SOFTCS, 0x01);
 
+	SET_SPI(TXFIFO, 0x05);
+	while((GET_SPI(SPSR)) & RFEMPTY);
 	val = GET_SPI(RXFIFO);
-	SET_SPI(TXFIFO,0x00);
+
+	SET_SPI(TXFIFO, 0x00);
 	while(((GET_SPI(SPSR)) & RFEMPTY) == RFEMPTY);
-
 	val = GET_SPI(RXFIFO);
-	SET_SPI(SOFTCS,0x11);
+
+	SET_SPI(SOFTCS, 0x11);
 	return val;
 }
 
@@ -200,7 +201,7 @@ void read_jedecid(unsigned char *p)
 		while((GET_SPI(SPSR))&RFEMPTY);
 		p[i] = GET_SPI(RXFIFO);
 	}
-	printf ("nor-flash id = 0x%x, 0x%x, 0x%x !\n", p[0], p[1], p[2]);
+//	printf ("nor-flash id = 0x%x, 0x%x, 0x%x !\n", p[0], p[1], p[2]);
 
 	SET_SPI(SOFTCS,0x11);	//cs = hight
 }
@@ -542,8 +543,8 @@ int spi_erase_area(unsigned int saddr,unsigned int eaddr,unsigned sectorsize)
 		SET_SPI(SOFTCS,0x11);
 		while(read_sr()&1);
 	}
-	SET_SPI(SOFTCS,0x11);
-	delay(10);
+	SET_SPI(SOFTCS, 0x11);
+	while(read_sr() & 1);
 	return 0;
 }
 
@@ -558,7 +559,7 @@ int spi_write_area(int flashaddr,char *buffer,int size)
 		spi_write_byte(flashaddr,buffer[j]);
 	}
 	SET_SPI(SOFTCS,0x11);
-	delay(10);
+	while(read_sr() & 1);
 	return 0;
 }
 
@@ -747,7 +748,7 @@ int spi_write_area_fast(int flashaddr,char *buffer,int size)		//lxy
 	}
 
 	SET_SPI(SOFTCS,0x11);
-	delay(10);
+	while(read_sr() & 1);
 	return 0;
 }
 
@@ -808,49 +809,44 @@ int spi_read_area_fast(loff_t flashaddr, unsigned char *buffer, size_t size)
 
 
 
-int spi_read_area(int flashaddr,char *buffer,int size)
+int spi_read_area(int flashaddr, char *buffer, int size)
 {
 	int i;
+
 	spi_initw();
-	SET_SPI(SOFTCS,0x01);
 
-	SET_SPI(TXFIFO,0x03);
+	SET_SPI(SOFTCS, 0x01);
 
-	while((GET_SPI(SPSR))&RFEMPTY);
+	SET_SPI(TXFIFO, 0x0b);
+	while((GET_SPI(SPSR)) & RFEMPTY);
 	GET_SPI(RXFIFO);
 
-	SET_SPI(TXFIFO,flashaddr>>16);     
-	while((GET_SPI(SPSR))&RFEMPTY);
+	SET_SPI(TXFIFO, flashaddr>>16);     
+	while((GET_SPI(SPSR)) & RFEMPTY);
 	GET_SPI(RXFIFO);
 
-	SET_SPI(TXFIFO,flashaddr>>8);     
-	while((GET_SPI(SPSR))&RFEMPTY);
+	SET_SPI(TXFIFO, flashaddr>>8);     
+	while((GET_SPI(SPSR)) & RFEMPTY);
 	GET_SPI(RXFIFO);
 
-	SET_SPI(TXFIFO,flashaddr);     
-	while((GET_SPI(SPSR))&RFEMPTY);
+	SET_SPI(TXFIFO, flashaddr);     
+	while((GET_SPI(SPSR)) & RFEMPTY);
 	GET_SPI(RXFIFO);
 
+	SET_SPI(TXFIFO, 0x00);     
+	while((GET_SPI(SPSR)) & RFEMPTY);
+	GET_SPI(RXFIFO);
 
-	for(i=0;i<size;i++) {
-		SET_SPI(TXFIFO,0);     
-		while((GET_SPI(SPSR))&RFEMPTY);
-		buffer[i] = GET_SPI(RXFIFO);
+	for(i=0; i<size; i++) {
+		SET_SPI(TXFIFO, 0);
+		while((GET_SPI(SPSR)) & RFEMPTY);
+		*(buffer++) = GET_SPI(RXFIFO);
 	}
 
-	SET_SPI(SOFTCS,0x11);
-	delay(10);
+	SET_SPI(SOFTCS, 0x11);
+	while(read_sr() & 1);
 	return 0;
 }
-
-
-#if 0
-struct fl_device myflash = {
-	.fl_name="spiflash",
-	.fl_size	= 0x800000,	//0x100000,	//lxy
-	.fl_secsize	= 0x10000,	//0x10000,
-};
-#endif
 
 struct fl_device *fl_devident(void *base, struct fl_map **m)
 {
@@ -882,26 +878,17 @@ int fl_program_device(void *fl_base, void *data_base, int data_size, int verbose
 	map = fl_find_map(fl_base);
 	off = (int)(fl_base - map->fl_map_base) + map->fl_map_offset;
 	if (nor_dev != NULL){
-		if (!strcmp(nor_dev->fl_name, "sst25vf080")){
-			printf ("flash sst25vf080.....\n");
-			spi_write_area_sst_fast(off, data_base, data_size);
+		if (nor_dev->fl_mfg == (char)0xbf) {
+			printf (" byte write %s\n", nor_dev->fl_name);
+			spi_write_area_sst_fast(off, data_base, data_size);	/* SST */
 		}
-		//使用winb25x128bf 可能需要修改SPI控制器的SPER寄存器，提高分频值，winb25x128bf的工作频率不能太高
-		else if (!strcmp(nor_dev->fl_name, "winb25x128")){
-			printf ("flash winb25x128.....\n");
-			spi_write_area_fast(off, data_base, data_size);
-		}
-		else if (!strcmp(nor_dev->fl_name, "winb25x64")){
-			printf ("flash winb25x64.....\n");
-			spi_write_area_fast(off, data_base, data_size);
-		}
-		else if (!strcmp(nor_dev->fl_name, "winb25x40")){
-			printf ("flash winb25x40.....\n");
-			spi_write_area_fast(off, data_base, data_size);
+		else if (nor_dev->fl_mfg == (char)0xef) {
+			printf (" byte write %s\n", nor_dev->fl_name);
+			spi_write_area_fast(off, data_base, data_size);		/* winbond */
 		}
 	}
-	else{
-		printf ("unknow flash type. try to program .....\n");
+	else {
+		printf (" byte write unknow flash type\n");
 		spi_write_area(off, data_base, data_size);
 	}
 #else
@@ -920,7 +907,7 @@ int fl_erase_device(void *fl_base, int size, int verbose)
 	int off;
 	map = fl_find_map(fl_base);
 	off = (int)(fl_base - map->fl_map_base) + map->fl_map_offset;
-	spi_erase_area(off,off+size,0x10000);
+	spi_erase_area(off, off+size, 0x10000);
 	spi_initr();
 	return 0;
 }
@@ -1004,7 +991,9 @@ void norflash_init(void)
 	nor_mtd->type		= MTD_NORFLASH;
 	nor_mtd->name		= "ls1b-nor";
 
-	//W25Q128 16MB
+	/* W25Q128 16MB
+	   使用winb25x128bf 可能需要修改SPI控制器的SPER寄存器，提高分频值，winb25x128bf的工作频率不能太高
+	 */
 #ifdef W25Q128
 	/* 1A/1B 的SPI控制器 支持SPI Flash快速(高速 双IO)读取 但只支持最大8MB容量
 	   所以需要快速读取的分区如内核区，尽量设置在8MB内
@@ -1012,9 +1001,7 @@ void norflash_init(void)
 	add_mtd_device(nor_mtd, 0, 512*1024, "pmon_nor");					//512KB
 	add_mtd_device(nor_mtd, 512*1024, (512+7*1024)*1024, "kernel_nor");	//7.5MB
 	add_mtd_device(nor_mtd, 8*1024*1024, 8*1024*1024, "fs_nor");		//8MB
-#endif
-
-#if 1	//for bobodog program
+#elif W25X64	//for bobodog program
 	add_mtd_device(nor_mtd, 0, 			0x80000, 	"pmon_nor");	
 	add_mtd_device(nor_mtd, 0x80000,	0x210000, 	"kernel_nor");
 	add_mtd_device(nor_mtd, 0x290000,	0x500000,	"fs_nor");
