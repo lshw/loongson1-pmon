@@ -73,7 +73,7 @@ nsprogram (volatile ns16550dev *dp, unsigned long freq, int baudrate)
 {
 static int rates[] = {
 	50, 75, 110, 134, 150, 200, 300, 600, 1200, 1800, 2400,
-	4800, 9600, 19200, 38400, 57600, 115200, 0 };
+	4800, 9600, 19200, 38400, 57600, 115200, 230400, 380400, 460800, 921600, 0 };
 
 	unsigned short brtc;
 	int timeout, *p;

@@ -90,6 +90,9 @@ extern int ns16550 __P((int, struct DevEntry *, unsigned long, int));
 #define B76800  76800
 #define B115200 115200
 #define B230400 230400
+#define B380400	380400
+#define B460800 460800
+#define B921600	921600
 
 #endif /* __LANGUAGE_ASSEMBLY */
 

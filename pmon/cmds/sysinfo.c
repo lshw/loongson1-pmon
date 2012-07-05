@@ -83,7 +83,7 @@ return 0;
 static int uartinfo()
 {
 printf("uart info:\n");
-printf("serial max baud 115200\n");
+printf("serial max baud 921600\n");
 //	__msgbox(MSG_Y,MSG_X,MSG_H,MSG_W,menu[item].arg);
 return 0;
 }

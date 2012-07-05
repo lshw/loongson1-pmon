@@ -9,6 +9,10 @@
 #define         UART16550_BAUD_38400            38400
 #define         UART16550_BAUD_57600            57600
 #define         UART16550_BAUD_115200           115200
+#define         UART16550_BAUD_230400           230400
+#define         UART16550_BAUD_380400           380400
+#define         UART16550_BAUD_460800           460800
+#define         UART16550_BAUD_921600           921600
 
 #define         UART16550_PARITY_NONE           0
 #define         UART16550_PARITY_ODD            0x08

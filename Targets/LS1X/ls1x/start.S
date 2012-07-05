@@ -989,6 +989,10 @@ END(tgt_getchar)
 #define B38400  38400
 #define B57600  57600
 #define B115200 115200
+#define B230400	230400
+#define B380400	380400
+#define B460800 460800
+#define B921600	921600
 
 LEAF(initserial)
 	.set noat	//lxy
