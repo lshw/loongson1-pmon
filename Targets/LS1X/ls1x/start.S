@@ -453,6 +453,7 @@ cpu_win_fixup:
 	 */
 	li	t0, 0xbfd010c8
 	li	t1, 0xfc000000
+//	li	t1, 0x00000000
 	sw	t1, (t0)
 	li	t0, 0xbfd010f8
 	li	t1, 0x14000000
@@ -1238,7 +1239,8 @@ cache_init_finish:
 	.align 5
 #include "ls1a_ddr2_param.S"
 #elif LS1BSOC
-#include "ddr2fconfig-samsung.S"
+//#include "ddr2fconfig-samsung.S"
+#include "ddr2fconfig-samsung-CL3.S"
 //#include "ddr2fconfig.S"
 #endif
 
