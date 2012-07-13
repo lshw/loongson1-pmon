@@ -23,7 +23,7 @@ MC0_CTL_090 : .dword 0x0000050b00000000
 //000_00000 ocd_adjust_pup_cs_0(RW) 000_00000 ocd_adjust_pdn_cs_0(RW) 0000_0100 trp(RW) 0000_1000 tdal(RW) 0000_0000 port_data_error_id(RD) 0000_0000 port_cmd_error_type(RD) 0000_0000 port_cmd_error_id(RD) 0000_0000 out_of_range_source_id(RD)
 MC0_CTL_0a0 : .dword 0x0000003f3f150212
 //0_0011101 dll_dqs_delay_2(RW) 0_0011101 dll_dqs_delay_1(RW) 0_0011101 dll_dqs_delay_0(RW) 00_111111 command_age_count(RW) 00_111111 age_count(RW) 000_01111 trc(RW) 000_00010 tmrd(RW) 000_00000 tfaw(RW)
-MC0_CTL_0b0 : .dword 0x4858000000000000
+MC0_CTL_0b0 : .dword 0x4858000000000000	//0x5d6d -- 0x3747
 //0_1011111 wr_dqs_shift(RW) 0_1111111 dqs_out_shift(RW) 0_0011101 dll_dqs_delay_8(RW) 0_0011101 dll_dqs_delay_7(RW) 0_0011101 dll_dqs_delay_6(RW) 0_0011101 dll_dqs_delay_5(RW) 0_0011101 dll_dqs_delay_4(RW) 0_0011101 dll_dqs_delay_3(RW)
 MC0_CTL_0c0 : .dword 0x002a2a0510000000
 //0000000_000101010 dll_dqs_delay_bypass_0(RW) 00011100 trfc(RW) 00000100 trcd_int(RW) 00001011 tras_min(RW) 00000000 out_of_range_length(RD) 00000000 ecc_u_synd(RD) 00000000 ecc_c_synd(RD)
