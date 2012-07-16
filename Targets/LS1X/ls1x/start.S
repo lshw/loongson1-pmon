@@ -394,10 +394,11 @@ get_pin_val_finish:
 	nop
 
 	PRINTSTR("\r\nPMON2000 MIPS Initializing. Standby...\r\n")
-	PRINTSTR("ERRORPC=")
+	PRINTSTR(" ERRORPC=")
 	mfc0	a0, COP_0_ERROR_PC
 	bal	hexserial
 	nop
+	PRINTSTR("\r\n")
 
 	PRINTSTR(" CONFIG=")
 	mfc0	a0, COP_0_CONFIG
@@ -468,14 +469,16 @@ cpu_win_fixup:
 	 */
 	li	t0, 0xbfd010c8
 	li	t1, 0xfc000000
-//	li	t1, 0x00000000
+#ifdef LS1ASOC
+	li	t1, 0x00000000
+#endif
 	sw	t1, (t0)
 	li	t0, 0xbfd010f8
 	li	t1, 0x14000000
 	sw	t1, (t0)
 
 #	ddr2config by cww 20090901
-	PRINTSTR("DDR2 config begin_2\r\n")
+	PRINTSTR("DDR2 config begin\r\n")
 	bal     ddr2_config
 	nop
 	PRINTSTR("DDR2 config end\r\n")

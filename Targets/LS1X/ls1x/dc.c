@@ -53,6 +53,7 @@ struct vga_struc{
 	int pan_config;
 	int pll_reg0, pll_reg1;
 }
+
 #ifdef CONFIG_VGA_MODEM
 vgamode[] = {
 	{/*"320x240_60.00"*/	5260,	320,	304,	336,	352,	240,	241,	244,	249,	0x80001311},
@@ -127,22 +128,22 @@ enum{
 #define PLL_FREQ_REG(x) *(volatile unsigned int *)(0xbfe78030+x)
 
 #ifdef LS1ASOC
-int caclulatefreq(long long XIN,long long PCLK)
+int caclulatefreq(long long XIN, long long PCLK)
 {
 	long N=4, NO=4, OD=2, M, FRAC;
 	int flag = 0;
 	long  out;
 	long long MF;
-	printf("PCLK=%lld\n",PCLK);
+//	printf("PCLK=%lld\n",PCLK);
 
 	while(flag == 0) {
 		flag = 1;
-		printf("N=%lld\n",N);
+//		printf("N=%lld\n",N);
 		if(XIN/N<5000) {N--; flag=0;}
 		if(XIN/N>50000) {N++; flag=0;}
 	}
 	flag = 0;
-	while(flag == 0){
+	while(flag == 0) {
 		flag = 1;
 		if(PCLK*NO<200000) {NO*=2; OD++; flag=0;}
 		if(PCLK*NO>700000) {NO/=2; OD--; flag=0;}
@@ -153,16 +154,13 @@ int caclulatefreq(long long XIN,long long PCLK)
 	FRAC = (int)(MF);
 	out = (FRAC<<14)+(OD<<12)+(N<<8)+M;
 
-	printf("in this case, M=%llx ,N=%llx, OD=%llx, FRAC=%llx\n",M,N,OD,FRAC);
+//	printf("in this case, M=%llx ,N=%llx, OD=%llx, FRAC=%llx\n",M,N,OD,FRAC);
 	return out;
 }
-
 #else
-
 #define abs(x) ((x<0)?(-x):x)
 #define min(a,b) ((a<b)?a:b)
-
-int caclulatefreq(long long XIN,long long PCLK)
+int caclulatefreq(long long XIN, long long PCLK)
 {
 #if 0
 	int i;
@@ -224,41 +222,40 @@ int caclulatefreq(long long XIN,long long PCLK)
 
 #endif
 
-int config_cursor()
+int config_cursor(void)
 {
-	printf("framebuffer Cursor Configuration\n");
-	write_reg((0xbc301520  +0x00),0x00020200);
-	printf("framebuffer Cursor Address\n");
-	write_reg((0xbc301530  +0x00),ADDR_CURSOR);
-	printf("framebuffer Cursor Location\n");
-	write_reg((0xbc301540  +0x00),0x00060122);
-	printf("framebuffer Cursor Background\n");
-	write_reg((0xbc301550  +0x00),0x00eeeeee);
-	printf("what hell is this register for ?\n");
-	write_reg((0xbc301560  +0x00),0x00aaaaaa);
+	write_reg((0xbc301520+0x00), 0x00020200);
+	write_reg((0xbc301530+0x00), ADDR_CURSOR);
+	write_reg((0xbc301540+0x00), 0x00060122);
+	write_reg((0xbc301550+0x00), 0x00eeeeee);
+	write_reg((0xbc301560+0x00), 0x00aaaaaa);
 }
 
 static int fb_xsize, fb_ysize, frame_rate;
 
 int config_fb(unsigned long base)
 {
-	int i,mode=-1;
+	int i, mode=-1;
 
-	for(i=0;i<sizeof(vgamode)/sizeof(struct vga_struc);i++){
+	for(i=0; i<sizeof(vgamode)/sizeof(struct vga_struc); i++) {
 		int out;
 		if(vgamode[i].hr == fb_xsize && vgamode[i].vr == fb_ysize){
 			mode = i;
 		#ifdef LS1ASOC
 			out = caclulatefreq(APB_CLK/1000, vgamode[i].pclk);
-			printf("out=%x\n",out);
 			/*inner gpu dc logic fifo pll ctrl,must large then outclk*/
 //			*(volatile int *)0xbfd00414 = out + 1;
 			*(volatile int *)0xbfd00414 = out;
-			/*output pix1 clock  pll ctrl*/
+			/*output pix1 clock  pll ctrl */
+		#ifdef DC_FB1
 			*(volatile int *)0xbfd00410 = out;
+		#endif
 			/*output pix2 clock pll ctrl */
+		#ifdef DC_FB0
 			*(volatile int *)0xbfd00424 = out;
-		#elif defined(CONFIG_FB_DYN)
+		#endif
+
+		#elif defined(CONFIG_FB_DYN)	//LS1BSOC
 		#ifdef CONFIG_VGA_MODEM
 			PLL_FREQ_REG(4) = vgamode[i].pll_reg1;
 			PLL_FREQ_REG(0) = vgamode[i].pll_reg0;
@@ -276,22 +273,20 @@ int config_fb(unsigned long base)
 			div = clk / vgamode[i].pclk / 4; //参考longson1B的数据手册 LCD分频需要再除以4
 			ctrl = (ctrl & ~(0x1f<<26)) | (div<<26) | (1<<31);
 			PLL_FREQ_REG(4) = ctrl;
-			printf("LCD pclk = %d\n", vgamode[i].pclk);
 			}
-		#endif /*CONFIG_VGA_MODEM*/
-		#endif /*defined(CONFIG_FB_DYN)*/
+		#endif /* CONFIG_VGA_MODEM */
+		#endif /* #ifdef LS1ASOC */
 			break;
 		}
 	}
 
-	if(mode<0){
+	if(mode < 0) {
 		printf("\n\n\nunsupported framebuffer resolution,choose from bellow:\n");
 		for(i=0;i<sizeof(vgamode)/sizeof(struct vga_struc);i++)
-		printf("%dx%d, ",vgamode[i].hr,vgamode[i].vr);
+			printf("%dx%d, ",vgamode[i].hr,vgamode[i].vr);
 		printf("\n");
-		return;
+		return -1;
 	}
-	
 
 	//  Disable the panel 0
 	write_reg((base+OF_BUF_CONFIG),0x00000000);
@@ -302,7 +297,6 @@ int config_fb(unsigned long base)
 	write_reg((base+OF_DITHER_CONFIG),0x00000000);
 	write_reg((base+OF_DITHER_TABLE_LOW),0x00000000);
 	write_reg((base+OF_DITHER_TABLE_HIGH),0x00000000);
-//	write_reg((base+OF_PAN_CONFIG),0x80001311);
 	write_reg((base+OF_PAN_CONFIG), vgamode[mode].pan_config);
 	write_reg((base+OF_PAN_TIMING),0x00000000);
 
@@ -351,7 +345,6 @@ int config_fb(unsigned long base)
 	write_reg((base+OF_BUF_CONFIG), val|0x10);
 	write_reg((base+OF_BUF_ORIG), 0);
 	readl((base+OF_BUF_ORIG));
-//	delay(1000000);
 	delay(40000);
 	readl((base+OF_BUF_CONFIG));
 #endif
@@ -359,55 +352,38 @@ int config_fb(unsigned long base)
 	}
 }
 
-int dc_init()
+int dc_init(void)
 {
-   int print_count;
-   int i;
-   int init_R = 0;
-   int init_G = 0;
-   int init_B = 0;
-   int j;
-   int ii=0,tmp=0;
+	int ii=0;
 
-   
-   int  print_addr;
-   int print_data;
-   printf("enter dc_init...\n");
+	fb_xsize  = getenv("xres")? strtoul(getenv("xres"),0,0):FB_XSIZE;
+	fb_ysize  = getenv("yres")? strtoul(getenv("yres"),0,0):FB_YSIZE;
+	frame_rate  = getenv("frame_rate")? strtoul(getenv("frame_rate"),0,0):60;
 
-   fb_xsize  = getenv("xres")? strtoul(getenv("xres"),0,0):FB_XSIZE;
-   fb_ysize  = getenv("yres")? strtoul(getenv("yres"),0,0):FB_YSIZE;
-   frame_rate  = getenv("frame_rate")? strtoul(getenv("frame_rate"),0,0):60;
+	MEM_ADDR = (long)MEM_ptr&0x0fffffff;
 
-MEM_ADDR = (long)MEM_ptr&0x0fffffff;
+	if(MEM_ptr == NULL) {
+		printf("frame buffer memory malloc failed!\n ");
+		exit(0);
+	}
 
+	for(ii=0; ii<0x1000; ii+=4)
+		*(volatile unsigned int *)(ADDR_CURSOR + ii) = 0x88f31f4f;
 
-if(MEM_ptr == NULL)
-{
-	printf("frame buffer memory malloc failed!\n ");
-	exit(0);
-}
- 
-for(ii=0;ii<0x1000; ii+=4)
-*(volatile unsigned int *)(ADDR_CURSOR + ii) = 0x88f31f4f;
+	ADDR_CURSOR = (long)ADDR_CURSOR & 0x0fffffff;
 
-ADDR_CURSOR = (long)ADDR_CURSOR & 0x0fffffff;
-
-printf("frame buffer addr: %x \n",MEM_ADDR);
-  
 #ifdef DC_FB0
-config_fb(DC_BASE_ADDR);
+	config_fb(DC_BASE_ADDR);
 #endif
-#ifdef DC_FB1 
-config_fb(DC_BASE_ADDR_1);
+#ifdef DC_FB1
+	config_fb(DC_BASE_ADDR_1);
 #endif
-config_cursor();
+	config_cursor();
 
-
-printf("display controller reg config complete!\n");
-
-
-return MEM_ptr;
+	return MEM_ptr;
 }
+
+
 
 static int cmd_dc_freq(int argc,char **argv)
 {
@@ -447,168 +423,151 @@ static int cmd_initserial(int argc,char **argv)
 #ifdef LS1BSOC
 struct xmode
 {
-struct xmode *next;
-int i,j,ks[3],key;
+	struct xmode *next;
+	int i,j,ks[3],key;
 };
 
 static int cmd_xrandr(int argc,char **argv)
 {
-int i,j,k,l;
-int mode=-1;
-struct xmode *head=0,*pnode,**p;
-int length=0;
-int xres,yres;
-int val,freq;
-int cpu,ddr,dc;
-int gclk;
-unsigned int r8030,r8034;
-int ks[3];
-int idx[3];
-int area[3][3];
-int order;
-int key;
+	int i,j,k,l;
+	int mode=-1;
+	struct xmode *head=0,*pnode,**p;
+	int length=0;
+	int xres,yres;
+	int val,freq;
+	int cpu,ddr,dc;
+	int gclk;
+	unsigned int r8030,r8034;
+	int ks[3];
+	int idx[3];
+	int area[3][3];
+	int order;
+	int key;
 
-if(argc<6) return -1;
+	if(argc<6) return -1;
 
-xres=strtoul(argv[1],0,0);
-yres=strtoul(argv[2],0,0);
+	xres=strtoul(argv[1],0,0);
+	yres=strtoul(argv[2],0,0);
 
-for(i=4;i<=6;i++)
-{
-char *p;
-if(strncmp("cpu:",argv[i],4) == 0)
-{
- idx[0] = i-4;
- p = argv[i]+4;
-}
-else if(strncmp("ddr:",argv[i],4) == 0)
-{
- idx[1] = i-4;
- p = argv[i]+4;
-}
-else if(strncmp("dc:",argv[i],3) == 0)
-{
- idx[2] = i-4;
- p = argv[i]+3;
-}
-else
- return -1;
+	for(i=4;i<=6;i++) {
+		char *p;
+		if(strncmp("cpu:",argv[i],4) == 0) {
+			idx[0] = i-4;
+			p = argv[i]+4;
+		}
+		else if(strncmp("ddr:",argv[i],4) == 0) {
+			idx[1] = i-4;
+			p = argv[i]+4;
+		}
+		else if(strncmp("dc:",argv[i],3) == 0) {
+			idx[2] = i-4;
+			p = argv[i]+3;
+		}
+		else
+			return -1;
 
- area[i-4][0]=strtol(p,&p,0);
- p++;
- area[i-4][1]=strtol(p,&p,0);
- area[i-4][2]= 1;
-}
-
-area[idx[2]][2] = EXTRA_DIV;
-
-for(i=0;i<sizeof(vgamode)/sizeof(struct vga_struc);i++)
-{
-	int out;
-	if(vgamode[i].hr == xres && vgamode[i].vr == yres){
-		mode=i;
-		freq = vgamode[i].pclk;
-		break;
+		area[i-4][0]=strtol(p,&p,0);
+		p++;
+		area[i-4][1]=strtol(p,&p,0);
+		area[i-4][2]= 1;
 	}
-}
 
-if(mode<0)
-{
-	printf("\n\n\nunsupported framebuffer resolution,choose from bellow:\n");
-	for(i=0;i<sizeof(vgamode)/sizeof(struct vga_struc);i++)
-		printf("%dx%d, ",vgamode[i].hr,vgamode[i].vr);
-	printf("\n");
-	return;
-}
+	area[idx[2]][2] = EXTRA_DIV;
 
+	for(i=0;i<sizeof(vgamode)/sizeof(struct vga_struc);i++) {
+		int out;
+		if(vgamode[i].hr == xres && vgamode[i].vr == yres) {
+			mode=i;
+			freq = vgamode[i].pclk;
+			break;
+		}
+	}
 
-area[idx[2]][0] += freq;
-area[idx[2]][1] += freq;
+	if(mode<0) {
+		printf("\n\n\nunsupported framebuffer resolution,choose from bellow:\n");
+		for(i=0;i<sizeof(vgamode)/sizeof(struct vga_struc);i++)
+			printf("%dx%d, ",vgamode[i].hr,vgamode[i].vr);
+		printf("\n");
+		return;
+	}
 
+	area[idx[2]][0] += freq;
+	area[idx[2]][1] += freq;
 
-	for(i=0;i<=0x3f;i++)
-	{
-		for(j=0;j<=1023;j++)
-		{
-				gclk=(APB_CLK*(12+i)+APB_CLK*j/1024)/2;
-				if(gclk>660000)  continue;
+	for(i=0;i<=0x3f;i++) {
+		for(j=0;j<=1023;j++) {
+			gclk=(APB_CLK*(12+i)+APB_CLK*j/1024)/2;
+			if(gclk>660000)  continue;
 
-				for(order=0;order<=2;order++)
-				{	
-
-					for(k=1;k<=31;k++)
-					{
-						val=(APB_CLK*(12+i)+APB_CLK*j/1024)/2/area[order][2]/k;
-						if(val>=area[order][0] && val<=area[order][1]){
-							ks[order] = k;
-							break;
-						}
+			for(order=0;order<=2;order++) {	
+				for(k=1;k<=31;k++) {
+					val=(APB_CLK*(12+i)+APB_CLK*j/1024)/2/area[order][2]/k;
+					if(val>=area[order][0] && val<=area[order][1]){
+						ks[order] = k;
+						break;
 					}
-					if(k==32) break;
 				}
+				if(k==32) break;
+			}
 
-				if(order<3) continue;
+			if(order<3) continue;
 
-				if(idx[2] == 0)
-				 key = abs(gclk/area[0][2]/ks[0] - freq);
-				else
-				 key = gclk/area[0][2]/ks[0];
+			if(idx[2] == 0)
+				key = abs(gclk/area[0][2]/ks[0] - freq);
+			else
+				key = gclk/area[0][2]/ks[0];
 
-				/*sort first cpu,then diff*/
-				for(p=&head;*p && (*p)->key>key;p=&(*p)->next);
-
-				 pnode=malloc(sizeof(struct xmode));
-				if(pnode)
-				{
-				 pnode->next = *p;
-				 *p=pnode;
-				 length++;
-				}
-				else pnode=*p;
-				if(!pnode) continue;
-				
-				pnode->i = i;
-				pnode->j = j;
-				pnode->ks[0] = ks[0];
-				pnode->ks[1] = ks[1];
-				pnode->ks[2] = ks[2];
-				pnode->key = key;
-		 }
+			/*sort first cpu,then diff*/
+			for(p=&head;*p && (*p)->key>key;p=&(*p)->next);
+				pnode=malloc(sizeof(struct xmode));
+			if(pnode) {
+				pnode->next = *p;
+				*p=pnode;
+				length++;
+			}
+			else
+				pnode=*p;
+			if(!pnode)
+				continue;
+			pnode->i = i;
+			pnode->j = j;
+			pnode->ks[0] = ks[0];
+			pnode->ks[1] = ks[1];
+			pnode->ks[2] = ks[2];
+			pnode->key = key;
+		}
 	}
 
 	printf("i,\tj,\tpll,\tcpu,\tddr,\tdc,\tdcdiff\t,8030,\t,8034\n");
-	for(pnode=head,l=0;pnode;pnode=pnode->next,l++)
-   {
-	i=pnode->i;
-	j=pnode->j;
-	ks[0]=pnode->ks[0];
-	ks[1]=pnode->ks[1];
-	ks[2]=pnode->ks[2];
-	
-	gclk=(APB_CLK*(12+i)+APB_CLK*j/1024)/2;
+	for(pnode=head,l=0;pnode;pnode=pnode->next,l++) {
+		i=pnode->i;
+		j=pnode->j;
+		ks[0]=pnode->ks[0];
+		ks[1]=pnode->ks[1];
+		ks[2]=pnode->ks[2];
 
-	
-	cpu=gclk/area[idx[0]][2]/ks[idx[0]];
-	ddr=gclk/area[idx[1]][2]/ks[idx[1]];
-	dc=gclk/area[idx[2]][2]/ks[idx[2]];
+		gclk=(APB_CLK*(12+i)+APB_CLK*j/1024)/2;
 
-	r8030=i|(j<<8);
-	r8034=(1<<31)|(ks[2]<<26)|(1<<25)|(ks[0]<<20)|(1<<19)|(ks[1]<<14);
+		cpu=gclk/area[idx[0]][2]/ks[idx[0]];
+		ddr=gclk/area[idx[1]][2]/ks[idx[1]];
+		dc=gclk/area[idx[2]][2]/ks[idx[2]];
 
-	printf("%d:%d,\t%d,\t%d,\t%d,\t%d,\t%d,\t%d,\t%x,\t,%x\n",l,i,j,gclk,cpu,ddr,dc,dc-freq, r8030, r8034);
-	if(l%10==9||!pnode->next)
-	{
-		char c,buf[10];
-		printf("select which one [num|q|enter]?");
-		i=read(0,buf,9);
-		buf[i] = 0;
-		c=buf[0];
-		if(c =='\n'|| c=='\r') continue;
-		if(c == 'q') return 0;
-		l=strtoul(buf,0,0);
-		break;
+		r8030=i|(j<<8);
+		r8034=(1<<31)|(ks[2]<<26)|(1<<25)|(ks[0]<<20)|(1<<19)|(ks[1]<<14);
+
+		printf("%d:%d,\t%d,\t%d,\t%d,\t%d,\t%d,\t%d,\t%x,\t,%x\n",l,i,j,gclk,cpu,ddr,dc,dc-freq, r8030, r8034);
+		if(l%10==9||!pnode->next) {
+			char c,buf[10];
+			printf("select which one [num|q|enter]?");
+			i=read(0,buf,9);
+			buf[i] = 0;
+			c=buf[0];
+			if(c =='\n'|| c=='\r') continue;
+			if(c == 'q') return 0;
+			l=strtoul(buf,0,0);
+			break;
+		}
 	}
-   }
 
 	if(!pnode) return 0;
 
@@ -629,8 +588,7 @@ area[idx[2]][1] += freq;
 	do_cmd(str);
 	}
 
-	for(pnode=head;pnode;pnode=head)
-	{
+	for(pnode=head;pnode;pnode=head) {
 		head=pnode->next;
 		free(pnode);
 	}
