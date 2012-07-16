@@ -627,9 +627,13 @@ static void lohci_attach(struct device *parent, struct device *self, void *aux)
 	printf("usb lohci init\n");
 	/*end usb reset*/
 #if LS1ASOC
+	/* enable USB */
+	*(volatile int *)0xbfd00420 &= ~0x200000;
 	/*ls1a usb reset stop*/
 	*(volatile int *)0xbff10204 |= 0x40000000;
-#else
+#else /* LS1BSOC */
+	/* enable USB */
+	*(volatile int *)0xbfd00424 &= ~0x800;
 	/*ls1b usb reset stop*/
 	*(volatile int *)0xbfd00424 |= 0x80000000;
 #endif

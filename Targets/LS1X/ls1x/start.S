@@ -344,6 +344,21 @@ locate:
 	sw zero,0x10c4(a0)
 	sw zero,0x10c8(a0)
 
+#if LS1ASOC
+	/* 启动时默认关闭SATA GPU USB GMAC0 GMAC1 */
+	li a0,0xbfd00000
+	lw a2,0x420(a0);
+	xor a2,0x00500000	//关闭SATA GPU
+	xor a2,0x01a00000	//关闭USB GMAC0 GMAC1
+	sw a2,0x420(a0);
+#elif LS1BSOC
+	/* 启动时默认关闭USB GMAC0 GMAC1 */
+	li a0,0xbfd00000
+	lw a2,0x424(a0);
+	ori a2,0x3800
+	sw a2,0x424(a0);
+#endif
+
 #ifdef BUZZER
 	/* disable buzzer gpio40*/
 	li	v0, 0xbfd010c4

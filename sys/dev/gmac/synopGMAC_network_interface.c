@@ -2174,10 +2174,21 @@ s32  synopGMAC_init_network_interface(char* xname,u64 synopGMACMappedAddr)
 		inited = 1;
 	}
 
-	/* GMAC2初始化 使能GMAC2 和UART0复用，导致UART0不能使用 */
-	if (synopGMACMappedAddr == 0xbfe20000){
-		*((volatile unsigned int*)0xbfd00420) |= 0x18;
+#ifdef LS1ASOC
+	*((volatile unsigned int*)0xbfd00420) &= ~0x00800000;	/* 使能GMAC0 */
+	if (synopGMACMappedAddr == 0xbfe20000) {
+		*((volatile unsigned int*)0xbfd00420) &= ~0x01000000;	/* 使能GMAC1 */
 	}
+#elif LS1BSOC
+	/* 寄存器0xbfd00424有GMAC的使能开关 */
+	*((volatile unsigned int*)0xbfd00424) &= ~0x1000;	/* 使能GMAC0 */
+	
+	/* GMAC2初始化 使能GMAC2 和UART0复用，导致UART0不能使用 */
+	if (synopGMACMappedAddr == 0xbfe20000) {
+		*((volatile unsigned int*)0xbfd00420) |= 0x18;
+		*((volatile unsigned int*)0xbfd00424) &= ~0x2000;	/* 使能GMAC1 */
+	}
+#endif
 	
 	TR("Now Going to Call register_netdev to register the network interface for GMAC core\n");
 	synopGMACadapter = (struct synopGMACNetworkAdapter * )plat_alloc_memory(sizeof (struct synopGMACNetworkAdapter)); 
@@ -2210,13 +2221,10 @@ s32  synopGMAC_init_network_interface(char* xname,u64 synopGMACMappedAddr)
 //	testphyreg(synopGMACadapter->synopGMACdev);
 	synopGMAC_reset(synopGMACadapter->synopGMACdev);
 
-
-	
 	ifp = &(synopGMACadapter->PInetdev->arpcom.ac_if);
 	ifp->if_softc = synopGMACadapter;
 	
 	memcpy(synopGMACadapter->PInetdev->dev_addr, mac_addr0,6);
-
 
 //	bcopy(mac_addr, synopGMACadapter->PInetdev->arpcom.ac_enaddr, sizeof(synopGMACadapter->PInetdev->arpcom.ac_enaddr));		//sw: set mac addr manually
 	bcopy(synopGMACadapter->PInetdev->dev_addr, synopGMACadapter->PInetdev->arpcom.ac_enaddr, sizeof(synopGMACadapter->PInetdev->arpcom.ac_enaddr));		//sw: set mac addr manually
@@ -2236,7 +2244,6 @@ s32  synopGMAC_init_network_interface(char* xname,u64 synopGMACMappedAddr)
 	
 	ifp->if_snd.ifq_maxlen = TRANSMIT_DESC_SIZE - 1;	//defined in Dev.h value is 12, too small?
 
-
 	/*Now start the network interface*/
 	TR("\nNow Registering the netdevice\n");
 	//synopGMAC_linux_open(synopGMACadapter); 
@@ -2255,7 +2262,6 @@ s32  synopGMAC_init_network_interface(char* xname,u64 synopGMACMappedAddr)
 //	test_tx(ifp);
 
 	mac_addr0[5]++;
-
 
 	/* MII setup */
 	synopGMACadapter->mii.phy_id_mask = 0x1F;
