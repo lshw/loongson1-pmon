@@ -247,11 +247,11 @@ int config_fb(unsigned long base)
 //			*(volatile int *)0xbfd00414 = out + 1;
 			*(volatile int *)0xbfd00414 = out;
 			/*output pix1 clock  pll ctrl */
-		#ifdef DC_FB1
+		#ifdef DC_FB0
 			*(volatile int *)0xbfd00410 = out;
 		#endif
 			/*output pix2 clock pll ctrl */
-		#ifdef DC_FB0
+		#ifdef DC_FB1
 			*(volatile int *)0xbfd00424 = out;
 		#endif
 
@@ -270,7 +270,14 @@ int config_fb(unsigned long base)
 			pll = PLL_FREQ_REG(0);
 			ctrl = PLL_FREQ_REG(4);
 			clk = (12 + (pll & 0x3f)) * APB_CLK / 2;
-			div = clk / vgamode[i].pclk / 4; //参考longson1B的数据手册 LCD分频需要再除以4
+			for (tmp=1; tmp<17; tmp++) {
+				//参考longson1B的数据手册 LCD分频需要再除以4
+				frame_rate = clk / (vgamode[i].hfl * vgamode[i].vfl) / 4 / tmp;
+				if((50<=frame_rate) && (frame_rate<=75)) {
+					div = tmp;
+					break;
+				}
+			}
 			ctrl = (ctrl & ~(0x1f<<26)) | (div<<26) | (1<<31);
 			PLL_FREQ_REG(4) = ctrl;
 			}
