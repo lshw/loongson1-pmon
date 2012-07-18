@@ -264,7 +264,7 @@ int config_fb(unsigned long base)
 		#else
 			{
 			#define PLL_FREQ_REG(x) *(volatile unsigned int *)(0xbfe78030+x)
-			unsigned int pll, ctrl, clk, div;
+			unsigned int pll, ctrl, clk, div, tmp;
 			vgamode[i].pclk = frame_rate * vgamode[i].hfl * vgamode[i].vfl;
 			/* 设定LCD工作频率 */
 			pll = PLL_FREQ_REG(0);
