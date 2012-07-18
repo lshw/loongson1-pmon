@@ -103,7 +103,9 @@ extern char           *heaptop;
 #	define NVRAM_SECSIZE		512	/* Helper */
 #	define NVRAM_SIZE	        (NVRAM_SECSIZE-20)
 #	define NVRAM_OFFS		0
-#	define NVRAM_POS	    0x70000
+#	define NVRAM_POS	    0x00070000
+//#	define NVRAM_POS	    0x000F0000	//当PMON大小超过512K时需要修改该值,保留给环境变量的大小为0x10000=65536字节
+                                        //如果SPI Flash大小为1MB，则NVRAM_POS=0x00100000-0x00010000=0x000F0000
 #	define ETHER_OFFS		(NVRAM_SECSIZE-6) 	/* Ethernet address base */
 #	define PLL_OFFS			(ETHER_OFFS-10)
 #	define XRES_OFFS		(PLL_OFFS-2)

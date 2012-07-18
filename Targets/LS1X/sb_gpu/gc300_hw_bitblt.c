@@ -7,41 +7,40 @@ int gc300_init_one = 0;
 
 void gc300_hw_bitblt(unsigned int Bpp,unsigned int winx,unsigned int winy,unsigned int font_height)
 {
-
 	gcSURFACEINFO* Target =&gcDisplaySurface;
 	gcSURFACEINFO Src ;
 
-    if(!gc300_init_one)
-    {
-        gcAppInit();
-        gcSelect2DPipe();
-        gc300_init_one = 1;
-    }
+	if(!gc300_init_one) {
+		*((volatile unsigned int*)0xbfd00420) &= ~0x00100000;	/* 使能GPU */
+		gcAppInit();
+		gcSelect2DPipe();
+		gc300_init_one = 1;
+	}
 
-    // Init target surface.
-    Src.address = Target->address; //+ 16*winx*Bpp; // font_height*winx*Bpp;
-    Src.stride  = Target->stride; // gcSCREENWIDTH * gcGetPixelSize(gcSCREENFORMAT) / 8;
-    Src.format  = Target->format;
+	// Init target surface.
+	Src.address = Target->address; //+ 16*winx*Bpp; // font_height*winx*Bpp;
+	Src.stride  = Target->stride; // gcSCREENWIDTH * gcGetPixelSize(gcSCREENFORMAT) / 8;
+	Src.format  = Target->format;
 
-    // Init coordinates.
-    Src.rect.left   = 0;
-    Src.rect.top    = 0;
-    Src.rect.right  = winx;
-    Src.rect.bottom = winy;
+	// Init coordinates.
+	Src.rect.left   = 0;
+	Src.rect.top    = 0;
+	Src.rect.right  = winx;
+	Src.rect.bottom = winy;
 
-    // Init clipping.
-    Src.clip.left   = 0;
-    Src.clip.top    = 0; // font_height; //zgj
-    Src.clip.right  = winx;
-    Src.clip.bottom = winy;
+	// Init clipping.
+	Src.clip.left   = 0;
+	Src.clip.top    = 0; // font_height; //zgj
+	Src.clip.right  = winx;
+	Src.clip.bottom = winy;
 
-// Compute initial rect.
-    Src.rect.left   = Target->rect.left = 0;
+	// Compute initial rect.
+	Src.rect.left   = Target->rect.left = 0;
 	Src.rect.right  = Target->rect.right = winx;
-    Target->rect.top = 0;
-    Src.rect.top    = Target->rect.top + font_height;
-    Target->rect.bottom = winy - font_height ;
-    Src.rect.bottom = winy ;
+	Target->rect.top = 0;
+	Src.rect.top    = Target->rect.top + font_height;
+	Target->rect.bottom = winy - font_height ;
+	Src.rect.bottom = winy ;
 
 #if 0
 
@@ -74,8 +73,8 @@ void gc300_hw_bitblt(unsigned int Bpp,unsigned int winx,unsigned int winy,unsign
     #endif
     //    printf("%d,%d,%d,%d,%d,%d,%d,%d\n",Target->rect.left,Target->rect.right,Target->rect.top,Target->rect.bottom,Src->rect.left,Src->rect.right,Src->rect.top,Src->rect.bottom);
 
-		// Blit the image.
-    gcBitBlt_SC(Target, &Src,&Target->rect, &Src.rect);
+	// Blit the image.
+	gcBitBlt_SC(Target, &Src,&Target->rect, &Src.rect);
 #if 0
     gcBitBlt(Target, &Src,
 				&Target->rect, &Src.rect,
@@ -96,10 +95,10 @@ void gc300_hw_bitblt(unsigned int Bpp,unsigned int winx,unsigned int winy,unsign
 	gcClear(Target, &Target->rect, BLACK32);
 #endif
 
-    // Start.
+	// Start.
 	gcFlush2DAndStall();
 	gcStart();
-    gcFlushDisplay();
+	gcFlushDisplay();
 
 	// Free the image.
 	gcMemFree();
