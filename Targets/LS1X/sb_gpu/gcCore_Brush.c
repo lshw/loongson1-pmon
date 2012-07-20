@@ -1,89 +1,68 @@
 #include "gcSdk.h"
 
-static void gcInitColorPattern(
-	gcBRUSH* Brush
-	)
+static void gcInitColorPattern(gcBRUSH* Brush)
 {
-	gcLoadState(AQDEPatternAddressRegAddrs, 1,
-				Brush->colorBits);
+	gcLoadState(AQDEPatternAddressRegAddrs, 1, Brush->colorBits);
 
 	gcLoadState(AQDEPatternMaskLowRegAddrs, 2,
-
-				// AQDEPatternMaskLow.
-				(UINT32) (Brush->mask),
-
-				// AQDEPatternMaskHigh.
-				(UINT32) (Brush->mask >> 32));
+		// AQDEPatternMaskLow.
+		(UINT32) (Brush->mask),
+		// AQDEPatternMaskHigh.
+		(UINT32) (Brush->mask >> 32));
 
 	gcLoadState(AQDEPatternConfigRegAddrs, 1,
-				SETFIELD(0, AQDE_PATTERN_CONFIG, FORMAT, Brush->format)
-				| SETFIELD(0, AQDE_PATTERN_CONFIG, ORIGIN_X, Brush->originX)
-				| SETFIELD(0, AQDE_PATTERN_CONFIG, ORIGIN_Y, Brush->originY)
-				| SETFIELDVALUE(0, AQDE_PATTERN_CONFIG, TYPE, PATTERN)
-				| SETFIELDVALUE(0, AQDE_PATTERN_CONFIG, INIT_TRIGGER, INIT_ALL));
+		SETFIELD(0, AQDE_PATTERN_CONFIG, FORMAT, Brush->format)
+		| SETFIELD(0, AQDE_PATTERN_CONFIG, ORIGIN_X, Brush->originX)
+		| SETFIELD(0, AQDE_PATTERN_CONFIG, ORIGIN_Y, Brush->originY)
+		| SETFIELDVALUE(0, AQDE_PATTERN_CONFIG, TYPE, PATTERN)
+		| SETFIELDVALUE(0, AQDE_PATTERN_CONFIG, INIT_TRIGGER, INIT_ALL));
 }
 
-static void gcInitMonoPattern(
-	gcBRUSH* Brush
-	)
+static void gcInitMonoPattern(gcBRUSH* Brush)
 {
 	gcLoadState(AQDEPatternLowRegAddrs, 6,
-
-				// AQDEPatternLow.
-				(UINT32) (Brush->monoBits),
-
-				// AQDEPatternHigh.
-				(UINT32) (Brush->monoBits >> 32),
-
-				// AQDEPatternMaskLow.
-				(UINT32) (Brush->mask),
-
-				// AQDEPatternMaskHigh.
-				(UINT32) (Brush->mask >> 32),
-
-				// AQDEPatternBgColor.
-				Brush->bgColor,
-
-				// AQDEPatternFgColor.
-				Brush->fgColor);
+		// AQDEPatternLow.
+		(UINT32) (Brush->monoBits),
+		// AQDEPatternHigh.
+		(UINT32) (Brush->monoBits >> 32),
+		// AQDEPatternMaskLow.
+		(UINT32) (Brush->mask),
+		// AQDEPatternMaskHigh.
+		(UINT32) (Brush->mask >> 32),
+		// AQDEPatternBgColor.
+		Brush->bgColor,
+		// AQDEPatternFgColor.
+		Brush->fgColor);
 
 	gcLoadState(AQDEPatternConfigRegAddrs, 1,
-				SETFIELD(0, AQDE_PATTERN_CONFIG, COLOR_CONVERT, Brush->colorConvert)
-				| SETFIELD(0, AQDE_PATTERN_CONFIG, ORIGIN_X, Brush->originX)
-				| SETFIELD(0, AQDE_PATTERN_CONFIG, ORIGIN_Y, Brush->originY)
-				| SETFIELDVALUE(0, AQDE_PATTERN_CONFIG, FORMAT, MONOCHROME)
-				| SETFIELDVALUE(0, AQDE_PATTERN_CONFIG, TYPE, PATTERN)
-				| SETFIELDVALUE(0, AQDE_PATTERN_CONFIG, INIT_TRIGGER, INIT_ALL));
+		SETFIELD(0, AQDE_PATTERN_CONFIG, COLOR_CONVERT, Brush->colorConvert)
+		| SETFIELD(0, AQDE_PATTERN_CONFIG, ORIGIN_X, Brush->originX)
+		| SETFIELD(0, AQDE_PATTERN_CONFIG, ORIGIN_Y, Brush->originY)
+		| SETFIELDVALUE(0, AQDE_PATTERN_CONFIG, FORMAT, MONOCHROME)
+		| SETFIELDVALUE(0, AQDE_PATTERN_CONFIG, TYPE, PATTERN)
+		| SETFIELDVALUE(0, AQDE_PATTERN_CONFIG, INIT_TRIGGER, INIT_ALL));
 }
 
-static void gcInitSolidPattern(
-	gcBRUSH* Brush
-	)
+static void gcInitSolidPattern(gcBRUSH* Brush)
 {
 	gcLoadState(AQDEPatternMaskLowRegAddrs, 4,
-
-				// AQDEPatternMaskLow.
-				(UINT32) (Brush->mask),
-
-				// AQDEPatternMaskHigh.
-				(UINT32) (Brush->mask >> 32),
-
-				// AQDEPatternBgColor.
-				Brush->bgColor,
-
-				// AQDEPatternFgColor.
-				Brush->fgColor);
+		// AQDEPatternMaskLow.
+		(UINT32) (Brush->mask),
+		// AQDEPatternMaskHigh.
+		(UINT32) (Brush->mask >> 32),
+		// AQDEPatternBgColor.
+		Brush->bgColor,
+		// AQDEPatternFgColor.
+		Brush->fgColor);
 
 	gcLoadState(AQDEPatternConfigRegAddrs, 1,
-				SETFIELD(0, AQDE_PATTERN_CONFIG, COLOR_CONVERT, Brush->colorConvert)
-				| SETFIELD(0, AQDE_PATTERN_CONFIG, FORMAT, Brush->format)
-				| SETFIELDVALUE(0, AQDE_PATTERN_CONFIG, TYPE, SOLID_COLOR)
-				| SETFIELDVALUE(0, AQDE_PATTERN_CONFIG, INIT_TRIGGER, INIT_ALL));
+		SETFIELD(0, AQDE_PATTERN_CONFIG, COLOR_CONVERT, Brush->colorConvert)
+		| SETFIELD(0, AQDE_PATTERN_CONFIG, FORMAT, Brush->format)
+		| SETFIELDVALUE(0, AQDE_PATTERN_CONFIG, TYPE, SOLID_COLOR)
+		| SETFIELDVALUE(0, AQDE_PATTERN_CONFIG, INIT_TRIGGER, INIT_ALL));
 }
 
-void gcSetBrush(
-	gcBRUSH* Brush
-	)
+void gcSetBrush(gcBRUSH* Brush)
 {
 	// Hardware uses 2D PE cache for a brief period of time for pattern init.
 	// Flush the cache here to preserve whatever results there might be left
@@ -91,20 +70,15 @@ void gcSetBrush(
 	gcFlush2DAndStall();
 
 	// Color brush?
-	if (Brush->colorBits != ~0)
-	{
+	if (Brush->colorBits != ~0) {
 		gcInitColorPattern(Brush);
 	}
-
 	// Mono brush.
-	else if ((Brush->originX != ~0) && (Brush->originY != ~0))
-	{
+	else if ((Brush->originX != ~0) && (Brush->originY != ~0)) {
 		gcInitMonoPattern(Brush);
 	}
-
 	// Solid color brush.
-	else
-	{
+	else {
 		gcInitSolidPattern(Brush);
 	}
 }
@@ -171,3 +145,4 @@ void gcConstructColorBrush(
 	Brush->mask         = Mask;
 	Brush->colorConvert = AQDE_PATTERN_CONFIG_COLOR_CONVERT_OFF;
 }
+

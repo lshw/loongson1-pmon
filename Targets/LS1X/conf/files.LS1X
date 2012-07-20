@@ -29,30 +29,34 @@ file	Targets/LS1X/dev/nand_ops.c nand needs-flag
 #file 	sys/dev/phy/bcm5461config.c
 
 #GPU
-#file    Targets/LS1X/sb_gpu/mytest_drawline.c  //
-#file    Targets/LS1X/sb_gpu/my_load_result.c   #func result  //
+#file	Targets/LS1X/sb_gpu/mytest_drawline.c
+#file	Targets/LS1X/sb_gpu/my_load_result.c   #func result
 
-file    Targets/LS1X/sb_gpu/fpga.c                 gpu300_compile 
-file    Targets/LS1X/sb_gpu/gcCore_Meman.c         gpu300_compile
-file    Targets/LS1X/sb_gpu/gcCore_Primitives.c    gpu300_compile
-file    Targets/LS1X/sb_gpu/gcCore_Utilities.c     gpu300_compile
-file    Targets/LS1X/sb_gpu/gcUtilities.c          gpu300_compile
-#file    Targets/LS1X/sb_gpu/stretch.c              gpu300_compile
-#file    Targets/LS1X/sb_gpu/testStretch.c          gpu300_compile
-file    Targets/LS1X/sb_gpu/common.c               gpu300_compile
-file    Targets/LS1X/sb_gpu/gcCore_Brush.c         gpu300_compile
-file    Targets/LS1X/sb_gpu/gcFilterBlit.c         gpu300_compile
-file    Targets/LS1X/sb_gpu/gcCore_FilterBlit.c    gpu300_compile
-file    Targets/LS1X/sb_gpu/gcImages.c             gpu300_compile
-file    Targets/LS1X/sb_gpu/gpu_twodclearl.c       gpu300_compile
-#file    Targets/LS1X/sb_gpu/testLine.c             gpu300_compile
-file    Targets/LS1X/sb_gpu/my_random.c            gpu300_compile
-#file    Targets/LS1X/sb_gpu/testFilterBlt.c        gpu300_compile
-#file    Targets/LS1X/sb_gpu/testMono.c             gpu300_compile
-#file    Targets/LS1X/sb_gpu/testRotation.c         gpu300_compile
-#file    Targets/LS1X/sb_gpu/testMask.c             gpu300_compile
-#file    Targets/LS1X/sb_gpu/mytest_filterblit.c    gpu300_compile
-file    Targets/LS1X/sb_gpu/gc300_hw_bitblt.c      gpu300_compile
+file	Targets/LS1X/sb_gpu/gcCore_Meman.c         gpu300_compile
+file	Targets/LS1X/sb_gpu/gcCore_Primitives.c    gpu300_compile
+file	Targets/LS1X/sb_gpu/gcCore_Utilities.c     gpu300_compile
+file	Targets/LS1X/sb_gpu/gcCore_Brush.c         gpu300_compile
+file	Targets/LS1X/sb_gpu/gcCore_FilterBlit.c    gpu300_compile
+
+file	Targets/LS1X/sb_gpu/gcUtilities.c          gpu300_compile
+file	Targets/LS1X/sb_gpu/gcFilterBlit.c         gpu300_compile
+file	Targets/LS1X/sb_gpu/gcImages.c             gpu300_compile
+
+file	Targets/LS1X/sb_gpu/fpga.c                 gpu300_compile
+file	Targets/LS1X/sb_gpu/my_random.c            gpu300_compile
+file	Targets/LS1X/sb_gpu/gc300_hw_bitblt.c      gpu300_compile
+
+#file	Targets/LS1X/sb_gpu/stretch.c              gpu300_compile
+#file	Targets/LS1X/sb_gpu/common.c               gpu300_compile
+#file	Targets/LS1X/sb_gpu/gpu_twodclearl.c       gpu300_compile
+
+#file	Targets/LS1X/sb_gpu/testLine.c             gpu300_compile
+#file	Targets/LS1X/sb_gpu/testStretch.c          gpu300_compile
+#file	Targets/LS1X/sb_gpu/testFilterBlt.c        gpu300_compile
+#file	Targets/LS1X/sb_gpu/testMono.c             gpu300_compile
+#file	Targets/LS1X/sb_gpu/testRotation.c         gpu300_compile
+#file	Targets/LS1X/sb_gpu/testMask.c             gpu300_compile
+#file	Targets/LS1X/sb_gpu/mytest_filterblit.c    gpu300_compile
 
 define  localbus { [base = -1 ] }
 device  localbus

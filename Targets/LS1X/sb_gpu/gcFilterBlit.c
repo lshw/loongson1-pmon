@@ -2,28 +2,17 @@
 #include <math.h>
 #include "display.h"
 
-UINT32 gcGetStretchFactor(
-	UINT32 SrcSize,
-	UINT32 DstSize
-	)
+UINT32 gcGetStretchFactor(UINT32 SrcSize, UINT32 DstSize)
 {
-	if (DstSize > 1)
-	{
-	
+	if (DstSize > 1) {
 		return ((SrcSize - 1) << 16) / (DstSize - 1);
 	}
-	else
-	{
+	else {
 		return 0;
 	}
 }
 
-void gcComputeKernelTable(
-	UINT32 SrcSize,
-	UINT32 DstSize,
-	UINT32 KernelSize,
-	gcKERNELTABLE* Table
-	)
+void gcComputeKernelTable(UINT32 SrcSize, UINT32 DstSize, UINT32 KernelSize, gcKERNELTABLE* Table)
 {
 	double scale, fscale;
 	double subpixelStep;
@@ -49,8 +38,7 @@ void gcComputeKernelTable(
 	subpixelStep   = 1.0 / SUBPIXEL_COUNT;
 	subpixelOffset = 0.5;
 
-	for (subpixelPos = 0; subpixelPos < SUBPIXEL_COUNT; subpixelPos++)
-	{
+	for (subpixelPos = 0; subpixelPos < SUBPIXEL_COUNT; subpixelPos++) {
 		// Compute weights.
 		double weightSum = 0;
 
@@ -61,32 +49,25 @@ void gcComputeKernelTable(
 		int padding = (MAX_KERNEL_SIZE - KernelSize) / 2;
 
 		// Compute the kernel.
-		for (i = 0; i < MAX_KERNEL_SIZE; i++)
-		{
+		for (i = 0; i < MAX_KERNEL_SIZE; i++) {
 			// Compute the kernel index.
 			int index = i - padding;
 
 			// Are we within range?
-			if ((index >= 0) && (index < KernelSize))
-			{
+			if ((index >= 0) && (index < KernelSize)) {
 				double x = (index - kernelHalf + subpixelOffset) * fscale;
 
-				if (KernelSize == 1)
-				{
+				if (KernelSize == 1) {
 					kernel[i] = 1.0;
 				}
-				else
-				{
-					if (fabs(x) > kernelHalf)
-					{
+				else {
+					if (fabs(x) > kernelHalf) {
 						kernel[i] = 0.0;
 					}
-					else if (x == 0)
-					{
+					else if (x == 0) {
 						kernel[i] = 1.0;
 					}
-					else
-					{
+					else {
 						double pit = 3.14159265358979323846 * x;
 						double pitd = pit / kernelHalf;
 
@@ -102,35 +83,29 @@ void gcComputeKernelTable(
 			}
 
 			// Out of range.
-			else
-			{
+			else {
 				kernel[i] = 0;
 			}
 		}
 
 		// Adjust weights so that the sum will be 1.0.
-		for (i = 0; i < MAX_KERNEL_SIZE; i++)
-		{
+		for (i = 0; i < MAX_KERNEL_SIZE; i++) {
 			// Compute the final current weight.
 			double dblWeight = kernel[i] / weightSum;
 
 			// Convert to fixed point.
 			short fxdWeight;
 
-			if (dblWeight == 0)
-			{
+			if (dblWeight == 0) {
 				fxdWeight = (short) 0x0000;
 			}
-			else if (dblWeight >= 2.0)
-			{
+			else if (dblWeight >= 2.0) {
 				fxdWeight = (short) 0x7FFF;
 			}
-			else if (dblWeight < -2.0)
-			{
+			else if (dblWeight < -2.0) {
 				fxdWeight = (short) 0x8000;
 			}
-			else
-			{
+			else {
 				fxdWeight = (short) (dblWeight * (1 << 14));
 			}
 
@@ -167,20 +142,17 @@ void gcComputeFilterBlit(
 	// Set rectangles if not specified.
 
 	// Set the destination rectangle.
-	if (TrgRect == NULL)
-	{
+	if (TrgRect == NULL) {
 		TrgRect = &Target->rect;
 	}
 
 	// Set the source rectangle.
-	if (SrcRect == NULL)
-	{
+	if (SrcRect == NULL) {
 		SrcRect = &Source->rect;
 	}
 
 	// Set the destination sub rectangle.
-	if (TrgSubRect == NULL)
-	{
+	if (TrgSubRect == NULL) {
 		static gcRECT rect;
 
 		rect.left   = 0;
@@ -219,13 +191,11 @@ void gcComputeFilterBlit(
 	bytesPerSrcPixel = gcGetPixelSize(Source->format) / 8;
 	bytesPerTrgPixel = gcGetPixelSize(Target->format) / 8;
 
-	if (bytesPerSrcPixel > bytesPerTrgPixel)
-	{
+	if (bytesPerSrcPixel > bytesPerTrgPixel) {
 		Parameters->tempFormat = Source->format;
 		tempHorCoordMask = (64 / bytesPerSrcPixel) - 1;
 	}
-	else
-	{
+	else {
 		Parameters->tempFormat = Target->format;
 		tempHorCoordMask = (64 / bytesPerTrgPixel) - 1;
 	}
@@ -423,3 +393,4 @@ void gcFilterBlit(
 	// Free the temporary buffer.
 	gcMemFree();
 }
+

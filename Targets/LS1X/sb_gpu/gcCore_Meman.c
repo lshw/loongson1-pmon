@@ -50,10 +50,7 @@ UINT32 gcSTACKBASE;
 UINT32 gcVIDEOBASE;
 
 #if gcENABLEVIRTUAL
-UINT32 gcGetVirtualAddress(
-	UINT32 Index,
-	UINT32 Offset
-	)
+UINT32 gcGetVirtualAddress(UINT32 Index, UINT32 Offset)
 {
 	UINT32 result
 		= SETFIELDVALUE(0, AQ_MEMORY_ADDRESS, TYPE,    VIRTUAL_SYSTEM)
@@ -62,9 +59,7 @@ UINT32 gcGetVirtualAddress(
 	return result;
 }
 
-UINT32 gcGetPhysicalAddress(
-	UINT32 VirtualAddress
-	)
+UINT32 gcGetPhysicalAddress(UINT32 VirtualAddress)
 {
 	// Retrive the index and the offset.
 	UINT32 Index  = GETFIELD(VirtualAddress, AQ_MEMORY_ADDRESS, ADDRESS) >> 12;
@@ -80,9 +75,7 @@ UINT32 gcGetPhysicalAddress(
 
 #undef MY_GPU_DEBUG_MEMRESET 
 
-void gcMemReset(
-	void
-	)
+void gcMemReset(void)
 {
 	// Reset current buffer info.
 	// g_gcCurrAddr = gcVIDEOBASE = __SD_LCD_BAR_BASE;
@@ -113,10 +106,10 @@ void gcMemReset(
 #endif
 
 	gcCMDBUFADDR = gcCMDBUFCURRADDR = gcMemAllocate(gcCMDBUFSIZE);
-    #ifdef MY_GPU_DEBUG_MEMRESET
-    printf("Command buffer: 0x%08X to 0x%08X\n", 
+#ifdef MY_GPU_DEBUG_MEMRESET
+	printf("Command buffer: 0x%08X to 0x%08X\n", 
 		gcCMDBUFADDR, gcCMDBUFADDR + gcCMDBUFSIZE);
-    #endif
+#endif
 
 #if gcENABLEVIRTUAL
 	// Allocate page table.
@@ -136,18 +129,16 @@ void gcMemReset(
 #endif
 }
 
-UINT32 gcMemAllocate(
-	UINT32 Size
-	)
+UINT32 gcMemAllocate(UINT32 Size)
 {
-	UINT32 result = NULL;
+//	UINT32 result = NULL;
+	UINT32 result = 0;
 
 	// Align.
 	Size = (Size + 63) & ~63;
 
 	// Do we have enough memory?
-	if (Size <= g_gcCurrSize)
-	{
+	if (Size <= g_gcCurrSize) {
 		// Set the result.
 		result = g_gcCurrAddr;
 
@@ -169,10 +160,7 @@ UINT32 gcMemAllocate(
 }
 
 #if gcENABLEVIRTUAL
-static UINT32 gcInitPageTable(
-	UINT32 Address,
-	UINT32 Size
-	)
+static UINT32 gcInitPageTable(UINT32 Address, UINT32 Size)
 {
 	UINT32 pageIndex;
 	UINT32 pageCount;
@@ -192,13 +180,11 @@ static UINT32 gcInitPageTable(
 	Address &= ~(PAGE_SIZE - 1);
 
 	// Init pages.
-	while (pageCount--)
-	{
-		if (g_gcPageTableIndex < PAGE_TABLE_ENTRIES)
-		{
+	while (pageCount--) {
+		if (g_gcPageTableIndex < PAGE_TABLE_ENTRIES) {
 			// Set the physical address to the entry.
 			gcPoke(g_gcPageTableAddr + g_gcPageTableIndex * sizeof(UINT32),
-				   Address);
+			Address);
 
 			// Advance page table index.
 			g_gcPageTableIndex += 1;
@@ -206,47 +192,40 @@ static UINT32 gcInitPageTable(
 			// Advance physical address.
 			Address += PAGE_SIZE;
 		}
-		else
-		{
+		else {
 			printf("Page table entries are exhausted!\n");
 			break;
 		}
 	}
 
 	// Flush if necessary.
-	if (!g_gcPageTableFlushed)
-	{
+	if (!g_gcPageTableFlushed) {
 		g_gcPageTableFlushed = TRUE;
 
 		gcWriteReg(AQMMUFlushRegAddrs,
-				   SETFIELDVALUE(0, AQMMU_FLUSH, FEMMU,  ENABLE) |
-				   SETFIELDVALUE(0, AQMMU_FLUSH, RAMMU,  ENABLE) |
-				   SETFIELDVALUE(0, AQMMU_FLUSH, TXMMU,  ENABLE) |
-				   SETFIELDVALUE(0, AQMMU_FLUSH, PEMMU,  ENABLE) |
-				   SETFIELDVALUE(0, AQMMU_FLUSH, PEZMMU, ENABLE));
+		SETFIELDVALUE(0, AQMMU_FLUSH, FEMMU,  ENABLE) |
+		SETFIELDVALUE(0, AQMMU_FLUSH, RAMMU,  ENABLE) |
+		SETFIELDVALUE(0, AQMMU_FLUSH, TXMMU,  ENABLE) |
+		SETFIELDVALUE(0, AQMMU_FLUSH, PEMMU,  ENABLE) |
+		SETFIELDVALUE(0, AQMMU_FLUSH, PEZMMU, ENABLE));
 	}
 
 	// Determine virtual address.
 	return gcGetVirtualAddress(pageIndex, pageOffset);
 }
 
-UINT32 gcMemAllocateVirtual(
-	UINT32 Size
-	)
+UINT32 gcMemAllocateVirtual(UINT32 Size)
 {
 	UINT32 result = gcMemAllocate(Size);
 
-	if (result)
-	{
+	if (result) {
 		result = gcInitPageTable(result, Size);
 	}
 
 	return result;
 }
 
-void gcVirtualizeSurface(
-	gcSURFACEINFO* Surface
-	)
+void gcVirtualizeSurface(gcSURFACEINFO* Surface)
 {
 	// Determine the size of the surface.
 	unsigned long height = (Surface->rect.bottom + 7) & ~7;
@@ -257,12 +236,9 @@ void gcVirtualizeSurface(
 }
 #endif
 
-void gcMemFree(
-	void
-	)
+void gcMemFree(void)
 {
-	if (g_gcHistoryIndex)
-	{
+	if (g_gcHistoryIndex) {
 		g_gcHistoryIndex--;
 		g_gcCurrAddr = g_gcHistory[g_gcHistoryIndex].addr;
 		g_gcCurrSize = g_gcHistory[g_gcHistoryIndex].size;
@@ -273,25 +249,16 @@ void gcMemFree(
 	}
 }
 
-void gcAppendEnd(
-	void
-	)
+void gcAppendEnd(void)
 {
-	gcPoke(gcCMDBUFCURRADDR,
-		   SETFIELDVALUE(0, AQ_COMMAND_END_COMMAND, OPCODE, END));
+	gcPoke(gcCMDBUFCURRADDR, SETFIELDVALUE(0, AQ_COMMAND_END_COMMAND, OPCODE, END));
 	gcCMDBUFCURRADDR += 4;
 
-	gcPoke(gcCMDBUFCURRADDR,
-		   0);
+	gcPoke(gcCMDBUFCURRADDR, 0);
 	gcCMDBUFCURRADDR += 4;
 }
 
-void gcInitSurface(
-	gcSURFACEINFO* Surface,
-	UINT32 Width,
-	UINT32 Height,
-	UINT32 Format
-	)
+void gcInitSurface(gcSURFACEINFO* Surface, UINT32 Width, UINT32 Height, UINT32 Format)
 {
 	// Initialize the surface rectangle.
 	Surface->rect.left   = 0;
@@ -309,12 +276,7 @@ void gcInitSurface(
 	Surface->stride = Surface->rect.right * gcGetPixelSize(Format) / 8;
 }
 
-void gcAllocateSurface(
-	gcSURFACEINFO* Surface,
-	UINT32 Width,
-	UINT32 Height,
-	UINT32 Format
-	)
+void gcAllocateSurface(gcSURFACEINFO* Surface, UINT32 Width, UINT32 Height, UINT32 Format)
 {
 	UINT32 surfaceSize;
 
@@ -332,16 +294,13 @@ void gcAllocateSurface(
 #endif
 }
 
-UINT32 gcAllocateQueueSpace(
-	UINT32 Count
-	)
+UINT32 gcAllocateQueueSpace(UINT32 Count)
 {
 	UINT32 result;
 	UINT32 size = ((Count + 1) & ~1) * sizeof(UINT32);
 
 	// Queue is full?
-	if (size > gcCMDBUFCURRSIZE - 8)
-	{
+	if (size > gcCMDBUFCURRSIZE - 8) {
 		gcStart();
 	}
 
@@ -356,23 +315,25 @@ UINT32 gcAllocateQueueSpace(
 
 int gc_dump_cmdbuf(void)
 {
-    int i=0;
-    UINT32 dump_addr=gcCMDBUFADDR;
-    //UINT32 dump_addr=gcCMDBUFCURRADDR;
-    printf("Dump GC CMD buffer\n");
-    if(!(dump_addr & 0x80000000))
-        dump_addr |= 0xA0000000;
-    for(i=0;i<512; i=i+4)
-    //for(i=0;i<gcCMDBUFCURRSIZE; i=i+4)
-    {
-        if((i%16) == 0)
-            printf("%p :  ",(dump_addr+i));
-        printf(" %8x ",*(UINT32 *)(dump_addr+i));
-        if((i%16) == 12)
-            printf("\n");
-    }
+	int i = 0;
+	UINT32 dump_addr = gcCMDBUFADDR;
+//	UINT32 dump_addr=gcCMDBUFCURRADDR;
 
-    return 0;
+	printf("Dump GC CMD buffer\n");
+	if(!(dump_addr & 0x80000000))
+		dump_addr |= 0xA0000000;
+	for(i=0; i<512; i=i+4)
+	//for(i=0;i<gcCMDBUFCURRSIZE; i=i+4)
+	{
+		if((i%16) == 0)
+//			printf("%p :  ",(dump_addr+i));
+			printf("%x :  ",(dump_addr+i));
+		printf(" %8x ",*(UINT32 *)(dump_addr+i));
+		if((i%16) == 12)
+			printf("\n");
+	}
+
+	return 0;
 }
 #if 0
 int gc_dump_cmdbuf_toram(void)

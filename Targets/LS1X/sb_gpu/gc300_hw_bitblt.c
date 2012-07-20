@@ -5,10 +5,10 @@
 
 int gc300_init_one = 0;
 
-void gc300_hw_bitblt(unsigned int Bpp,unsigned int winx,unsigned int winy,unsigned int font_height)
+void gc300_hw_bitblt(unsigned int Bpp, unsigned int winx, unsigned int winy, unsigned int font_height)
 {
-	gcSURFACEINFO* Target =&gcDisplaySurface;
-	gcSURFACEINFO Src ;
+	gcSURFACEINFO* Target = &gcDisplaySurface;
+	gcSURFACEINFO Src;
 
 	if(!gc300_init_one) {
 		*((volatile unsigned int*)0xbfd00420) &= ~0x00100000;	/* 使能GPU */
@@ -39,39 +39,8 @@ void gc300_hw_bitblt(unsigned int Bpp,unsigned int winx,unsigned int winy,unsign
 	Src.rect.right  = Target->rect.right = winx;
 	Target->rect.top = 0;
 	Src.rect.top    = Target->rect.top + font_height;
-	Target->rect.bottom = winy - font_height ;
-	Src.rect.bottom = winy ;
-
-#if 0
-
-    *(volatile unsigned int *)(0xA5000000+i) = bpp;
-    i += 4;
-    *(volatile unsigned int *)(0xA5000000+i) = winx;
-    i += 4;
-    *(volatile unsigned int *)(0xA5000000+i) = winy;
-    i += 4;
-    *(volatile unsigned int *)(0xA5000000+i) = font_height;
-    i += 4;
-    *(volatile unsigned int *)(0xA5000000+i) = Target->rect.left;
-    i += 4;
-    *(volatile unsigned int *)(0xA5000000+i) = Target->rect.right;
-    i += 4;
-    *(volatile unsigned int *)(0xA5000000+i) = Target->rect.top;
-    i += 4;
-    *(volatile unsigned int *)(0xA5000000+i) = Target->rect.bottom;
-    i += 4;
-    *(volatile unsigned int *)(0xA5000000+i) = Src->rect.left;
-    i += 4;
-    *(volatile unsigned int *)(0xA5000000+i) = Src->rect.right;
-    i += 4;
-    *(volatile unsigned int *)(0xA5000000+i) = Src->rect.top;
-    i += 4;
-    *(volatile unsigned int *)(0xA5000000+i) = Src->rect.bottom;
-    i += 4;
-    *(volatile unsigned int *)(0xA5000000+i) = Src->address;
-    i += 4;
-    #endif
-    //    printf("%d,%d,%d,%d,%d,%d,%d,%d\n",Target->rect.left,Target->rect.right,Target->rect.top,Target->rect.bottom,Src->rect.left,Src->rect.right,Src->rect.top,Src->rect.bottom);
+	Target->rect.bottom = winy - font_height;
+	Src.rect.bottom = winy;
 
 	// Blit the image.
 	gcBitBlt_SC(Target, &Src,&Target->rect, &Src.rect);
@@ -104,22 +73,20 @@ void gc300_hw_bitblt(unsigned int Bpp,unsigned int winx,unsigned int winy,unsign
 	gcMemFree();
 }
 
-void gc300_hw_rectfill(unsigned int bpp,unsigned int winx,unsigned int winy,unsigned int font_height)
+void gc300_hw_rectfill(unsigned int bpp, unsigned int winx, unsigned int winy, unsigned int font_height)
 {
-    
-	gcSURFACEINFO* Target =&gcDisplaySurface;
+	gcSURFACEINFO* Target = &gcDisplaySurface;
 #if 1
-    Target->rect.left   =  0 ;
-    Target->rect.right  =  winx ;
-    Target->rect.top    =  winy - font_height ;
-    Target->rect.bottom =  winy ;
+	Target->rect.left   =  0;
+	Target->rect.right  =  winx;
+	Target->rect.top    =  winy - font_height;
+	Target->rect.bottom =  winy;
 	gcClear(Target, &Target->rect, BLACK32);
 #endif
-    gcFlush2DAndStall();
-    gcStart();      
-    gcFlushDisplay();
+	gcFlush2DAndStall();
+	gcStart();      
+	gcFlushDisplay();
 }
-
 
 #ifdef GC300_SROLLUP_DEBUG
 int test_sc_gc300(void)

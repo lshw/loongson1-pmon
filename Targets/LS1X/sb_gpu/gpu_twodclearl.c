@@ -1,8 +1,6 @@
 //Created by xiexin for Display Controller pmon test 
 //Oct 6th,2009
 
-
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -39,102 +37,99 @@ typedef unsigned long dma_addr_t;
 #define DC_BASE_ADDR_1 0xbc301250
 
 
-void displayasc(char * a,int b,int c, int d,int e,int f);
-void soft_display(int a,int b,int c);
+void displayasc(char * a, int b, int c, int d, int e, int f);
+void soft_display(int a, int b, int c);
 
-int gpu_reg_wr()
+int gpu_reg_wr(void)
 {
-
-	int base_reg_addr=0xbc200000;
+	int base_reg_addr = 0xbc200000;
 	int temp;
-	temp=base_reg_addr + 0x0008*4;
+	
+	temp = base_reg_addr + 0x0008*4;
 	printf("chipid:%x\n",readl(temp));
-	temp=base_reg_addr + 0x0009*4;
+	temp = base_reg_addr + 0x0009*4;
 	printf("chiprev:%x\n",readl(temp));
-	temp=base_reg_addr + 0x000a*4;
+	temp = base_reg_addr + 0x000a*4;
 	printf("chipdate:%x\n",readl(temp));
-	temp=base_reg_addr + 0x000b*4;
+	temp = base_reg_addr + 0x000b*4;
 	printf("chiptime:%x\n",readl(temp));
-	temp=base_reg_addr + 0x000c*4;
+	temp = base_reg_addr + 0x000c*4;
 	printf("chipcustomer:%x\n",readl(temp));
 
-printf("read addr bc200014 ,val:%x\n",readl(0xbc200014));
-writel(0xaaaaaaaa,0xbc200014);
-printf("write addr bc200014 with val 0xaaaaaaaa\n");
-printf("read addr bc200014 ,val:%x\n",readl(0xbc200014));
+	printf("read addr bc200014 ,val:%x\n", readl(0xbc200014));
+	writel(0xaaaaaaaa,0xbc200014);
+	printf("write addr bc200014 with val 0xaaaaaaaa\n");
+	printf("read addr bc200014 ,val:%x\n", readl(0xbc200014));
 
+	printf("read addr bc200000 ,val:%x\n", readl(0xbc200000));
+	printf("read addr bc200654 ,val:%x\n", readl(0xbc200654));
+	printf("read addr bc200658 ,val:%x\n", readl(0xbc200658));
+	printf("read addr bc20065c ,val:%x\n", readl(0xbc20065c));
 
-printf("read addr bc200000 ,val:%x\n",readl(0xbc200000));
-printf("read addr bc200654 ,val:%x\n",readl(0xbc200654));
-printf("read addr bc200658 ,val:%x\n",readl(0xbc200658));
-printf("read addr bc20065c ,val:%x\n",readl(0xbc20065c));
-
-return 0;
+	return 0;
 }
 
-
-unsigned long GPU_fbaddr;
+extern unsigned long GPU_fbaddr;
 //test for gpu_twodclears
 //int gpu_twodclearl(int framebuf_addr)
 int VIR_CMDBUF_ADDR=0;
 int gpu_twodclearl(void)
 {
 	int cmd_buf_size = 4096;
-	int CMDBUF_ADDR,FRAMEBUF_ADDR;
+	int CMDBUF_ADDR, FRAMEBUF_ADDR;
 	int i;
 	char *cmd_ptr = (char *)malloc(cmd_buf_size);
+
 	CMDBUF_ADDR = cmd_ptr;
 	VIR_CMDBUF_ADDR = cmd_ptr;
 	CMDBUF_ADDR = (CMDBUF_ADDR + 16) & 0x0ffffff0;
 	FRAMEBUF_ADDR = GPU_fbaddr & 0x0fffffff;
 	VIR_CMDBUF_ADDR = (VIR_CMDBUF_ADDR + 16) & 0xfffffff0;
-        printf("cmd buffer addr: %x \n",(VIR_CMDBUF_ADDR+0x00));
+	printf("cmd buffer addr: %x \n",(VIR_CMDBUF_ADDR+0x00));
 
-        
-        write_reg((VIR_CMDBUF_ADDR+0x00),0x08010e00);
-        write_reg((VIR_CMDBUF_ADDR+0x04),0x00000001);
-        write_reg((VIR_CMDBUF_ADDR+0x08),0x0801049a);
-        write_reg((VIR_CMDBUF_ADDR+0x0c),0x000000ff);
-        write_reg((VIR_CMDBUF_ADDR+0x10),0x0801049c);
-        write_reg((VIR_CMDBUF_ADDR+0x14),0xdeadbeef);
-        write_reg((VIR_CMDBUF_ADDR+0x18),0x0801049d);
-        write_reg((VIR_CMDBUF_ADDR+0x1c),0xdeadbeef);
-        write_reg((VIR_CMDBUF_ADDR+0x20),0x0801048a);
-        write_reg((VIR_CMDBUF_ADDR+0x24),FRAMEBUF_ADDR);
-        write_reg((VIR_CMDBUF_ADDR+0x28),0x0801048b);
-        write_reg((VIR_CMDBUF_ADDR+0x2c),0x00000a00);
-        write_reg((VIR_CMDBUF_ADDR+0x30),0x0801048c);
-        write_reg((VIR_CMDBUF_ADDR+0x34),0x00000000);
-        write_reg((VIR_CMDBUF_ADDR+0x38),0x0801048d);
-        write_reg((VIR_CMDBUF_ADDR+0x3c),0x00000006);
-        write_reg((VIR_CMDBUF_ADDR+0x40),0x08010483);
-        write_reg((VIR_CMDBUF_ADDR+0x44),0x00000000);
-        write_reg((VIR_CMDBUF_ADDR+0x48),0x08010498);
-        write_reg((VIR_CMDBUF_ADDR+0x4c),0x00000000);
-        write_reg((VIR_CMDBUF_ADDR+0x50),0x08010499);
-        write_reg((VIR_CMDBUF_ADDR+0x54),0x01e00280);
-        write_reg((VIR_CMDBUF_ADDR+0x58),0x08010497);
-        write_reg((VIR_CMDBUF_ADDR+0x5c),0x00200000);
-        write_reg((VIR_CMDBUF_ADDR+0x60),0x20000100);
-        write_reg((VIR_CMDBUF_ADDR+0x64),0x00000000);
-        write_reg((VIR_CMDBUF_ADDR+0x68),0x00000000);
-        write_reg((VIR_CMDBUF_ADDR+0x6c),0x01e00280);
-        write_reg((VIR_CMDBUF_ADDR+0x70),0x08010e03);
-        write_reg((VIR_CMDBUF_ADDR+0x74),0x00000008);
+	write_reg((VIR_CMDBUF_ADDR+0x00), 0x08010e00);
+	write_reg((VIR_CMDBUF_ADDR+0x04), 0x00000001);
+	write_reg((VIR_CMDBUF_ADDR+0x08), 0x0801049a);
+	write_reg((VIR_CMDBUF_ADDR+0x0c), 0x000000ff);
+	write_reg((VIR_CMDBUF_ADDR+0x10), 0x0801049c);
+	write_reg((VIR_CMDBUF_ADDR+0x14), 0xdeadbeef);
+	write_reg((VIR_CMDBUF_ADDR+0x18), 0x0801049d);
+	write_reg((VIR_CMDBUF_ADDR+0x1c), 0xdeadbeef);
+	write_reg((VIR_CMDBUF_ADDR+0x20), 0x0801048a);
+	write_reg((VIR_CMDBUF_ADDR+0x24), FRAMEBUF_ADDR);
+	write_reg((VIR_CMDBUF_ADDR+0x28), 0x0801048b);
+	write_reg((VIR_CMDBUF_ADDR+0x2c), 0x00000a00);
+	write_reg((VIR_CMDBUF_ADDR+0x30), 0x0801048c);
+	write_reg((VIR_CMDBUF_ADDR+0x34), 0x00000000);
+	write_reg((VIR_CMDBUF_ADDR+0x38), 0x0801048d);
+	write_reg((VIR_CMDBUF_ADDR+0x3c), 0x00000006);
+	write_reg((VIR_CMDBUF_ADDR+0x40), 0x08010483);
+	write_reg((VIR_CMDBUF_ADDR+0x44), 0x00000000);
+	write_reg((VIR_CMDBUF_ADDR+0x48), 0x08010498);
+	write_reg((VIR_CMDBUF_ADDR+0x4c), 0x00000000);
+	write_reg((VIR_CMDBUF_ADDR+0x50), 0x08010499);
+	write_reg((VIR_CMDBUF_ADDR+0x54), 0x01e00280);
+	write_reg((VIR_CMDBUF_ADDR+0x58), 0x08010497);
+	write_reg((VIR_CMDBUF_ADDR+0x5c), 0x00200000);
+	write_reg((VIR_CMDBUF_ADDR+0x60), 0x20000100);
+	write_reg((VIR_CMDBUF_ADDR+0x64), 0x00000000);
+	write_reg((VIR_CMDBUF_ADDR+0x68), 0x00000000);
+	write_reg((VIR_CMDBUF_ADDR+0x6c), 0x01e00280);
+	write_reg((VIR_CMDBUF_ADDR+0x70), 0x08010e03);
+	write_reg((VIR_CMDBUF_ADDR+0x74), 0x00000008);
 
+	write_reg((VIR_CMDBUF_ADDR+0x78), 0x08010e02);
+	write_reg((VIR_CMDBUF_ADDR+0x7c), 0x00000701);
+	write_reg((VIR_CMDBUF_ADDR+0x80), 0x48000000);
+	write_reg((VIR_CMDBUF_ADDR+0x84), 0x00000701);
+	write_reg((VIR_CMDBUF_ADDR+0x88), 0x10000000);
+	write_reg((VIR_CMDBUF_ADDR+0x8c), 0x00000000);
 
-        write_reg((VIR_CMDBUF_ADDR+0x78),0x08010e02);
-        write_reg((VIR_CMDBUF_ADDR+0x7c),0x00000701);
-        write_reg((VIR_CMDBUF_ADDR+0x80),0x48000000);
-        write_reg((VIR_CMDBUF_ADDR+0x84),0x00000701);
-        write_reg((VIR_CMDBUF_ADDR+0x88),0x10000000);
-        write_reg((VIR_CMDBUF_ADDR+0x8c),0x00000000);
+	write_reg((0xbc200654),CMDBUF_ADDR);
+	write_reg((0xbc200658),0xffffffff);
 
-        write_reg((0xbc200654),CMDBUF_ADDR);
-        write_reg((0xbc200658),0xffffffff);
-
-        free(cmd_ptr);
-        return 0;
+	free(cmd_ptr);
+	return 0;
 }
 
 int dump_gpu_cmd_buf(void)
@@ -142,12 +137,11 @@ int dump_gpu_cmd_buf(void)
 	//print cmd buf
     int i=0;
 	printf("print GPU cmd buffer:\n");
-	for(i=VIR_CMDBUF_ADDR;i<VIR_CMDBUF_ADDR+0x8c;i+=4)
-		printf("%p : %x\n",i,readl(i));
-
-
+	for(i=VIR_CMDBUF_ADDR; i<VIR_CMDBUF_ADDR+0x8c; i+=4)
+		printf("%p : %x\n", i, readl(i));
 	return 0;
 }
+
 #if 0
 int dc_init()
 {

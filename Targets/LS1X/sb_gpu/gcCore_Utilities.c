@@ -1,32 +1,25 @@
 #include <pmon.h>
 #include "gcSdk.h"
-#include "common.h"
+//#include "common.h"
 
-UINT32 gcREG_BASE=SYS_BASE;
+//UINT32 gcREG_BASE = SYS_BASE;
+UINT32 gcREG_BASE = 0xBC200000;
 
-UINT32 gcReadReg(
-	UINT32 Address
-	)
+UINT32 gcReadReg(UINT32 Address)
 {
 	return *(PUINT32) (gcREG_BASE + (Address << 2));
 }
 
-void gcWriteReg(
-	UINT32 Address,
-	UINT32 Data
-	)
+void gcWriteReg(UINT32 Address, UINT32 Data)
 {
 	*(PUINT32) (gcREG_BASE + (Address << 2)) = Data;
 }
 
-UINT32 gcReportIdle(
-	char* Message
-	)
+UINT32 gcReportIdle(char* Message)
 {
 	UINT32 idle = gcReadReg(AQHiIdleRegAddrs);
 
-	if (Message != NULL)
-	{
+	if (Message != NULL) {
 		printf(Message, idle);
 	}
 
@@ -53,7 +46,6 @@ UINT32 gcReportRegs(void)
 	UINT32 FEDebugCurCmd 	= gcReadReg(AQFEDebugCurCmdAdrRegAddrs);
 	UINT32 FEDebugCmdLow 	= gcReadReg(AQFEDebugCmdLowRegRegAddrs);
 
-
 	printf("ClockControl 	= %x\n", ClockControl	);
 	printf("HiIdleReg    	= %x\n", HiIdleReg   	);
 	printf("AxiConfigReg 	= %x\n", AxiConfigReg	);
@@ -73,7 +65,6 @@ UINT32 gcReportRegs(void)
 	printf("FEDebugCurCmd 	= %x\n", FEDebugCurCmd	);	
 	printf("FEDebugCmdLow	= %x\n", FEDebugCmdLow	);
 
-	
 	return 1;
 }
 

@@ -1,7 +1,5 @@
 #include "gcSdk.h"
-//#include <rt_misc.h>
 #include "display.h"
-//#include "lcd.h"
 
 #define gcSCREENADDR	CLCD_FRAME_BASE1
 #define gcSCREENWIDTH	XPIXELS
@@ -47,12 +45,11 @@ __value_in_regs struct __initial_stackheap __user_initial_stackheap(
 }
 #endif
 
-extern unsigned long GPU_fbaddr;
+unsigned long GPU_fbaddr;
 
-void gcAppInit(
-	void
-	)
+void gcAppInit(void)
 {
+	unsigned int xres, yres;
 	// Init display.
 //	apCLCD_Init(1, 1);
 
@@ -67,27 +64,27 @@ void gcAppInit(
 	// Init memory.
 	gcMemReset();
 
+	xres = getenv("xres")? strtoul(getenv("xres"),0,0):FB_XSIZE;
+    yres = getenv("yres")? strtoul(getenv("yres"),0,0):FB_YSIZE;
 	// Init target surface.
-	//gcDisplaySurface.address = gcSCREENADDR;
+//	gcDisplaySurface.address = gcSCREENADDR;
 	gcDisplaySurface.address = GPU_fbaddr;
-	gcDisplaySurface.stride  = gcSCREENWIDTH * gcGetPixelSize(gcSCREENFORMAT) / 8;
+	gcDisplaySurface.stride  = xres * gcGetPixelSize(gcSCREENFORMAT) / 8;
 	gcDisplaySurface.format  = gcSCREENFORMAT;
 
 	// Init coordinates.
 	gcDisplaySurface.rect.left   = 0;
 	gcDisplaySurface.rect.top    = 0;
-	gcDisplaySurface.rect.right  = gcSCREENWIDTH; 
-	gcDisplaySurface.rect.bottom = gcSCREENHEIGHT;
+	gcDisplaySurface.rect.right  = xres; 
+	gcDisplaySurface.rect.bottom = yres;
 
 	// Init clipping.
 	gcDisplaySurface.clip.left   = 0;
 	gcDisplaySurface.clip.top    = 0;
-	gcDisplaySurface.clip.right  = gcSCREENWIDTH; 
-	gcDisplaySurface.clip.bottom = gcSCREENHEIGHT;
+	gcDisplaySurface.clip.right  = xres; 
+	gcDisplaySurface.clip.bottom = yres;
 }
 
-void gcFlushDisplay(
-	void
-	)
+void gcFlushDisplay(void)
 {
 }

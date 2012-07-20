@@ -15,9 +15,7 @@ typedef struct
 }
 gcBRUSH;
 
-void gcSetBrush(
-	gcBRUSH* Brush
-	);
+void gcSetBrush(gcBRUSH* Brush);
 
 void gcConstructSingleColorBrush(
 	gcBRUSH* Brush,
