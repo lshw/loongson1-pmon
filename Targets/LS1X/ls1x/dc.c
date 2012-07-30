@@ -42,10 +42,9 @@ typedef unsigned long dma_addr_t;
 
 #define RANDOM_HEIGHT_Z 37
 
-//static char *ADDR_CURSOR = 0xA6000000;
-//static char *MEM_ptr = 0xA2000000;
-static char *MEM_ptr = NULL;
-static int MEM_ADDR = 0;
+static char *ADDR_CURSOR = 0xA6000000;
+static char *MEM_ptr = 0xA2000000;
+static int MEM_ADDR =0;
 
 struct vga_struc{
 	long pclk;
@@ -222,7 +221,7 @@ int caclulatefreq(long long XIN, long long PCLK)
 }
 
 #endif
-/*
+
 int config_cursor(void)
 {
 	write_reg((0xbc301520+0x00), 0x00020200);
@@ -231,7 +230,7 @@ int config_cursor(void)
 	write_reg((0xbc301550+0x00), 0x00eeeeee);
 	write_reg((0xbc301560+0x00), 0x00aaaaaa);
 }
-*/
+
 static int fb_xsize, fb_ysize, frame_rate;
 
 int config_fb(unsigned long base)
@@ -300,6 +299,8 @@ int config_fb(unsigned long base)
 	write_reg((base+OF_BUF_CONFIG),0x00000000);
 	// framebuffer configuration RGB565
 	write_reg((base+OF_BUF_CONFIG),0x00000003);
+	write_reg((base+OF_BUF_ADDR),MEM_ADDR);
+	write_reg(base+OF_DBLBUF,MEM_ADDR );
 	write_reg((base+OF_DITHER_CONFIG),0x00000000);
 	write_reg((base+OF_DITHER_TABLE_LOW),0x00000000);
 	write_reg((base+OF_DITHER_TABLE_HIGH),0x00000000);
@@ -312,8 +313,6 @@ int config_fb(unsigned long base)
 	write_reg((base+OF_VSYNC),0x40000000|(vgamode[mode].vse<<16)|vgamode[mode].vss);
 
 #if defined(CONFIG_VIDEO_32BPP)
-	MEM_ptr = malloc(fb_xsize * fb_ysize * 4);
-	memset((char *)MEM_ptr, 0, fb_xsize * fb_ysize * 4);
 	write_reg((base+OF_BUF_CONFIG),0x00100004);
 	write_reg((base+OF_BUF_STRIDE),(fb_xsize*4+255)&~255); //1024
 	#ifdef LS1BSOC
@@ -321,8 +320,6 @@ int config_fb(unsigned long base)
 	*(volatile int *)0xbfd00420 |= 0x07;
 	#endif
 #elif defined(CONFIG_VIDEO_24BPP)
-	MEM_ptr = malloc(fb_xsize * fb_ysize * 4);
-	memset((char *)MEM_ptr, 0, fb_xsize * fb_ysize * 4);
 	write_reg((base+OF_BUF_CONFIG),0x00100004);
 	write_reg((base+OF_BUF_STRIDE),(fb_xsize*3+255)&~255); //1024
 	#ifdef LS1BSOC
@@ -330,34 +327,18 @@ int config_fb(unsigned long base)
 	*(volatile int *)0xbfd00420 |= 0x07;
 	#endif
 #elif defined(CONFIG_VIDEO_16BPP)
-	MEM_ptr = malloc(fb_xsize * fb_ysize * 2);
-	memset((char *)MEM_ptr, 0, fb_xsize * fb_ysize * 2);
 	write_reg((base+OF_BUF_CONFIG),0x00100003);
 	write_reg((base+OF_BUF_STRIDE),(fb_xsize*2+255)&~255); //1024
 #elif defined(CONFIG_VIDEO_15BPP)
-	MEM_ptr = malloc(fb_xsize * fb_ysize * 2);
-	memset((char *)MEM_ptr, 0, fb_xsize * fb_ysize * 2);
 	write_reg((base+OF_BUF_CONFIG),0x00100002);
 	write_reg((base+OF_BUF_STRIDE),(fb_xsize*2+255)&~255); //1024
 #elif defined(CONFIG_VIDEO_12BPP)
-	MEM_ptr = malloc(fb_xsize * fb_ysize * 2);
-	memset((char *)MEM_ptr, 0, fb_xsize * fb_ysize * 2);
 	write_reg((base+OF_BUF_CONFIG),0x00100001);
 	write_reg((base+OF_BUF_STRIDE),(fb_xsize*2+255)&~255); //1024
 #else  //640x480-32Bits
-	MEM_ptr = malloc(fb_xsize * fb_ysize * 4);
-	memset((char *)MEM_ptr, 0, fb_xsize * fb_ysize * 4);
 	write_reg((base+OF_BUF_CONFIG),0x00100004);
 	write_reg((base+OF_BUF_STRIDE),(fb_xsize*4+255)&~255); //640
 #endif //32Bits
-	if(MEM_ptr == NULL) {
-		printf("frame buffer memory malloc failed!\n ");
-		return -1;
-	}
-	MEM_ADDR = (long)MEM_ptr & 0x0fffffff;
-	printf("MEM_ptr = %x\nMEM_ADDR = %x\n", MEM_ptr, MEM_ADDR);
-	write_reg((base+OF_BUF_ADDR),MEM_ADDR);
-	write_reg(base+OF_DBLBUF,MEM_ADDR );
 
 	{
 	int val;
@@ -380,25 +361,31 @@ int config_fb(unsigned long base)
 
 int dc_init(void)
 {
-//	int ii=0;
+	int ii=0;
 
 	fb_xsize  = getenv("xres")? strtoul(getenv("xres"),0,0):FB_XSIZE;
 	fb_ysize  = getenv("yres")? strtoul(getenv("yres"),0,0):FB_YSIZE;
 	frame_rate  = getenv("frame_rate")? strtoul(getenv("frame_rate"),0,0):60;
 
-/*
+	MEM_ADDR = (long)MEM_ptr&0x0fffffff;
+
+	if(MEM_ptr == NULL) {
+		printf("frame buffer memory malloc failed!\n ");
+		exit(0);
+	}
+
 	for(ii=0; ii<0x1000; ii+=4)
 		*(volatile unsigned int *)(ADDR_CURSOR + ii) = 0x88f31f4f;
 
 	ADDR_CURSOR = (long)ADDR_CURSOR & 0x0fffffff;
-*/
+
 #ifdef DC_FB0
 	config_fb(DC_BASE_ADDR);
 #endif
 #ifdef DC_FB1
 	config_fb(DC_BASE_ADDR_1);
 #endif
-//	config_cursor();
+	config_cursor();
 
 	return MEM_ptr;
 }
@@ -637,4 +624,5 @@ init_cmd()
 {
 	cmdlist_expand(Cmds, 1);
 }
+
 
