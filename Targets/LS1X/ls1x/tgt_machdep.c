@@ -299,10 +299,10 @@ initmips(unsigned int memsz)
 
 #ifdef ZIGBEE
 	/* 拉高GPIO52引脚 使能ZIGBEE模块供电 */
-	ls1b_gpio_direction_output(ZIGBEE_POWER, 1);
+	ls1x_gpio_direction_output(ZIGBEE_POWER, 1);
 	
-	ls1b_gpio_direction_output(MG323_RESET, 1);//MG323复位
-	ls1b_gpio_direction_output(MG323_TERM_ON, 0);
+	ls1x_gpio_direction_output(MG323_RESET, 1);//MG323复位
+	ls1x_gpio_direction_output(MG323_TERM_ON, 0);
 	delay(1100000);
 	gpio_set_value(MG323_RESET, 0);
 	gpio_set_value(MG323_TERM_ON, 1);					//MG323启动
@@ -1374,6 +1374,10 @@ tgt_reboot(void)
 	writel(1, LS1X_WDT_EN);
 	writel(1, LS1X_WDT_TIMER);
 	writel(1, LS1X_WDT_SET);
+#ifdef LS1ASOC
+	ls1x_gpio_direction_output(0, 1);
+	gpio_set_value(0, 0);
+#endif
 	while(1);
 }
 

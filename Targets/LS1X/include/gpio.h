@@ -3,8 +3,8 @@
 
 #define	EINVAL		22	/* Invalid argument */
 
-#define STLS1B_N_GPIO		64
-#define STLS1B_GPIO_IN_OFFSET	16
+#define STLS1X_N_GPIO		64
+#define STLS1X_GPIO_IN_OFFSET	16
 
 #define _ACAST32_
 #define KSEG1			0xa0000000
@@ -26,9 +26,9 @@
 int gpio_get_value(int gpio);
 void gpio_set_value(int gpio, int state);
 int gpio_cansleep(int gpio);
-int ls1b_gpio_direction_input(int gpio);
-int ls1b_gpio_direction_output(int gpio, int level);
-int ls1b_gpio_get_value(int gpio);
-void ls1b_gpio_set_value(int gpio, int value);
+int ls1x_gpio_direction_input(int gpio);
+int ls1x_gpio_direction_output(int gpio, int level);
+int ls1x_gpio_get_value(int gpio);
+void ls1x_gpio_set_value(int gpio, int value);
 
 #endif

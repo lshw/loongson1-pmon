@@ -1,5 +1,5 @@
 /*
- *  STLS1B GPIO Support
+ *  STLS1X GPIO Support
  *
  *  
  *
@@ -17,7 +17,7 @@ int gpio_get_value(int gpio)
 	u32 val;
 	u32 mask;
 
-	if (gpio >= STLS1B_N_GPIO)
+	if (gpio >= STLS1X_N_GPIO)
 		return -1;
 
 	if(gpio >= 32){
@@ -36,7 +36,7 @@ void gpio_set_value(int gpio, int state)
 	u32 val;
 	u32 mask;
 
-	if (gpio >= STLS1B_N_GPIO) {
+	if (gpio >= STLS1X_N_GPIO) {
 		return ;
 	}
 
@@ -61,18 +61,18 @@ void gpio_set_value(int gpio, int state)
 
 int gpio_cansleep(int gpio)
 {
-	if (gpio < STLS1B_N_GPIO)
+	if (gpio < STLS1X_N_GPIO)
 		return 0;
 	else
 		return -1;
 }
 
-int ls1b_gpio_direction_input(int gpio)
+int ls1x_gpio_direction_input(int gpio)
 {
 	u32 temp;
 	u32 mask;
 
-	if (gpio >= STLS1B_N_GPIO)
+	if (gpio >= STLS1X_N_GPIO)
 		return -EINVAL;
 
 	if(gpio >= 32){
@@ -96,12 +96,12 @@ int ls1b_gpio_direction_input(int gpio)
 	return 0;
 }
 
-int ls1b_gpio_direction_output(int gpio, int level)
+int ls1x_gpio_direction_output(int gpio, int level)
 {
 	u32 temp;
 	u32 mask;
 
-	if (gpio >= STLS1B_N_GPIO)
+	if (gpio >= STLS1X_N_GPIO)
 		return -EINVAL;
 
 	gpio_set_value(gpio, level);
@@ -127,12 +127,12 @@ int ls1b_gpio_direction_output(int gpio, int level)
 	return 0;
 }
 
-int ls1b_gpio_get_value(int gpio)
+int ls1x_gpio_get_value(int gpio)
 {
 	return gpio_get_value(gpio);
 }
 
-void ls1b_gpio_set_value(int gpio, int value)
+void ls1x_gpio_set_value(int gpio, int value)
 {
 	gpio_set_value(gpio, value);
 }

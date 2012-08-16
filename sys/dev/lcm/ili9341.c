@@ -55,11 +55,11 @@ static void gpio_init(void)
 {
 	u32 ret;
 
-	ls1b_gpio_direction_output(LCDCS, 0);
-	ls1b_gpio_direction_output(LCDA0, 1);
-	ls1b_gpio_direction_output(LCDWR, 1);
-	ls1b_gpio_direction_output(LCDRD, 1);
-	ls1b_gpio_direction_output(LCDRES, 1);
+	ls1x_gpio_direction_output(LCDCS, 0);
+	ls1x_gpio_direction_output(LCDA0, 1);
+	ls1x_gpio_direction_output(LCDWR, 1);
+	ls1x_gpio_direction_output(LCDRD, 1);
+	ls1x_gpio_direction_output(LCDRES, 1);
 
 	ret = readl(0xbfd010c0);
 	ret |= 0xFFFF << 8;
