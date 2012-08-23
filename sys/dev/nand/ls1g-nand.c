@@ -1317,7 +1317,7 @@ int ls1g_soc_nand_init(void)
 	printf("\nNAND DETE\n");
 
 #ifdef	LS1ASOC
-#if 1	//NAND复用LPC
+#if 0	//NAND复用LPC
 	__rw(0xbfd00420, val);
 	val |= 0x2a000000;
 	__ww(0xbfd00420, val);

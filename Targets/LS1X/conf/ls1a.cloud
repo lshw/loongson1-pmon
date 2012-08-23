@@ -243,3 +243,4 @@ option		CONFIG_PHY100M		#使能百兆网络 否则千兆网络
 #option		BUZZER				#蜂鸣器
 #option		FAST_STARTUP		#快速启动
 #option		CONFIG_CHINESE
+option		CONFIG_1A_CLOUD

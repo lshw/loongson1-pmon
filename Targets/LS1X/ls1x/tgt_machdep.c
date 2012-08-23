@@ -310,6 +310,13 @@ initmips(unsigned int memsz)
 	gpio_set_value(MG323_TERM_ON, 0);
 #endif
 
+#ifdef	CONFIG_1A_CLOUD
+//set gpio0 output heigh to disable system reset
+	*(volatile int*)0xbfd010c0 |= 1<<0;
+	*(volatile int*)0xbfd010d0 &= ~(1<<0);
+	*(volatile int*)0xbfd010f0 |= 1<<0;
+#endif
+
 	/*
 	 * Launch!
 	 */
