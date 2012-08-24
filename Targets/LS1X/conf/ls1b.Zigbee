@@ -78,7 +78,7 @@ select		cmd_shell		# Shell commands, vers, help, eval
 #
 select		mod_uart_ns16550	# Standard UART driver
 option		APB_CLK=33000000	# 外部晶振频率(Hz)
-option 		CPU_MULT=8
+option 		CPU_MULT=0x12
 option 		DDR_MULT=5
 option		CONS_BAUD=B115200
 option		UART_BASE_ADDR=0xbfe4c000	#串口控制台基地址 需要不同的串口输出可以修改此值
