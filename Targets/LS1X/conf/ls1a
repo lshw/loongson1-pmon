@@ -171,18 +171,18 @@ select		gmac
 #ohci1		at pci? dev ? function ?
 #atp*		at pci? dev ? function ?  #sata atp8620
 #ahci*		at pci? dev ? function ?
-#lohci0		at localbus0 base 0xbfe08000
-#usb*		at usbbus ? 
+lohci0		at localbus0 base 0xbfe08000
+usb*		at usbbus ? 
 #ahcisata*	at ahci?
 
-#lahci0		at localbus0 base 0xbfe30000
-#ahcisata*	at lahci?
+lahci0		at localbus0 base 0xbfe30000
+ahcisata*	at lahci?
 
-#select		mod_usb
-#select		mod_usb_storage
+select		mod_usb
+select		mod_usb_storage
 #select		mod_usb_uhci
-#select		mod_usb_ohci
-#select		mod_usb_kbd
+select		mod_usb_ohci
+select		mod_usb_kbd
 
 #### Pseudo devices
 pseudo-device	loop	1	# network loopback

@@ -98,6 +98,14 @@
 	(struct ahci_sata_softc *)device_lookup(&ahcisata_cd, minor(dev))
 block_dev_desc_t sata_dev_desc[CFG_SATA_MAX_DEVICE];
 
+
+static unsigned char dev_count;
+typedef struct port_to_dev{
+	unsigned char dev_index;
+	unsigned char port_index;
+}port_to_dev_t;
+static port_to_dev_t port_to_dev_info[CFG_SATA_MAX_DEVICE];
+
 static int curr_device = -1;
 static int lba48[32];
 static int fault_timeout;
@@ -607,6 +615,30 @@ static int ahci_port_start(u8 port)
 	return 0;
 }
 
+void print_data(u8 *buf_data, int len)
+{
+	int i,k;
+	int j;
+	u8 *buf = buf_data;
+
+	i = len / 16;
+	k = len % 16;
+	
+	printf ("lxy: receive %d data is :\n", len);
+
+	for (; i > 0; i--)
+	{
+		for (j = 0; j < 16; j++)
+			printf ("%02x  ,", buf[j]);
+		printf ("\n");
+		buf += 16;
+	}
+
+	for (j = 0; j < k; j++) 
+		printf ("%02x  ,", buf[j]);
+	printf ("\n");
+}
+
 static int get_ahci_device_data(u8 port, u8 *fis, int fis_len, u8 *buf,
 		int buf_len, u8 *cdb,int is_write)
 {
@@ -670,9 +702,9 @@ static int get_ahci_device_data(u8 port, u8 *fis, int fis_len, u8 *buf,
 		printf("timeout exit!\n");
 		return -1;
 	}
-	printf("get_ahci_device_data: %d byte transferred.\n",
-			pp->cmd_slot->status);
+//	printf("get_ahci_device_data: %d byte transferred.\n", pp->cmd_slot->status);
 
+//	print_data(buf, pp->cmd_slot->status);
 	/* Indicates the current byte count that has transferred on device
 	 * writes(system memory to device) or 
 	 * device reads(device to system memory).
@@ -761,7 +793,10 @@ static int ahcisata_match(struct device *parent,
 	int err, class;
 	
 	info = *(ahci_sata_info_t *)aux;
-	
+
+	port_to_dev_info[dev_count].dev_index = dev_count;
+	port_to_dev_info[dev_count++].port_index = info.flags;
+
 	err = ahci_sata_initialize(info.sata_reg_base, info.flags);
 	if(err)
 		return 0;
@@ -951,6 +986,7 @@ ulong ahci_sata_read(int dev,
 		void *buffer)
 {
 	u32 rc;
+	dev = port_to_dev_info[dev].port_index;
 	if(lba48[dev]){
 		rc = ata_low_level_rw_lba48(dev, blknr, blkcnt, buffer, READ_CMD);		
 	} else {
@@ -965,6 +1001,7 @@ ulong ahci_sata_write(int dev,
 		void *buffer)
 {
 	u32 rc;
+	dev = port_to_dev_info[dev].port_index;
 	if(lba48[dev]){
 		rc = ata_low_level_rw_lba48(dev, blknr, blkcnt, buffer, WRITE_CMD);		
 	} else {
