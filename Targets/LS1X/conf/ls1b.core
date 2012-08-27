@@ -200,7 +200,7 @@ select		nand
 #option		VGA_MEM_BASE=0xb5000000
 #option		VGA_MEM_BASE=0xb7f00000
 #option		X320x240
-option		X480x272
+#option		X480x272
 #option		X640x480
 #option		X640x640
 #option		X640x768
@@ -213,7 +213,7 @@ option		X480x272
 #option		X1024x480
 #option		X1024x600
 #option		X1024x640
-#option		X1024x768
+option		X1024x768
 #option		X1280x800
 #option		X1440x900
 option		CONFIG_VIDEO_LOGO

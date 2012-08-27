@@ -631,6 +631,26 @@ static int cmd_xrandr(int argc,char **argv)
 }
 #endif
 
+void display_white()
+{
+#if 0
+	int k, i;
+	char *fb_cur;
+	fb_cur = MEM_ptr; 
+	printf ("fb_xsize= %d , fb_ysize= %d !\n", fb_xsize, fb_ysize);
+	for (k = 0; k < fb_ysize; k += 1)
+	{
+		fb_cur += (fb_xsize * 2);
+		for (i = 0; i < (fb_xsize * 2); i += 4)	
+			*((int *)(fb_cur + i)) = 0xffffffff;
+	}
+#else
+	video_fill(0xffffffff);
+#endif
+	vga_available = 0;
+}
+
+
 
 static const Cmd Cmds[] =
 {
@@ -641,6 +661,7 @@ static const Cmd Cmds[] =
 	{"xrandr","xres yres hsync cpu:from-to ddr:from-to dc:from-to", 0, "xrandr xres yres hsync cpufreq(KHZ) ddrfreq(KHZ) dcdiff(khz)", cmd_xrandr, 0, 99, CMD_REPEAT},
 #endif
 	{"initserial","[ddrclk]", 0, "cacl freq",cmd_initserial, 0, 99, CMD_REPEAT},
+	{"test_white","display_white color", 0, "display white color", display_white, 0, 99, CMD_REPEAT},
 	{0, 0}
 };
 

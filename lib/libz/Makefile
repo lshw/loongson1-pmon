@@ -64,74 +64,74 @@ adler32.o: zlib.h zconf.h
 crc32.o: zlib.h zconf.h
 infblock.o: zutil.h zlib.h zconf.h
 infblock.o: /home/22/1B-PMON-BSP-ipcam/include/stddef.h
-infblock.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1a.cloud/machine/ansi.h
+infblock.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1b.core/machine/ansi.h
 infblock.o: /home/22/1B-PMON-BSP-ipcam/include/string.h
 infblock.o: /home/22/1B-PMON-BSP-ipcam/sys/sys/cdefs.h
-infblock.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1a.cloud/machine/cdefs.h
+infblock.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1b.core/machine/cdefs.h
 infblock.o: /home/22/1B-PMON-BSP-ipcam/include/stdlib.h
 infblock.o: /home/22/1B-PMON-BSP-ipcam/sys/sys/types.h
-infblock.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1a.cloud/machine/types.h
-infblock.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1a.cloud/machine/endian.h
+infblock.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1b.core/machine/types.h
+infblock.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1b.core/machine/endian.h
 infblock.o: /home/22/1B-PMON-BSP-ipcam/sys/sys/endian.h
 infblock.o: /home/22/1B-PMON-BSP-ipcam/include/errno.h infblock.h inftrees.h
 infblock.o: infcodes.h infutil.h
 infcodes.o: zutil.h zlib.h zconf.h
 infcodes.o: /home/22/1B-PMON-BSP-ipcam/include/stddef.h
-infcodes.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1a.cloud/machine/ansi.h
+infcodes.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1b.core/machine/ansi.h
 infcodes.o: /home/22/1B-PMON-BSP-ipcam/include/string.h
 infcodes.o: /home/22/1B-PMON-BSP-ipcam/sys/sys/cdefs.h
-infcodes.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1a.cloud/machine/cdefs.h
+infcodes.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1b.core/machine/cdefs.h
 infcodes.o: /home/22/1B-PMON-BSP-ipcam/include/stdlib.h
 infcodes.o: /home/22/1B-PMON-BSP-ipcam/sys/sys/types.h
-infcodes.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1a.cloud/machine/types.h
-infcodes.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1a.cloud/machine/endian.h
+infcodes.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1b.core/machine/types.h
+infcodes.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1b.core/machine/endian.h
 infcodes.o: /home/22/1B-PMON-BSP-ipcam/sys/sys/endian.h
 infcodes.o: /home/22/1B-PMON-BSP-ipcam/include/errno.h inftrees.h infblock.h
 infcodes.o: infcodes.h infutil.h inffast.h
 inffast.o: zutil.h zlib.h zconf.h /home/22/1B-PMON-BSP-ipcam/include/stddef.h
-inffast.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1a.cloud/machine/ansi.h
+inffast.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1b.core/machine/ansi.h
 inffast.o: /home/22/1B-PMON-BSP-ipcam/include/string.h
 inffast.o: /home/22/1B-PMON-BSP-ipcam/sys/sys/cdefs.h
-inffast.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1a.cloud/machine/cdefs.h
+inffast.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1b.core/machine/cdefs.h
 inffast.o: /home/22/1B-PMON-BSP-ipcam/include/stdlib.h
 inffast.o: /home/22/1B-PMON-BSP-ipcam/sys/sys/types.h
-inffast.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1a.cloud/machine/types.h
-inffast.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1a.cloud/machine/endian.h
+inffast.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1b.core/machine/types.h
+inffast.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1b.core/machine/endian.h
 inffast.o: /home/22/1B-PMON-BSP-ipcam/sys/sys/endian.h
 inffast.o: /home/22/1B-PMON-BSP-ipcam/include/errno.h inftrees.h infblock.h
 inffast.o: infcodes.h infutil.h inffast.h
 inflate.o: zutil.h zlib.h zconf.h /home/22/1B-PMON-BSP-ipcam/include/stddef.h
-inflate.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1a.cloud/machine/ansi.h
+inflate.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1b.core/machine/ansi.h
 inflate.o: /home/22/1B-PMON-BSP-ipcam/include/string.h
 inflate.o: /home/22/1B-PMON-BSP-ipcam/sys/sys/cdefs.h
-inflate.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1a.cloud/machine/cdefs.h
+inflate.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1b.core/machine/cdefs.h
 inflate.o: /home/22/1B-PMON-BSP-ipcam/include/stdlib.h
 inflate.o: /home/22/1B-PMON-BSP-ipcam/sys/sys/types.h
-inflate.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1a.cloud/machine/types.h
-inflate.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1a.cloud/machine/endian.h
+inflate.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1b.core/machine/types.h
+inflate.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1b.core/machine/endian.h
 inflate.o: /home/22/1B-PMON-BSP-ipcam/sys/sys/endian.h
 inflate.o: /home/22/1B-PMON-BSP-ipcam/include/errno.h infblock.h
 inftrees.o: zutil.h zlib.h zconf.h
 inftrees.o: /home/22/1B-PMON-BSP-ipcam/include/stddef.h
-inftrees.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1a.cloud/machine/ansi.h
+inftrees.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1b.core/machine/ansi.h
 inftrees.o: /home/22/1B-PMON-BSP-ipcam/include/string.h
 inftrees.o: /home/22/1B-PMON-BSP-ipcam/sys/sys/cdefs.h
-inftrees.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1a.cloud/machine/cdefs.h
+inftrees.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1b.core/machine/cdefs.h
 inftrees.o: /home/22/1B-PMON-BSP-ipcam/include/stdlib.h
 inftrees.o: /home/22/1B-PMON-BSP-ipcam/sys/sys/types.h
-inftrees.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1a.cloud/machine/types.h
-inftrees.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1a.cloud/machine/endian.h
+inftrees.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1b.core/machine/types.h
+inftrees.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1b.core/machine/endian.h
 inftrees.o: /home/22/1B-PMON-BSP-ipcam/sys/sys/endian.h
 inftrees.o: /home/22/1B-PMON-BSP-ipcam/include/errno.h inftrees.h inffixed.h
 infutil.o: zutil.h zlib.h zconf.h /home/22/1B-PMON-BSP-ipcam/include/stddef.h
-infutil.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1a.cloud/machine/ansi.h
+infutil.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1b.core/machine/ansi.h
 infutil.o: /home/22/1B-PMON-BSP-ipcam/include/string.h
 infutil.o: /home/22/1B-PMON-BSP-ipcam/sys/sys/cdefs.h
-infutil.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1a.cloud/machine/cdefs.h
+infutil.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1b.core/machine/cdefs.h
 infutil.o: /home/22/1B-PMON-BSP-ipcam/include/stdlib.h
 infutil.o: /home/22/1B-PMON-BSP-ipcam/sys/sys/types.h
-infutil.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1a.cloud/machine/types.h
-infutil.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1a.cloud/machine/endian.h
+infutil.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1b.core/machine/types.h
+infutil.o: /home/22/1B-PMON-BSP-ipcam/Targets/LS1X/compile/ls1b.core/machine/endian.h
 infutil.o: /home/22/1B-PMON-BSP-ipcam/sys/sys/endian.h
 infutil.o: /home/22/1B-PMON-BSP-ipcam/include/errno.h infblock.h inftrees.h
 infutil.o: infcodes.h infutil.h
