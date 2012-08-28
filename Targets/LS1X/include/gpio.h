@@ -30,5 +30,6 @@ int ls1x_gpio_direction_input(int gpio);
 int ls1x_gpio_direction_output(int gpio, int level);
 int ls1x_gpio_get_value(int gpio);
 void ls1x_gpio_set_value(int gpio, int value);
+void ls1b_gpio_free(int gpio);
 
 #endif

@@ -201,6 +201,7 @@ select		nand
 #option		VGA_MEM_BASE=0xb7f00000
 #option		X320x240
 option		X480x272
+#option		X480x640
 #option		X640x480
 #option		X640x640
 #option		X640x768
@@ -226,6 +227,9 @@ option		CONFIG_VIDEO_16BPP
 #option		CONFIG_VGA_MODEM		#VGA模式
 option		CONFIG_VIDEO_SW_CURSOR	#软件光标
 option		CONFIG_FB_DYN
+
+#select		mod_jbt6k74			#TPO TD028TTEC1 TFT LCD 驱动
+#option		CONFIG_JBT6K74
 
 option		wait_key
 #option		HAVE_MUT_COM		#多串口输入/输出,把控制台信息同时输入/输出到多个串口

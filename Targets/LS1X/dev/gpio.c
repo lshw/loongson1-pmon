@@ -136,3 +136,24 @@ void ls1x_gpio_set_value(int gpio, int value)
 {
 	gpio_set_value(gpio, value);
 }
+
+void ls1b_gpio_free(int gpio)
+{
+	u32 temp;
+	u32 mask;
+
+	if (gpio >= STLS1X_N_GPIO)
+		return -EINVAL;
+
+	if(gpio >= 32){
+		mask = 1 << (gpio - 32);
+		temp = LOONGSON_GPIOCFG1;
+		temp &= ~mask;
+		LOONGSON_GPIOCFG1 = temp;
+	}else{
+		mask = 1 << gpio;
+		temp = LOONGSON_GPIOCFG0;
+		temp &= ~mask;
+		LOONGSON_GPIOCFG0 = temp;
+	}
+}
