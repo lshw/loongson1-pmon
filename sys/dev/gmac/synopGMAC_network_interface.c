@@ -264,63 +264,54 @@ s32 synopGMAC_check_phy_init (synopGMACPciNetworkAdapter *adapter);
 
 static void synopGMAC_linux_cable_unplug_function(synopGMACPciNetworkAdapter *adapter)
 {
-s32 data;
-synopGMACdevice            *gmacdev = adapter->synopGMACdev;
-struct ethtool_cmd cmd;
+	s32 data;
+	synopGMACdevice *gmacdev = adapter->synopGMACdev;
+	struct ethtool_cmd cmd;
 
-if(!mii_link_ok(&adapter->mii)){
-	if(gmacdev->LinkState)
-	TR("No Link\n");
-	gmacdev->DuplexMode = 0;
-	gmacdev->Speed = 0;
-	gmacdev->LoopBackMode = 0; 
-	gmacdev->LinkState = 0; 
-}
-else{
-	data = synopGMAC_check_phy_init(adapter);
+	if (!mii_link_ok(&adapter->mii)) {
+		if(gmacdev->LinkState)
+			TR("No Link\n");
+		gmacdev->DuplexMode = 0;
+		gmacdev->Speed = 0;
+		gmacdev->LoopBackMode = 0;
+		gmacdev->LinkState = 0;
+	} else {
+		data = synopGMAC_check_phy_init(adapter);
 
-	if(gmacdev->LinkState != data){
-		gmacdev->LinkState = data;
-		synopGMAC_mac_init(gmacdev);
-	TR("Link UP data=%08x\n",data);
-	TR("Link is up in %s mode\n",(gmacdev->DuplexMode == FULLDUPLEX) ? "FULL DUPLEX": "HALF DUPLEX");
-	if(gmacdev->Speed == SPEED1000)	
-		TR("Link is with 1000M Speed \n");
-	if(gmacdev->Speed == SPEED100)	
-		TR("Link is with 100M Speed \n");
-	if(gmacdev->Speed == SPEED10)	
-		TR("Link is with 10M Speed \n");
+		if(gmacdev->LinkState != data) {
+			gmacdev->LinkState = data;
+			synopGMAC_mac_init(gmacdev);
+			TR("Link UP data=%08x\n",data);
+			TR("Link is up in %s mode\n",(gmacdev->DuplexMode == FULLDUPLEX) ? "FULL DUPLEX": "HALF DUPLEX");
+			if(gmacdev->Speed == SPEED1000)	
+				TR("Link is with 1000M Speed \n");
+			if(gmacdev->Speed == SPEED100)	
+				TR("Link is with 100M Speed \n");
+			if(gmacdev->Speed == SPEED10)	
+				TR("Link is with 10M Speed \n");
+		}
 	}
-}
 }
 
 s32 synopGMAC_check_phy_init (synopGMACPciNetworkAdapter *adapter) 
 {	
-struct ethtool_cmd cmd;
-synopGMACdevice            *gmacdev = adapter->synopGMACdev;
-	
+	struct ethtool_cmd cmd;
+	synopGMACdevice *gmacdev = adapter->synopGMACdev;
 
-
-	if(!mii_link_ok(&adapter->mii))
-	{
+	if(!mii_link_ok(&adapter->mii)) {
 		gmacdev->DuplexMode = FULLDUPLEX;
-		gmacdev->Speed      =   SPEED100;
-
+		gmacdev->Speed      = SPEED100;
 		return 0;
-	}
-	else
-	
-	{
+	} else {
 		mii_ethtool_gset(&adapter->mii, &cmd);
 
-	gmacdev->DuplexMode = (cmd.duplex == DUPLEX_FULL)  ? FULLDUPLEX: HALFDUPLEX ;
-	if(cmd.speed == SPEED_1000)
-	        gmacdev->Speed      =   SPEED1000;
-	else if(cmd.speed == SPEED_100)
-		gmacdev->Speed      =   SPEED100;
-	else
-		gmacdev->Speed      =   SPEED10;
-
+		gmacdev->DuplexMode = (cmd.duplex == DUPLEX_FULL)  ? FULLDUPLEX: HALFDUPLEX ;
+		if(cmd.speed == SPEED_1000)
+			gmacdev->Speed = SPEED1000;
+		else if(cmd.speed == SPEED_100)
+			gmacdev->Speed = SPEED100;
+		else
+			gmacdev->Speed = SPEED10;
 	}
 
 	return gmacdev->Speed|(gmacdev->DuplexMode<<4);
@@ -331,14 +322,12 @@ static int bcm54xx_ack_interrupt(synopGMACdevice *gmacdev)
 {
 	int reg;
 	unsigned short data;
-	
+
 	/* Clear pending interrupts.  */
 	reg = synopGMAC_read_phy_reg(gmacdev->MacBase,gmacdev->PhyBase,MII_BCM54XX_ISR,&data);
 	if (reg < 0)
 		return reg;
-
 	TR("===phy intr status: %04x\n",data);
-	
 	return 0;
 }
 
@@ -346,10 +335,6 @@ static int bcm54xx_config_intr(struct synopGMACdevice *gmacdev)
 {
 	bcm54xx_config_init(gmacdev);
 }
-
-
-
-
 
 static void synopGMAC_linux_powerdown_mac(synopGMACdevice *gmacdev)
 {
@@ -1036,7 +1021,12 @@ int synopGMAC_intr_handler(struct synopGMACNetworkAdapter * tp)
 		   目前暂时屏蔽该函数的执行来提高网络速度。屏蔽该函数没有发现会影响使用.
 		*/
 		if(dma_status_reg & GmacLineIntfIntr){
+			/* 配置成千兆模式时GmacLineIntfIntr会被置1, 
+			导致synopGMAC_linux_cable_unplug_function不断被执行,影响系统性能 
+			GmacLineIntfIntr会被置1 还不清楚原因，这里暂时屏蔽该函数 */
+			#ifdef CONFIG_PHY100M
 			synopGMAC_linux_cable_unplug_function(tp);
+			#endif
 		}
 	}
 
@@ -1475,8 +1465,8 @@ s32 synopGMAC_linux_xmit_frames(struct ifnet* ifp)
  */
 struct net_device_stats *  synopGMAC_linux_get_stats(struct synopGMACNetworkAdapter *tp)
 {
-TR("%s called \n",__FUNCTION__);
-return( &(((struct synopGMACNetworkAdapter *)(tp))->synopGMACNetStats) );
+	TR("%s called \n",__FUNCTION__);
+	return( &(((struct synopGMACNetworkAdapter *)(tp))->synopGMACNetStats) );
 }
 
 /**
@@ -1589,159 +1579,146 @@ void set_phy_manu(synopGMACdevice * gmacdev)
 int init_phy(synopGMACdevice *gmacdev)
 {
 	u16 data;
-	
+
 	synopGMAC_read_phy_reg(gmacdev->MacBase,gmacdev->PhyBase,2,&data);
 	/*set 88e1111 clock phase delay*/
 	if(data == 0x141)
-	 rtl88e1111_config_init(gmacdev);
-		return 0;
+		rtl88e1111_config_init(gmacdev);
+	return 0;
 }
 
 
 #if UNUSED
 s32 synopGMAC_linux_do_ioctl(struct ifnet *ifp, struct ifreq *ifr, s32 cmd)
 {
-s32 retval = 0;
-u16 temp_data = 0;
-struct synopGMACNetworkAdapter *adapter = NULL;
-synopGMACdevice * gmacdev = NULL;
-struct ifr_data_struct
-{
-	u32 unit;
-	u32 addr;
-	u32 data;
-} *req;
+	s32 retval = 0;
+	u16 temp_data = 0;
+	struct synopGMACNetworkAdapter *adapter = NULL;
+	synopGMACdevice * gmacdev = NULL;
+	struct ifr_data_struct {
+		u32 unit;
+		u32 addr;
+		u32 data;
+	} *req;
 
+	if(ifr == NULL)
+		return -1;
 
-if(ifr == NULL)
-	return -1;
+	req = (struct ifr_data_struct *)ifr->ifr_data;
+	adapter = (struct synopGMACNetworkAdapter *) ifp->if_softc;
+	if(adapter == NULL)
+		return -1;
 
-req = (struct ifr_data_struct *)ifr->ifr_data;
+	gmacdev = adapter->synopGMACdev;
+	if(gmacdev == NULL)
+		return -1;
+//	TR("%s :: on device %s req->unit = %08x req->addr = %08x req->data = %08x cmd = %08x \n",__FUNCTION__,netdev->name,req->unit,req->addr,req->data,cmd);
 
-adapter = (struct synopGMACNetworkAdapter *) ifp->if_softc;
-if(adapter == NULL)
-	return -1;
-
-gmacdev = adapter->synopGMACdev;
-
-if(gmacdev == NULL)
-	return -1;
-//TR("%s :: on device %s req->unit = %08x req->addr = %08x req->data = %08x cmd = %08x \n",__FUNCTION__,netdev->name,req->unit,req->addr,req->data,cmd);
-
-switch(cmd)
-{
-	case IOCTL_READ_REGISTER:		//IOCTL for reading IP registers : Read Registers
-		if      (req->unit == 0)	// Read Mac Register
-			req->data = synopGMACReadReg(gmacdev->MacBase,req->addr);
-		else if (req->unit == 1)	// Read DMA Register
-			req->data = synopGMACReadReg(gmacdev->DmaBase,req->addr);
-		else if (req->unit == 2){	// Read Phy Register
-			retval = synopGMAC_read_phy_reg(gmacdev->MacBase,gmacdev->PhyBase,req->addr,&temp_data);
-			req->data = (u32)temp_data;
-			if(retval != -ESYNOPGMACNOERR)
-				TR("ERROR in Phy read\n");	
-		}
-		break;
-
-	case IOCTL_WRITE_REGISTER:		//IOCTL for reading IP registers : Read Registers
-		if      (req->unit == 0)	// Write Mac Register
-			synopGMACWriteReg(gmacdev->MacBase,req->addr,req->data);
-		else if (req->unit == 1)	// Write DMA Register
-			synopGMACWriteReg(gmacdev->DmaBase,req->addr,req->data);
-		else if (req->unit == 2){	// Write Phy Register
-			retval = synopGMAC_write_phy_reg(gmacdev->MacBase,gmacdev->PhyBase,req->addr,req->data);
-			if(retval != -ESYNOPGMACNOERR)
-				TR("ERROR in Phy read\n");	
-		}
-		break;
-
-	case IOCTL_READ_IPSTRUCT:		//IOCTL for reading GMAC DEVICE IP private structure
-	        memcpy(ifr->ifr_data, gmacdev, sizeof(synopGMACdevice));
-		break;
-
-	case IOCTL_READ_RXDESC:			//IOCTL for Reading Rx DMA DESCRIPTOR
-		memcpy(ifr->ifr_data, gmacdev->RxDesc + ((DmaDesc *) (ifr->ifr_data))->data1, sizeof(DmaDesc) );
-		break;
-
-	case IOCTL_READ_TXDESC:			//IOCTL for Reading Tx DMA DESCRIPTOR
-		memcpy(ifr->ifr_data, gmacdev->TxDesc + ((DmaDesc *) (ifr->ifr_data))->data1, sizeof(DmaDesc) );
-		break;
-	case IOCTL_POWER_DOWN:
-		if	(req->unit == 1){	//power down the mac
-			TR("============I will Power down the MAC now =============\n");
-			// If it is already in power down don't power down again
-			retval = 0;
-			if(((synopGMACReadReg(gmacdev->MacBase,GmacPmtCtrlStatus)) & GmacPmtPowerDown) != GmacPmtPowerDown){
-			synopGMAC_linux_powerdown_mac(gmacdev);			
-			retval = 0;
+	switch(cmd) {
+		case IOCTL_READ_REGISTER:		//IOCTL for reading IP registers : Read Registers
+			if (req->unit == 0)	// Read Mac Register
+				req->data = synopGMACReadReg(gmacdev->MacBase,req->addr);
+			else if (req->unit == 1)	// Read DMA Register
+				req->data = synopGMACReadReg(gmacdev->DmaBase,req->addr);
+			else if (req->unit == 2) {	// Read Phy Register
+				retval = synopGMAC_read_phy_reg(gmacdev->MacBase,gmacdev->PhyBase,req->addr,&temp_data);
+				req->data = (u32)temp_data;
+				if(retval != -ESYNOPGMACNOERR)
+					TR("ERROR in Phy read\n");
 			}
-		}
-		if	(req->unit == 2){	//Disable the power down  and wake up the Mac locally
-			TR("============I will Power up the MAC now =============\n");
-			//If already powered down then only try to wake up
+		break;
+
+		case IOCTL_WRITE_REGISTER:		//IOCTL for reading IP registers : Read Registers
+			if (req->unit == 0)	// Write Mac Register
+				synopGMACWriteReg(gmacdev->MacBase,req->addr,req->data);
+			else if (req->unit == 1)	// Write DMA Register
+				synopGMACWriteReg(gmacdev->DmaBase,req->addr,req->data);
+			else if (req->unit == 2) {	// Write Phy Register
+				retval = synopGMAC_write_phy_reg(gmacdev->MacBase,gmacdev->PhyBase,req->addr,req->data);
+				if(retval != -ESYNOPGMACNOERR)
+					TR("ERROR in Phy read\n");
+			}
+			break;
+
+		case IOCTL_READ_IPSTRUCT:		//IOCTL for reading GMAC DEVICE IP private structure
+			memcpy(ifr->ifr_data, gmacdev, sizeof(synopGMACdevice));
+			break;
+
+		case IOCTL_READ_RXDESC:			//IOCTL for Reading Rx DMA DESCRIPTOR
+			memcpy(ifr->ifr_data, gmacdev->RxDesc + ((DmaDesc *) (ifr->ifr_data))->data1, sizeof(DmaDesc) );
+			break;
+
+		case IOCTL_READ_TXDESC:			//IOCTL for Reading Tx DMA DESCRIPTOR
+			memcpy(ifr->ifr_data, gmacdev->TxDesc + ((DmaDesc *) (ifr->ifr_data))->data1, sizeof(DmaDesc) );
+			break;
+		case IOCTL_POWER_DOWN:
+			if (req->unit == 1) {	//power down the mac
+				TR("============I will Power down the MAC now =============\n");
+				// If it is already in power down don't power down again
+				retval = 0;
+				if(((synopGMACReadReg(gmacdev->MacBase,GmacPmtCtrlStatus)) & GmacPmtPowerDown) != GmacPmtPowerDown) {
+					synopGMAC_linux_powerdown_mac(gmacdev);			
+					retval = 0;
+				}
+			}
+			if (req->unit == 2) {	//Disable the power down  and wake up the Mac locally
+				TR("============I will Power up the MAC now =============\n");
+				//If already powered down then only try to wake up
+				retval = -1;
+				if(((synopGMACReadReg(gmacdev->MacBase,GmacPmtCtrlStatus)) & GmacPmtPowerDown) == GmacPmtPowerDown) {
+					synopGMAC_power_down_disable(gmacdev);
+					synopGMAC_linux_powerup_mac(gmacdev);
+					retval = 0;
+				}
+			}
+			break;
+		default:
 			retval = -1;
-			if(((synopGMACReadReg(gmacdev->MacBase,GmacPmtCtrlStatus)) & GmacPmtPowerDown) == GmacPmtPowerDown){
-			synopGMAC_power_down_disable(gmacdev);
-			synopGMAC_linux_powerup_mac(gmacdev);
-			retval = 0;
-			}
-		}
-		break;
-	default:
-		retval = -1;
+	}
 
-}
-
-
-return retval;
+	return retval;
 }
 #endif
 
 void dumppkghd(struct ether_header *eh,int tp)
 {
-		int i;
-//sw: dbg
-		if(tp == 1)
-	       		printf("\n===Rx:  pkg dst:  ");
-		else
-	       		printf("\n===Tx:  pkg dst:  ");
-		
-		for(i = 0;i < 6;i++)
-	       		printf(" %02x",eh->ether_dhost[i]);
-		
-		if(tp == 1)
-			printf("\n===Rx:  pkg sst:  ");
-		else
-			printf("\n===Tx:  pkg sst:  ");
-	
-		for(i = 0;i < 6;i++)
-	       		printf(" %02x",eh->ether_shost[i]);
-		
-		if(tp == 1)
-			printf("\n===Rx:  pkg type:  ");
-		else
-			printf("\n===Tx:  pkg type:  ");
-		printf(" %12x",eh->ether_type);
-		printf("\n");
-		
-//dbg
+	int i;
+	//sw: dbg
+	if(tp == 1)
+		printf("\n===Rx:  pkg dst:  ");
+	else
+		printf("\n===Tx:  pkg dst:  ");
+
+	for(i = 0;i < 6;i++)
+		printf(" %02x",eh->ether_dhost[i]);
+
+	if(tp == 1)
+		printf("\n===Rx:  pkg sst:  ");
+	else
+		printf("\n===Tx:  pkg sst:  ");
+
+	for(i = 0;i < 6;i++)
+		printf(" %02x",eh->ether_shost[i]);
+
+	if(tp == 1)
+		printf("\n===Rx:  pkg type:  ");
+	else
+		printf("\n===Tx:  pkg type:  ");
+	printf(" %12x",eh->ether_type);
+	printf("\n");
+	//dbg
 }
-
-
-
 
 s32 synopGMAC_dummy_reset(struct ifnet *ifp)
 {
-	
 	struct synopGMACNetworkAdapter * adapter; 
 	synopGMACdevice	* gmacdev;
-	
+
 	adapter = (struct synopGMACNetworkAdapter *)ifp->if_softc;
 	gmacdev = adapter->synopGMACdev;
-	
+
 	return synopGMAC_reset(gmacdev);
 }
-
 
 s32 synopGMAC_dummy_ioctl(struct ifnet *ifp)
 {
@@ -1973,8 +1950,7 @@ void dumpphyreg(gbase)
 	u16 data;
 	int i;
 	printf("===dump mii phy regs of GMAC: 0\n");
-	for(i = 0x0; i <= 0x1f; i++)
-	{
+	for (i = 0x0; i <= 0x1f; i++) {
 		synopGMAC_read_phy_reg(gbase+0x1000,0x10,i, &data);
 		printf("  mii phy reg: %x    value: %x  \n",i,data);
 	}
