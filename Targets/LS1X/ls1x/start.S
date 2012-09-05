@@ -1249,13 +1249,13 @@ cache_init_finish:
     .set reorder
 	.end 	cache_init
 
-#ddr2 by cww 20090901
 #ifdef LS1ASOC
-#include "ls1a_ddr2_param_define.h"
-#include "ls1a_ddr2_config.S"
-	.rdata
-	.align 5
-#include "ls1a_ddr2_param.S"
+//#include "ls1a_ddr2_param_define.h"
+//#include "ls1a_ddr2_config.S"
+//	.rdata
+//	.align 5
+//#include "ls1a_ddr2_param.S"
+#include "ddr2fconfig-1a-samsung-CL3.S"
 #elif LS1BSOC
 //#include "ddr2fconfig-samsung.S"
 #include "ddr2fconfig-samsung-CL3.S"
