@@ -898,7 +898,7 @@ void tgt_mapenv(int (*func) __P((char *, char *)))
 
 #ifdef LS1ASOC
 	bcopy(&nvram[PLL_OFFS], &pll_reg0, 4);
-	if (pll_reg0 == 0xffffffff)
+	if ((pll_reg0 >> 16) != 0x0000)
 		pll_reg0 = (((DDR_MULT - 3) << 8) | (CPU_MULT - 4));
 	sprintf(env, "0x%08x", pll_reg0);
 	(*func)("pll_reg0", env);
