@@ -509,21 +509,6 @@ cpu_win_fixup:
 #endif
 	lw a2, 0x0(a0)
 	or a2, a1
-
-/*100M phy*/
-#ifdef LS1ASOC
-	ori a2, 0xf00
-#elif LS1BSOC
-	ori a2, 0xf
-#endif
-
-#ifndef CONFIG_PHY100M
-#ifdef LS1ASOC
-	xor a2, 0xf00
-#elif LS1BSOC
-	xor a2, 0xf
-#endif
-#endif
 	sw a2, 0x0(a0)
 
 /**************************************CACHE*****************************/

@@ -2152,17 +2152,41 @@ s32  synopGMAC_init_network_interface(char* xname,u64 synopGMACMappedAddr)
 
 #ifdef LS1ASOC
 	*((volatile unsigned int*)0xbfd00420) &= ~0x00800000;	/* 使能GMAC0 */
+	#ifdef CONFIG_GMAC0_100M
+	*((volatile unsigned int*)0xbfd00420) |= 0x500;		/* 配置成百兆模式 */
+	#else
+	*((volatile unsigned int*)0xbfd00420) &= ~0x500;		/* 否则配置成千兆模式 */
+	#endif
 	if (synopGMACMappedAddr == 0xbfe20000) {
 		*((volatile unsigned int*)0xbfd00420) &= ~0x01000000;	/* 使能GMAC1 */
+		#ifdef CONFIG_GMAC1_100M
+		*((volatile unsigned int*)0xbfd00420) |= 0xa00;		/* 配置成百兆模式 */
+		#else
+		*((volatile unsigned int*)0xbfd00420) &= ~0xa00;		/* 否则配置成千兆模式 */
+		#endif
+		#ifdef GMAC1_USE_UART01
+		*((volatile unsigned int*)0xbfd00420) |= 0xc0;
+		#else
+		*((volatile unsigned int*)0xbfd00420) &= ~0xc0;
+		#endif
 	}
 #elif LS1BSOC
 	/* 寄存器0xbfd00424有GMAC的使能开关 */
 	*((volatile unsigned int*)0xbfd00424) &= ~0x1000;	/* 使能GMAC0 */
-	
-	/* GMAC2初始化 使能GMAC2 和UART0复用，导致UART0不能使用 */
+	#ifdef CONFIG_GMAC0_100M
+	*((volatile unsigned int*)0xbfd00424) |= 0x5;		/* 配置成百兆模式 */
+	#else
+	*((volatile unsigned int*)0xbfd00424) &= ~0x5;	/* 否则配置成千兆模式 */
+	#endif
+	/* GMAC1初始化 使能GMAC1 和UART0复用，导致UART0不能使用 */
 	if (synopGMACMappedAddr == 0xbfe20000) {
 		*((volatile unsigned int*)0xbfd00420) |= 0x18;
 		*((volatile unsigned int*)0xbfd00424) &= ~0x2000;	/* 使能GMAC1 */
+		#ifdef CONFIG_GMAC1_100M
+		*((volatile unsigned int*)0xbfd00424) |= 0xa;		/* 配置成百兆模式 */
+		#else
+		*((volatile unsigned int*)0xbfd00424) &= ~0xa;	/* 否则配置成千兆模式 */
+		#endif
 	}
 #endif
 	

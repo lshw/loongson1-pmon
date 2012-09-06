@@ -151,6 +151,9 @@ pci*		at pcibr?
 #### Networking Devices
 syn0		at localbus0
 #syn1		at localbus0
+option		CONFIG_GMAC0_100M	#GMAC0的使能百兆网络 否则千兆网络
+option		CONFIG_GMAC1_100M	#GMAC1的使能百兆网络 否则千兆网络
+#option		GMAC1_USE_UART01
 option		GMAC_PHY_BASE=1
 option		GMAC0_ADDR=0xbfe10000
 option		GMAC1_ADDR=0xbfe20000
@@ -232,7 +235,6 @@ select		ide
 option		wait_key
 #option		HAVE_MUT_COM		#多串口输入/输出,把控制台信息同时输入/输出到多个串口
 option		CONFIG_DDR16BIT		#使能16bit内存接口模式 否则32bit内存接口模式
-option		CONFIG_PHY100M		#使能百兆网络 否则千兆网络
 #option		BUZZER				#蜂鸣器
 #option		FAST_STARTUP		#快速启动
 #option		CONFIG_CHINESE
