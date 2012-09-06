@@ -65,7 +65,7 @@ extern char           *heaptop;
 #endif
 //#define COM1_BASE_ADDR	0xbfe48000		//1B uart8 主串口
 #define COM2_BASE_ADDR	0xbfd003f8
-#define COM3_BASE_ADDR	0xbfe40000		//1B uart0
+#define COM3_BASE_ADDR	0xbfe48000		//1B uart0
 //#define COM3_BASE_ADDR	0xbfe4c000		//1B uart9
 //#define COM3_BASE_ADDR	0xbfe6c000		//1B uart10
 

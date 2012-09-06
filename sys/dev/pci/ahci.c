@@ -84,6 +84,11 @@
 #include "ahci.h"
 #include "ahcisata.h"
 
+#define	AHCI_CLOCK_25MHZ	0x34682650
+#define	AHCI_CLOCK_50MHZ	0x30682650
+#define	AHCI_CLOCK_100MHZ	0x38682650
+#define	AHCI_CLOCK_125MHZ	0x38502650
+
 struct ahci_probe_ent *probe_ent = NULL;
 
 /* to get some global routines like printf */
@@ -191,7 +196,8 @@ static void lahci_attach(struct device * parent, struct device * self, void *aux
 
  /*ls1a adjust sata phy clock added by menghaibo*/
         *(volatile int *)0xbfd00424 |= 0x80000000;
-        *(volatile int *)0xbfd00418  = 0x38682650;
+//        *(volatile int *)0xbfd00418  = 0x38682650;
+        *(volatile int *)0xbfd00418  = AHCI_CLOCK_125MHZ;
         *(volatile int *)0xbfe30000 &= 0x0;
 		
 	regbase = (bus_space_handle_t)cf->ca_baseaddr;;

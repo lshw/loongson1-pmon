@@ -243,7 +243,7 @@ select		tcp
 select		inet
 
 option		wait_key
-#option		HAVE_MUT_COM		#多串口输入/输出,把控制台信息同时输入/输出到多个串口
+option		HAVE_MUT_COM		#多串口输入/输出,把控制台信息同时输入/输出到多个串口
 #option		CONFIG_DDR16BIT		#使能16bit内存接口模式 否则32bit内存接口模式
 #option		BUZZER				#蜂鸣器
 #option		FAST_STARTUP		#快速启动
