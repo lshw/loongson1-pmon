@@ -350,7 +350,11 @@ int init_kbd(void)
 int psaux_init(void);
 extern int video_hw_init (void);
 
+#ifdef PCI_ENABLE
+int have_pci=1;
+#else
 int have_pci=0;		//sw
+#endif
 extern int fb_init(unsigned long,unsigned long);
 extern int dc_init(void);
 

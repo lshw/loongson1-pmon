@@ -450,9 +450,9 @@ cpu_win_fixup:
 	//
 	// NOTE: the address windows has priority, win0 > win1 > ... > win7
 	set_cpu_window(0, 0x1fc00000, 0xfff00000, 0x1fc000f3) // boot rom
-	set_cpu_window(1, 0x10000000, 0xf8000000, 0x10000001) // PCI mem0, mem1,    disabled
-	set_cpu_window(2, 0x18000000, 0xfc000000, 0x18000001) // PCI mem2           disabled
-	set_cpu_window(3, 0x1c000000, 0xffe00000, 0x1c000001) // PCI cfg/IO/header  disabled
+	set_cpu_window(1, 0x10000000, 0xf8000000, 0x100000b1) // PCI mem0, mem1,    disabled
+	set_cpu_window(2, 0x18000000, 0xfc000000, 0x180000b1) // PCI mem2           disabled
+	set_cpu_window(3, 0x1c000000, 0xffe00000, 0x1c0000b1) // PCI cfg/IO/header  disabled
 	set_cpu_window(4, 0x1c200000, 0xffe00000, 0x1c2000d2) // gpu 1c2 /dc 1c3
 	set_cpu_window(5, 0x1f000000, 0xff000000, 0x1f0000d3) // AXIMUX
 	set_cpu_window(6, 0x40000000, 0xc0000000, 0x000000f0) // DDR 1GB
