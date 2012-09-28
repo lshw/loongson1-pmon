@@ -34,7 +34,6 @@
 #include <sys/param.h>
 #include <sys/device.h>
 #include <sys/systm.h>
-
 #include <sys/malloc.h>
 
 #include <dev/pci/pcivar.h>
@@ -47,19 +46,19 @@
 
 #include <pmon.h>
 
-#define FCR_CFG_BASE			0x1c100000	
+#define FCR_CFG_BASE		0x1c100000	
 #define FCR_PCI_IO_BASE		0x1c000000
-#define FCR_PCI_MEM_BASE		0x10000000
-#define PCIB_HEADER_BASE 0x1c180000
-#define PCIB_CONTROL_BASE 0x1fd01100
+#define FCR_PCI_MEM_BASE	0x10000000
+#define PCIB_HEADER_BASE	0x1c180000
+#define PCIB_CONTROL_BASE	0x1fd01100
 
-#define PCI_OXARB_CONFIG *(volatile int *)PHYS_TO_UNCACHED(0x1fd0110c)
-#define PCI_OXARB_STATUS *(volatile int *)PHYS_TO_UNCACHED(0x1fd01100)
-#define PCIMAP *(volatile int *)PHYS_TO_UNCACHED(0x1fd01114)
-#define PCIMAP_CFG *(volatile int *)PHYS_TO_UNCACHED(0x1fd01120)
+#define PCI_OXARB_CONFIG	*(volatile int *)PHYS_TO_UNCACHED(0x1fd0110c)
+#define PCI_OXARB_STATUS	*(volatile int *)PHYS_TO_UNCACHED(0x1fd01100)
+#define PCIMAP				*(volatile int *)PHYS_TO_UNCACHED(0x1fd01114)
+#define PCIMAP_CFG			*(volatile int *)PHYS_TO_UNCACHED(0x1fd01120)
 
 #define BONITO_PCICMD		*((unsigned long *)(0xbc100000+0x4))
-#define PCIB_HEADER(x) *(volatile int *)PHYS_TO_UNCACHED(PCIB_HEADER_BASE+x)
+#define PCIB_HEADER(x)		*(volatile int *)PHYS_TO_UNCACHED(PCIB_HEADER_BASE+x)
 
 
 extern void *pmalloc __P((size_t ));
@@ -114,20 +113,16 @@ _pci_hwinit(initialise, iot, memt)
 	pd->pa.pa_flags = PCI_FLAGS_IO_ENABLED | PCI_FLAGS_MEM_ENABLED;
 	pd->pa.pa_iot = pmalloc(sizeof(bus_space_tag_t));
 	pd->pa.pa_iot->bus_reverse = 1;
-//	pd->pa.pa_iot->bus_base = 0xbfd00000;
-//sw
 	pd->pa.pa_iot->bus_base = 0xbc000000;
-//	printf("pd->pa.pa_iot=%p,bus_base=0x%x\n",pd->pa.pa_iot,pd->pa.pa_iot->bus_base);
 	pd->pa.pa_memt = pmalloc(sizeof(bus_space_tag_t));
 	pd->pa.pa_memt->bus_reverse = 1;
+	pd->pa.pa_memt->bus_base = 0xb0000000;
 	pd->pa.pa_dmat = &bus_dmamap_tag;
 	pd->bridge.secbus = pb;
 	_pci_head = pd;
 
 	pb->minpcimemaddr  = FCR_PCI_MEM_BASE+0x04000000;
-	pb->nextpcimemaddr = 0x17000000; 
-//	pd->pa.pa_memt->bus_base = 0xa0000000;		??
-	pd->pa.pa_memt->bus_base = 0xb0000000;
+	pb->nextpcimemaddr = 0x17000000;
 	pb->minpciioaddr  = 0x0004000;
 	pb->nextpciioaddr = 0x100000;
 	pb->pci_mem_base   = 0xb0000000;
@@ -140,29 +135,23 @@ _pci_hwinit(initialise, iot, memt)
 	_pci_bushead = pb;
 	_pci_bus[_max_pci_bus++] = pd;
 
-	
 	bus_dmamap_tag._dmamap_offs = 0;
 
-
-	pci_local_mem_pci_base = 0x80000000;
-
-//sw: code form 2f	
-/*set pci base0 address and window size*/
-//	printf("\n\n==1150: %x 1154: %x\n\n\n",	*(volatile unsigned long*)(0xbfd00000+0x1150),*(volatile unsigned long*)(0xbfd00000+0x1154));
-//	printf("==win base: %x  win mmap: %x\n",*(unsigned long *)(0xbfd00120),*(unsigned long *)(0xbfd001a0));
+	pci_local_mem_pci_base = 0x00000000;
+//	pci_local_mem_pci_base = PCI_LOCAL_MEM_PCI_BASE;
 
 	/*setup  pci base bar,enable io and mem*/
 	PCIB_HEADER(0x24) = 0;
-	PCIB_HEADER(0x20) = 0x80000000;
+	PCIB_HEADER(0x20) = 0x00000000;
+//	PCIB_HEADER(0x20) = PCI_LOCAL_MEM_PCI_BASE;
 	PCIB_HEADER(4) = 0x7;
 	PCIMAP_CFG = 0x1; //?
 	PCI_OXARB_CONFIG  = 0x1;
 	/*setup pci window*/
 	PCIMAP = 0x6144;
 
-	printf("\n\n==1150: %x 1154: %x\n\n\n",	*(volatile unsigned long*)(0xbfd00000+0x1150),*(volatile unsigned long*)(0xbfd00000+0x1154));
-	printf("==win base: %x  win mmap: %x\n",*(unsigned long *)(0xbfd00120),*(unsigned long *)(0xbfd001a0));
-
+//	printf("\n\n==1150: %x 1154: %x\n\n\n",	*(volatile unsigned long*)(0xbfd00000+0x1150),*(volatile unsigned long*)(0xbfd00000+0x1154));
+//	printf("==win base: %x  win mmap: %x\n",*(unsigned long *)(0xbfd00120),*(unsigned long *)(0xbfd001a0));
 
 	return(1);
 }

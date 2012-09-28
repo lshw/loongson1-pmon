@@ -139,6 +139,7 @@ loopdev0	at mainbus0
 # PCI
 #
 #option		PCI_ENABLE
+#option		X86_LIKE_SPACE				# make pci addr == cpu addr
 pcibr*		at mainbus0
 #pcibr1		at mainbus0
 pci*		at pcibr?
