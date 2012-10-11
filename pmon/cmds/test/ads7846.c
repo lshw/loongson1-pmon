@@ -110,7 +110,6 @@ int ads7846_pendown_state(void)
 	unsigned int ret;
 	ret = KSEG1_LOAD32(REG_GPIO_IN1); //读回的数值是反码？
 	ret = ((ret >> (GPIO_IRQ & 0x1f)) & 0x01);
-//	printk("ret = %x \n", !ret);
 	return !ret;
 }
 
@@ -125,8 +124,7 @@ void ads7846_detect_penirq(void)
 	ret = KSEG1_LOAD32(REG_GPIO_OE1);//GPIO0 设置GPIO输入使能
 	ret |= (1 << (GPIO_IRQ & 0x1f));
 	KSEG1_STORE32(REG_GPIO_OE1, ret);
-	(sb2f_board_hw0_icregs + 3) -> int_edge	&= ~(1 << (GPIO_IRQ & 0x1f));
-//	(sb2f_board_hw0_icregs + 3) -> int_edge	|= (1 << (GPIO_IRQ & 0x1f));
+	(sb2f_board_hw0_icregs + 3) -> int_edge		&= ~(1 << (GPIO_IRQ & 0x1f));
 	(sb2f_board_hw0_icregs + 3) -> int_pol		&= ~(1 << (GPIO_IRQ & 0x1f));
 	(sb2f_board_hw0_icregs + 3) -> int_clr		|= (1 << (GPIO_IRQ & 0x1f));
 	(sb2f_board_hw0_icregs + 3) -> int_set		&= ~(1 << (GPIO_IRQ & 0x1f));
@@ -153,11 +151,9 @@ static int ads7846_debounce(struct ads7846 *ads, int data_idx, int *val)
 		ts->read_rep = 0;
 		/* Repeat it, if this was the first read or the read
 		 * wasn't consistent enough. */
-//		 printf("+\n");
 		if (ts->read_cnt < ts->debounce_max) {
 			ts->last_read = *val;
 			ts->read_cnt++;
-//			 printf("++\n");
 			return ADS7846_FILTER_REPEAT;
 		} else {
 			/* Maximum number of debouncing reached and still
@@ -166,7 +162,6 @@ static int ads7846_debounce(struct ads7846 *ads, int data_idx, int *val)
 			 * period.
 			 */
 			ts->read_cnt = 0;
-//			 printf("+++\n");
 			return ADS7846_FILTER_IGNORE;
 		}
 	} else {
@@ -175,12 +170,10 @@ static int ads7846_debounce(struct ads7846 *ads, int data_idx, int *val)
 			 * go for the next one. */
 			ts->read_cnt = 0;
 			ts->read_rep = 0;
-//			 printf("++++\n");
 			return ADS7846_FILTER_OK;
 		} else {
 			/* Read more values that are consistent. */
 			ts->read_cnt++;
-//			 printf("+++++\n");
 			return ADS7846_FILTER_REPEAT;
 		}
 	}
@@ -221,31 +214,26 @@ void ads7846_test(void)
 	
 	while(1){
 		while(ads7846_pendown_state() && cont){
-	//		if (y_ok)
-	//			goto x_read;
 			SET_SPI(TXFIFO, READ_Y(0));
 			while(((GET_SPI(SPSR)) & RFEMPTY) == RFEMPTY);
 			GET_SPI(RXFIFO);
-	
+			delay(100);	//需要适当的延时
 			SET_SPI(TXFIFO,0x00);
 			while((GET_SPI(SPSR)) & RFEMPTY);
 			y = GET_SPI(RXFIFO);
-	//		printf("%x  ", y);
-	
+			delay(100);	//需要适当的延时
 			SET_SPI(TXFIFO,0x00);
 			while((GET_SPI(SPSR)) & RFEMPTY);
 			y = (y << 4) | (GET_SPI(RXFIFO) >> 4);
-	//		printf("y = %x  ", y);
 	
 			SET_SPI(TXFIFO, READ_X(0));
 			while(((GET_SPI(SPSR)) & RFEMPTY) == RFEMPTY);
 			GET_SPI(RXFIFO);
-	
+			delay(20);	//需要适当的延时
 			SET_SPI(TXFIFO,0x00);
 			while((GET_SPI(SPSR)) & RFEMPTY);
 			x = GET_SPI(RXFIFO);
-	//		printf("%x  ", x);
-	
+			delay(20);	//需要适当的延时
 			SET_SPI(TXFIFO,0x00);
 			while((GET_SPI(SPSR)) & RFEMPTY);
 			x = (x << 4) | (GET_SPI(RXFIFO) >> 4);
@@ -256,17 +244,16 @@ void ads7846_test(void)
 			SET_SPI(TXFIFO, PWRDOWN);
 			while(((GET_SPI(SPSR)) & RFEMPTY) == RFEMPTY);
 			GET_SPI(RXFIFO);
-	
+			delay(20);	//需要适当的延时
 			SET_SPI(TXFIFO,0x00);
 			while((GET_SPI(SPSR)) & RFEMPTY);
 			val = GET_SPI(RXFIFO);
-	//		printf("%x  ", val);
-	
+			delay(20);	//需要适当的延时
 			SET_SPI(TXFIFO,0x00);
 			while((GET_SPI(SPSR)) & RFEMPTY);
 			val = (val << 4) | (GET_SPI(RXFIFO) >> 4);
-	//		printf("val = %x\n", val);
 			cont--;
+			delay(20);	//需要适当的延时
 		}
 		if (cont == 0){
 			printf("y = %x   x = %x  \n", y, x);
