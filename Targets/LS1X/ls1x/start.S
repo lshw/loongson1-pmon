@@ -355,7 +355,8 @@ locate:
 	/* 启动时默认关闭USB GMAC0 GMAC1 */
 	li a0,0xbfd00000
 	lw a2,0x424(a0);
-	ori a2,0x3800
+//	ori a2,0x3800
+	ori a2,0x0800
 	sw a2,0x424(a0);
 #endif
 
@@ -459,6 +460,15 @@ cpu_win_fixup:
 	set_cpu_window(7, 0x00000000, 0x00000000, 0x000000f0) // everything else
 	// after this fixup, the kernel code should be compiled with
 	// uncached instruction fetch patch
+/*	set_cpu_window(0, 0x1c300000, 0xfff00000, 0x1c3000f2) // dc       1M
+	set_cpu_window(1, 0x1fe10000, 0xffffe000, 0x1fe100f3) // gmac0	8K
+	set_cpu_window(2, 0x1fe20000, 0xffffe000, 0x1fe200f3) // gmac1	8K
+	set_cpu_window(3, 0x1fe10000, 0xffff0000, 0x1fe100f0) // gmac0	64K
+	set_cpu_window(4, 0x1fe20000, 0xffff0000, 0x1fe200f0) // gmac1	64K
+	set_cpu_window(5, 0x1ff00000, 0xfff00000, 0x1ff000f0) // reserved 1M
+	set_cpu_window(6, 0x1f000000, 0xff000000, 0x1f0000f3) // AXIMUX   16M
+	set_cpu_window(7, 0x00000000, 0x00000000, 0x000000f0) // ddr 0
+*/
 #endif 
 
 	/*
