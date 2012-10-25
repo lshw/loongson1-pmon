@@ -438,7 +438,7 @@ get_pin_val_finish:
         sw      t1, 0x80+id*8(t0)         ;  \
         sw      $0, 0x84+id*8(t0)
 
-#if 1 /* fixup cpu window */
+/* fixup cpu window */
 cpu_win_fixup:
 	//
 	// hit         = (paddr & mask) == (mmap & mask)
@@ -450,6 +450,7 @@ cpu_win_fixup:
 	// mmap[1:0] -> destination
 	//
 	// NOTE: the address windows has priority, win0 > win1 > ... > win7
+#ifdef LS1ASOC
 	set_cpu_window(0, 0x1fc00000, 0xfff00000, 0x1fc000f3) // boot rom
 	set_cpu_window(1, 0x10000000, 0xf8000000, 0x100000b1) // PCI mem0, mem1,    disabled
 	set_cpu_window(2, 0x18000000, 0xfc000000, 0x180000b1) // PCI mem2           disabled
@@ -458,18 +459,18 @@ cpu_win_fixup:
 	set_cpu_window(5, 0x1f000000, 0xff000000, 0x1f0000d3) // AXIMUX
 	set_cpu_window(6, 0x40000000, 0xc0000000, 0x000000f0) // DDR 1GB
 	set_cpu_window(7, 0x00000000, 0x00000000, 0x000000f0) // everything else
+#elif LS1BSOC
+	set_cpu_window(0, 0x1c300000, 0xfff00000, 0x1c300092) // dc       1M
+	set_cpu_window(1, 0x1fe10000, 0xffffe000, 0x1fe10083) // gmac0	8K
+	set_cpu_window(2, 0x1fe20000, 0xffffe000, 0x1fe20083) // gmac1	8K
+	set_cpu_window(3, 0x1fe10000, 0xffff0000, 0x1fe10080) // gmac0	64K
+	set_cpu_window(4, 0x1fe20000, 0xffff0000, 0x1fe20080) // gmac1	64K
+	set_cpu_window(5, 0x1ff00000, 0xfff00000, 0x1ff00080) // reserved 1M
+	set_cpu_window(6, 0x1f000000, 0xff000000, 0x1f000093) // AXIMUX   16M
+	set_cpu_window(7, 0x00000000, 0x00000000, 0x000000b0) // ddr 0
+#endif
 	// after this fixup, the kernel code should be compiled with
 	// uncached instruction fetch patch
-/*	set_cpu_window(0, 0x1c300000, 0xfff00000, 0x1c3000f2) // dc       1M
-	set_cpu_window(1, 0x1fe10000, 0xffffe000, 0x1fe100f3) // gmac0	8K
-	set_cpu_window(2, 0x1fe20000, 0xffffe000, 0x1fe200f3) // gmac1	8K
-	set_cpu_window(3, 0x1fe10000, 0xffff0000, 0x1fe100f0) // gmac0	64K
-	set_cpu_window(4, 0x1fe20000, 0xffff0000, 0x1fe200f0) // gmac1	64K
-	set_cpu_window(5, 0x1ff00000, 0xfff00000, 0x1ff000f0) // reserved 1M
-	set_cpu_window(6, 0x1f000000, 0xff000000, 0x1f0000f3) // AXIMUX   16M
-	set_cpu_window(7, 0x00000000, 0x00000000, 0x000000f0) // ddr 0
-*/
-#endif 
 
 	/*
 	 * set *_ssel and *_tsel
