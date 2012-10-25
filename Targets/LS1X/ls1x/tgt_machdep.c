@@ -163,7 +163,7 @@ void movinv1(int iter, ulong p1, ulong p2);
 
 
 //#define	HPET
-void hpet_test(void)
+void hpet_test_1(void)
 {
 	hpet_init();
 

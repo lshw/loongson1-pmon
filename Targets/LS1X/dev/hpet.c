@@ -1,5 +1,11 @@
 #include <target/iorw.h>
 #include <stdio.h>
+#include <pmon.h>
+#include <cpu.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+#include <linux/types.h>
 
 
 #define	GS232_HPET_BASE	0xbfe6c000
@@ -22,7 +28,7 @@ void hpet_init(void)
 {
 	writel(0x0,MCOUNT);
 	
-	writel(0x1fffffff,T0_CMP);
+	writel(0x1ffffff,T0_CMP);
 	writel(0x2fffffff,T1_CMP);
 	writel(0x3fffffff,T2_CMP);
 
@@ -59,14 +65,31 @@ void get_hpet_sts(void)
 
 	printf("===hpet int sts: %x\n",readl(GINTS));
 	printf("===hpet MCOUNT: %x\n",tmp);
-	
-	
 }
 
+void hpet_test(void)
+{
+	hpet_init();
 
+	while(1)
+		get_hpet_sts();
+	while(!check_intr())
+		;
+//	hpet_intr();
 
+}
 
+static const Cmd Cmds[] =
+{
+	{"MyCmds"},
+	{"hpet_test","",0,"hpet_test",hpet_test,0,99,CMD_REPEAT},
+	{0, 0}
+};
 
+static void init_cmd __P((void)) __attribute__ ((constructor));
 
-
-
+static void
+init_cmd()
+{
+	cmdlist_expand(Cmds, 1);
+}

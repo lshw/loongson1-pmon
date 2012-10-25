@@ -558,11 +558,11 @@ acpi_begin:
 
 /* Access ACPI controller to check out if the machine is resuming from suspend 
    	   Zeng Lu <zenglu@loongson.cn> */
-#	li	t0,	0xbfe7c000
-#	lw	t1,(t0)
-#	and t1,t1,	(1<<15)//WAK_STS
-#	beqz t1,acpi_end
-#	nop
+	li	t0,	0xbfe7c000
+	lw	t1,(t0)
+	and t1,t1,	(1<<15)//WAK_STS
+	beqz t1,acpi_end
+	nop
 	/*clear wakeup events */
 	li	t0, 0xbfe7c000
 	li	t1, -1
@@ -580,7 +580,7 @@ acpi_begin:
 
 	srl	t1,	10
 	and	t1,	t1,	7//SLP_TYP
-	sub	t1,	t1,	5
+	sub	t1,	t1,	5	
 	bnez	t1,	acpi_end	/* Resuming from suspend */
 	nop
 
