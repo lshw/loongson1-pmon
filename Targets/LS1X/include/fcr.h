@@ -63,39 +63,21 @@ extern char           *heaptop;
 #else
 #define COM1_BASE_ADDR	UART_BASE_ADDR
 #endif
-//#define COM1_BASE_ADDR	0xbfe48000		//1B uart8 主串口
 #define COM2_BASE_ADDR	0xbfd003f8
 #define COM3_BASE_ADDR	0xbfe48000		//1B uart0
-//#define COM3_BASE_ADDR	0xbfe4c000		//1B uart9
-//#define COM3_BASE_ADDR	0xbfe6c000		//1B uart10
 
 #define	NS16550HZ	(APB_CLK/4)
 /*********************************************************************/
 /*nvram define                                                       */
 /*********************************************************************/
-#if 0
-
 #ifdef NVRAM_IN_FLASH
-#	define	NVRAM_SIZE		494
-#	define	NVRAM_SECSIZE		500
-#	define	NVRAM_OFFS		0x00070000
-#	define ETHER_OFFS		494 	/* Ethernet address base */
-#else	/* Use clock ram, 256 bytes only */
-#	define NVRAM_SIZE	        512	
-#	define NVRAM_SECSIZE		NVRAM_SIZE	/* Helper */
+#	define NVRAM_SECSIZE		512
+#	define NVRAM_SIZE		NVRAM_SECSIZE
 #	define NVRAM_OFFS		0
-#	define ETHER_OFFS		(NVRAM_SIZE-6) 	/* Ethernet address base */
-#endif
-
-#else
-
-#ifdef NVRAM_IN_FLASH
-#	define	NVRAM_SIZE		512
-#	define	NVRAM_SECSIZE		0x10000
-#	define	NVRAM_OFFS		0x00070000
-#	define	NVRAM_POS		NVRAM_OFFS
-#	define ETHER_OFFS		(NVRAM_SIZE-6) 	/* Ethernet address base */
-#	define PLL_OFFS			(ETHER_OFFS-10)
+#	define FLASH_OFFS		(tgt_flashmap()->fl_map_size - 0x1000)
+#	define NVRAM_POS		0x0007F000
+#	define ETHER_OFFS		(NVRAM_SECSIZE-6) 	/* Ethernet address base */
+#	define PLL_OFFS		(ETHER_OFFS-10)
 #	define XRES_OFFS		(PLL_OFFS-2)
 #	define YRES_OFFS		(PLL_OFFS-4)
 #	define DEPTH_OFFS		(PLL_OFFS+8)
@@ -113,7 +95,6 @@ extern char           *heaptop;
 #	define DEPTH_OFFS		(PLL_OFFS+8)
 #endif
 
-#endif
 /*********************************************************************/
 /*PCI map	                                                     */
 /*********************************************************************/

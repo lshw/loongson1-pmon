@@ -807,7 +807,7 @@ void tgt_flashprogram(void *p, int size, void *s, int endian)
 	if(fl_program_device(p, s, size, TRUE)) {
 		printf("Programming failed!\n");
 	}
-//	fl_verify_device(p, s, size, TRUE);	//lxy: temporarily for disable this
+	fl_verify_device(p, s, size, TRUE);
 }
 #endif /* PFLASH */
 

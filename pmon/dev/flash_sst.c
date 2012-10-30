@@ -101,14 +101,6 @@ int stat;
 		outb((map->fl_map_base + SST_CMDOFFS2), 0x55);
 		outb((map->fl_map_base + offset), FL_SECT);
 		break;
-	case FL_BUS_16:
-		outw((map->fl_map_base + (SST_CMDOFFS1<< 1)), 0xAA);
-		outw((map->fl_map_base + (SST_CMDOFFS2<<1)), 0x55);
-		outw((map->fl_map_base + (SST_CMDOFFS1<<1)), FL_ERASE);
-		outw((map->fl_map_base + (SST_CMDOFFS1<<1)), 0xAA);
-		outw((map->fl_map_base + (SST_CMDOFFS2<<1)), 0x55);
-		outw(map->fl_map_base + offset, FL_SECT);
-		break;
 	case FL_BUS_64:
 		break;	/* Leave this for now */
 	case FL_BUS_8_ON_64:
@@ -140,12 +132,6 @@ fl_program_sst(map, dev, pa, pd)
 		outb((map->fl_map_base + SST_CMDOFFS2), 0x55);
 		outb((map->fl_map_base + SST_CMDOFFS1), 0xA0);
 		outb((map->fl_map_base + pa), *pd);
-		break;
-	case FL_BUS_16:
-		outw((map->fl_map_base + (SST_CMDOFFS1 << 1)), 0xaa);
-		outw((map->fl_map_base + (SST_CMDOFFS2 << 1)), 0x55);
-		outw((map->fl_map_base + (SST_CMDOFFS1 << 1)), 0xa0);
-		outw(map->fl_map_base + pa, ((int)pd[1]<<8)|pd[0]);
 		break;
 	case FL_BUS_8_ON_64:
 		SETWIDE(0xaa);
@@ -182,14 +168,6 @@ fl_erase_chip_sst(map, dev)
 		outb((map->fl_map_base + SST_CMDOFFS2), 0x55);
 		outb((map->fl_map_base + SST_CMDOFFS1), FL_ERASE_CHIP);
 		break;
-	case FL_BUS_16:
-		outw((map->fl_map_base + (SST_CMDOFFS1<<1)), 0xaa);
-		outw((map->fl_map_base + (SST_CMDOFFS2<<1)), 0x55);
-		outw((map->fl_map_base + (SST_CMDOFFS1<<1)), FL_ERASE);
-		outw((map->fl_map_base + (SST_CMDOFFS1<<1)), 0xaa);
-		outw((map->fl_map_base + (SST_CMDOFFS2<<1)), 0x55);
-		outw((map->fl_map_base + (SST_CMDOFFS1<<1)), FL_ERASE_CHIP);
-		break;
 	case FL_BUS_64:
 		break;	/* Leave this for now */
 	case FL_BUS_8_ON_64:
@@ -212,7 +190,6 @@ fl_reset_sst(map, dev)
 {
 	switch(map->fl_map_bus) {
 	case FL_BUS_8:
-	case FL_BUS_16:
 		outb((map->fl_map_base), FL_RESET);
 		break;
 	case FL_BUS_8_ON_64:
@@ -244,7 +221,6 @@ fl_isbusy_sst(map, dev, what, offset, erase)
 		offset = offset << 3;
 		/* Fallthrough */
 	case FL_BUS_8:
-	case FL_BUS_16:
 		/* Data polling 
 		 *  algorithm is in Figure 6
 		 */
@@ -285,3 +261,144 @@ fl_erase_suspend_sst(map, dev)
 	return(0);
 }
 
+/*
+ *  Function to Disable the LPC write protection of SST49LF040B/Disable the FIRMWARE HUB write protection of SST49LF008A
+ *  For Loongson3 by wanghuandong(AdonWang, whd)
+ */
+
+	int
+fl_write_protect_unlock(map, dev, offset)
+	struct fl_map *map;
+	struct fl_device *dev;
+	int offset;
+{
+	unsigned int trans_unlock_value;
+	unsigned int value;
+
+	if (!((((dev->fl_mfg & 0xff) == 0xbf) && ((dev->fl_id & 0xff) == 0x50))   //NOT SST49LF040B
+				||(((dev->fl_mfg & 0xff) == 0xbf) && ((dev->fl_id & 0xff) == 0x5a)))) /* NOT SST49LF008A */
+		return(0);
+
+	if (((dev->fl_mfg & 0xff) == 0xbf) && ((dev->fl_id & 0xff) == 0x50)) /* SST49LF040B */
+	{
+		printf("Disable all space write protection of 49LF040B. \r\n");
+		/* Open translation of 0xbc000000 - 0xbd00000 */
+		trans_unlock_value = inl(0xbff10200);
+		outl(0xbff10200, (0x00ff0000 | trans_unlock_value));
+
+		/* Disable all space write protection */
+		outb(0xbdbf0002, 0x0);
+		outb(0xbdbe0002, 0x0);
+		outb(0xbdbd0002, 0x0);
+		outb(0xbdbc0002, 0x0);
+		outb(0xbdbb0002, 0x0);
+		outb(0xbdba0002, 0x0);
+		outb(0xbdb90002, 0x0);
+		outb(0xbdb80002, 0x0);
+
+		outl(0xbff10200, trans_unlock_value);
+	}
+	else if (((dev->fl_mfg & 0xff) == 0xbf) && ((dev->fl_id & 0xff) == 0x5a))   /* SST49LF008A */
+	{
+		printf("Disable all space write protection of 49LF008A. \r\n");
+		/* Open translation of 0xbc000000 - 0xbd00000 */
+		trans_unlock_value = inl(0xbff10200);
+		outl(0xbff10200, (0x00870000 | trans_unlock_value));
+		/* Enable firmware memory access */
+		value = inl(0xbff10204);
+		value |= 1 << 31;
+		outl(0xbff10204, value);
+
+		/* Disable all space write protection */
+		outb(0xbdbf0002, 0x0);
+		outb(0xbdbe0002, 0x0);
+		outb(0xbdbd0002, 0x0);
+		outb(0xbdbc0002, 0x0);
+		outb(0xbdbb0002, 0x0);
+		outb(0xbdba0002, 0x0);
+		outb(0xbdb90002, 0x0);
+		outb(0xbdb80002, 0x0);
+		outb(0xbdb70002, 0x0);
+		outb(0xbdb60002, 0x0);
+		outb(0xbdb50002, 0x0);
+		outb(0xbdb40002, 0x0);
+		outb(0xbdb30002, 0x0);
+		outb(0xbdb20002, 0x0);
+		outb(0xbdb10002, 0x0);
+		outb(0xbdb00002, 0x0);
+
+		outl(0xbff10200, trans_unlock_value);
+	}
+	return(1);
+}
+
+/*
+ *  Function to enable the LPC write protection of SST49LF040B/enable the FIRMWARE HUB write protection of SST49LF008A
+ *  For Loongson3 by wanghuandong(AdonWang, whd)
+ */
+
+	int
+fl_write_protect_lock(map, dev, offset)
+	struct fl_map *map;
+	struct fl_device *dev;
+	int offset;
+{
+	unsigned int trans_unlock_value;
+	unsigned int value;
+
+	if (!((((dev->fl_mfg & 0xff) == 0xbf) && ((dev->fl_id & 0xff) == 0x50))   /* NOT SST49LF040B */
+				||(((dev->fl_mfg & 0xff) == 0xbf) && ((dev->fl_id & 0xff) == 0x5a)))) /* NOT SST49LF008A */
+		return(0);
+
+	if (((dev->fl_mfg & 0xff) == 0xbf) && ((dev->fl_id & 0xff) == 0x50)) /* SST49LF040B */
+	{
+		printf("Enable all space write protection of 49LF040B. \r\n");
+		/* Open translation of 0xbc000000 - 0xbd00000 */
+		trans_unlock_value = inl(0xbff10200);
+		outl(0xbff10200, (0x00ff0000 | trans_unlock_value));
+
+		/* Enable all space write protection */
+		outb(0xbdbf0002, 0x1);
+		outb(0xbdbe0002, 0x1);
+		outb(0xbdbd0002, 0x1);
+		outb(0xbdbc0002, 0x1);
+		outb(0xbdbb0002, 0x1);
+		outb(0xbdba0002, 0x1);
+		outb(0xbdb90002, 0x1);
+		outb(0xbdb80002, 0x1);
+
+		outl(0xbff10200, trans_unlock_value);
+	}
+	else if (((dev->fl_mfg & 0xff) == 0xbf) && ((dev->fl_id & 0xff) == 0x5a))   /* SST49LF008A */
+	{
+		printf("Enable all space write protection of 49LF008A. \r\n");
+		/* Open translation of 0xbc000000 - 0xbd00000 */
+		trans_unlock_value = inl(0xbff10200);
+		outl(0xbff10200, (0x00870000 | trans_unlock_value));
+		/* Enable firmware memory access */
+		value = inl(0xbff10204);
+		value |= 1 << 31;
+		outl(0xbff10204, value);
+
+		/* Enable all space write protection */
+		outb(0xbdbf0002, 0x1);
+		outb(0xbdbe0002, 0x1);
+		outb(0xbdbd0002, 0x1);
+		outb(0xbdbc0002, 0x1);
+		outb(0xbdbb0002, 0x1);
+		outb(0xbdba0002, 0x1);
+		outb(0xbdb90002, 0x1);
+		outb(0xbdb80002, 0x1);
+		outb(0xbdb70002, 0x1);
+		outb(0xbdb60002, 0x1);
+		outb(0xbdb50002, 0x1);
+		outb(0xbdb40002, 0x1);
+		outb(0xbdb30002, 0x1);
+		outb(0xbdb20002, 0x1);
+		outb(0xbdb10002, 0x1);
+		outb(0xbdb00002, 0x1);
+
+		outl(0xbff10200, trans_unlock_value);
+	}
+	return(1);
+}

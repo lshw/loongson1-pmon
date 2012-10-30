@@ -148,6 +148,14 @@ struct fl_device fl_known_dev[] = {
       2048*__KB, 4*__KB,  NULL, &fl_func_sst },   //hwm
 	{ "SST39SF040",	0x0bf, 0xb7, FL_PROTO_SST, FL_CAP_DE,
 	512*__KB, 4*__KB,  NULL, &fl_func_sst }, /*sector size must be correct*/
+	{ "SST49LF040",	0xbf, 0x51, FL_PROTO_SST, FL_CAP_DE,
+	512*__KB, 4*__KB,  NULL, &fl_func_sst },//whd
+	{ "SST49LF040B",	0xbf, 0x50, FL_PROTO_SST, FL_CAP_DE,
+	512*__KB, 4*__KB,  NULL, &fl_func_sst },//whd
+	{ "SST49LF080A",	0xbf, 0x5b, FL_PROTO_SST, FL_CAP_DE,
+	1024*__KB, 4*__KB,  NULL, &fl_func_sst },//whd
+	{ "SST49LF008A",	0xbf, 0x5a, FL_PROTO_SST, FL_CAP_DE,
+	1024*__KB, 4*__KB,  NULL, &fl_func_sst },
 	{ "Am29LV017",	0x01, 0xc8, FL_PROTO_SST, FL_CAP_DE,
 	2048*__KB, 64*__KB,  NULL, &fl_func_sst },
 	{ "Am29LV065",	0x01, 0xc8, FL_PROTO_SST, FL_CAP_DE,
