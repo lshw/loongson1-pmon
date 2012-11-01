@@ -852,6 +852,9 @@ struct fl_device *fl_devident(void *base, struct fl_map **m)
 {
 	struct fl_device *dev;
 
+	if(m)
+		*m = fl_find_map(base);
+
 	if (init_id == 0) {
 		nor_dev = NULL;
 		read_jedecid(flash_id);
