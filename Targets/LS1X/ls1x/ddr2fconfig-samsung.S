@@ -57,7 +57,11 @@ ddr2_reg_data:
 DDR2_CTL_00_DATA_LO: .word 0x00000101
 DDR2_CTL_00_DATA_HI: .word 0x01000100 #no_concurrentap
 DDR2_CTL_01_DATA_LO: .word 0x00000000
+#ifdef EIGHT_BANK_MODE
+DDR2_CTL_01_DATA_HI: .word 0x01000001 //内存颗粒有8bank和4bank的区分，请认真看清使用的内存颗粒的bank数
+#else
 DDR2_CTL_01_DATA_HI: .word 0x01000000
+#endif
 DDR2_CTL_02_DATA_LO: .word 0x00000000
 DDR2_CTL_02_DATA_HI: .word 0x01000101
 DDR2_CTL_03_DATA_LO: .word 0x01000100

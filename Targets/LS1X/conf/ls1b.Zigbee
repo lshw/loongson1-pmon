@@ -83,7 +83,11 @@ option 		DDR_MULT=5
 option		CONS_BAUD=B115200
 option		UART_BASE_ADDR=0xbfe4c000	#串口控制台基地址 需要不同的串口输出可以修改此值
 
+#option		EIGHT_BANK_MODE		# 定义该位表示内存颗粒使用8bank，屏蔽该位表示内存颗粒使用4bank
+								# 内存颗粒有8bank和4bank的区分，请认真看清使用的内存颗粒的bank数，请认真参考内存手册
 option		MEM_SIZE=0x04000000	# 64M(16bit) 定义内存大小 注意32bit和16bit内存的区别 这里指总大小
+								# 请确保内存配置正确，内存工作不正常会导致系统莫名其妙的问题
+								# start.s文件中定义了引用那个内存配置，如#include "ddr2fconfig-samsung-CL3.S"
 
 select		ext2
 #select 	yaffsfs
