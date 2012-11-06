@@ -21,7 +21,8 @@ file	sys/dev/gmac/synopGMAC_network_interface.c  gmac
 file	sys/dev/gmac/synopGMAC_plat.c               gmac
 file	sys/dev/gmac/if_gmac.c gmac
 
-file	Targets/LS1X/dev/can.c
+#file	Targets/LS1X/dev/can.c
+#LS1A使用LPC Flash 需要把spi flash禁用
 file    Targets/LS1X/dev/spi_w.c
 file    sys/dev/nand/ls1g-nand.c  nand needs-flag
 file	Targets/LS1X/dev/nand_ops.c nand needs-flag

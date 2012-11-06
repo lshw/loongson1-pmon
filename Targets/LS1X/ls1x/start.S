@@ -268,6 +268,7 @@ locate:
 
 #ifdef LS1ASOC/* to adjust the DDR frequency */
 	li v0, 0xbfc00000+(NVRAM_POS+PLL_OFFS)
+//	li v0, 0xbfc80000+(NVRAM_POS+PLL_OFFS)	/* 注意：1A LPC Flash启动地址映射为0xbfc80000 */
 	lw a1, (v0)
 
 	li v0, 0xffff0000

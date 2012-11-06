@@ -124,7 +124,8 @@ option		AUTOLOAD
 #option		CONFIG_PCI0_HUGE_MEM	
 #option		CONFIG_PCI0_GAINT_MEM	
 option		CONFIG_CACHE_64K_4WAY
-#option		NVRAM_IN_FLASH	
+#注意：1A LPC Flash启动地址映射为0xbfc80000
+#option		NVRAM_IN_FLASH	#LS1A使用LPC Flash 需要把该选项打开
 #option		FLASH_READ_ONLY
 
 #

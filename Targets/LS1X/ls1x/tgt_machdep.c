@@ -854,40 +854,40 @@ void tgt_mapenv(int (*func) __P((char *, char *)))
 	 */
 	printf("in envinit\n");
 #ifdef NVRAM_IN_FLASH
-    nvram = (char *)(tgt_flashmap())->fl_map_base;
-	printf("nvram=%08x\n",(unsigned int)nvram);
-	if(fl_devident(nvram, NULL) == 0 ||
+    nvram = (char *)(tgt_flashmap()->fl_map_base + FLASH_OFFS);
+	printf("nvram %x\n", nvram);
+	if(fl_devident((void *)(tgt_flashmap()->fl_map_base), NULL) == 0 ||
            cksum(nvram + NVRAM_OFFS, NVRAM_SIZE, 0) != 0) {
 #else
     nvram = (char *)malloc(NVRAM_SECSIZE);
 	nvram_get(nvram);
 	if(cksum(nvram, NVRAM_SIZE, 0) != 0) {
 #endif
-		        printf("NVRAM is invalid!\n");
-                nvram_invalid = 1;
-        }
-        else {
-				nvram += NVRAM_OFFS;
-                ep = nvram+2;;
+		printf("NVRAM is invalid!\n");
+		nvram_invalid = 1;
+	}
+	else {
+		nvram += NVRAM_OFFS;
+		ep = nvram+2;;
 
-                while(*ep != 0) {
-                        char *val = 0, *p = env;
-						i = 0;
-                        while((*p++ = *ep++) && (ep <= nvram + NVRAM_SIZE - 1) && i++ < 255) {
-                                if((*(p - 1) == '=') && (val == NULL)) {
-                                        *(p - 1) = '\0';
-                                        val = p;
-                                }
-                        }
-                        if(ep <= nvram + NVRAM_SIZE - 1 && i < 255) {
-                                (*func)(env, val);
-                        }
-                        else {
-                                nvram_invalid = 2;
-                                break;
-                        }
-                }
-        }
+		while(*ep != 0) {
+			char *val = 0, *p = env;
+			i = 0;
+			while((*p++ = *ep++) && (ep <= nvram + NVRAM_SIZE - 1) && i++ < 255) {
+				if((*(p - 1) == '=') && (val == NULL)) {
+					*(p - 1) = '\0';
+					val = p;
+				}
+			}
+			if(ep <= nvram + NVRAM_SIZE - 1 && i < 255) {
+				(*func)(env, val);
+			}
+			else {
+				nvram_invalid = 2;
+				break;
+			}
+		}
+	}
 
 	printf("NVRAM@%x\n", (u_int32_t)nvram);
 
@@ -944,7 +944,6 @@ void tgt_mapenv(int (*func) __P((char *, char *)))
     (*func)("vxWorks", env);
 #endif
 
-
 	sprintf(env, "%d", memorysize / (1024 * 1024));
 	(*func)("memsize", env);
 
@@ -974,7 +973,7 @@ int tgt_unsetenv(char *name)
 
 	/* Use first defined flash device (we probably have only one) */
 #ifdef NVRAM_IN_FLASH
-	nvram = (char *)(tgt_flashmap())->fl_map_base;
+	nvram = (char *)((tgt_flashmap())->fl_map_base + FLASH_OFFS);
 
 	/* Map. Deal with an entire sector even if we only use part of it */
 	nvram += NVRAM_OFFS & ~(NVRAM_SECSIZE - 1);
@@ -1065,8 +1064,7 @@ int tgt_setenv(char *name, char *value)
 
 	/* Use first defined flash device (we probably have only one) */
 #ifdef NVRAM_IN_FLASH
-	nvram = (char *)(tgt_flashmap())->fl_map_base;
-
+	nvram = (char *)((tgt_flashmap())->fl_map_base + FLASH_OFFS);
 	/* Deal with an entire sector even if we only use part of it */
 	nvram += NVRAM_OFFS & ~(NVRAM_SECSIZE - 1);
 #endif
@@ -1246,39 +1244,19 @@ static int cksum(void *p, size_t s, int set)
 /*
  *  Read and write data into non volatile memory in clock chip.
  */
-#if 0
-void
-nvram_get(char *buffer)
-{
-	spi_read_area(0x70000,buffer,NVRAM_SIZE);	//lxy
-	spi_initr();
-}
-
-void
-nvram_put(char *buffer)
-{
-	int i;
-	spi_erase_area(0x70000,0x70000+NVRAM_SIZE,0x10000);		//lxy
-	spi_write_area(0x00070000,buffer,NVRAM_SIZE);			//lxy
-	spi_initr();
-}
-#else
-void
-nvram_get(char *buffer)
+void nvram_get(char *buffer)
 {
 	spi_read_area(NVRAM_POS,buffer,NVRAM_SECSIZE);
 	spi_initr();
 }
 
-void
-nvram_put(char *buffer)
+void nvram_put(char *buffer)
 {
 	int i;
 	spi_erase_area(NVRAM_POS,NVRAM_POS+NVRAM_SECSIZE,0x10000);
 	spi_write_area(NVRAM_POS,buffer,NVRAM_SECSIZE);
 	spi_initr();
 }
-#endif
 
 #endif
 
@@ -1287,8 +1265,7 @@ nvram_put(char *buffer)
  *  Called during startup to display progress on any feasible
  *  display before any serial port have been initialized.
  */
-void
-tgt_display(char *msg, int x)
+void tgt_display(char *msg, int x)
 {
 	/* Have simple serial port driver */
 	tgt_putchar(msg[0]);
@@ -1301,32 +1278,28 @@ tgt_display(char *msg, int x)
 
 
 #include <include/stdarg.h>
-int
-tgt_printf (const char *fmt, ...)
+int tgt_printf(const char *fmt, ...)
 {
-    int  n;
-    char buf[1024];
+	int  n;
+	char buf[1024];
 	char *p=buf;
 	char c;
-	va_list     ap;
+	va_list ap;
 	va_start(ap, fmt);
-    n = vsprintf (buf, fmt, ap);
-    va_end(ap);
-	while((c=*p++))
-	{ 
-	 if(c=='\n')tgt_putchar('\r');
-	 tgt_putchar(c);
+	n = vsprintf (buf, fmt, ap);
+	va_end(ap);
+	while((c=*p++)) { 
+		if(c=='\n')tgt_putchar('\r');
+		tgt_putchar(c);
 	}
-    return (n);
+	return (n);
 }
 
-void
-clrhndlrs(void)
+void clrhndlrs(void)
 {
 }
 
-int
-tgt_getmachtype(void)
+int tgt_getmachtype(void)
 {
 	return(md_cputype());
 }
@@ -1335,8 +1308,7 @@ tgt_getmachtype(void)
  *  Create stubs if network is not compiled in
  */
 #ifdef INET
-void
-tgt_netpoll(void)
+void tgt_netpoll(void)
 {
 	splx(splhigh());
 }
@@ -1358,7 +1330,7 @@ gsignal(label_t *jb, int sig)
 int	netopen (const char *, int);
 int	netread (int, void *, int);
 int	netwrite (int, const void *, int);
-long	netlseek (int, long, int);
+long netlseek (int, long, int);
 int	netioctl (int, int, void *);
 int	netclose (int);
 int netopen(const char *p, int i)	{ return -1;}
@@ -1371,8 +1343,7 @@ void tgt_netpoll()	{};
 
 #endif /*INET*/
 
-void
-tgt_reboot(void)
+void tgt_reboot(void)
 {
 	#if defined(GC300)
 	*(volatile unsigned int *)0xbc301520 = 0x0 ;
