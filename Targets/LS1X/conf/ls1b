@@ -76,11 +76,12 @@ select		cmd_shell		# Shell commands, vers, help, eval
 #
 select		mod_uart_ns16550	# Standard UART driver
 option		APB_CLK=33000000	# 外部晶振频率(Hz)
-option 		CPU_MULT=0x12
-option 		DDR_MULT=5
+option 		CPU_MULT=0x12		# CPU(DDR)倍频
+option 		DDR_MULT=5			# DDR倍频(LS1B该值无效)
 option		CONS_BAUD=B115200
 option		UART_BASE_ADDR=0xbfe48000	#串口控制台基地址 需要不同的串口输出可以修改此值
 
+option		CONFIG_DDR16BIT		# 使能16bit内存接口模式 否则32bit内存接口模式
 #option		EIGHT_BANK_MODE		# 定义该位表示内存颗粒使用8bank，屏蔽该位表示内存颗粒使用4bank
 								# 内存颗粒有8bank和4bank的区分，请认真看清使用的内存颗粒的bank数，请认真参考内存手册
 option		MEM_SIZE=0x04000000	# 64M(16bit) 定义内存大小 注意32bit和16bit内存的区别 这里指总大小
@@ -240,7 +241,6 @@ option		CONFIG_FB_DYN
 
 option		wait_key
 #option		HAVE_MUT_COM		#多串口输入/输出,把控制台信息同时输入/输出到多个串口
-option		CONFIG_DDR16BIT		#使能16bit内存接口模式 否则32bit内存接口模式
 option		BUZZER				#蜂鸣器
 #option		FAST_STARTUP		#快速启动
 option		CONFIG_CHINESE
