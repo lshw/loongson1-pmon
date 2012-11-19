@@ -170,8 +170,8 @@ CONFIG_VIDEO_HW_CURSOR:	     - Uses the hardware cursor capability of the
 #endif
 
 #if (CONFIG_COMMANDS & CFG_CMD_BMP) || defined(CONFIG_SPLASH_SCREEN)
-#include <watchdog.h>
-#include <bmp_layout.h>
+//#include <watchdog.h>
+#include "bmp_layout.h"
 #endif /* (CONFIG_COMMANDS & CFG_CMD_BMP) || CONFIG_SPLASH_SCREEN */
 
 /*****************************************************************************/
@@ -1091,6 +1091,8 @@ void video_puts (const char *s)
 }
 #endif
 
+#define le32_to_cpu(x) (x)
+#define le16_to_cpu(x) (x)
 
 /*
  * Display the BMP file located at address bmp_image.
@@ -1111,8 +1113,6 @@ int video_display_bitmap (ulong bmp_image, int x, int y)
 	unsigned char *dst = NULL;
 	ulong len;
 #endif
-
-	WATCHDOG_RESET ();
 
 	if (!((bmp->header.signature[0] == 'B') &&
 	      (bmp->header.signature[1] == 'M'))) {
@@ -1158,9 +1158,6 @@ int video_display_bitmap (ulong bmp_image, int x, int y)
 	colors = le32_to_cpu (bmp->header.colors_used);
 	compression = le32_to_cpu (bmp->header.compression);
 
-	debug ("Display-bmp: %d x %d  with %d colors\n",
-	       width, height, colors);
-
 	if (compression != BMP_BI_RGB) {
 		printf ("Error: compression type %ld not supported\n",
 			compression);
@@ -1196,7 +1193,6 @@ int video_display_bitmap (ulong bmp_image, int x, int y)
 		switch (VIDEO_DATA_FORMAT) {
 		case GDF__8BIT_INDEX:
 			while (ycount--) {
-				WATCHDOG_RESET ();
 				xcount = width;
 				while (xcount--) {
 					*fb++ = *bmap++;
@@ -1207,7 +1203,6 @@ int video_display_bitmap (ulong bmp_image, int x, int y)
 			break;
 		case GDF__8BIT_332RGB:
 			while (ycount--) {
-				WATCHDOG_RESET ();
 				xcount = width;
 				while (xcount--) {
 					cte = bmp->color_table[*bmap++];
@@ -1219,7 +1214,6 @@ int video_display_bitmap (ulong bmp_image, int x, int y)
 			break;
 		case GDF_12BIT_444RGB:
 			while (ycount--) {
-				WATCHDOG_RESET ();
 				xcount = width;
 				while (xcount--) {
 					cte = bmp->color_table[*bmap++];
@@ -1231,7 +1225,6 @@ int video_display_bitmap (ulong bmp_image, int x, int y)
 			break;
 		case GDF_15BIT_555RGB:
 			while (ycount--) {
-				WATCHDOG_RESET ();
 				xcount = width;
 				while (xcount--) {
 					cte = bmp->color_table[*bmap++];
@@ -1243,7 +1236,6 @@ int video_display_bitmap (ulong bmp_image, int x, int y)
 			break;
 		case GDF_16BIT_565RGB:
 			while (ycount--) {
-				WATCHDOG_RESET ();
 				xcount = width;
 				while (xcount--) {
 					cte = bmp->color_table[*bmap++];
@@ -1255,7 +1247,6 @@ int video_display_bitmap (ulong bmp_image, int x, int y)
 			break;
 		case GDF_32BIT_X888RGB:
 			while (ycount--) {
-				WATCHDOG_RESET ();
 				xcount = width;
 				while (xcount--) {
 					cte = bmp->color_table[*bmap++];
@@ -1267,7 +1258,6 @@ int video_display_bitmap (ulong bmp_image, int x, int y)
 			break;
 		case GDF_24BIT_888RGB:
 			while (ycount--) {
-				WATCHDOG_RESET ();
 				xcount = width;
 				while (xcount--) {
 					cte = bmp->color_table[*bmap++];
@@ -1285,7 +1275,6 @@ int video_display_bitmap (ulong bmp_image, int x, int y)
 		switch (VIDEO_DATA_FORMAT) {
 		case GDF__8BIT_332RGB:
 			while (ycount--) {
-				WATCHDOG_RESET ();
 				xcount = width;
 				while (xcount--) {
 					FILL_8BIT_332RGB (bmap[2], bmap[1], bmap[0]);
@@ -1297,7 +1286,6 @@ int video_display_bitmap (ulong bmp_image, int x, int y)
 			break;
 		case GDF_12BIT_444RGB:
 			while (ycount--) {
-				WATCHDOG_RESET ();
 				xcount = width;
 				while (xcount--) {
 					FILL_12BIT_444RGB (bmap[2], bmap[1], bmap[0]);
@@ -1309,7 +1297,6 @@ int video_display_bitmap (ulong bmp_image, int x, int y)
 			break;
 		case GDF_15BIT_555RGB:
 			while (ycount--) {
-				WATCHDOG_RESET ();
 				xcount = width;
 				while (xcount--) {
 					FILL_15BIT_555RGB (bmap[2], bmap[1], bmap[0]);
@@ -1321,7 +1308,6 @@ int video_display_bitmap (ulong bmp_image, int x, int y)
 			break;
 		case GDF_16BIT_565RGB:
 			while (ycount--) {
-				WATCHDOG_RESET ();
 				xcount = width;
 				while (xcount--) {
 					FILL_16BIT_565RGB (bmap[2], bmap[1], bmap[0]);
@@ -1333,7 +1319,6 @@ int video_display_bitmap (ulong bmp_image, int x, int y)
 			break;
 		case GDF_32BIT_X888RGB:
 			while (ycount--) {
-				WATCHDOG_RESET ();
 				xcount = width;
 				while (xcount--) {
 					FILL_32BIT_X888RGB (bmap[2], bmap[1], bmap[0]);
@@ -1345,7 +1330,6 @@ int video_display_bitmap (ulong bmp_image, int x, int y)
 			break;
 		case GDF_24BIT_888RGB:
 			while (ycount--) {
-				WATCHDOG_RESET ();
 				xcount = width;
 				while (xcount--) {
 					FILL_24BIT_888RGB (bmap[2], bmap[1], bmap[0]);
@@ -1374,6 +1358,34 @@ int video_display_bitmap (ulong bmp_image, int x, int y)
 
 	return (0);
 }
+
+#include "custom_bmp.h"
+
+int video_display_bmp(int argc, char **argv)
+{
+	unsigned char *addr;
+	int x, y;
+
+	addr = &custom_bmp_bits;
+	x = 300;
+	y = 300;
+	video_display_bitmap(addr, x, y);
+	return 0;
+}
+
+static const Cmd Cmds[] =
+{
+	{"MyCmds"},
+	{"display_bmp", "imgaddr x y", 0, "hardware test", video_display_bmp, 0, 99, CMD_REPEAT},
+	{0,0}
+};
+
+static void init_cmd __P((void)) __attribute__ ((constructor));
+static void init_cmd()
+{
+	cmdlist_expand(Cmds, 1);
+}
+
 #endif /* (CONFIG_COMMANDS & CFG_CMD_BMP) || CONFIG_SPLASH_SCREEN */
 
 /*****************************************************************************/
@@ -1483,8 +1495,8 @@ static void *video_logo (void)
 	ulong addr;
 
 	if ((s = getenv ("splashimage")) != NULL) {
-		addr = simple_strtoul (s, NULL, 16);
-
+//		addr = simple_strtoul (s, NULL, 16);
+		addr = NULL;
 		if (video_display_bitmap (addr, 0, 0) == 0) {
 			return ((void *) (video_fb_address));
 		}
