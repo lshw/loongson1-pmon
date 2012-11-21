@@ -239,7 +239,6 @@ option		CONFIG_VIDEO_16BPP
 option		CONFIG_VIDEO_SW_CURSOR	#软件光标
 option		CONFIG_FB_DYN
 
-select		ide
 option		wait_key
 #option 	HAVE_MUT_COM		#多串口输入/输出,把控制台信息同时输入/输出到多个串口
 option		BUZZER				#蜂鸣器
