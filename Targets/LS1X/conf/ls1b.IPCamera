@@ -214,8 +214,10 @@ select		cmd_xyzmodem
 #select		loop
 #select		raw_ether
 
-#option		VGA_MEM_BASE=0xb5000000
-#option		VGA_MEM_BASE=0xb7f00000
+#### VGA modes
+option		DC_FB0
+#option		DC_FB1
+#option		DC_CURSOR
 #option		X320x240
 #option		X480x272
 #option		X640x480

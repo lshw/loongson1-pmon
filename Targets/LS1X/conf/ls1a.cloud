@@ -217,8 +217,10 @@ select		nand
 #select		loop
 #select		raw_ether
 
-#option		VGA_MEM_BASE=0xb5000000
-#option		VGA_MEM_BASE=0xb7f00000
+#### VGA modes
+#option		DC_FB0
+option		DC_FB1
+#option		DC_CURSOR
 #option		X640x480
 #option		X640x640
 #option		X640x768
