@@ -209,6 +209,7 @@ select		nand
 option		DC_FB0
 #option		DC_FB1
 #option		DC_CURSOR
+#option		X240x320
 #option		X320x240
 option		X480x272
 #option		X480x640
@@ -238,8 +239,12 @@ option		CONFIG_VIDEO_16BPP
 option		CONFIG_VIDEO_SW_CURSOR	#软件光标
 option		CONFIG_FB_DYN
 
-#select		mod_jbt6k74			#TPO TD028TTEC1 TFT LCD 驱动
+### TPO TD028TTEC1 TFT LCD 驱动
+#select		mod_jbt6k74
 #option		CONFIG_JBT6K74
+### BL28027(RGB接口) ILI9341控制器 LCD驱动
+#select		mod_ili9341
+#option		CONFIG_ILI9341
 
 option		wait_key
 #option		HAVE_MUT_COM		#多串口输入/输出,把控制台信息同时输入/输出到多个串口

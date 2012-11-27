@@ -1715,6 +1715,9 @@ int fb_init (unsigned long fbbase,unsigned long iobase)
 #elif defined(X320x240)
         pGD->winSizeX  = 320;
         pGD->winSizeY  = 240;
+#elif defined(X240x320)
+        pGD->winSizeX  = 240;
+        pGD->winSizeY  = 320;
 #else
         pGD->winSizeX  = FB_XSIZE;
         pGD->winSizeY  = FB_YSIZE;

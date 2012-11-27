@@ -1,12 +1,12 @@
 #ifndef	__ILI9341_h__
 #define	__ILI9341_h__
 //	write your header here
-#define LCD_X_MAX			240-1			//ÆÁÄ»µÄXÖáµÄÎïÀí¿í¶È
-#define LCD_Y_MAX			320-1			//ÆÁÄ»µÄYÖáµÄÎïÀí¿í¶È
+#define LCD_X_MAX			240-1			//å±å¹•çš„Xè½´çš„ç‰©ç†å®½åº¦
+#define LCD_Y_MAX			320-1			//å±å¹•çš„Yè½´çš„ç‰©ç†å®½åº¦
 			
-#define LCD_XY_SWITCH		0				//ÏÔÊ¾Ê±XÖáºÍYÓÉ½»»»
-#define LCD_X_REV			0				//ÏÔÊ¾Ê±XÖá·´×ª
-#define LCD_Y_REV			0				//ÏÔÊ¾Ê±YÖá·´×ª
+#define LCD_XY_SWITCH		0				//æ˜¾ç¤ºæ—¶Xè½´å’ŒYç”±äº¤æ¢
+#define LCD_X_REV			0				//æ˜¾ç¤ºæ—¶Xè½´åè½¬
+#define LCD_Y_REV			0				//æ˜¾ç¤ºæ—¶Yè½´åè½¬
 
 #if LCD_XY_SWITCH == 0
 	#define DIS_X_MAX		LCD_X_MAX
@@ -18,7 +18,7 @@
 	#define DIS_Y_MAX		LCD_X_MAX	
 #endif
 
-#define LCD_INITIAL_COLOR	0x0000			//¶¨ÒåLCDÆÁ³õÊ¼»¯Ê±µÄ±³¾°É«
+#define LCD_INITIAL_COLOR	0x0000			//å®šä¹‰LCDå±åˆå§‹åŒ–æ—¶çš„èƒŒæ™¯è‰²
 
 void write_dot_lcd(unsigned int x,unsigned int y,unsigned int color);
 void fill_dot_lcd(unsigned int color);

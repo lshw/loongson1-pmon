@@ -397,9 +397,6 @@ file sys/dev/nand/yaf-nand/nand_util.c      nand | nor_flash	#lxy
 
 #lcm ili9341
 file	sys/dev/lcm/ili9341.c			mod_ili9341
-file	sys/dev/lcm/ili9341_lcd_dis.c	mod_ili9341
-file	sys/dev/lcm/LCD_ASCII.c			mod_ili9341
-file	sys/dev/lcm/GB_Table.c			mod_ili9341
 #lcm JBT6K74
 file	sys/dev/lcm/jbt6k74.c			mod_jbt6k74
 
