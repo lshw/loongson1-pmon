@@ -28,8 +28,8 @@ option		ZIGBEE
 option		MIPS
 option		INET
 
-select		mod_flash_amd		# AMD flash device programming
-select		mod_flash_intel		# intel flash device programming
+#select		mod_flash_amd		# AMD flash device programming
+#select		mod_flash_intel		# intel flash device programming
 select		mod_flash_sst		# intel flash device programming
 select		mod_debugger		# Debugging module
 select		mod_symbols		# Symbol table handling
@@ -44,10 +44,10 @@ select		elf32only
 select		cmd_newmt
 select		cmd_setup
 select		mod_display
-select		cmd_about		# Display info about PMON
+#select		cmd_about		# Display info about PMON
 select		cmd_boot		# Boot wrapper
 select		cmd_mycmd
-select		cmd_mycmd_debug #test cache and TLB
+#select		cmd_mycmd_debug # test cache and TLB
 select		ramfiles
 select		cmd_newmt
 select		cmd_cache		# Cache enabling
@@ -78,7 +78,7 @@ select		cmd_shell		# Shell commands, vers, help, eval
 #
 select		mod_uart_ns16550	# Standard UART driver
 option		APB_CLK=33000000	# 外部晶振频率(Hz)
-option 		CPU_MULT=0x12		# CPU(DDR)倍频
+option 		CPU_MULT=0x1c		# CPU(DDR)倍频
 option 		DDR_MULT=5			# DDR倍频(LS1B该值无效)
 option		CONS_BAUD=B115200
 option		UART_BASE_ADDR=0xbfe4c000	#串口控制台基地址 需要不同的串口输出可以修改此值
@@ -96,7 +96,7 @@ select		fatfs
 select		gzip
 
 #select		mod_x86emu		# X86 emulation for VGA
-option		MY40IO
+#option		MY40IO
 #option		GC300
 #select		gpu300_compile
 select		mod_framebuffer

@@ -325,7 +325,7 @@ locate:
 	b 2f
 	nop
 1:
-    li v1, (1<<31)|(4<<26)|(1<<25)|(2<<20)|(1<<19)|(3<<14)|0x2a00
+    li v1, (1<<31)|(4<<26)|(1<<25)|(3<<20)|(1<<19)|(4<<14)|0x2a00
     li a1, CPU_MULT
 
 2:
@@ -461,14 +461,23 @@ cpu_win_fixup:
 	set_cpu_window(6, 0x40000000, 0xc0000000, 0x000000f0) // DDR 1GB
 	set_cpu_window(7, 0x00000000, 0x00000000, 0x000000f0) // everything else
 #elif LS1BSOC
-	set_cpu_window(0, 0x1c300000, 0xfff00000, 0x1c300092) // dc       1M
-	set_cpu_window(1, 0x1fe10000, 0xffffe000, 0x1fe10083) // gmac0	8K
-	set_cpu_window(2, 0x1fe20000, 0xffffe000, 0x1fe20083) // gmac1	8K
-	set_cpu_window(3, 0x1fe10000, 0xffff0000, 0x1fe10080) // gmac0	64K
-	set_cpu_window(4, 0x1fe20000, 0xffff0000, 0x1fe20080) // gmac1	64K
-	set_cpu_window(5, 0x1ff00000, 0xfff00000, 0x1ff00080) // reserved 1M
-	set_cpu_window(6, 0x1f000000, 0xff000000, 0x1f000093) // AXIMUX   16M
-	set_cpu_window(7, 0x00000000, 0x00000000, 0x000000b0) // ddr 0
+	set_cpu_window(0, 0x1c300000, 0xfff00000, 0x1c3000d2) // dc       1M must cachable
+	set_cpu_window(1, 0x1fe10000, 0xffffe000, 0x1fe100d3) // gmac0	8K
+	set_cpu_window(2, 0x1fe20000, 0xffffe000, 0x1fe200d3) // gmac1	8K
+	set_cpu_window(3, 0x1fe10000, 0xffff0000, 0x1fe100d0) // gmac0	64K
+	set_cpu_window(4, 0x1fe20000, 0xffff0000, 0x1fe200d0) // gmac1	64K
+	set_cpu_window(5, 0x1ff00000, 0xfff00000, 0x1ff000d0) // reserved 1M
+	set_cpu_window(6, 0x1f000000, 0xff000000, 0x1f0000d3) // AXIMUX   16M
+	set_cpu_window(7, 0x00000000, 0x00000000, 0x000000f0) // ddr 0
+	li	t0, 0xbfd000e0
+	lw	t1, 0x0(t0)	//0xbfd000e0
+	and t1, t1, 0xffffff00
+	ori	t1, 0xd0
+	sw	t1, 0x0(t0)
+	lw	t1, 0x8(t0)	//0xbfd000e8
+	and t1, t1, 0xffffff00
+	ori	t1, 0xd0
+	sw	t1, 0x8(t0)
 #endif
 	// after this fixup, the kernel code should be compiled with
 	// uncached instruction fetch patch

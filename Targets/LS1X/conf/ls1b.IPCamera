@@ -27,8 +27,8 @@ option		IPCAMERA
 option		MIPS
 #option		INET
 
-select		mod_flash_amd		# AMD flash device programming
-select		mod_flash_intel		# intel flash device programming
+#select		mod_flash_amd		# AMD flash device programming
+#select		mod_flash_intel		# intel flash device programming
 select		mod_flash_sst		# intel flash device programming
 select		mod_debugger		# Debugging module
 select		mod_symbols		# Symbol table handling
@@ -43,10 +43,10 @@ select		elf32only
 select		cmd_newmt
 select		cmd_setup
 select		mod_display
-select		cmd_about		# Display info about PMON
+#select		cmd_about		# Display info about PMON
 select		cmd_boot		# Boot wrapper
 select		cmd_mycmd
-select		cmd_mycmd_debug #test cache and TLB
+#select		cmd_mycmd_debug # test cache and TLB
 select		ramfiles
 select		cmd_newmt
 select		cmd_cache		# Cache enabling
@@ -77,7 +77,7 @@ select		cmd_shell		# Shell commands, vers, help, eval
 #
 select		mod_uart_ns16550	# Standard UART driver
 option		APB_CLK=33000000	# 外部晶振频率(Hz)
-option 		CPU_MULT=0x12		# CPU(DDR)倍频
+option 		CPU_MULT=0x1c		# CPU(DDR)倍频
 option 		DDR_MULT=5			# DDR倍频(LS1B该值无效)
 option		CONS_BAUD=B115200
 option		UART_BASE_ADDR=0xbfe4c000	#串口控制台基地址 需要不同的串口输出可以修改此值
@@ -85,7 +85,7 @@ option		UART_BASE_ADDR=0xbfe4c000	#串口控制台基地址 需要不同的串�
 option		CONFIG_DDR16BIT		# 使能16bit内存接口模式 否则32bit内存接口模式
 option		EIGHT_BANK_MODE		# 定义该位表示内存颗粒使用8bank，屏蔽该位表示内存颗粒使用4bank
 								# 内存颗粒有8bank和4bank的区分，请认真看清使用的内存颗粒的bank数，请认真参考内存手册
-option		MEM_SIZE=0x08000000	# 64M(16bit) 定义内存大小 注意32bit和16bit内存的区别 这里指总大小
+option		MEM_SIZE=0x08000000	# 128M(16bit) 定义内存大小 注意32bit和16bit内存的区别 这里指总大小
 								# 请确保内存配置正确，内存工作不正常会导致系统莫名其妙的问题
 								# start.s文件中定义了引用那个内存配置，如#include "ddr2fconfig-samsung-CL3.S"
 
@@ -95,7 +95,7 @@ select		fatfs
 select		gzip
 
 #select		mod_x86emu		# X86 emulation for VGA
-option		MY40IO
+#option		MY40IO
 #option		GC300
 #select		gpu300_compile
 #select		mod_framebuffer
@@ -164,8 +164,8 @@ pci*		at pcibr?
 #### Networking Devices
 #syn0		at localbus0
 #syn1		at localbus0
-option		CONFIG_GMAC0_100M	#GMAC0的使能百兆网络 否则千兆网络
-option		CONFIG_GMAC1_100M	#GMAC1的使能百兆网络 否则千兆网络
+#option		CONFIG_GMAC0_100M	#GMAC0的使能百兆网络 否则千兆网络
+#option		CONFIG_GMAC1_100M	#GMAC1的使能百兆网络 否则千兆网络
 #option		GMAC1_USE_UART01
 #option		GMAC_PHY_BASE=1
 #option		GMAC0_ADDR=0xbfe10000
@@ -215,7 +215,7 @@ select		cmd_xyzmodem
 #select		raw_ether
 
 #### VGA modes
-option		DC_FB0
+#option		DC_FB0
 #option		DC_FB1
 #option		DC_CURSOR
 #option		X320x240
