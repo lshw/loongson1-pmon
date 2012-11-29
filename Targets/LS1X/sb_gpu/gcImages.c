@@ -68,6 +68,10 @@ void gcLoadImage_3(gcIMAGEDESCRIPTOR* ImageInfo)
 
 void gcLoadImage(gcIMAGEDESCRIPTOR* ImageInfo)
 {
+	gcSURFACEINFO *img_surface = &ImageInfo->surface;
+	int xcount = img_surface->rect.right * img_surface->stride;
+	int ycount = img_surface->rect.bottom;
+	int yaddr = 0, xaddr = 0;	//THF
 #if gcENABLEVIRTUAL
 	UINT32 Physical;
 
@@ -91,7 +95,13 @@ void gcLoadImage(gcIMAGEDESCRIPTOR* ImageInfo)
 	printf("Image addr is : %x\n", ImageInfo->surface.address);
 #endif
 	// Move the image to the aligned location.
-	memcpy((void*) ImageInfo->surface.address, ImageInfo->bits, ImageInfo->size);
+//	memcpy((void*) ImageInfo->surface.address, ImageInfo->bits, ImageInfo->size);
+	/* 根据图像(24bit bmp)的大小正确填充到fb缓冲区 */
+	while (ycount--) {	//THF
+		memcpy((void *) (ImageInfo->surface.address+yaddr), ImageInfo->bits+xaddr, xcount);
+		xaddr += xcount;
+		yaddr += gcDisplaySurface.stride;
+	}
 #endif
 }
 
