@@ -5981,7 +5981,7 @@ gcIMAGEDESCRIPTOR exige_0160x108x24 =
 	// Surface parameters.
 	{
 		0x00000000,							// Address.
-		640,								// Stride.
+		4,								// Stride.
 		0x00000000,							// U plane address.
 		0,									// U plane stride.
 		0x00000000,							// V plane address.

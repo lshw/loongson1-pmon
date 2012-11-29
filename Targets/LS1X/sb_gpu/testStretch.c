@@ -2,9 +2,7 @@
 //#include "testImages.h"
 #include "img_Exige_0160x108x24.h"
 
-void testStretch(
-	gcSURFACEINFO* Target
-	)
+void testStretch(gcSURFACEINFO* Target)
 {
 	UINT32 loopCount = 50;
 
@@ -32,18 +30,14 @@ void testStretch(
 	// Compute ratios.
 	imgRatio = (float) imgWidth / imgHeight;
 	trgRatio = (float) trgWidth / trgHeight;
-//printf("----------------------------------imgWidth:%d ,imgHeight:%d ,trgWidth:%d ,trgHeight:%d ,imgRatio:%f ,trgRatio:%f \n",imgWidth,imgHeight,trgWidth,trgHeight,imgRatio,trgRatio);
 	// Compute initial rect.
-	if (imgRatio < trgRatio)
-	{
+	if (imgRatio < trgRatio) {
 		UINT32 width = (UINT32) (trgHeight * imgRatio);
 		rect.left   = Target->rect.left + (trgWidth - width) / 2;
 		rect.top    = Target->rect.top;
 		rect.right  = rect.left + width;
 		rect.bottom = Target->rect.bottom;
-	}
-	else
-	{
+	} else {
 		UINT32 height = (UINT32) (trgWidth / imgRatio);
 		rect.left   = Target->rect.left;
 		rect.top    = Target->rect.top + (trgHeight - height) / 2;;
@@ -58,8 +52,7 @@ void testStretch(
 	//gcClear(Target, &Target->rect, DEADBEEF16);
 	gcClear(Target, &Target->rect, BLACK32);
 
-	while (loopCount--)
-	{
+	while (loopCount--) {
 		// Blit the image.
 		gcBitBlt(Target, &Image->surface,
 				 &rect, &Image->surface.rect,
@@ -81,7 +74,6 @@ void testStretch(
 			rect.top    = Target->rect.top  + (trgHeight - height) / 2;
 			rect.right  = rect.left + width;
 			rect.bottom = rect.top  + height;
-//printf("------++++++++++++-------width:%d ,height:%d ,L:%d ,T:%d ,R:%d ,B:%d ,xStep:%d \n",width,height,rect.left,rect.top,rect.right,rect.bottom,xStep);
 		}
 
 		// Start.
@@ -94,9 +86,7 @@ void testStretch(
 	gcMemFree();
 }
 
-void testRandomStretch(
-	gcSURFACEINFO* Target
-	)
+void testRandomStretch(gcSURFACEINFO* Target)
 {
 	UINT32 loopCount = 50;
 
@@ -113,8 +103,7 @@ void testRandomStretch(
 	//gcClear(Target, NULL, DEADBEEF16);
 	gcClear(Target, NULL, BLACK32);
 
-	while (loopCount--)
-	{
+	while (loopCount--) {
 		// Generate destination rect.
 		gcGenerateRect(&dstRect, &Target->rect);
 		//gcGenerateRect_Stretch(&dstRect, &Target->rect);
@@ -139,3 +128,4 @@ void testRandomStretch(
 	// Free the image.
 	gcMemFree();
 }
+

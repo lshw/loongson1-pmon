@@ -222,7 +222,7 @@ void testRotation_t(unsigned int winx, unsigned int winy)
 		// Start.
 		gcFlush2DAndStall();
 		gcStart();
-		gcFlushDisplay();	
+		gcFlushDisplay();
 		for (j=1500;j>1;j--) {
 			printf("");
 		}
@@ -251,6 +251,23 @@ void testRotation_t(unsigned int winx, unsigned int winy)
 	gcMemFree();
 }
 
+void gc300_hw_rectfill_t(unsigned int winx, unsigned int winy, 
+		unsigned int width, unsigned int height, int color)
+{
+	gcSURFACEINFO* Target = &gcDisplaySurface;
+
+	Target->rect.left   =  winx;
+	Target->rect.right  =  winx + width;
+	Target->rect.top    =  winy;
+	Target->rect.bottom =  winy + height;
+
+	gcClear(Target, &Target->rect, color);
+
+	gcFlush2DAndStall();
+	gcStart();
+	gcFlushDisplay();
+}
+
 int test_sc_gc300(void)
 {
 	gcAppInit();
@@ -265,6 +282,8 @@ int test_sc_gc300(void)
 
 	gc300_hw_bitblt_t(350, 350);
 //	testRotation_t(250, 350);
+	gc300_hw_rectfill_t(50, 50, 160, 160, YELLOW32);
+	gc300_hw_rectfill_t(530, 150, 260, 220, GREEN32);
 	return 0;
 }
 

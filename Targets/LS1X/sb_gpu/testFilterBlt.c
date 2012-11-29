@@ -4,10 +4,7 @@
 #include "img_Poppy_480x325_UYVY.h"
 #include "img_Poppy_480x325_YUY2.h"
 
-static void GenerateRandomTargetRect(
-	gcSURFACEINFO* Target,
-	gcRECT* TrgRect
-	)
+static void GenerateRandomTargetRect(gcSURFACEINFO* Target, gcRECT* TrgRect)
 {
 	// Compute sizes.
 	UINT32 trgWidth  = gcSurfaceWidth(Target);
@@ -24,28 +21,24 @@ static void GenerateRandomTargetRect(
 	TrgRect->bottom = TrgRect->top  + dstHeight;
 }
 
-void testFilterBlit(
-	gcSURFACEINFO* Target
-	)
+void testFilterBlit(gcSURFACEINFO* Target)
 {
 	UINT32 loopCount = 10;
 	gcRECT targetRect;
 	UINT32 horKernelSize;
 	UINT32 verKernelSize;
-    gcIMAGEDESCRIPTOR* Image;
+	gcIMAGEDESCRIPTOR* Image;
 
 
 	// Load the image.
 	//zgj gcLoadImage(&vasiliy_476x320x24);
 	gcLoadImage(&exige_0160x108x24);
 
-    // Set image.
-//    Image = &exige_0160x108x24;
-
+	// Set image.
+//	Image = &exige_0160x108x24;
 
 	// Start the test.
-	while (loopCount--)
-	{
+	while (loopCount--){
 		// Generate random destination rectangle.
 		GenerateRandomTargetRect(Target, &targetRect);
 
@@ -71,11 +64,9 @@ void testFilterBlit(
 			);*/
 
 #else
-        gcFilterBlit(
-			Target, &exige_0160x108x24.surface,
+        gcFilterBlit(Target, &exige_0160x108x24.surface,
 			&targetRect, &exige_0160x108x24.surface.rect, NULL,
-			horKernelSize, verKernelSize
-			);
+			horKernelSize, verKernelSize);
 
 #endif
 		gcFlushDisplay();
@@ -86,9 +77,7 @@ void testFilterBlit(
 }
 
 #if 1
-void testFilterBlitFormats(
-	gcSURFACEINFO* Target
-	)
+void testFilterBlitFormats(gcSURFACEINFO* Target)
 {
 	UINT32 loopCount, idxImage, idxFormat;
 	UINT32 srcWidth, srcHeight;
@@ -105,14 +94,12 @@ void testFilterBlitFormats(
 	gcRECT* srcRect;
 	gcRECT* trgRect;
 
-	static gcIMAGEDESCRIPTOR* SrcImages[] =
-	{
+	static gcIMAGEDESCRIPTOR* SrcImages[] = {
 		&poppy_480x325_YUY2,
 		&poppy_480x325_UYVY,
 	};
 
-	static UINT32 Formats[] =
-	{
+	static UINT32 Formats[] = {
 		AQ_DRAWING_ENGINE_FORMAT_FORMAT_A8R8G8B8,
 		AQ_DRAWING_ENGINE_FORMAT_FORMAT_X8R8G8B8,
 		AQ_DRAWING_ENGINE_FORMAT_FORMAT_R5G6B5,
@@ -234,5 +221,5 @@ void testFilterBlitFormats(
 	gcMemFree();
 	gcMemFree();
 }
-
 #endif
+

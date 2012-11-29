@@ -1,7 +1,11 @@
 #include "gcSdk.h"
 #include <string.h>
 #include <stdio.h>
-//#include "img_Exige_0160x108x24.h"
+
+//#define GPU_LOAD_IMG 1
+#ifdef GPU_LOAD_IMG
+#include "img_Exige_0160x108x24.h"
+#endif
 
 #define GPU_IMG_LOAD_ADDR   0xA2500000
 #define GPU_IMG_LOAD_ADDR_1 0xA2800000

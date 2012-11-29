@@ -4,9 +4,7 @@
 #include "img_F430_171x128x24.h"
 #include "img_F430_Babe_171x128x1.h"
 
-void testMaskedBlitRandom(
-	gcSURFACEINFO* Target
-	)
+void testMaskedBlitRandom(gcSURFACEINFO* Target)
 {
 	UINT32 loopCount = 10;
 
@@ -18,8 +16,7 @@ void testMaskedBlitRandom(
 	gcBRUSH brush;
 
 	gcIMAGEDESCRIPTOR* Image = &f430_171x128x24;
-	gcIMAGEDESCRIPTOR* Mask[] =
-	{
+	gcIMAGEDESCRIPTOR* Mask[] = {
 		&f430_171x128x1,
 		&f430_babe_171x128x1
 	};
@@ -43,8 +40,7 @@ void testMaskedBlitRandom(
 	//gcClear(Target, NULL, DEADBEEF16);
 	gcClear(Target, NULL, BLACK32);
 
-	while (loopCount--)
-	{
+	while (loopCount--) {
 		// Pick a mask.
 		gcIMAGEDESCRIPTOR* mask = Mask[gcRand(CountOf(Mask) - 1)];
 
@@ -60,8 +56,7 @@ void testMaskedBlitRandom(
 		// Generate clipping.
 		blitRect = dstRect;
 
-		if (gcRand(1))
-		{
+		if (gcRand(1)) {
 			blitRect.left   += gcRand(imgWidth  / 2 - 1);
 			blitRect.top    += gcRand(imgHeight / 2 - 1);
 			blitRect.right  -= gcRand(imgWidth  / 2 - 1);
