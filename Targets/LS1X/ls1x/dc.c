@@ -27,10 +27,10 @@ typedef unsigned long dma_addr_t;
 #define DC_BASE_ADDR0 0xbc301240
 #define DC_BASE_ADDR1 0xbc301250
 
-static char *ADDR_CURSOR = 0xA6000000;
-static char *MEM_ptr = 0xA2000000;
-static int MEM_ADDR = 0;
 static int fb_xsize, fb_ysize, frame_rate;
+static char *ADDR_CURSOR = 0xA3e00000;
+static char *MEM_ptr = 0xA3000000;
+static int MEM_ADDR =0;
 
 static struct vga_struc{
 	long pclk, refresh;
