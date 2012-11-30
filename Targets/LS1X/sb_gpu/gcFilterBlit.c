@@ -1,6 +1,5 @@
 #include "gcSdk.h"
 #include <math.h>
-#include "display.h"
 
 UINT32 gcGetStretchFactor(UINT32 SrcSize, UINT32 DstSize)
 {

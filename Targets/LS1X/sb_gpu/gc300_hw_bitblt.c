@@ -290,7 +290,7 @@ int test_sc_gc300(void)
 static const Cmd Cmds[] =
 {
     {"GPU Test"},
-    {"sc_test", "", 0, "random test GC300 scrollup sccreen", test_sc_gc300, 0, 99, CMD_REPEAT},
+    {"gc_test", "", 0, "test GC300 bitblt Rotation and rectfill sccreen", test_sc_gc300, 0, 99, CMD_REPEAT},
     {0, 0}
 };
 

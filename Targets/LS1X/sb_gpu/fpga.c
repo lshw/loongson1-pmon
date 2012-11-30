@@ -1,5 +1,4 @@
 #include "gcSdk.h"
-#include "display.h"
 
 #define gcSCREENADDR	CLCD_FRAME_BASE1
 #define gcSCREENWIDTH	XPIXELS

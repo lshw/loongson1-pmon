@@ -1,9 +1,7 @@
 #include "gcSdk.h"
 #include <ctype.h>
 #include "gcUtilities.h"
-#include "display.h"
 #include "utilities.h"
-//#include "common.h"
 
 #undef MY_POKE_GPU_DEBUG
 

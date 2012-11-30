@@ -3,7 +3,6 @@
 
 #include "./Reg/AQ.h"
 #include <stdio.h>
-#include "display.h" 
 #define SAVEFRAMEBUFFER
 
 #define REG_BASE 0x80000000
@@ -20,7 +19,8 @@
 
 
 
-void show(void);
+
+void show(void);
 
 void DoResolve(
 	unsigned long phys,
