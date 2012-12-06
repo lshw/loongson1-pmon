@@ -96,9 +96,9 @@ select		gzip
 select		ramfiles
 
 #select		mod_x86emu		# X86 emulation for VGA
-option		MY40IO
-option		GC300
-select		gpu300_compile
+#option		MY40IO
+#option		GC300
+#select		gpu300_compile
 select		mod_framebuffer
 #select		mod_x86emu_int10
 select		mod_vgacon

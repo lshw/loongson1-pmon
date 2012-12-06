@@ -53,11 +53,11 @@ void gcAppInit(void)
 //	apCLCD_Init(1, 1);
 
 	// Set register base address.
-	gcREG_BASE = 0xBC200000;
+	gcREG_BASE = 0xbc200000;
 
 #if 1  //zgj-2010-3-22
-    gcVIDEOBASE = 0xA2000000;
-    gcVIDEOSIZE = 0x2000000;
+    gcVIDEOBASE = 0xa2800000;
+    gcVIDEOSIZE = 0x02000000;
 #endif
 
 	// Init memory.
