@@ -8,8 +8,8 @@ file	Targets/LS1X/ls1x/tgt_machdep.c
 file	Targets/LS1X/dev/i2c.c
 file	Targets/LS1X/dev/spi.c
 file	Targets/LS1X/dev/ac97.c
-file	Targets/LS1X/ls1x/tgt_cmd.c
-file	Targets/LS1X/ls1x/memscan.c
+#file	Targets/LS1X/ls1x/tgt_cmd.c
+#file	Targets/LS1X/ls1x/memscan.c
 file	Targets/LS1X/dev/hpet.c
 file	Targets/LS1X/dev/acpi.c
 file	Targets/LS1X/dev/gpio.c
