@@ -319,31 +319,43 @@ static int config_fb(unsigned long base)
 
 #if defined(CONFIG_VIDEO_32BPP)
 	write_reg((base+OF_BUF_CONFIG),0x00100004);
-	write_reg((base+OF_BUF_STRIDE),(fb_xsize*4+255)&~255); //1024
+	write_reg((base+OF_BUF_STRIDE),(fb_xsize*4+255)&~255);
 	#ifdef LS1BSOC
-	*(volatile int *)0xbfd00420 &= ~0x18;
-	*(volatile int *)0xbfd00420 |= 0x07;
+	*(volatile int *)0xbfd00420 &= ~0x08;
+	*(volatile int *)0xbfd00420 |= 0x05;
 	#endif
 #elif defined(CONFIG_VIDEO_24BPP)
 	write_reg((base+OF_BUF_CONFIG),0x00100004);
-	write_reg((base+OF_BUF_STRIDE),(fb_xsize*3+255)&~255); //1024
+	write_reg((base+OF_BUF_STRIDE),(fb_xsize*3+255)&~255);
 	#ifdef LS1BSOC
-	*(volatile int *)0xbfd00420 &= ~0x18;
-	*(volatile int *)0xbfd00420 |= 0x07;
+	*(volatile int *)0xbfd00420 &= ~0x08;
+	*(volatile int *)0xbfd00420 |= 0x05;
 	#endif
 #elif defined(CONFIG_VIDEO_16BPP)
 	write_reg((base+OF_BUF_CONFIG),0x00100003);
-	write_reg((base+OF_BUF_STRIDE),(fb_xsize*2+255)&~255); //1024
+	write_reg((base+OF_BUF_STRIDE),(fb_xsize*2+255)&~255);
+	#ifdef LS1BSOC
+	*(volatile int *)0xbfd00420 &= ~0x07;
+	#endif
 #elif defined(CONFIG_VIDEO_15BPP)
 	write_reg((base+OF_BUF_CONFIG),0x00100002);
-	write_reg((base+OF_BUF_STRIDE),(fb_xsize*2+255)&~255); //1024
+	write_reg((base+OF_BUF_STRIDE),(fb_xsize*2+255)&~255);
+	#ifdef LS1BSOC
+	*(volatile int *)0xbfd00420 &= ~0x07;
+	#endif
 #elif defined(CONFIG_VIDEO_12BPP)
 	write_reg((base+OF_BUF_CONFIG),0x00100001);
-	write_reg((base+OF_BUF_STRIDE),(fb_xsize*2+255)&~255); //1024
-#else  //640x480-32Bits
-	write_reg((base+OF_BUF_CONFIG),0x00100004);
-	write_reg((base+OF_BUF_STRIDE),(fb_xsize*4+255)&~255); //640
-#endif //32Bits
+	write_reg((base+OF_BUF_STRIDE),(fb_xsize*2+255)&~255);
+	#ifdef LS1BSOC
+	*(volatile int *)0xbfd00420 &= ~0x07;
+	#endif
+#else	/* 16bpp */
+	write_reg((base+OF_BUF_CONFIG),0x00100003);
+	write_reg((base+OF_BUF_STRIDE),(fb_xsize*2+255)&~255);
+	#ifdef LS1BSOC
+	*(volatile int *)0xbfd00420 &= ~0x07;
+	#endif
+#endif	//#if defined(CONFIG_VIDEO_32BPP)
 	write_reg((base+OF_BUF_ORIG), 0);
 
 	{	/* 显示数据输出使能 */
