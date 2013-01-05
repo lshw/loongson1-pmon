@@ -3,6 +3,8 @@
  */
 
 #include <pmon.h>
+#include <pmon/dev/ns16550.h>
+
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -24,6 +26,7 @@ typedef unsigned long dma_addr_t;
 
 #define write_reg(addr,val) writel(val,addr)
 
+#define PLL_FREQ_REG(x) *(volatile unsigned int *)(0xbfe78030+x)
 #define DC_BASE_ADDR0 0xbc301240
 #define DC_BASE_ADDR1 0xbc301250
 
@@ -80,10 +83,10 @@ static struct ls1b_vga ls1b_vga_modes[] = {
 		.xres = 800,
 		.yres = 600,
 		.refresh = 75,
-	#if AHB_CLK == 25000000
+	#if APB_CLK == 25000000
 		.ls1b_pll_freq = 0x21813,
 		.ls1b_pll_div = 0x8a28ea00,
-	#else	//AHB_CLK == 33000000
+	#else	//APB_CLK == 33000000
 		.ls1b_pll_freq = 0x0080c,
 		.ls1b_pll_div = 0x8a28ea00,
 	#endif
@@ -92,10 +95,10 @@ static struct ls1b_vga ls1b_vga_modes[] = {
 		.xres = 1024,
 		.yres = 768,
 		.refresh = 60,
-	#if AHB_CLK == 25000000
+	#if APB_CLK == 25000000
 		.ls1b_pll_freq = 0x2181d,
 		.ls1b_pll_div = 0x8a28ea00,
-	#else	//AHB_CLK == 33000000
+	#else	//APB_CLK == 33000000
 		.ls1b_pll_freq = 0x21813,
 		.ls1b_pll_div = 0x8a28ea00,
 	#endif
@@ -104,10 +107,10 @@ static struct ls1b_vga ls1b_vga_modes[] = {
 		.xres = 1280,
 		.yres = 1024,
 		.refresh = 75,
-	#if AHB_CLK == 25000000
+	#if APB_CLK == 25000000
 		.ls1b_pll_freq = 0x3af1e,
 		.ls1b_pll_div = 0x8628ea00,
-	#else	//AHB_CLK == 33000000
+	#else	//APB_CLK == 33000000
 		.ls1b_pll_freq = 0x3af14,
 		.ls1b_pll_div = 0x8628ea00,
 	#endif
@@ -116,10 +119,10 @@ static struct ls1b_vga ls1b_vga_modes[] = {
 		.xres = 1440,
 		.yres = 900,
 		.refresh = 75,
-	#if AHB_CLK == 25000000
+	#if APB_CLK == 25000000
 		.ls1b_pll_freq = 0x3af1f,
 		.ls1b_pll_div = 0x8628ea00,
-	#else	//AHB_CLK == 33000000
+	#else	//APB_CLK == 33000000
 		.ls1b_pll_freq = 0x3af14,
 		.ls1b_pll_div = 0x8628ea00,
 	#endif
@@ -144,9 +147,6 @@ enum {
 	OF_VSYNC = 0x260,
 	OF_BUF_ADDR1 = 0x340,
 };
-
-#define MYDBG printf(":%d\n",__LINE__);
-#define PLL_FREQ_REG(x) *(volatile unsigned int *)(0xbfe78030+x)
 
 #ifdef LS1ASOC
 static int caclulatefreq(long long XIN, long long PCLK)
@@ -176,16 +176,41 @@ static int caclulatefreq(long long XIN, long long PCLK)
 	return out;
 }
 #else
-#define abs(x) ((x<0)?(-x):x)
-#define min(a,b) ((a<b)?a:b)
-static int caclulatefreq(long long XIN, long long PCLK)
+static void caclulatefreq(unsigned int ls1b_pll_freq, unsigned int ls1b_pll_div)
 {
-	initserial(0);
-	_probe_frequencies();
-	printf("cpu freq is %d\n",tgt_pipefreq());
-	return 0;
-}
+	unsigned int pll, ctrl;
+	unsigned int x, divisor;
+	unsigned int i;
+	int ls1b_uart_base[] = {
+		0xbfe40000, 0xbfe41000, 0xbfe42000,
+		0xbfe43000, 0xbfe44000, 0xbfe45000,
+		0xbfe46000, 0xbfe47000, 0xbfe48000,
+		0xbfe4c000, 0xbfe6c000, 0xbfe7c000
+	};
+	#define PORT(id, offset)	(u8 *)(ls1b_uart_base[id] + offset)
+	
+	#define DIV_DDR				(0x1f << 14)
+	#define DIV_DDR_SHIFT		14
 
+	/* 计算ddr频率，更新串口分频 */
+	pll = ls1b_pll_freq;
+	ctrl = ls1b_pll_div & DIV_DDR;
+	divisor = (12 + (pll & 0x3f)) * APB_CLK / 2
+			+ ((pll >> 8) & 0x3ff) * APB_CLK / 1024 / 2;
+	divisor = divisor / (ctrl >> DIV_DDR_SHIFT);
+	divisor = divisor / 2 / (16*115200);
+
+	for (i=0; i<12; i++) {
+		x = readb(PORT(i, NS16550_CFCR));
+		writeb(x | CFCR_DLAB, PORT(i, NS16550_CFCR));
+
+		writeb(divisor & 0xff, PORT(i, NS16550_DATA));	/* DLL */
+		writeb((divisor>>8) & 0xff, PORT(i, NS16550_IER));	/* DLM */
+
+		writeb(x & ~CFCR_DLAB, PORT(i, NS16550_CFCR));
+	}
+	_probe_frequencies();
+}
 #endif
 
 #ifdef DC_CURSOR
@@ -248,13 +273,12 @@ static int config_fb(unsigned long base)
 			if (input_vga->ls1b_pll_freq) {
 				PLL_FREQ_REG(0) = input_vga->ls1b_pll_freq;
 				PLL_FREQ_REG(4) = input_vga->ls1b_pll_div;
-				delay(1000);
-				caclulatefreq(APB_CLK/1000, vgamode[i].pclk);
+				delay(100);
+				caclulatefreq(input_vga->ls1b_pll_freq, input_vga->ls1b_pll_div);
 			}
 		}
 		#else
 		{
-			#define PLL_FREQ_REG(x) *(volatile unsigned int *)(0xbfe78030+x)
 			int regval = 0;
 			u32 divider_int, pll;
 
