@@ -31,9 +31,9 @@ typedef unsigned long dma_addr_t;
 #define DC_BASE_ADDR1 0xbc301250
 
 static int fb_xsize, fb_ysize, frame_rate;
-static char *ADDR_CURSOR = 0xa2f00000;
-static char *MEM_ptr = 0xa2a00000;
-static int MEM_ADDR =0;
+static char *ADDR_CURSOR = 0xa3900000;
+static char *MEM_ptr = 0xa3200000;
+static int MEM_ADDR = 0;
 
 static struct vga_struc{
 	long pclk, refresh;
@@ -209,6 +209,7 @@ static void caclulatefreq(unsigned int ls1b_pll_freq, unsigned int ls1b_pll_div)
 
 		writeb(x & ~CFCR_DLAB, PORT(i, NS16550_CFCR));
 	}
+	/* 更新系统的cpu和总线频率 */
 	_probe_frequencies();
 }
 #endif
@@ -263,7 +264,7 @@ static int config_fb(unsigned long base)
 		{
 			struct ls1b_vga *input_vga;
 
-			for (input_vga=ls1b_vga_modes; input_vga->ls1b_pll_freq !=0; ++input_vga) {
+			for (input_vga=ls1b_vga_modes; input_vga->ls1b_pll_freq!=0; ++input_vga) {
 		//		if((input_vga->xres == fb_xsize) && (input_vga->yres == fb_ysize) && 
 		//			(input_vga->refresh == frame_rate)) {
 				if ((input_vga->xres == fb_xsize) && (input_vga->yres == fb_ysize)) {

@@ -170,7 +170,12 @@ struct fat_sc {
 	int		DirCacheNum;
 	struct fat_fileentry file;
 	int		LastSector;	/* Sector in last sector buffer */
-	u_int8_t	LastSectorBuffer[SECTORSIZE];
+	u_int8_t	*LastSectorBuffer;
+	u_int32_t       BytesPerClust;
+	u_int32_t       BytesOfBuffer;
+	u_int32_t       SectorsOfBuffer;
+	u_int32_t       nextBytesOfBuffer;
+	u_int32_t       nextSectorsOfBuffer;
 };
 
 /*
@@ -263,3 +268,4 @@ struct winentry {
 #define DD_YEAR_SHIFT		9
 
 #endif /* __FATFS_H__ */
+
