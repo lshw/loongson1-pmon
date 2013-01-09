@@ -164,8 +164,8 @@ void addr_tst2(void);
 void movinv1(int iter, ulong p1, ulong p2);
 
 
-//#define	HPET
-void hpet_test_1(void)
+#ifdef	HPET
+void hpet_test(void)
 {
 	hpet_init();
 
@@ -174,18 +174,13 @@ void hpet_test_1(void)
 //	while(!check_intr())
 //		;
 //	hpet_intr();
-
 }
-
-#define NMOD_SDCARD_STORAGE  1
-
+#endif
 
 //#define GS_SOC_CAN
 //#ifdef
 //void can_test(void);
 //#endif
-
-//#define GS_SOC_I2C
 
 #ifdef GS_SOC_I2C
 #include <target/i2c.h>
@@ -194,51 +189,22 @@ void idelay(int n)
 	int count = n;
 	while(count > 0)
 		count--;
-	
 }
 
 int i2c_test(void)
 {
 	char i,j;
 	
-	for(i = 0x10; i < 0x20; i++)
-	{	
+	for (i=0x10; i<0x20; i++) {	
 		i2c_write(i+10,i);
 		idelay(100);
 		printf("===i2c_read addr: 0x%x  ,val: 0x%x\n",i,i2c_read(i));
 	}
 }
-
 #endif
 
-void pci_conf_dump(void)
-{
-	unsigned int * cfg_map;
-	unsigned int * conf_reg;
-	unsigned long data;
-	unsigned long data1;
-	int i,j;
-
-	
-	data1 = readl(0xbfd00410);
-	printf("===%x \n",data1);
-	
-		cfg_map = (unsigned int *)(0xbfd01120);
-		for(i = 0;i < 0x40;i = i+0x4)
-		{
-			*(cfg_map) = 0x1;
-			conf_reg = (unsigned int *)(0xbc100000+i);
-		
-			data = *(conf_reg);
-			printf("==conf_reg %d : %x\n",i,data);
-		
-		}
-
-}
-
 unsigned int output_mode = 1;
-void
-initmips(unsigned int memsz)
+void initmips(unsigned int memsz)
 {
 	/*
 	 *	Set up memory address decoders to map entire memory.
@@ -254,8 +220,7 @@ initmips(unsigned int memsz)
 	else	
 		output_mode = 1;
 
-	if (output_mode == 0)
-	{
+	if (output_mode == 0) {
 		cpuinfotab[0] = &DBGREG;
 		fast_startup();	//lxy
 	}
@@ -312,6 +277,10 @@ initmips(unsigned int memsz)
 	gpio_set_value(MG323_TERM_ON, 0);
 #endif
 
+#ifdef LS1A_CORE
+	ls1x_gpio_direction_output(GPIO_BACKLIGHT_CTRL, 1);	/* 使能LCD背光 */
+#endif
+
 #ifdef	CONFIG_1A_CLOUD
 //set gpio0 output heigh to disable system reset
 	*(volatile int*)0xbfd010c0 |= 1<<0;
@@ -335,13 +304,13 @@ initmips(unsigned int memsz)
 #define PS2_DLH			0x09
 int init_kbd(void)
 {
-    int ldd;
-    //ldd 5us/(1/clk)=5*t, kbdclk is ddrclk/2/ldd
-    ldd = 10*APB_CLK/1000000*DDR_MULT/2;
-    KSEG1_STORE8(FCR_PS2_BASE+PS2_DLL, ldd & 0xff);
-    KSEG1_STORE8(FCR_PS2_BASE+PS2_DLH, (ldd >> 8) & 0xff);
-	//pckbd_init_hw();
-   return 1;
+	int ldd;
+//	ldd 5us/(1/clk)=5*t, kbdclk is ddrclk/2/ldd
+	ldd = 10*APB_CLK/1000000*DDR_MULT/2;
+	KSEG1_STORE8(FCR_PS2_BASE+PS2_DLL, ldd & 0xff);
+	KSEG1_STORE8(FCR_PS2_BASE+PS2_DLH, (ldd >> 8) & 0xff);
+//	pckbd_init_hw();
+	return 1;
 }
 
 /*
@@ -388,7 +357,7 @@ tgt_devconfig(void)
 	rc=1;
 #endif
 #if (NMOD_FRAMEBUFFER > 0) || (NMOD_VGACON > 0 )
-	if (rc > 0){
+	if (rc > 0) {
 		if(!getenv("novga")) 
 			vga_available=1;
 		else 
@@ -501,8 +470,7 @@ tgt_devinit(void)
  *  This function makes inital HW setup for debugger and
  *  returns the apropriate setting for the status register.
  */
-register_t
-tgt_enable(int machtype)
+register_t tgt_enable(int machtype)
 {
 	/* XXX Do any HW specific setup */
 	return(SR_COP_1_BIT|SR_FR_32|SR_EXL);
@@ -513,16 +481,14 @@ tgt_enable(int machtype)
  *  Target dependent version printout.
  *  Printout available target version information.
  */
-void
-tgt_cmd_vers(void)
+void tgt_cmd_vers(void)
 {
 }
 
 /*
  *  Display any target specific logo.
  */
-void
-tgt_logo(void)
+void tgt_logo(void)
 {
     printf("\n");
     printf("[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[\n");
@@ -646,8 +612,7 @@ void _probe_frequencies(void)
 /*
  *   Returns the CPU pipelie clock frequency
  */
-int
-tgt_pipefreq(void)
+int tgt_pipefreq(void)
 {
 	if(md_pipefreq == 0) {
 		_probe_frequencies();
@@ -658,8 +623,7 @@ tgt_pipefreq(void)
 /*
  *   Returns the external clock frequency, usually the bus clock
  */
-int
-tgt_cpufreq(void)
+int tgt_cpufreq(void)
 {
 	if(md_cpufreq == 0) {
 		_probe_frequencies();
@@ -667,8 +631,7 @@ tgt_cpufreq(void)
 	return(md_cpufreq);
 }
 
-time_t
-tgt_gettime(void)
+time_t tgt_gettime(void)
 {
 	struct tm tm;
 	time_t t;

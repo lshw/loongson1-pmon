@@ -17,6 +17,7 @@ makeoptions	ENDIAN=EL		# Little endian version.
 option		SYSTYPE="\"FCR\""
 option		TARGETNAME="\"FCR\""
 option		LS1ASOC
+option		LS1A_CORE
 option		GS232_SOC
 option		CPU_LS232
 option		WAYBITS_HIGH
@@ -75,10 +76,10 @@ select		cmd_shell		# Shell commands, vers, help, eval
 # Platform options
 #
 select		mod_uart_ns16550	# Standard UART driver
-option		APB_CLK=25000000	# 外部晶振频率(Hz)
-#option		APB_CLK=12000000	# 外部晶振频率(Hz)
-option 		CPU_MULT=11			# CPU倍频
-option 		DDR_MULT=6			# DDR倍频
+#option		APB_CLK=25000000	# 外部晶振频率(Hz)
+option		APB_CLK=33000000	# 外部晶振频率(Hz)
+option 		CPU_MULT=8			# CPU倍频
+option 		DDR_MULT=4			# DDR倍频
 option		CONS_BAUD=B115200
 option		UART_BASE_ADDR=0xbfe40000	#串口控制台基地址 需要不同的串口输出可以修改此值
 
@@ -116,7 +117,7 @@ option		NOSNOOP			# Caches are no-snooping
 #
 option		HAVE_TOD		# Time-Of-Day clock
 option		HAVE_NVENV		#  Platform has non-volatile env mem
-option		HAVE_LOGO		# Output splash logo
+#option		HAVE_LOGO		# Output splash logo
 #option		USE_SUPERIO_UART
 #option		USE_LEGACY_RTC
 #option		GODSONEV2A
@@ -153,9 +154,6 @@ rtl*        at pci? dev ? function ?
 #ppb*		at pci? dev ? function ?	# PCI-PCI bridges
 #pci*		at ppb? bus ?
 
-#### USB
-#uhci*		at pci? dev ? function ?
-
 #### SCSI support
 #siop*		at pci? dev ? function ?	# Symbios/NCR 53c...
 #scsibus*	at siop?
@@ -163,7 +161,6 @@ rtl*        at pci? dev ? function ?
 #cd*		at scsibus? target ? lun ? 
 
 #### Networking Devices
-
 syn0		at localbus0
 #syn1		at localbus0
 #option		CONFIG_GMAC0_100M	#GMAC0的使能百兆网络 否则千兆网络
@@ -179,25 +176,29 @@ select		gmac
 # fxp normally only used for debugging (enable/disable both)
 #dmfe0		at localbus0
 
+#### SPI_SD_CARD
 #sdcard0	at localbus0 flags 0
 
+#### USB
 #uhci*		at pci? dev ? function ?
 #ohci0		at pci? dev ? function ?
 #ohci1		at pci? dev ? function ?
-#atp*		at pci? dev ? function ?  #sata atp8620
 #ahci*		at pci? dev ? function ?
 lohci0		at localbus0 base 0xbfe08000
-usb*		at usbbus ? 
-#ahcisata*	at ahci?
-
-lahci0		at localbus0 base 0xbfe30000
-ahcisata*	at lahci?
-
+#ehci0		at localbus0
+usb*		at usbbus ?
 select		mod_usb
 select		mod_usb_storage
 #select		mod_usb_uhci
 select		mod_usb_ohci
+#select		mod_usb_ehci
 select		mod_usb_kbd
+
+#### SATA controllers
+#atp*		at pci? dev ? function ?  #sata atp8620
+#ahcisata*	at ahci?
+lahci0		at localbus0 base 0xbfe30000
+ahcisata*	at lahci?
 
 #### Pseudo devices
 pseudo-device	loop	1	# network loopback
@@ -251,6 +252,7 @@ option		CONFIG_VIDEO_16BPP
 option		CONFIG_VGA_MODEM		#VGA模式
 option		CONFIG_VIDEO_SW_CURSOR	#软件光标
 option		CONFIG_FB_DYN
+option		GPIO_BACKLIGHT_CTRL=59	#lcd背光控制
 
 select		ide
 select		http #support load from http ???

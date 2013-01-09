@@ -145,9 +145,6 @@ pci*		at pcibr?
 #ppb*		at pci? dev ? function ?	# PCI-PCI bridges
 #pci*		at ppb? bus ?
 
-#### USB
-#uhci*		at pci? dev ? function ?
-
 #### SCSI support
 #siop*		at pci? dev ? function ?	# Symbios/NCR 53c...
 #scsibus*	at siop?
@@ -155,7 +152,6 @@ pci*		at pcibr?
 #cd*		at scsibus? target ? lun ? 
 
 #### Networking Devices
-
 syn0		at localbus0
 #syn1		at localbus0
 option		CONFIG_GMAC0_100M	#GMAC0的使能百兆网络 否则千兆网络
@@ -172,8 +168,10 @@ select		gmac
 # fxp normally only used for debugging (enable/disable both)
 #dmfe0		at localbus0
 
+#### SPI_SD_CARD
 #sdcard0	at localbus0 flags 0
 
+#### USB
 #uhci*		at pci? dev ? function ?
 #ohci0		at pci? dev ? function ?
 #ohci1		at pci? dev ? function ?
