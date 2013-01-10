@@ -59,7 +59,7 @@ char cvtab[] = { PREV, NEXT, FORW, BACK, 'E', END, 'G', BEGIN };
 
 enum esc_state { NONE, HAVE_ESC, HAVE_LB };
 
-#define HISTMAX 200
+#define HISTMAX 256
 char           *hist[HISTMAX + 1];	/* array of old commands */
 
 int             histi;		/* index to hist[], indicates next slot */

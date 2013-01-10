@@ -57,7 +57,7 @@
 #define IADDR   4
 
 #define MAX_BPT	 32		/* max number of user breakpoints */
-#define LINESZ	200		/* max command line length */
+#define LINESZ	256		/* max command line length */
 #define MAX_AC	100		/* max number of args to commands */
 #define PATSZ    80		/* max pattern length for search & fill */
 

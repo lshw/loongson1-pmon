@@ -564,7 +564,7 @@ do_caches:
 
 	mfc0   a0, COP_0_CONFIG
 	and    a0, a0, ~((1<<12) | 7)
-	or     a0, a0, 3
+	or     a0, a0, 2
 	mtc0   a0, COP_0_CONFIG
 
 	TTYDBG("Init caches done, cfg = ")

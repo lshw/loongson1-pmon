@@ -62,7 +62,6 @@
 #include "sd.h"
 #include "wd.h"
 
-
 #include <pflash.h>
 #include <flash.h>
 #include <dev/pflash_tgt.h>
@@ -71,7 +70,6 @@ unsigned int show_menu;
 
 #include "cmd_hist.h"		/* Test if command history selected */
 #include "cmd_more.h"		/* Test if more command is selected */
-
 
 jmp_buf         jmpb;		/* non-local goto jump buffer */
 char            line[LINESZ + 1];	/* input line */
@@ -94,8 +92,7 @@ extern void _exit (int retval);
 extern void delay __P((int));
 
 #ifdef INET
-static void
-pmon_intr (int dummy)
+static void pmon_intr (int dummy)
 {
     sigsetmask (0);
     longjmp (jmpb, 1);
@@ -105,8 +102,7 @@ pmon_intr (int dummy)
 /*FILE *logfp; = stdout; */
 
 #if NCMD_HIST == 0
-void
-get_line(char *line, int how)
+void get_line(char *line, int how)
 {
 	int i;
 
@@ -118,240 +114,210 @@ get_line(char *line, int how)
 }
 #endif
 
-
-static int load_menu_list()
+static int load_menu_list(void)
 {
-        char* rootdev = NULL;
-        char* path = NULL;
+	char* rootdev = NULL;
+	char* path = NULL;
 
 
-                show_menu=1;
-                if (path == NULL)
-                {
-                        path = malloc(512);
-                        if (path == NULL)
-                        {
-                                return 0;
-                        }
-                }
+	show_menu=1;
+	if (path == NULL) {
+		path = malloc(512);
+			if (path == NULL) {
+			return 0;
+		}
+	}
 
-                memset(path, 0, 512);
-                rootdev = getenv("bootdev");
-                if (rootdev == NULL)
-                {
-                        rootdev = "/dev/fs/ext2@wd0";
-                }
+	memset(path, 0, 512);
+	rootdev = getenv("bootdev");
+	if (rootdev == NULL) {
+		rootdev = "/dev/fs/ext2@wd0";
+	}
 
-                sprintf(path, "%s/boot/boot.cfg", rootdev);
-                if (check_config(path) == 1)
-                {
-                        sprintf(path, "bl -d ide %s/boot/boot.cfg", rootdev);
-                        if (do_cmd(path) == 0)
-                        {
-                                show_menu = 0;
-                                //                                      video_cls();
-                                free(path);
-                                path = NULL;
-                                return 1;
-                        }
-                }
-                else
-                {
-                        sprintf(path, "/dev/fs/ext2@wd0/boot/boot.cfg", rootdev);
-                        if (check_config(path) == 1)
-                        {
-                                sprintf(path, "bl -d ide /dev/fs/ext2@wd0/boot/boot.cfg", rootdev);
-                                if (do_cmd(path) == 0)
-                                {
-                                        show_menu = 0;
-                                        //                                              video_cls();
-                                        free(path);
-                                        path = NULL;
-                                        return 1;
-                                }
-                        }
-                }
+	sprintf(path, "%s/boot/boot.cfg", rootdev);
+	if (check_config(path) == 1) {
+		sprintf(path, "bl -d ide %s/boot/boot.cfg", rootdev);
+		if (do_cmd(path) == 0) {
+			show_menu = 0;
+			//                                      video_cls();
+			free(path);
+			path = NULL;
+			return 1;
+		}
+	}
+	else {
+		sprintf(path, "/dev/fs/ext2@wd0/boot/boot.cfg", rootdev);
+		if (check_config(path) == 1) {
+			sprintf(path, "bl -d ide /dev/fs/ext2@wd0/boot/boot.cfg", rootdev);
+			if (do_cmd(path) == 0) {
+				show_menu = 0;
+				//video_cls();
+				free(path);
+				path = NULL;
+				return 1;
+			}
+		}
+	}
 #if 0
-                if( check_ide() == 1 )// GOT IDE
-                {
-                        if( do_cmd ("bl -d ide /dev/fs/ext2@wd0/boot.cfg") ==0 )
-                        {
-                                show_menu=0;
-                                video_cls();
-                                return 1;
-                        }
-                }
-                else if( check_cdrom () == 1 ) // GOT CDROM
-                {
-                        if( do_cmd ("bl -d cdrom /dev/fs/ext2@wd0/boot.cfg") ==0 )
-                        {
-                                show_menu=0;
-                                video_cls();
-                                return 1;
-                        }
-                }
+	if( check_ide() == 1 )// GOT IDE
+	{
+		if( do_cmd ("bl -d ide /dev/fs/ext2@wd0/boot.cfg") ==0 ) {
+			show_menu=0;
+			video_cls();
+			return 1;
+		}
+	}
+	else if( check_cdrom () == 1 ) // GOT CDROM
+	{
+		if( do_cmd ("bl -d cdrom /dev/fs/ext2@wd0/boot.cfg") ==0 ) {
+			show_menu=0;
+			video_cls();
+			return 1;
+		}
+	}
 #endif
-                free(path);
-                path = NULL;
-                //                      video_cls();
-                show_menu=0;
-                return 0;
-        show_menu=0;
-        return 1;
-
+	free(path);
+	path = NULL;
+//	video_cls();
+	show_menu=0;
+	return 0;
+	show_menu=0;
+	return 1;
 }
 
-int check_user_password()
+int check_user_password(void)
 {
 	char buf[50];
 	struct termio tty;
 	int i;
 	char c;
-	if(!pwd_exist()||!pwd_is_set("user"))
+
+	if (!pwd_exist()||!pwd_is_set("user"))
 		return 0;
 
-	for(i=0;i<2;i++)
-	{
-	ioctl(i,TCGETA,&tty);
-	tty.c_lflag &= ~ ECHO;
-	ioctl(i,TCSETAW,&tty);
+	for (i=0; i<2; i++) {
+		ioctl(i,TCGETA,&tty);
+		tty.c_lflag &= ~ ECHO;
+		ioctl(i,TCSETAW,&tty);
 	}
-
-
 	printf("\nPlease input user password:");
+
 loop0:
-	for(i= 0;i<50;i++)
-	{
+	for (i=0; i<50; i++) {
 		c=getchar();
-		if(c!='\n'&&c!='\r'){	
+		if (c!='\n'&&c!='\r') {	
 			printf("*");
 			buf[i] = c;
 		}
-		else
-		{
+		else {
 			buf[i]='\0';
 			break;
 		}
 	}
 	
-	if(!pwd_cmp("user",buf))
-	{
+	if (!pwd_cmp("user",buf)) {
 		printf("\nPassword error!\n");
 		printf("Please input user password:");
 		goto loop0;
 	}
 
-	for(i=0;i<2;i++)
-	{
-	tty.c_lflag |=  ECHO;
-	ioctl(i,TCSETAW,&tty);
+	for (i=0; i<2; i++) {
+		tty.c_lflag |=  ECHO;
+		ioctl(i,TCSETAW,&tty);
 	}
 			
 	return 0;
 }
 
-int check_admin_password()
+int check_admin_password(void)
 {
 	char buf[50];
 	struct termio tty;
 	int i;
 	char c;
-	if(!pwd_exist()||!pwd_is_set("admin"))
+
+	if (!pwd_exist()||!pwd_is_set("admin"))
 		return 0;
 
-	for(i=0;i<2;i++)
-	{
-	ioctl(i,TCGETA,&tty);
-	tty.c_lflag &= ~ ECHO;
-	ioctl(i,TCSETAW,&tty);
+	for (i=0; i<2; i++) {
+		ioctl(i,TCGETA,&tty);
+		tty.c_lflag &= ~ ECHO;
+		ioctl(i,TCSETAW,&tty);
 	}
-
-
 	printf("\nPlease input admin password:");
+
 loop1:
-	for(i= 0;i<50;i++)
-	{
+	for (i= 0; i<50; i++) {
 		c=getchar();
-		if(c!='\n'&&c!='\r'){	
+		if (c!='\n'&&c!='\r') {	
 			printf("*");
 			buf[i] = c;
 		}
-		else
-		{
+		else {
 			buf[i]='\0';
 			break;
 		}
 	}
 	
-	if(!pwd_cmp("admin",buf))
-	{
+	if (!pwd_cmp("admin",buf)) {
 		printf("\nPassword error!\n");
 		printf("Please input admin password:");
 		goto loop1;
 	}
 
-
-	for(i=0;i<2;i++)
-	{
-	tty.c_lflag |=  ECHO;
-	ioctl(i,TCSETAW,&tty);
+	for (i=0; i<2; i++) {
+		tty.c_lflag |=  ECHO;
+		ioctl(i,TCSETAW,&tty);
 	}
 	
 	return 0;
 }
 
-
-int check_sys_password()
+int check_sys_password(void)
 {
 	char buf[50];
 	struct termio tty;
 	int i;
 	char c;
 	int count=0;
-	if(!pwd_exist()||!pwd_is_set("sys"))
+
+	if (!pwd_exist()||!pwd_is_set("sys"))
 		return 0;
 
-	for(i=0;i<6;i++)
-	{
-	ioctl(i,TCGETA,&tty);
-	tty.c_lflag &= ~ ECHO;
-	ioctl(i,TCSETAW,&tty);
+	for (i=0; i<6; i++) {
+		ioctl(i,TCGETA,&tty);
+		tty.c_lflag &= ~ ECHO;
+		ioctl(i,TCSETAW,&tty);
 	}
-
-
 	printf("\nPlease input sys password:");
+
 loop1:
-	for(i= 0;i<50;i++)
-	{
+	for (i= 0; i<50; i++) {
 		c=getchar();
-		if(c!='\n'&&c!='\r'){	
+		if (c!='\n'&&c!='\r') {	
 			printf("*");
 			buf[i] = c;
 		}
-		else
-		{
+		else {
 			buf[i]='\0';
 			break;
 		}
 	}
 	
-	if(!pwd_cmp("sys",buf))
-	{
+	if (!pwd_cmp("sys",buf)) {
 		printf("\nPassword error!\n");
 		printf("Please input sys password:");
 		count++;
-		if(count==3)
+		if (count==3)
 			return -1;
 		goto loop1;
 	}
 
-
-	for(i=0;i<6;i++)
-	{
-	tty.c_lflag |=  ECHO;
-	ioctl(i,TCSETAW,&tty);
+	for (i=0; i<6; i++) {
+		tty.c_lflag |=  ECHO;
+		ioctl(i,TCSETAW,&tty);
 	}
-	
+
 	return 0;
 }
 
@@ -367,8 +333,8 @@ void __gccmain(void);
 void __gccmain(void)
 {
 }
-int
-main()
+
+int main(void)
 {
 	char prompt[32];
 
@@ -391,60 +357,58 @@ main()
 	md_setsr(NULL, initial_sr);	/* XXX does this belong here? */
 
 	{
-
 //		check_user_password();
 		if(!getenv("al"))
 			;
 //		load_menu_list();
 	}
-{
-static int run=0;
-char *s;
-char *s1;
-int ret1 = 0;
-if(!run)
-{
-	s1 = getenv("update_usb");	//lxy
-	printf ("lxy: update_usb, %s !\n", s1);
-	if (!strcmp(s1, "yes"))
+
 	{
-		printf ("lxy: going to update vmlinuz .....\n");
-		ret1 = do_cmd("devcp /dev/fat@usb0/vmlinuz /dev/mtd3");	
-		if (ret1 != 0)
-			goto no_update;
-		setenv("al", "/dev/mtd3");
-		setenv("append", "console=ttyS2,115200 rdinit=/sbin/init");
-		setenv("update_usb", "no");
-	}
+	static int run=0;
+	char *s;
+	char *s1;
+	int ret1 = 0;
+
+	if (!run) {
+		s1 = getenv("update_usb");	//lxy
+		printf ("lxy: update_usb, %s !\n", s1);
+		if (!strcmp(s1, "yes")) {
+			printf ("lxy: going to update vmlinuz .....\n");
+			ret1 = do_cmd("devcp /dev/fat@usb0/vmlinuz /dev/mtd3");	
+			if (ret1 != 0)
+				goto no_update;
+			setenv("al", "/dev/mtd3");
+			setenv("append", "console=ttyS2,115200 rdinit=/sbin/init");
+			setenv("update_usb", "no");
+		}
 
 no_update:
 
-#ifdef	FAST_STARTUP
+	#ifdef	FAST_STARTUP
 		do_cmd("test");
-#endif
+	#endif
+		run=1;
+	#ifdef AUTOLOAD
+		s = getenv ("al");
+		autoload (s);
+	#else
+		s = getenv ("autoboot");
+		autorun (s);
+	#endif
+	}
+	}
 
-	run=1;
-#ifdef AUTOLOAD
-	s = getenv ("al");
-	autoload (s);
-#else
-	
-	s = getenv ("autoboot");
-	autorun (s);
-#endif
-}
-}
-
-	while(1) {
-#if 0
-		while(1){char c;int i;
+	while (1) {
+		#if 0
+		while (1) {
+			char c;int i;
 			i=term_read(0,&c,1);
 			printf("haha:%d,%02x\n",i,c);
 		}
-#endif		
+		#endif		
 		strncpy (prompt, getenv ("prompt"), sizeof(prompt));
 
-#if NCMD_HIST > 0
+	#if NCMD_HIST > 0
 		if (strchr(prompt, '!') != 0) {
 			char tmp[8], *p;
 			p = strchr(prompt, '!');
@@ -452,22 +416,21 @@ no_update:
 			sprintf(tmp, "%d", histno);
 			stristr(p, tmp);
 		}
-#endif
-
+	#endif
 		printf("%s", prompt);
-#if NCMD_HIST > 0
+	#if NCMD_HIST > 0
 		get_cmd(line);
-#else
+	#else
 		get_line(line, 0);
-#endif
+	#endif
 		do_cmd(line);
 		console_state(1);
 	}
 	return(0);
 }
+
 #ifdef AUTOLOAD
-static void
-autoload(char *s)
+static void autoload(char *s)
 {
 	char buf[LINESZ];
 	char *pa;
@@ -477,10 +440,10 @@ autoload(char *s)
 	struct termio sav;
 
 	if(s != NULL  && strlen(s) != 0) {
-
-#ifdef	wait_key
+	#ifdef	wait_key
 		char *d = getenv ("bootdelay");
-		if(!d || !atob (&dly, d, 10) || dly < 0 || dly > 99) {
+
+		if (!d || !atob (&dly, d, 10) || dly < 0 || dly > 99) {
 			dly = 1;
 		}
 
@@ -490,18 +453,17 @@ autoload(char *s)
 		ioctl (STDIN, CBREAK, &sav);
 		lastt = 0;
 		ioctl (STDIN, FIONREAD, &cnt);
-		while (dly != 0 && cnt == 0)
-		{
+
+		while (dly != 0 && cnt == 0) {
 			delay(1000000);
 			printf ("\b\b%02d", --dly);
 			ioctl (STDIN, FIONREAD, &cnt);
 		} 
 
-		if(cnt > 0 && strchr("\n\r", getchar())) {
+		if (cnt > 0 && strchr("\n\r", getchar())) {
 			cnt = 0;
 		}
-		else if (cnt > 0 && strchr("u", getchar()))
-		{
+		else if (cnt > 0 && strchr("u", getchar())) {
 			do_cmd("test");
 			do_cmd ("load /dev/mtd0");
 			do_cmd ("g console=ttyS2,115200 root=/dev/mtdblock1 rw rootfstype=yaffs2 init=/sbin/init video=ls1bfb:vga1024x768-24@60");
@@ -509,40 +471,38 @@ autoload(char *s)
 
 		ioctl (STDIN, TCSETAF, &sav);
 		putchar ('\n');
-#else
+	#else
 		cnt = 0;
-#endif
+	#endif
 
-		if(cnt == 0) {
-	        if(getenv("autocmd"))
-			{
-			strcpy(buf,getenv("autocmd"));
-			do_cmd(buf);
+		if (cnt == 0) {
+			if (getenv("autocmd")) {
+				strcpy(buf,getenv("autocmd"));
+				do_cmd(buf);
 			}
 			rd= getenv("rd");
-			if (rd != 0){
+			if (rd != 0) {
 				sprintf(buf, "initrd %s", rd);
-				if(do_cmd(buf))return;
+				if(do_cmd(buf))
+					return;
 			}
 
 			strcpy(buf,"load ");
 			strcat(buf,s);
-			if(do_cmd(buf))return;
-			if((pa=getenv("append")))
-			{
-			sprintf(buf,"g %s",pa);
+			if (do_cmd(buf))
+				return;
+			if ((pa=getenv("append"))) {
+				sprintf(buf,"g %s",pa);
 			}
-			else if((pa=getenv("karg")))
-			{
-			sprintf(buf,"g %s",pa);
+			else if ((pa=getenv("karg"))) {
+				sprintf(buf,"g %s",pa);
 			}
-			else
-			{
-			pa=getenv("dev");
-			strcpy(buf,"g root=/dev/");
-			if(pa != NULL  && strlen(pa) != 0) strcat(buf,pa);
-			else strcat(buf,"hda1");
-			strcat(buf," console=tty");
+			else {
+				pa=getenv("dev");
+				strcpy(buf,"g root=/dev/");
+				if (pa != NULL  && strlen(pa) != 0) strcat(buf,pa);
+				else strcat(buf,"hda1");
+				strcat(buf," console=tty");
 			}
 			printf("%s\n",buf);
 			delay(100000);
@@ -550,8 +510,8 @@ autoload(char *s)
 		}
 	}
 }
-
 #else
+
 /*
  *  Handle autoboot execution
  *  -------------------------
@@ -560,8 +520,7 @@ autoload(char *s)
  *  intervention. If CR is pressed skip counting. If var bootdelay
  *  is set use the value othervise default to 15 seconds.
  */
-static void
-autorun(char *s)
+static void autorun(char *s)
 {
 	char buf[LINESZ];
 	char *d;
@@ -612,7 +571,7 @@ autorun(char *s)
 #endif
 
 #ifdef FAST_STARTUP
-void fast_startup()		//lxy
+void fast_startup(void)		//lxy
 {
 #if 0
 extern	int vga_available;
@@ -665,8 +624,7 @@ extern unsigned long GPU_fbaddr;
 /*
  *  PMON2000 entrypoint. Called after initial setup.
  */
-void
-dbginit (char *adr)
+void dbginit(char *adr)
 {
 	int	memsize, freq;
 	char	fs[10], *fp;
@@ -781,8 +739,7 @@ dbginit (char *adr)
 /*
  *  closelst(lst) -- Handle client state opens and terminal state.
  */
-void
-closelst(int lst)
+void closelst(int lst)
 {
 	switch (lst) {
 	case 0:
@@ -802,8 +759,7 @@ closelst(int lst)
 /*
  *  console_state(lst) -- switches between PMON2000 and client tty setting.
  */
-void
-console_state(int lst)
+void console_state(int lst)
 {
 	switch (lst) {
 	case 1:
@@ -822,13 +778,11 @@ console_state(int lst)
 /*************************************************************
  *  dotik(rate,use_ret)
  */
-void
-dotik (rate, use_ret)
-	int             rate, use_ret;
+void dotik(int rate, int use_ret)
 {
-static	int             tik_cnt;
-static	const char      more_tiks[] = "|/-\\";
-static	const char     *more_tik;
+	static	int             tik_cnt;
+	static	const char      more_tiks[] = "|/-\\";
+	static	const char     *more_tik;
 
 	tik_cnt -= rate;
 	if (tik_cnt > 0) {
@@ -853,10 +807,7 @@ static	const char     *more_tik;
 /*
  *  Allow usage of more printout even if more is not compiled in.
  */
-int
-more (p, cnt, size)
-     char           *p;
-     int            *cnt, size;
+int more (char *p, int *cnt, int size)
 { 
 	printf("%s\n", p);
 	return(0);
@@ -866,10 +817,7 @@ more (p, cnt, size)
 /*
  *  Non direct command placeholder. Give info to user.
  */
-int 
-no_cmd(ac, av)
-     int ac;
-     char *av[];
+int no_cmd(int ac, char *av[])
 {
     printf("Not a direct command! Use 'h %s' for more information.\n", av[0]);
     return (1);
@@ -881,11 +829,7 @@ no_cmd(ac, av)
  *  arg1 = argc, arg2 = argv, arg3 = envp, arg4 = callvector
  */
 
-void
-initstack (ac, av, addenv)
-    int ac;
-    char **av;
-    int addenv;
+void initstack (int ac, char **av, int addenv)
 {
 	char	**vsp, *ssp;
 	int	ec, stringlen, vectorlen, stacklen, i;
