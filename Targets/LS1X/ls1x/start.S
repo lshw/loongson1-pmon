@@ -562,17 +562,16 @@ do_caches:
     bal     cache_init
     nop
 
+	mfc0   a0, COP_0_CONFIG
+	and    a0, a0, ~((1<<12) | 7)
+	or     a0, a0, 3
+	mtc0   a0, COP_0_CONFIG
+
 	TTYDBG("Init caches done, cfg = ")
 	mfc0	a0, COP_0_CONFIG
 	bal	hexserial
 	nop
 	TTYDBG("\r\n")
-
-
-	mfc0   a0,COP_0_CONFIG
-	and    a0,a0,~((1<<12) | 3)
-	or     a0,a0,2
-	mtc0   a0,COP_0_CONFIG
 	
 #ifdef LS1ASOC
 acpi_begin:
@@ -637,7 +636,6 @@ acpi_begin:
 	PRINTSTR("\r\n")
 #endif
 
-
 	bal	CPU_TLBClear
 	nop
 	PRINTSTR("ACPI_RESUME\r\n")
@@ -653,19 +651,6 @@ acpi_end:/* Startup as usual */
 /***********************MEMORY DEBUGGING AND COPY SELF TO RAM***********************/
 
 PRINTSTR("begin test\r\n");
-###lcd soft_reset and panel config&timing
-	li a0,0xbc301240
-	li a1,0x00100000
-	sw a1,0x0(a0)
-	li a1,0x00000000
-	sw a1,0x0(a0)
-
-	li a0,0xbc3013c0
-	li a1,0x80001111
-	sw a1,0x0(a0)
-	li a1,0x33333333
-	sw a1,0x20(a0)
-
 //#include "newtest.32/mydebug.S"
 bootnow:
 PRINTSTR("end test\r\n");
