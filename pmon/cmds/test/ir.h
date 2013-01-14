@@ -1,4 +1,8 @@
-#define GPIO_IR 61
+#ifdef	LS1A_CORE
+	#define GPIO_IR 59
+#else
+	#define GPIO_IR 61
+#endif
 
 #define SYSTEMCODE_BIT_NUM 16
 

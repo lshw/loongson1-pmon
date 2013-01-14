@@ -859,6 +859,38 @@ LEAF(suspend_resume)
 	nop
 END(suspend_resume)
 
+LEAF(suspend_save)
+	li	t0,	0xa01ffc00
+#	sw	ra,	(t0)
+	sw	sp,	4(t0)
+	sw	s8,	8(t0)
+	sw	gp,	12(t0)
+	sw	s0,	16(t0)
+	sw	s1,	20(t0)
+	sw	s2,	24(t0)
+	sw	s3,	28(t0)
+	sw	s4,	32(t0)
+	sw	s5,	36(t0)
+	sw	s6,	40(t0)
+	sw	s7,	44(t0)
+
+	sw	k0,	48(t0)
+	sw	k1,	52(t0)
+
+	sw	v0,	56(t0)
+	sw	v1,	60(t0)
+                                
+	mfc0	t1,	$12
+	sw	t1,	64(t0)
+	mfc0	t1,	$4
+	sw	t1,	68(t0)
+	mfc0	t1,	$5
+	sw	t1,	72(t0)
+
+	jr	ra
+	nop
+END(suspend_save)
+
 /***********************************FUNCTIONS**********************************/
 
 LEAF(stringserial)

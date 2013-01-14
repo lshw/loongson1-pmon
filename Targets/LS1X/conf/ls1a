@@ -145,7 +145,7 @@ loopdev0	at mainbus0
 #
 # PCI
 #
-#option		PCI_ENABLE
+option		PCI_ENABLE
 #option		X86_LIKE_SPACE				# make pci addr == cpu addr
 pcibr*		at mainbus0
 #pcibr1		at mainbus0
@@ -162,10 +162,10 @@ rtl*        at pci? dev ? function ?
 
 #### Networking Devices
 syn0		at localbus0
-#syn1		at localbus0
+syn1		at localbus0
 #option		CONFIG_GMAC0_100M	#GMAC0的使能百兆网络 否则千兆网络
-#option		CONFIG_GMAC1_100M	#GMAC1的使能百兆网络 否则千兆网络
-#option		GMAC1_USE_UART01
+option		CONFIG_GMAC1_100M	#GMAC1的使能百兆网络 否则千兆网络
+option		GMAC1_USE_UART01
 option		GMAC_PHY_BASE=1
 option		GMAC0_ADDR=0xbfe10000
 option		GMAC1_ADDR=0xbfe20000
@@ -177,7 +177,7 @@ select		gmac
 #dmfe0		at localbus0
 
 #### SPI_SD_CARD
-#sdcard0	at localbus0 flags 0
+sdcard0	at localbus0 flags 0
 
 #### USB
 #uhci*		at pci? dev ? function ?

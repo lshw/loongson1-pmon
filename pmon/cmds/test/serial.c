@@ -69,7 +69,11 @@ typedef unsigned int uint32;
 static int serialbase[]={0xbe000000,0xbe000020};
 #else
 //static int serialbase[]={0xbfd003f8,0xbfd002f8,0xbff003f8};
+#ifdef	LS1ASOC
+static int serialbase[]={0xbfe40000, 0xbfe44000, 0xbfe48000, 0xbfe4c000};
+#else
 static int serialbase[]={0xbfe40000, 0xbfe41000, 0xbfe42000, 0xbfe43000, 0xbfe44000, 0xbfe45000, 0xbfe46000, 0xbfe47000, 0xbfe48000, 0xbfe4c000, 0xbfe6c000, 0xbfe7c000};
+#endif
 #endif
 extern void delay(int);
 
@@ -302,6 +306,30 @@ int serialtest(void)
 		printf("%c",getDebugChar(0));
 	}
 	printf("\n");
+	return 0;
+}
+
+int ls1a_serialtest(void)
+{
+#ifdef CONFIG_CHINESE
+	printf("串口测试\n说明：\n");
+	printf("1.请把串口的输出引脚(Tx)连接到输入引脚(Rx)\n");
+	printf("2.COM1接口对应串口0，JP20对应串口9，JP21对应串口10\n");
+	printf("3.串口0测试需要把JP2插针的跳线帽拿掉\n");
+#else
+	printf("Plese plug net wire into fxp0\n");
+#endif
+	pause();
+	/* UART0和GMAC1复用 使能UART0 */
+	*((volatile unsigned int*)0xbfd00420) &= ~0x40;
+	serial_selftest(0);
+	serial_selftest(2);
+	serial_selftest(3);
+#ifdef CONFIG_CHINESE
+	printf("\n串口测试结速\n");
+#else
+	printf("\nserial test done\n");
+#endif
 	return 0;
 }
 

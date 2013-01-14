@@ -17,8 +17,12 @@
 #include <sys/buf.h>
 #include <sys/uio.h>
 
+#if	LS1A_CORE
+#define SPI1
+#else
 #define SPI0
 //#define SPI1
+#endif
 
 //#define SDCARD_DBG
 #define NMOD_SDCARD_STORAGE 1
@@ -64,11 +68,15 @@ static unsigned char  flash_writeb_cmd(unsigned char value)
 static void spi_init0(void)
 {
 #ifdef SPI1
-	/* 使能SPI1控制器，与CAN0 CAN1 GPIO38-GPIO41复用,同时占用PWM0 PWM1用于片选. */
-	/* 编程需要注意 */
-	*(volatile unsigned int *)0xbfd00424 |= (0x3 << 23);
-	/* disable gpio38-41 */
-	*(volatile unsigned int *)0xbfd010c4 &= ~(0xf << 6);
+	#if LS1A_CORE
+		*(volatile unsigned int*)0xbfd00420 &= ~(1 << 26);
+	#else
+		/* 使能SPI1控制器，与CAN0 CAN1 GPIO38-GPIO41复用,同时占用PWM0 PWM1用于片选. */
+		/* 编程需要注意 */
+		*(volatile unsigned int *)0xbfd00424 |= (0x3 << 23);
+		/* disable gpio38-41 */
+		*(volatile unsigned int *)0xbfd010c4 &= ~(0xf << 6);
+	#endif
 #endif
 #ifdef SPI0
 	/* disable gpio24-27 */
@@ -80,13 +88,19 @@ static void spi_init0(void)
 	SET_SPI(FCR_PARAM, 0x00);
 	//#define SPER      0x3	//外部寄存器
 	//spre:01 [2]mode spi接口模式控制 1:采样与发送时机错开半周期  [1:0]spre 与Spr一起设定分频的比率
-	SET_SPI(FCR_SPER, 0x04);
+//	SET_SPI(FCR_SPER, 0x04);
+	SET_SPI(FCR_SPER, 0x07);
 	//SPI Flash片选控制寄存器
+#if LS1A_CORE
+	SET_SPI(FCR_SOFTCS, 0xef);
+#else
 	SET_SPI(FCR_SOFTCS, 0xbf);
+#endif
 //	SET_SPI(FCR_SOFTCS, 0xef);
 //	SET_SPI(FCR_TIMING, 0x00);
 	/* [1:0]spr sclk_o分频设定，需要与sper的spre一起使用 */
-	SET_SPI(FCR_SPCR, 0x5d);
+//	SET_SPI(FCR_SPCR, 0x5d);
+	SET_SPI(FCR_SPCR, 0x5f);
 	/* 分频系数设置为4 */
 }
 
@@ -114,9 +128,13 @@ static inline void set_cs(int bit)
 {
 	if(bit) 
 		SET_SPI(FCR_SOFTCS, 0xFF);		//cs high
-	else 
-		SET_SPI(FCR_SOFTCS, 0xBF);		//cs low
-//		SET_SPI(FCR_SOFTCS, 0xEF);		//cs low
+	else {
+		#if LS1A_CORE
+			SET_SPI(FCR_SOFTCS, 0xEF);		//cs low
+		#else
+			SET_SPI(FCR_SOFTCS, 0xBF);		//cs low
+		#endif
+	}
 }
 
 
@@ -338,7 +356,7 @@ unsigned int SD_CMD_Write_Crc(unsigned int CMDIndex, unsigned long CMDArg, unsig
 		resp[4] = SD_Read();
 		Response = resp[0];
 
-//		printf ("resp= 0x%x, 0x%x, 0x%x, 0x%x, 0x%x !\n", resp[0], resp[1], resp[2], resp[3], resp[4]);
+		printf ("resp= 0x%x, 0x%x, 0x%x, 0x%x, 0x%x !\n", resp[0], resp[1], resp[2], resp[3], resp[4]);
 			break;
 	}
 	

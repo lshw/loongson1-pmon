@@ -49,6 +49,7 @@
 #define	UPDATE_PMON_USB		(1<<18)
 #define	UPDATE_KERNEL_USB	(1<<19)
 #define	UPDATE_SYSTEM_USB	(1<<20)	
+#define	OTHER_FUNCTON_TEST	(1<<21)	
 
 
 #include <fb/video_font.h>		//定义了字长字宽
@@ -266,12 +267,71 @@ static struct setupMenu testmenu1={
 		{POP_Y+19,POP_X,20,20,TYPE_CMD,	"(19)(pmon_usb update):${?&#mytest 262144}=[on=| _or mytest 262144||off=| _andn mytest 262144]test 262144"},
 		{POP_Y+20,POP_X,21,21,TYPE_CMD,	"(20)(kernel_usb update):${?&#mytest 524288}=[on=| _or mytest 524288||off=| _andn mytest 524288]test 524288"},
 		{POP_Y+21,POP_X,22,22,TYPE_CMD,	"(21)(system_usb update):${?&#mytest 1048576}=[on=| _or mytest 1048576||off=| _andn mytest 1048576]test 1048576"},
-		{POP_Y+22,POP_X,23,23,TYPE_CMD,	"(22)all selected=test ${#mytest}"},
-		{POP_Y+23,POP_X,1,1,TYPE_CMD,	"(23)quit=| _quit",0},
+		{POP_Y+22,POP_X,23,23,TYPE_CMD,	"(22)(other function test):${?&#mytest 2097152}=[on=| _or mytest 2097152||off=| _andn mytest 2097152]test 2097152"},
+		{POP_Y+23,POP_X,24,24,TYPE_CMD,	"(23)all selected=test ${#mytest}"},
+		{POP_Y+24,POP_X,1,1,TYPE_CMD,	"(24)quit=| _quit",0},
 		{}
 	}
 };
 #endif
+
+
+static char other_test_menu[] = {
+"\n\
+[1] PCI Networking test\n\
+[2] PS2 test\n\
+[q] quit\n\
+please input [1-8] to begin the test\n\
+input 'q' to black main test list.\n\
+"
+};
+
+static int other_fun_test(void)
+{
+	unsigned char input_char;
+	char cmd[200];
+	char *clientip2;
+	char *serverip;
+
+	printf ("%s", other_test_menu);
+	while (1) {
+		if (input_char = getchar()) {
+			switch (input_char) {
+			case '1':
+				if(!(clientip2=getenv("clientip2")))
+					clientip2="192.168.1.102";
+				if(!(serverip=getenv("serverip")))
+					serverip="192.168.1.12";
+				sprintf(cmd, "ifconfig syn0 remove;ifconfig syn1 remove;\
+					ifconfig rtl0 remove; ifconfig rtl0 %s;", clientip2);
+				do_cmd(cmd);
+				if (myping(serverip)){
+				#ifdef CONFIG_CHINESE
+					printf("\nPCI网口测试失败：数据包丢失！\n");
+//					sprintf(cmd, "set net0test \"%s\"", "测试失败！");
+				#else
+					printf ("PCI net test error ~_~!!!\n");
+				#endif
+				}
+				else{
+				#ifdef CONFIG_CHINESE
+					printf("\nPCI网络接口测试通过\n");
+				#else
+					printf ("PCI net test pass ^_^ !\n");
+				#endif
+				}
+				printf ("%s", other_test_menu);
+				break;
+			case 'q':
+				return 0;
+				break;
+			default:
+				break;
+			}
+		}
+	}
+	return 0;
+}
 
 static int cmd_test(int ac,char **av)
 {
@@ -305,7 +365,7 @@ static int cmd_test(int ac,char **av)
 		tests=strtoul(av[1],0,0);
 
 	if(!(serverip=getenv("serverip")))
-		serverip="192.168.1.3";
+		serverip="192.168.1.12";
 	if(!(clientip0=getenv("clientip0")))
 		clientip0="192.168.1.100";
 	if(!(clientip1=getenv("clientip1")))
@@ -322,7 +382,11 @@ static int cmd_test(int ac,char **av)
 				memtest();
 			break;
 			case TEST_SERIAL:
+			#ifdef	LS1ASOC
+				ls1a_serialtest();
+			#else
 				ls1b_serialtest();
+			#endif
 			break;
 			case TEST_AC97:
 			#ifdef CONFIG_CHINESE
@@ -374,6 +438,11 @@ static int cmd_test(int ac,char **av)
 				printf("Plese plug net wire into syn1\n");
 			#endif
 				pause();
+
+			#ifdef LS1ASOC
+				*((volatile unsigned int*)0xbfd00420) |= 0xc0;	//gmac1 use UART01
+			#endif
+
 				sprintf(cmd, "ifconfig syn0 remove;ifconfig syn1 remove;ifconfig syn1 %s;", clientip1);
 				do_cmd(cmd);
 				if (myping(serverip)){
@@ -385,6 +454,9 @@ static int cmd_test(int ac,char **av)
 //					sprintf(cmd, "set net1test \"%s\"", "测试通过");
 				}
 				do_cmd(cmd);
+			#ifdef LS1ASOC
+				*((volatile unsigned int*)0xbfd00420) &= ~0xc0; //reset pin to UART01
+			#endif
 			break;
 			case TEST_TS:
 				ads7846_test();
@@ -529,12 +601,12 @@ static int cmd_test(int ac,char **av)
 			break;
 
 			case UPDATE_PMON_USB:
-				printf ("please plug in the USB-disk !\n");
+				printf ("please plug in the USB-disk, file name is \'gzrom-cloud.bin\' !\n");
 				do_cmd ("load -r -f bfc00000 /dev/fat@usb0/gzrom-cloud.bin");
 				break;
 
 			case UPDATE_KERNEL_USB:
-				printf ("please plug in the USB-disk !\n");
+				printf ("please plug in the USB-disk, file name is \'vmlinuz-cloud\' !\n");
 				do_cmd ("devcp /dev/fat@usb0/vmlinuz-cloud /dev/mtd0");
 				setenv("al", "/dev/mtd0");
 				setenv("append", "console=ttyS2,115200 root=/dev/mtdblock1 rw rootfstype=yaffs2 init=/sbin/init video=ls1bfb:vga1024x768-24@60 quiet");
@@ -542,9 +614,14 @@ static int cmd_test(int ac,char **av)
 				break;
 
 			case UPDATE_SYSTEM_USB:
-				printf ("please plug in the USB-disk !\n");
+				printf ("please plug in the USB-disk, file name is \'cloud.img\' !\n");
 				do_cmd("mtd_erase /dev/mtd1");
 				do_cmd ("devcp /dev/fat@usb0/cloud.img /dev/mtd1 yaf nw");
+				break;
+			case OTHER_FUNCTON_TEST:
+			#ifdef	LS1ASOC
+				other_fun_test();
+			#endif
 				break;
 		}
 		pause();
@@ -555,10 +632,52 @@ static int cmd_test(int ac,char **av)
 	return 0;
 }
 
+static void acpi_test(int ac, char **av)
+{
+	unsigned int i;
+	unsigned int k;
+
+	suspend_save();
+
+	i = strtoul(av[1], 0, 0);
+	printf ("you set %d for test !\n", i);
+	if (i & 1)
+		*(volatile unsigned int *)0xbfe7c004 = 1 << 8;	//power button
+	k = *(volatile unsigned int *)0xbfe7c024;
+	k &= ~((1 << 8) | (1 << 9));
+	*(volatile unsigned int *)0xbfe7c024 = (i & 0x6) << 7;	//[8:9]RI_EN、PME_EN
+//	*(volatile unsigned int *)0xbfe7c008 = (1 << 13) | (5 << 10);	//sleep to ram
+
+	__asm__ volatile (
+			"la	$2, 1f\n\t"
+			"li	$3, 0xa01ffc00\n\t"
+			"sw	$2, 0x0($3)\n\t"		//save return address
+			"li	$2, 0xaffffe34\n\t"
+			"lw	$3, 0x0($2)\n\t"
+			"or	$3, 0x1\n\t"
+			"sw	$3, 0x0($2)\n\t"	//enable ddr autorefresh
+			"li	$2, 0xbfe7c008\n\t"
+			"li	$3, (1<<13) | (5<<10)\n\t"
+			"sw	$3, 0x0($2)\n\t"		//go to sleep
+			"1:\n\t"
+			::
+			: "$2","$3","memory"
+//			"move %0,$2\n\t"
+//			: "=r" (p)
+//			: "0" (p), "r" (len), "r" (1)
+//			: "$2","$3","$4","$5"
+	);
+
+
+}
+
+
+
 //-------------------------------------------------------------------------------------------
 static const Cmd Cmds[] =
 {
 	{"MyCmds"},
+	{"acpi_test","val",0,"cpu sleep test: 1|power_btn, 2|RI_EN, 4|PME_EN.",acpi_test,0,99,CMD_REPEAT},
 	{"test","val",0,"hardware test",cmd_test,0,99,CMD_REPEAT},
 #if NMOD_VGACON
 	{"LCD0","", 0, "LCD0", lcd0, 0, 99, CMD_REPEAT},

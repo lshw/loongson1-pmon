@@ -195,7 +195,7 @@ static void lahci_attach(struct device * parent, struct device * self, void *aux
 	*(volatile int *)0xbfd00420 &= ~(1 << 22);
 
  /*ls1a adjust sata phy clock added by menghaibo*/
-        *(volatile int *)0xbfd00424 |= 0x80000000;
+//        *(volatile int *)0xbfd00424 |= 0x80000000;
 //        *(volatile int *)0xbfd00418  = 0x38682650;
         *(volatile int *)0xbfd00418  = AHCI_CLOCK_125MHZ;
         *(volatile int *)0xbfe30000 &= 0x0;
