@@ -278,17 +278,23 @@ static struct setupMenu testmenu1={
 
 static char other_test_menu[] = {
 "\n\
-*************************************************\
-[1] PCI Networking test\n\
-[2] PS2 test\n\
-[3] CAN1 test\n\
-[q] quit\n\
-please input [1-8] to begin the test\n\
-input 'q' to black main test list.\n\
-*************************************************\
+************************************************|\n\
+[1] PCI Networking test				|\n\
+[2] PS2 test					|\n\
+[3] CAN1 test					|\n\
+[q] quit					|\n\
+please input [1-8] to begin the test		|\n\
+input 'q' to black main test list.		|\n\
+************************************************|\
 \r\n\n\
 "
 };
+
+void print_main_list(void)
+{
+	video_set_bg(30, 60, 250);
+	printf ("%s", other_test_menu);
+}
 
 static int other_fun_test(void)
 {
@@ -296,8 +302,9 @@ static int other_fun_test(void)
 	char cmd[200];
 	char *clientip2;
 	char *serverip;
+	int k;
 
-	printf ("%s", other_test_menu);
+	print_main_list();
 	while (1) {
 		if (input_char = getchar()) {
 			switch (input_char) {
@@ -324,12 +331,19 @@ static int other_fun_test(void)
 					printf ("PCI net test pass ^_^ !\n");
 				#endif
 				}
-				printf ("%s", other_test_menu);
+				print_main_list();
+				break;
+			case '2':
+				init_kbd();
+				k = kbd_initialize();
+				psaux_init();
+				kbd_available=1;
+				print_main_list();
 				break;
 			case '3':
 				sprintf(cmd, "test_can 1");
 				do_cmd(cmd);
-				printf ("%s", other_test_menu);
+				print_main_list();
 				break;
 			case 'q':
 				return 0;
