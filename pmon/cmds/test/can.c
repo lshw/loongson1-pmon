@@ -77,7 +77,7 @@ int test_can(int argc,char **argv)
 //	printf ("before to send data ......\n");
 //	do_cmd("d4 0x%x 24\n",CAN0_BASE);
 	outb(CAN0_BASE+1,0x92);  	//gctx_requeste
-	delay(100);
+	delay(1000);
 //	printf("after can bus to self tx and rx......\n");
 //	do_cmd("d4 0x%x 24\n",CAN0_BASE);
 

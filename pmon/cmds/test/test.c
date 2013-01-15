@@ -282,8 +282,9 @@ static char other_test_menu[] = {
 [1] PCI Networking test				|\n\
 [2] PS2 test					|\n\
 [3] CAN1 test					|\n\
+[4] acpi test					|\n\
 [q] quit					|\n\
-please input [1-8] to begin the test		|\n\
+please input [1-4] to begin the test		|\n\
 input 'q' to black main test list.		|\n\
 ************************************************|\
 \r\n\n\
@@ -342,6 +343,11 @@ static int other_fun_test(void)
 				break;
 			case '3':
 				sprintf(cmd, "test_can 1");
+				do_cmd(cmd);
+				print_main_list();
+				break;
+			case '4':
+				sprintf(cmd, "acpi_test");
 				do_cmd(cmd);
 				print_main_list();
 				break;
@@ -655,52 +661,11 @@ static int cmd_test(int ac,char **av)
 	return 0;
 }
 
-static void acpi_test(int ac, char **av)
-{
-	unsigned int i;
-	unsigned int k;
-
-	suspend_save();
-
-	i = strtoul(av[1], 0, 0);
-	printf ("you set %d for test !\n", i);
-	if (i & 1)
-		*(volatile unsigned int *)0xbfe7c004 = 1 << 8;	//power button
-	k = *(volatile unsigned int *)0xbfe7c024;
-	k &= ~((1 << 8) | (1 << 9));
-	*(volatile unsigned int *)0xbfe7c024 = (i & 0x6) << 7;	//[8:9]RI_EN、PME_EN
-//	*(volatile unsigned int *)0xbfe7c008 = (1 << 13) | (5 << 10);	//sleep to ram
-
-	__asm__ volatile (
-			"la	$2, 1f\n\t"
-			"li	$3, 0xa01ffc00\n\t"
-			"sw	$2, 0x0($3)\n\t"		//save return address
-			"li	$2, 0xaffffe34\n\t"
-			"lw	$3, 0x0($2)\n\t"
-			"or	$3, 0x1\n\t"
-			"sw	$3, 0x0($2)\n\t"	//enable ddr autorefresh
-			"li	$2, 0xbfe7c008\n\t"
-			"li	$3, (1<<13) | (5<<10)\n\t"
-			"sw	$3, 0x0($2)\n\t"		//go to sleep
-			"1:\n\t"
-			::
-			: "$2","$3","memory"
-//			"move %0,$2\n\t"
-//			: "=r" (p)
-//			: "0" (p), "r" (len), "r" (1)
-//			: "$2","$3","$4","$5"
-	);
-
-
-}
-
-
 
 //-------------------------------------------------------------------------------------------
 static const Cmd Cmds[] =
 {
 	{"MyCmds"},
-	{"acpi_test","val",0,"cpu sleep test: 1|power_btn, 2|RI_EN, 4|PME_EN.",acpi_test,0,99,CMD_REPEAT},
 	{"test","val",0,"hardware test",cmd_test,0,99,CMD_REPEAT},
 #if NMOD_VGACON
 	{"LCD0","", 0, "LCD0", lcd0, 0, 99, CMD_REPEAT},

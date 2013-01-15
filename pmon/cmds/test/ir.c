@@ -157,7 +157,8 @@ void test_ir(int argc,char **argv)
 			ls1b_ir_interval += 100;	//用于时间计数
 		}
 		/* 判断是否按任意键退出 */
-		if (get_uart_char(COM1_BASE_ADDR)){
+//		if (get_uart_char(COM1_BASE_ADDR)){
+		if (getchar()){
 		#ifdef CONFIG_CHINESE
 			printf("\n退出红外测试测试程序\n");
 		#else
