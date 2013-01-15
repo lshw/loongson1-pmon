@@ -277,10 +277,6 @@ void initmips(unsigned int memsz)
 	gpio_set_value(MG323_TERM_ON, 0);
 #endif
 
-#ifdef LS1A_CORE
-	ls1x_gpio_direction_output(GPIO_BACKLIGHT_CTRL, 1);	/* 使能LCD背光 */
-#endif
-
 #ifdef	CONFIG_1A_CLOUD
 //set gpio0 output heigh to disable system reset
 	*(volatile int*)0xbfd010c0 |= 1<<0;

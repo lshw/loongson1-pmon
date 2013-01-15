@@ -278,11 +278,15 @@ static struct setupMenu testmenu1={
 
 static char other_test_menu[] = {
 "\n\
+*************************************************\
 [1] PCI Networking test\n\
 [2] PS2 test\n\
+[3] CAN1 test\n\
 [q] quit\n\
 please input [1-8] to begin the test\n\
 input 'q' to black main test list.\n\
+*************************************************\
+\r\n\n\
 "
 };
 
@@ -320,6 +324,11 @@ static int other_fun_test(void)
 					printf ("PCI net test pass ^_^ !\n");
 				#endif
 				}
+				printf ("%s", other_test_menu);
+				break;
+			case '3':
+				sprintf(cmd, "test_can 1");
+				do_cmd(cmd);
 				printf ("%s", other_test_menu);
 				break;
 			case 'q':

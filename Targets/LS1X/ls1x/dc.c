@@ -408,6 +408,10 @@ int dc_init(void)
 		exit(0);
 	}
 
+#ifdef LS1A_CORE
+	ls1x_gpio_direction_output(GPIO_BACKLIGHT_CTRL, 1);	/* 使能LCD背光 */
+#endif
+
 #ifdef DC_FB0
 	config_fb(DC_BASE_ADDR0);
 #endif
