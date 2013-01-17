@@ -8,14 +8,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-typedef unsigned long  u32;
+typedef unsigned int  u32;
 typedef unsigned short u16;
 typedef unsigned char  u8;
-typedef signed long  s32;
+typedef signed int  s32;
 typedef signed short s16;
 typedef signed char  s8;
 typedef int bool;
-typedef unsigned long dma_addr_t;
+typedef unsigned int dma_addr_t;
 
 #define writeb(val, addr) (*(volatile u8*)(addr) = (val))
 #define writew(val, addr) (*(volatile u16*)(addr) = (val))
@@ -36,7 +36,7 @@ static char *MEM_ptr = 0xa3200000;
 static int MEM_ADDR = 0;
 
 static struct vga_struc{
-	long pclk, refresh;
+	unsigned int pclk, refresh;
 	int hr, hss, hse, hfl;
 	int vr, vss, vse, vfl;
 	int pan_config;
@@ -44,7 +44,7 @@ static struct vga_struc{
 		{/*"240x320_70.00"*/	6429,	60,	240,	250,	260,	280,	320,	324,	326,	328,	0x00000301},
 		{/*"320x240_60.00"*/	7154,	60,	320,	332,	364,	432,	240,	248,	254,	276,	0x00000103},/* HX8238-D控制器 */
 //		{/*"320x240_60.00"*/	6438,	60,	320,	336,	337,	408,	240,	250,	251,	263,	0x80001311},/* NT39016D控制器 */
-		{/*"480x272_60.00"*/	9072,	60,	480,	481,	482,	525,	272,	273,	274,	288,	0x00000101},/* AT043TN24 */
+		{/*"480x272_60.00"*/	12072,	60,	480,	481,	482,	525,	272,	273,	274,	288,	0x00000101},/* AT043TN24 */
 		{/*"480x640_60.00"*/    20217,	60,	480,    488,    496,    520,    640,    642,    644,    648,	0x00000101},/* jbt6k74控制器 */
 		{/*"640x480_60.00"*/	24480,	60,	640,	664,	728,	816,	480,	481,    484,    500,	0x00000101},/* AT056TN52 */
 		{/*"640x640_60.00"*/	33100,	60,	640,	672,	736,	832,	640,	641,	644,	663,	0x00000101},
@@ -149,31 +149,85 @@ enum {
 };
 
 #ifdef LS1ASOC
-static int caclulatefreq(long long XIN, long long PCLK)
+static unsigned int caclulatefreq(unsigned int sys_clk, unsigned int pclk)
 {
-	long N=4, NO=4, OD=2, M, FRAC;
-	int flag = 0;
-	long  out;
-	long long MF;
+#if 0
+	unsigned int N = 4, NO = 4, OD = 2;
+	unsigned int M, FRAC;
+	unsigned int flag = 0;
+	unsigned int MF;
 
 	while (flag == 0) {
 		flag = 1;
-		if(XIN/N<5000) {N--; flag=0;}
-		if(XIN/N>50000) {N++; flag=0;}
+		if ((sys_clk/N) < 5000) {
+			N--;
+			flag = 0;
+		}
+		if ((sys_clk/N) > 50000) {
+			N++;
+			flag = 0;
+		}
 	}
+
 	flag = 0;
 	while (flag == 0) {
 		flag = 1;
-		if(PCLK*NO<5000) {NO*=2; OD++; flag=0;}
-		if(PCLK*NO>700000) {NO/=2; OD--; flag=0;}
+		if ((pclk*NO) < 5000) {
+			NO *= 2;
+			OD++;
+			flag = 0;
+		}
+		if ((pclk*NO) > 700000) {
+			NO /= 2;
+			OD--;
+			flag = 0;
+		}
 	}
-	MF = PCLK*N*NO*262144/XIN;
-	MF %= 262144;
-	M = PCLK*N*NO/XIN;
-	FRAC = (int)(MF);
-	out = (FRAC<<14)+(OD<<12)+(N<<8)+M;
 
-	return out;
+	MF = pclk * N * NO * 262144 / sys_clk;
+	FRAC = MF % 262144;
+	M = pclk * N * NO / sys_clk;
+
+	return (FRAC<<14) + (OD<<12) + (N<<8) + M;
+#else
+	/* N值和OD值选择不正确会造成系统死机，莫名其妙。OD=2^PIX12 */
+	unsigned int N = 4, PIX12 = 2, OD = 4;
+	unsigned int M = 0, FRAC = 0;
+	unsigned long tmp1, tmp2;
+
+	while (1) {
+		tmp2 = pclk * N * OD;
+		M = tmp2 / sys_clk;
+		if (M <= 1) {
+			N++;
+		} else {
+			tmp1 = sys_clk * M;
+			if (tmp2 < tmp1) {
+				unsigned int tmp3;
+				tmp3 = tmp1; tmp1 = tmp2; tmp2 = tmp3;
+			}
+			if ((tmp2 - tmp1) > 16384) {
+				if (N < 15 ) {
+					N++;
+				} else {
+					N = 15; PIX12++; OD *= 2;
+					if (PIX12 > 3) {
+						tgt_printf("Warning: \
+								clock source is out of range.\n");
+						break;
+					}
+				}
+			}
+			else {
+				FRAC = ((tmp2 - tmp1) * 262144) / sys_clk;
+				break;
+			}
+		}
+	}
+//	printf("tmp2-tmp1=%d FRAC=%d\n", tmp2 - tmp1, FRAC);
+//	printf("PIX12=%d N=%d M=%d\n", PIX12, N, M);
+	return ((FRAC<<14) + (PIX12<<12) + (N<<8) + M);
+#endif
 }
 #else
 static void caclulatefreq(unsigned int ls1b_pll_freq, unsigned int ls1b_pll_div)
@@ -222,7 +276,7 @@ static int config_cursor(void)
 	for(ii=0; ii<0x1000; ii+=4)
 		*(volatile unsigned int *)(ADDR_CURSOR + ii) = 0x88f31f4f;
 
-	ADDR_CURSOR = (long)ADDR_CURSOR & 0x0fffffff;
+	ADDR_CURSOR = (unsigned int)ADDR_CURSOR & 0x0fffffff;
 
 	write_reg((0xbc301520+0x00), 0x00020200);
 	write_reg((0xbc301530+0x00), ADDR_CURSOR);
@@ -233,7 +287,7 @@ static int config_cursor(void)
 }
 #endif
 
-static int config_fb(unsigned long base)
+static int config_fb(unsigned int base)
 {
 	int i, mode = -1;
 
@@ -243,11 +297,7 @@ static int config_fb(unsigned long base)
 			int out;
 			mode = i;
 		#ifdef LS1ASOC
-			out = caclulatefreq(APB_CLK/1000, vgamode[i].pclk);
-			/*inner gpu dc logic fifo pll ctrl,must large then outclk*/
-			//*(volatile int *)0xbfd00414 = out + 1;
-			*(volatile int *)0xbfd00414 = out;
-			delay(1000);
+			out = caclulatefreq(APB_CLK/1000, vgamode[mode].pclk);
 			/*output pix1 clock  pll ctrl */
 			#ifdef DC_FB0
 			*(volatile int *)0xbfd00410 = out;
@@ -258,6 +308,10 @@ static int config_fb(unsigned long base)
 			*(volatile int *)0xbfd00424 = out;
 			delay(1000);
 			#endif
+			/*inner gpu dc logic fifo pll ctrl,must large then outclk*/
+			//*(volatile int *)0xbfd00414 = out + 1;
+			*(volatile int *)0xbfd00414 = out;
+			delay(1000);
 
 		#elif defined(CONFIG_FB_DYN)	//LS1BSOC
 		#ifdef CONFIG_VGA_MODEM	/* 只用于1B的外接VGA */
@@ -287,7 +341,7 @@ static int config_fb(unsigned long base)
 			pll = (12 + (pll & 0x3f)) * APB_CLK / 2
 				+ ((pll >> 8) & 0x3ff) * APB_CLK / 1024 / 2;
 
-			divider_int = pll / (vgamode[i].pclk * 1000) / 4;
+			divider_int = pll / (vgamode[mode].pclk * 1000) / 4;
 			/* check whether divisor is too small. */
 			if (divider_int < 1) {
 				printf("Warning: clock source is too slow."
@@ -401,16 +455,12 @@ int dc_init(void)
 	fb_ysize  = getenv("yres") ? strtoul(getenv("yres"),0,0) : FB_YSIZE;
 	frame_rate  = getenv("frame_rate") ? strtoul(getenv("frame_rate"),0,0) : 60;
 
-	MEM_ADDR = (long)MEM_ptr & 0x0fffffff;
+	MEM_ADDR = (unsigned int)MEM_ptr & 0x0fffffff;
 
 	if(MEM_ptr == NULL) {
 		printf("frame buffer memory malloc failed!\n ");
 		exit(0);
 	}
-
-#ifdef LS1A_CORE
-	ls1x_gpio_direction_output(GPIO_BACKLIGHT_CTRL, 1);	/* 使能LCD背光 */
-#endif
 
 #ifdef DC_FB0
 	config_fb(DC_BASE_ADDR0);
