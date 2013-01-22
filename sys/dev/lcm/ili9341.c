@@ -57,7 +57,7 @@ typedef unsigned long dma_addr_t;
 #elif CONFIG_ILI9341_3L
 #define	SDI		25
 #define	SCL		24
-#define	CS		28
+#define	CS		30
 #define	RESET	39
 #endif
 
