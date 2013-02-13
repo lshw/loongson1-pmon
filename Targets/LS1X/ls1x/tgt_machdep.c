@@ -372,16 +372,16 @@ tgt_devconfig(void)
 	configure();
 /*
 #if (NMOD_VGACON >0) && defined(LS1ASOC)
-	printf("====before init ps/2 kbd\n");
-	if(getenv("nokbd"))
-		rc=1;
-	else{
+	printf("init ps/2 kbd\n");
+	if (getenv("nokbd"))
+		rc = 1;
+	else {
 		init_kbd();
-		rc=kbd_initialize();
+		rc = kbd_initialize();
 		pckbd_leds(2);
 	}
-	if(!rc){ 
-		kbd_available=1;
+	if (!rc) { 
+		kbd_available = 1;
 	}
 	psaux_init();
 #endif

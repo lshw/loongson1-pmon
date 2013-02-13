@@ -309,7 +309,7 @@ static int config_fb(unsigned int base)
 			delay(1000);
 			#endif
 			/*inner gpu dc logic fifo pll ctrl,must large then outclk*/
-			*(volatile int *)0xbfd00414 = out + 2;
+			*(volatile int *)0xbfd00414 = out + 4;
 //			*(volatile int *)0xbfd00414 = out;
 			delay(1000);
 

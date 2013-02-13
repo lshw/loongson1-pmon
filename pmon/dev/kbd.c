@@ -618,7 +618,6 @@ static void do_pad(unsigned char value, char up_flag)
 			break;
 		}
 	}
-	printf("do_pad value=%x\n", value);
 }
 
 static void do_cur(unsigned char value, char up_flag)
