@@ -88,8 +88,8 @@ static void spi_init0(void)
 	SET_SPI(FCR_PARAM, 0x00);
 	//#define SPER      0x3	//外部寄存器
 	//spre:01 [2]mode spi接口模式控制 1:采样与发送时机错开半周期  [1:0]spre 与Spr一起设定分频的比率
-//	SET_SPI(FCR_SPER, 0x04);
-	SET_SPI(FCR_SPER, 0x07);
+	SET_SPI(FCR_SPER, 0x03);
+//	SET_SPI(FCR_SPER, 0x07);
 	//SPI Flash片选控制寄存器
 #if LS1A_CORE
 	SET_SPI(FCR_SOFTCS, 0xef);
@@ -99,8 +99,8 @@ static void spi_init0(void)
 //	SET_SPI(FCR_SOFTCS, 0xef);
 //	SET_SPI(FCR_TIMING, 0x00);
 	/* [1:0]spr sclk_o分频设定，需要与sper的spre一起使用 */
-//	SET_SPI(FCR_SPCR, 0x5d);
-	SET_SPI(FCR_SPCR, 0x5f);
+	SET_SPI(FCR_SPCR, 0x53);
+//	SET_SPI(FCR_SPCR, 0x5f);
 	/* 分频系数设置为4 */
 }
 
@@ -356,7 +356,7 @@ unsigned int SD_CMD_Write_Crc(unsigned int CMDIndex, unsigned long CMDArg, unsig
 		resp[4] = SD_Read();
 		Response = resp[0];
 
-		printf ("resp= 0x%x, 0x%x, 0x%x, 0x%x, 0x%x !\n", resp[0], resp[1], resp[2], resp[3], resp[4]);
+//		printf ("resp= 0x%x, 0x%x, 0x%x, 0x%x, 0x%x !\n", resp[0], resp[1], resp[2], resp[3], resp[4]);
 			break;
 	}
 	
@@ -476,7 +476,7 @@ unsigned int SD_Overall_Initiation(void)
 	#ifdef CONFIG_CHINESE
 		PutPortraitChar(0,15,"初始化成功",1);//Print MSG
 	#else
-		PutPortraitChar(0,15,"Init Success",1);//Print MSG
+		PutPortraitChar(0,15,"SDcard Init Success",1);//Print MSG
 	#endif
 	}
 	else{
