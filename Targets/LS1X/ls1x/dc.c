@@ -66,7 +66,8 @@ static struct vga_struc{
 		{/*"1360x768_60.00"*/	85500,	60,	1360,	1424,	1536,	1792,	768,	771,    777,    795,	0x00000101},/* VESA */
 		{/*"1440x1050_60.00"*/	121750,	60,	1440,	1528,	1672,	1904,	1050,	1053,	1057,	1089,	0x00000101},/* VESA */
 //		{/*"1440x900_60.00"*/	106500,	60,	1440,	1520,	1672,	1904,	900,    903,    909,    934,	0x00000101},/* VESA */
-		{/*"1440x900_75.00"*/	136750,	75,	1440,	1536,	1688,	1936,	900,    903,    909,    942,	0x00000101},/* VESA */
+		{/*"1440x900_75.00"*/	136750,	75,	1440,	1536,	1688,	1936,	900,	903,	909,	942,	0x00000101},/* VESA */
+		{/*"1920x1080_60.00"*/	148500,	60,	1920,	2008,	2052,	2200,	1080,	1084,	1089,	1125,	0x00000101},/* VESA */
 	};
 
 #ifdef CONFIG_VGA_MODEM	/* 只用于1B的外接VGA */
@@ -125,6 +126,18 @@ static struct ls1b_vga ls1b_vga_modes[] = {
 	#else	//APB_CLK == 33000000
 		.ls1b_pll_freq = 0x3af14,
 		.ls1b_pll_div = 0x8628ea00,
+	#endif
+	},
+	{
+		.xres = 1920,
+		.yres = 1080,
+		.refresh = 60,
+	#if APB_CLK == 25000000
+		.ls1b_pll_freq = 0x3af23,
+		.ls1b_pll_div = 0x86392a00,
+	#else	//APB_CLK == 33000000
+		.ls1b_pll_freq = 0x3af17,
+		.ls1b_pll_div = 0x86392a00,
 	#endif
 	},
 	{},
@@ -348,7 +361,7 @@ static int config_fb(unsigned int base)
 						"Try smaller resolution\n");
 				divider_int = 1;
 			}
-			else if(divider_int > 15) {
+			else if (divider_int > 15) {
 				printf("Warning: clock source is too fast."
 						"Try smaller resolution\n");
 				divider_int = 15;
@@ -369,10 +382,10 @@ static int config_fb(unsigned int base)
 		}
 	}
 
-	if(mode < 0) {
+	if (mode < 0) {
 		printf("\n\n\nunsupported framebuffer resolution,choose from bellow:\n");
-		for(i=0;i<sizeof(vgamode)/sizeof(struct vga_struc);i++)
-			printf("%dx%d, ",vgamode[i].hr,vgamode[i].vr);
+		for (i=0; i<sizeof(vgamode)/sizeof(struct vga_struc); i++)
+			printf("%dx%d, ", vgamode[i].hr, vgamode[i].vr);
 		printf("\n");
 		return -1;
 	}
