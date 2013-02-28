@@ -1,3 +1,5 @@
+/* ac97 driver for loongson1 (alc203 alc655) */
+
 #include <pmon.h>
 #include <cpu.h>
 #include <stdio.h>
@@ -5,54 +7,129 @@
 #include <ctype.h>
 #include <string.h>
 #include <linux/types.h>
-#define udelay delay
-#define ac97_base 0xbfe74000  // 0xbfe74000
-#define confreg_base 0xbfd00000
-#define dma_base  0xbfe74080  //0xbf004280
-#define ac97_reg_write(addr, val) do{ *(volatile u32 *)(ac97_base+(addr))=val; }while(0)
-#define ac97_reg_read(addr) *(volatile u32 * )(ac97_base+(addr))
-//#define udelay(n)   
-#define dma_reg_write(addr, val) do{ *(volatile u32 *)(dma_base+(addr))=val; }while(0)
-//#define dma_reg_read(addr) *(volatile u32 * )(dma_base+(addr))
+#include "include/ac97_codec.h"
+
+#define CONFREG_BASE	0xbfd00000
+
+#define DMA_BASE	0xbfe74080
+
+#define dma_reg_write(addr, val) do{ *(volatile u32 *)(DMA_BASE+(addr))=val; }while(0)
+//#define dma_reg_read(addr) *(volatile u32 * )(DMA_BASE+(addr))
 #define dma_reg_read(addr) *(volatile u32 *)(addr)
-#define codec_wait(n) do{ int __i=n;\
-        while (__i-->0){ \
-            if ((ac97_reg_read(0x54) & 0x3) != 0) break;\
-            udelay(1000); }\
-            if (__i>0){ \
-                ac97_reg_read(0x6c);\
-                ac97_reg_read(0x68);\
-            }\
-        }while (0)
-
-//yq:0x70-->0x68
         
-#define DMA_BUF	0x00800000
-#define BUF_SIZE	0x200000        //2MB
-//#define  BUF_SIZE 0x7000
-#define SYNC_W 1    //sync cache for writing data
-#define CPU2FIFO 1
+#define DMA_BUF		0xa3b00000
+#define BUF_SIZE	0x00200000	/* 2MB */
+#define REC_DMA_BUF		(DMA_BUF + BUF_SIZE)
+#define REC_BUF_SIZE	BUF_SIZE
+#define SYNC_W		1    /* sync cache for writing data */
+#define CPU2FIFO	1
 
-#define AC97_RECORD 0
-#define AC97_PLAY   1
+#define AC97_RECORD	0
+#define AC97_PLAY	1
 
-#define REC_DMA_BUF		(DMA_BUF+ BUF_SIZE)        //0x00a00000
-#define REC_BUF_SIZE		(BUF_SIZE>>1)
+#define LS1X_AC97_BASE	0xbfe74000
+#define LS1X_AC97_REG(x)	(LS1X_AC97_BASE + (x))
 
-#ifdef DEBUG
-#undef TR
-#define TR0(fmt, args...) printf("SynopGMAC: " fmt, ##args)
-#define TR(fmt, args...) printf("SynopGMAC: " fmt, ##args)
-#else
-#define TR0(fmt, args...)
-#define TR(fmt, args...) // not debugging: nothing
-#endif
+/* Control Status Register (CSR) */
+#define LS1X_AC97_CSR		LS1X_AC97_REG(0x00)
+#define AC97_CSR_RESUME		(1 << 1)
+#define AC97_CSR_RST_FORCE	(1 << 0)
+/* Output Channel Configuration Registers (OCCn) */
+#define LS1X_AC97_OCC0		LS1X_AC97_REG(0x04)
+#define LS1X_AC97_OCC1		LS1X_AC97_REG(0x08)
+#define LS1X_AC97_OCC2		LS1X_AC97_REG(0x0c)
+#define OCH1_CFG_R_OFFSET	(8)
+#define OCH0_CFG_L_OFFSET	(0)
+#define OCH1_CFG_R_MASK		(0xFF)
+#define OCH0_CFG_L_MASK		(0xFF)
 
-static unsigned short sample_rate=0xac44;
+/* Input Channel Configuration (ICC) */
+#define LS1X_AC97_ICC		LS1X_AC97_REG(0x10)
+#define ICH2_CFG_MIC_OFFSET	(16)
+#define ICH1_CFG_R_OFFSET	(8)
+#define ICH0_CFG_L_OFFSET	(0)
+#define ICH2_CFG_MIC_MASK	(0xFF)
+#define ICH0_CFG_R_MASK		(0xFF)
+#define ICH1_CFG_L_MASK		(0xFF)
 
-static int ac97_rw=0;
+/* Channel Configurations (Sub-field) */
+#define DMA_EN	(1 << 6)
+#define FIFO_THRES_OFFSET	(4)
+#define FIFO_THRES_MASK		(0x3)
+#define SS_OFFSET		(2)	/* Sample Size 00:8bit 10:16bit */
+#define SS_MASK		(0x3)
+#define SR		(1 << 1)	/* Sample Rate 1:Variable 0:Fixed */
+#define CH_EN	(1 << 0)
 
-static struct desc{
+
+#define LS1X_AC97_CODECID	LS1X_AC97_REG(0x14)
+
+/* Codec Register Access Command (CRAC) */
+#define LS1X_AC97_CRAC		LS1X_AC97_REG(0x18)
+#define CODEC_WR			(1 << 31)
+#define CODEC_ADR_OFFSET	(16)
+#define CODEC_DAT_OFFSET	(0)
+#define CODEC_ADR_MASK		(0xFF)
+#define CODEC_DAT_MASK		(0xFF)
+
+/* OCHn and ICHn Registers
+   OCHn are the output fifos (data that will be send to the codec), ICHn are the 
+   input fifos (data received from the codec).
+ */
+#define LS1X_AC97_OCH0		LS1X_AC97_REG(0x20)
+#define LS1X_AC97_OCH1		LS1X_AC97_REG(0x24)
+#define LS1X_AC97_OCH2		LS1X_AC97_REG(0x28)
+#define LS1X_AC97_OCH3		LS1X_AC97_REG(0x2c)
+#define LS1X_AC97_OCH4		LS1X_AC97_REG(0x30)
+#define LS1X_AC97_OCH5		LS1X_AC97_REG(0x34)
+#define LS1X_AC97_OCH6		LS1X_AC97_REG(0x38)
+#define LS1X_AC97_OCH7		LS1X_AC97_REG(0x3c)
+#define LS1X_AC97_OCH8		LS1X_AC97_REG(0x40)
+#define LS1X_AC97_ICH0		LS1X_AC97_REG(0x44)
+#define LS1X_AC97_ICH1		LS1X_AC97_REG(0x48)
+#define LS1X_AC97_ICH2		LS1X_AC97_REG(0x4c)
+
+/* Interrupt Status Register (INTS) */
+#define LS1X_AC97_INTRAW	LS1X_AC97_REG(0x54)
+#define ICH_FULL		(1 << 31)
+#define ICH_TH_INT		(1 << 30)
+#define OCH1_FULL		(1 << 7)
+#define OCH1_EMPTY		(1 << 6)
+#define OCH1_TH_INT		(1 << 5)
+#define OCH0_FULL		(1 << 4)
+#define OCH0_EMPTY		(1 << 3)
+#define OCH0_TH_INT		(1 << 2)
+#define CW_DONE		(1 << 1)
+#define CR_DONE		(1 << 0)
+
+#define LS1X_AC97_INTM		LS1X_AC97_REG(0x58)
+
+/* 中断状态/清除寄存器 
+   屏蔽后的中断状态寄存器，对本寄存器的读操作将清除寄存器0x54中的所有中断状态 */
+#define LS1X_AC97_INT_CLR	LS1X_AC97_REG(0x5c)
+/* OCH中断清除寄存器
+   对本寄存器的读操作将清除寄存器0x54中的所有output channel的中断状态对应的 bit[7:2] */
+#define LS1X_AC97_INT_OCCLR	LS1X_AC97_REG(0x60)
+/* ICH中断清除寄存器 
+   对本寄存器的读操作将清除寄存器0x54中的所有input channel的中断状态对应的 bit[31:30] */
+#define LS1X_AC97_INT_ICCLR	LS1X_AC97_REG(0x64)
+/* CODEC WRITE 中断清除寄存器 
+   对本寄存器的读操作将清除寄存器0x54中的中bit[1] */
+#define LS1X_AC97_INT_CWCLR	LS1X_AC97_REG(0x68)
+/* CODEC READ 中断清除寄存器
+   对本寄存器的读操作将清除寄存器0x54中的中bit[0] */
+#define LS1X_AC97_INT_CRCLR	LS1X_AC97_REG(0x6c)
+
+#define ALC655 0x414c4760
+#define ALC203 0x414c4770
+
+static unsigned short sample_rate = 0xac44;
+static int ac97_rw = 0;
+static int codec_reset = 1;
+static int ls1x_ac97_reset = 1;
+
+/* DMA描述符 */
+struct desc {
 	u32 ordered;		//下一个描述符地址寄存器
 	u32 saddr;			//内存地址寄存器
 	u32 daddr;			//设备地址寄存器
@@ -61,170 +138,208 @@ static struct desc{
 	u32 step_times;	//循环次数寄存器
 	u32 cmd;			//控制寄存器
 };
+static struct desc *dma_desc_base;
 
-
-static struct desc *DMA_DESC_BASE;
-static struct desc *dma_desc2_addr;
-
-static u32 play_desc1[7]={
-	0x1,                       //need to be filled
-	DMA_BUF & 0x1fffffff,     
-	0xdfe72420,                //(ac97_base&0x9fffffff)+0x20,           //9fffffff?fun
+static u32 play_desc1[7] = {
+	0x1,
+	DMA_BUF & 0x1fffffff,
+	0xdfe72420,
 	0x8,
 	0x0,
 	(BUF_SIZE/8/4),
 	0x00001001
 };
 
-static u32 play_desc2[7]={
-	0x00001,
-	DMA_BUF & 0x1fffffff,
-	0xdfe72420,                                //( ac97_base&0x9fffffff)+0x20,
-	0x6,
-	0x0,
-	(BUF_SIZE/8/6/2),
-	0x00001001	
-};
-
-static u32 rec_desc1[7]={
-	0x1,                       //need to be filled
-	(REC_DMA_BUF|0xa0000000)&0x1fffffff,                    //(ac97_base&0x9fffffff)+0x20,           //9fffffff?func
-	0x9fe74c4c,
+static u32 rec_desc1[7] = {
+	0x1,
+	REC_DMA_BUF & 0x1fffffff,
+	0xdfe74c4c,
 	0x8,
 	0x0,
 	(BUF_SIZE/8/4),
 	0x00000001
 };
 
-static u32 rec_desc2[7]={
-	0x1,                       //need to be filled
-	(REC_DMA_BUF|0xa0000000)&0x1fffffff,                    //(ac97_base&0x9fffffff)+0x20,      //9fffffff?func
-	0x9fe74c4c,
-	0x6,
-	0x0,
-	(BUF_SIZE/8/6/2),
-	0x00000001
-};
-
-void  init_audio_data(void)
+static u32 readl(u32 addr)
 {
-	unsigned int *data = (unsigned int*)(DMA_BUF|0xa0000000);
+	return *(volatile u32 *)addr;
+}
+
+static void writel(u32 val, u32 addr)
+{
+	*(volatile u32 *)addr = val;
+}
+
+static void init_audio_data(void)
+{
+	unsigned int *data = (unsigned int*)DMA_BUF;
 	int i;
 
-	for (i=0; i<((BUF_SIZE)>>3); i++){
-		data[i*2] = 0x7fffe000;
-		data[i*2+1] = 0x1f2e3d4c;
+	for (i=0; i<(BUF_SIZE>>3); i++) {
+		data[i*2] = 0;//0x7fffe000;
+		data[i*2+1] = 0;//0x1f2e3d4c;
+	}
+}
+
+static unsigned short ls1x_ac97_read(unsigned short reg)
+{
+	int i = 1000;
+	u32 data = 0;
+	
+	data |= CODEC_WR;
+	data |= ((u32)reg << CODEC_ADR_OFFSET);
+	writel(data, LS1X_AC97_CRAC);
+
+	/* now wait for the data */
+	while (i-- > 0) {
+		if ((readl(LS1X_AC97_INTRAW) & CR_DONE) != 0)
+			break;
+		delay(500);
+	}
+	if (i > 0) {
+		readl(LS1X_AC97_INT_CRCLR);
+		return readl(LS1X_AC97_CRAC) & 0xffff;
+	}
+	printf("AC97 command read timeout\n");
+	return 0;
+}
+
+static void ls1x_ac97_write(unsigned short reg, unsigned short val)
+{
+	int i = 1000;
+	u32 data = 0;
+	
+	data &= ~(CODEC_WR);
+	data |= ((u32)reg << CODEC_ADR_OFFSET) | ((u32)val << CODEC_DAT_OFFSET);
+	writel(data, LS1X_AC97_CRAC);
+
+	while (i-- > 0) {
+		if ((readl(LS1X_AC97_INTRAW) & CW_DONE) != 0)
+			break;
+		delay(500);
+	}
+	if (i > 0) {
+		readl(LS1X_AC97_INT_CWCLR);
+	}
+}
+
+static void codec_init(void)
+{
+	int codec_id;
+	u32 x, conf;
+
+	/* codec reset */
+	if (codec_reset) {
+		ls1x_ac97_write(AC97_RESET, 0x0000);
+		delay(500000);
+		codec_reset = 0;
 	}
 
-	for(i=0; i<40; i++){
-		TR("%x:  data:%x\n",((DMA_BUF|0xa0000000)+(i*4)),*(volatile unsigned int *)(DMA_BUF|0xa0000000+(i*4)));
+	codec_id = ls1x_ac97_read(AC97_VENDOR_ID1);
+	codec_id = (codec_id << 16) | ls1x_ac97_read(AC97_VENDOR_ID2);
+#ifdef CONFIG_CHINESE
+	printf("编解码器ID： %x \n", codec_id);
+#else
+	printf("codec ID :%x \n", codec_id);
+#endif
+
+	if (codec_id == ALC655) {
+		/* 输出通道配置寄存器 */
+		x = readl(LS1X_AC97_OCC0);
+		conf = x & ~(FIFO_THRES_MASK << FIFO_THRES_OFFSET) & ~(SS_MASK << SS_OFFSET);
+		conf = (conf | (2 << FIFO_THRES_OFFSET) | (2 << SS_OFFSET) | DMA_EN | CH_EN) & (~SR);
+		conf |= (conf << OCH1_CFG_R_OFFSET) | (conf << OCH0_CFG_L_OFFSET);
+		writel(conf, LS1X_AC97_OCC0);
+
+		/* 输入通道配置寄存器 */
+		x = readl(LS1X_AC97_ICC);
+		conf = x & ~(FIFO_THRES_MASK << FIFO_THRES_OFFSET) & ~(SS_MASK << SS_OFFSET);
+		conf = (conf | (2 << FIFO_THRES_OFFSET) | (2 << SS_OFFSET) | DMA_EN | CH_EN) & (~SR);
+		conf |= (conf << ICH2_CFG_MIC_OFFSET) | (conf << ICH1_CFG_R_OFFSET) | (conf << ICH0_CFG_L_OFFSET);
+		writel(conf, LS1X_AC97_ICC);
+
+		ls1x_ac97_write(AC97_ALC650_MULTICH, 0x201);
 	}
-	TR("===init audio data complete\n");
+	else if (codec_id == ALC203) {
+		/* 输出通道配置寄存器 */
+		x = readl(LS1X_AC97_OCC0);
+		conf = x & ~(FIFO_THRES_MASK << FIFO_THRES_OFFSET) & ~(SS_MASK << SS_OFFSET);
+		conf |= (2 << FIFO_THRES_OFFSET) | (2 << SS_OFFSET) | DMA_EN | CH_EN | SR;
+		conf |= (conf << OCH1_CFG_R_OFFSET) | (conf << OCH0_CFG_L_OFFSET);
+		writel(conf, LS1X_AC97_OCC0);
+
+		/* 输入通道配置寄存器 */
+		x = readl(LS1X_AC97_ICC);
+		conf = x & ~(FIFO_THRES_MASK << FIFO_THRES_OFFSET) & ~(SS_MASK << SS_OFFSET);
+		conf |= (2 << FIFO_THRES_OFFSET) | (2 << SS_OFFSET) | DMA_EN | CH_EN | SR;
+		conf |= (conf << ICH2_CFG_MIC_OFFSET) | (conf << ICH1_CFG_R_OFFSET) | (conf << ICH0_CFG_L_OFFSET);
+		writel(conf, LS1X_AC97_ICC);
+		
+		ls1x_ac97_write(AC97_PCM_FRONT_DAC_RATE, sample_rate);
+		ls1x_ac97_write(AC97_PCM_SURR_DAC_RATE, sample_rate);
+		ls1x_ac97_write(AC97_PCM_LFE_DAC_RATE, sample_rate);
+		ls1x_ac97_write(AC97_PCM_LR_ADC_RATE, sample_rate);
+		ls1x_ac97_write(AC97_PCM_MIC_ADC_RATE, sample_rate);
+	}
+
+	ls1x_ac97_write(AC97_POWERDOWN, 0x0000);
+
+	/* 设置音量 */
+	ls1x_ac97_write(AC97_MASTER, 0x0808);
+	ls1x_ac97_write(AC97_HEADPHONE, 0x0808);
+	ls1x_ac97_write(AC97_MASTER_MONO, 0x0008);
+//	ls1x_ac97_write(AC97_MASTER_TONE, 0x0808);
+//	ls1x_ac97_write(AC97_PC_BEEP, 0x0808);
+	ls1x_ac97_write(AC97_PHONE, 0x0004);
+	ls1x_ac97_write(AC97_MIC, 0x035f);
+	ls1x_ac97_write(AC97_LINE, 0x0808);
+//	ls1x_ac97_write(AC97_CD, 0x0808);
+//	ls1x_ac97_write(AC97_VIDEO, 0x0808);
+	ls1x_ac97_write(AC97_AUX, 0x0808);
+	ls1x_ac97_write(AC97_PCM, 0x0808);
+//	ls1x_ac97_write(AC97_CENTER_LFE_MASTER, 0x0808);
+//	ls1x_ac97_write(AC97_SURROUND_MASTER, 0x0808);
+
+	/* record设置录音寄存器 */
+	ls1x_ac97_write(AC97_REC_SEL, 0x0000);	/* MIC */
+//	ls1x_ac97_write(AC97_REC_SEL, 0x0404);	/* Linein */
+//	ls1x_ac97_write(AC97_REC_SEL, 0x0303);	/* AUX */
+	ls1x_ac97_write(AC97_REC_GAIN, 0x0f0f);
+	ls1x_ac97_write(AC97_REC_GAIN_MIC, 0x0f0f);
+	ls1x_ac97_write(AC97_GENERAL_PURPOSE, (1<<13)|(1<<10));
 }
- 
+
 int ac97_config(void)
 {
-	int i=0;
-	int codec_id;
+	int i = 0;
+
 #ifdef CONFIG_CHINESE
 	printf("配置 ac97 编解码器\n");
 #else
 	printf("config ac97 codec\n");
 #endif
 	
-	/* 必须执行？？ AC97 codec冷启动 */
-	for(i=0;i<100000;i++) *(volatile unsigned char *)0xbfe74000 |= 1;
-	
-	/* 输出通道配置寄存器 */
-	ac97_reg_write(0x4, 0x6969);
-	TR("OCCR0 complete:%x\n",ac97_reg_read(0x4));
-	/* 输入通道配置寄存器 */
-	ac97_reg_write(0x10,0x690001);
-	TR("ICCR complete\n");
-	ac97_reg_write(0x58,0x0); //INTM
-	TR("INTM complete\n");
-	
-	/* codec reset */
-	ac97_reg_write(0x18,0x0|(0x0<<16)|(0<<31));
-	codec_wait(10000);
+	/* AC97 codec冷启动 */
+	if (ls1x_ac97_reset) {
+		writel(AC97_CSR_RST_FORCE, LS1X_AC97_CSR);
+		writel(AC97_CSR_RESUME, LS1X_AC97_CSR);
+		delay(1000);
+		writel(AC97_CSR_RST_FORCE, LS1X_AC97_CSR);
+		delay(500000);
+		ls1x_ac97_reset = 0;
+	}
 
-	/* 读取0x7c寄存器地址的值 参考ALC203数据手册 */
-	ac97_reg_write(0x18,0|(0x7c<<16)|(1<<31));
-	codec_wait(10000);
-	codec_id = ac97_reg_read(0x18)&0xffff;
-	ac97_reg_write(0x18,0|(0x7e<<16)|(1<<31));
-	codec_wait(10000);
-	codec_id = (codec_id<<16) | (ac97_reg_read(0x18)&0xffff);
-#ifdef CONFIG_CHINESE
-	printf("编解码器ID： %x \n", codec_id); //read ID
-#else
-	printf("codec ID :%x \n", codec_id); //read ID
-#endif
-	
-	if (codec_id == 0x414c4760){
-		/* 输出通道配置寄存器 */
-		ac97_reg_write(0x4, 0x6969);
-		TR("OCCR0 complete:%x\n",ac97_reg_read(0x4));
-		/* 输入通道配置寄存器 */
-		ac97_reg_write(0x10,0x690001);
-		TR("ICCR complete\n");
-		
-		ac97_reg_write(0x18,0x201|(0x6a<<16)|(0<<31));
-		codec_wait(10000);
-		ac97_reg_write(0x18,0x0808|(0x38<<16)|(0<<31));
-		codec_wait(10000);
-		ac97_reg_write(0x18,0x0e|(0x66<<16)|(0<<31));
-		codec_wait(10000);
-	}
-	else{
-		/* 输出通道配置寄存器 */
-		ac97_reg_write(0x4, 0x6b6b);
-		TR("OCCR0 complete:%x\n",ac97_reg_read(0x4));
-		/* 输入通道配置寄存器 */
-		ac97_reg_write(0x10,0x6b0001);
-		TR("ICCR complete\n");
-	}
-	
-	/* ALC655 需要设置该寄存器 */
-	ac97_reg_write(0x18,0x0f0f|(0x1c<<16)|(0<<31));
-	codec_wait(10000);
-	/* line in */
-	ac97_reg_write(0x18,0x0101|(0x10<<16)|(0<<31));
-	codec_wait(10000);
-	
-	for(i=5;i>0;i--){
-		ac97_reg_write(0x18,0x0|(0x26<<16)|(1<<31));
-		codec_wait(10000);
-		TR("===D/A status:%x\n",ac97_reg_read(0x18)&0xffffffff);
-	}
-	//设置音量
-	ac97_reg_write(0x18,0x0808|(0x2<<16)|(0<<31));      //Master Volume. data=0x0808
-	TR("register 0x18 Master Volume.content2:%x\n",ac97_reg_read(0x18));
-	codec_wait(10000);
-	ac97_reg_write(0x18,0x0808|(0x4<<16)|(0<<31));      //headphone Vol.
-	codec_wait(10000);
-	ac97_reg_write(0x18,0x0008|(0x6<<16)|(0<<31));      //headphone Vol.
-	codec_wait(10000);
-	ac97_reg_write(0x18,0x0008|(0xc<<16)|(0<<31));      //phone Vol.
-	codec_wait(10000);
-	ac97_reg_write(0x18,0x0808|(0x18<<16)|(0<<31));     //PCM Out Vol.
-	codec_wait(10000);
-	ac97_reg_write(0x18,0x1|(0x2A<<16)|(0<<31));        //Extended Audio Status  and control
-	codec_wait(10000);
-	ac97_reg_write(0x18,sample_rate|(0x2c<<16)|(0<<31));     //PCM Out Vol. FIXME:22k can play 44k wav data?
-	codec_wait(10000);
-	/* record设置录音寄存器 */
-	if (ac97_rw==AC97_RECORD){
-		TR("===record config\n");
-		ac97_reg_write(0x18,sample_rate|(0x32<<16)|(0<<31));     //ADC rate .
-		codec_wait(10000);
-		ac97_reg_write(0x18,0x035f|(0x0E<<16)|(0<<31));     //Mic vol .
-		codec_wait(10000);
-		ac97_reg_write(0x18,0x0f0f|(0x1E<<16)|(0<<31));     //MIC Gain ADC.
-		codec_wait(10000);
-		ac97_reg_write(0x18,sample_rate|(0x34<<16)|(0<<31));     //MIC rate.
-		codec_wait(10000);
-	}
+	/* disables the generation of an interrupt */
+//	writel(0, LS1X_AC97_INTM);
+	writel(0xffffffff, LS1X_AC97_INTM);
+	readl(LS1X_AC97_INT_CLR);
+	readl(LS1X_AC97_INT_OCCLR);
+	readl(LS1X_AC97_INT_ICCLR);
+	readl(LS1X_AC97_INT_CWCLR);
+	readl(LS1X_AC97_INT_CRCLR);
+
+	codec_init();
+
 #ifdef CONFIG_CHINESE
 	printf("配置完毕\n");
 #else
@@ -236,101 +351,41 @@ int ac97_config(void)
 void dma_config(void)
 {
 	u32 addr;
-	u32 addr2;
 
-	DMA_DESC_BASE = (struct desc*)malloc(sizeof(struct desc) + 32);
-	addr = DMA_DESC_BASE = ((u32)DMA_DESC_BASE+31) & (~31);
-	TR("===addr:%x\n",DMA_DESC_BASE);
-
-	dma_desc2_addr = (struct desc*)malloc(sizeof(struct desc) + 32);
-	addr2 = dma_desc2_addr = ((u32)dma_desc2_addr+31) & (~31);
-	TR("===addr2:%x\n",dma_desc2_addr);
+	dma_desc_base = (struct desc*)malloc(sizeof(struct desc) + 32);
+	addr = dma_desc_base = (u32)dma_desc_base & ~31;
 	
 	/* play */
 	if (AC97_PLAY == ac97_rw) {
-		DMA_DESC_BASE->ordered = play_desc1[0] | (addr & 0x1fffffff);    ///addr&0xffffffe0;
-		DMA_DESC_BASE->saddr = play_desc1[1];   //0x00010000;//addr&0x1fffffff;
-		DMA_DESC_BASE->daddr = play_desc1[2];
-		DMA_DESC_BASE->length = play_desc1[3];
-		DMA_DESC_BASE->step_length = play_desc1[4];
-		DMA_DESC_BASE->step_times = play_desc1[5];
-		DMA_DESC_BASE->cmd = play_desc1[6];
+		dma_desc_base->ordered = play_desc1[0] | (addr & 0x1fffffff);
+		dma_desc_base->saddr = play_desc1[1];
+		dma_desc_base->daddr = play_desc1[2];
+		dma_desc_base->length = play_desc1[3];
+		dma_desc_base->step_length = play_desc1[4];
+		dma_desc_base->step_times = play_desc1[5];
+		dma_desc_base->cmd = play_desc1[6];
 		pci_sync_cache(0, (unsigned long)addr, 32*7, SYNC_W);
-		TR("===play1\n");
-		TR("===desc1:%x;%x,%x,%x,%x\n",DMA_DESC_BASE->ordered,DMA_DESC_BASE->saddr,DMA_DESC_BASE->daddr,DMA_DESC_BASE->length,DMA_DESC_BASE->step_times);	 
-		TR("===mem desc:%x,%x\n",*(volatile unsigned int*)(addr),*(volatile unsigned int*)(addr+4));
-		
-		dma_desc2_addr->ordered = play_desc2[0] | (addr2 & 0x1fffffff);
-		dma_desc2_addr->saddr = play_desc2[1];//0x00001000;//addr2&0x1fffffff;                     //play_desc2[1];
-		dma_desc2_addr->daddr = play_desc2[2];
-		dma_desc2_addr->length = play_desc2[3];
-		dma_desc2_addr->step_length = play_desc2[4];
-		dma_desc2_addr->step_times = play_desc2[5];
-		dma_desc2_addr->cmd = play_desc2[6];
-		pci_sync_cache(0, (unsigned long)addr2, 32*7, SYNC_W);
-		TR("===play2");
-		TR("===desc2:%x\n", dma_desc2_addr->ordered);
-    
+
 		addr = (u32)(addr & 0x1fffffff);
 
-		TR("===addr:%x\n",addr);
-		TR("===addr':%x",addr|0x00000009);
-		do{
-			*(volatile u32*)(confreg_base+0x1160) = addr|0x00000009;
-			delay(1000);
-			TR("dma register:%x\n",(*(volatile u32*)(confreg_base+0x1160)));
-		}while(0);
+		*(volatile u32*)(CONFREG_BASE + 0x1160) = addr | 0x00000009;
 	}
-	/* record 记录 */
-	else{
-		DMA_DESC_BASE->ordered = rec_desc1[0] | (addr & 0x1fffffff);    ///addr&0xffffffe0;
-		DMA_DESC_BASE->saddr = rec_desc1[1];   //0x00010000;//addr&0x1fffffff;
-		DMA_DESC_BASE->daddr = rec_desc1[2];
-		DMA_DESC_BASE->length = rec_desc1[3];
-		DMA_DESC_BASE->step_length = rec_desc1[4];
-		DMA_DESC_BASE->step_times = rec_desc1[5];
-		DMA_DESC_BASE->cmd = rec_desc1[6];
-		TR("========rec1\n");
+	/* record */
+	else {
+		dma_desc_base->ordered = rec_desc1[0] | (addr & 0x1fffffff);
+		dma_desc_base->saddr = rec_desc1[1];
+		dma_desc_base->daddr = rec_desc1[2];
+		dma_desc_base->length = rec_desc1[3];
+		dma_desc_base->step_length = rec_desc1[4];
+		dma_desc_base->step_times = rec_desc1[5];
+		dma_desc_base->cmd = rec_desc1[6];
 		pci_sync_cache(0, (unsigned long)addr, 32*7, SYNC_W);
 
-		TR("====rec desc:%x;%x,%x,%x,%x\n",DMA_DESC_BASE->ordered,DMA_DESC_BASE->saddr,DMA_DESC_BASE->daddr,DMA_DESC_BASE->length,DMA_DESC_BASE->step_times);	 
-		dma_desc2_addr->ordered = rec_desc2[0] | (addr2 & 0x1fffffff);
-		dma_desc2_addr->saddr = rec_desc2[1];//0x00001000;//addr2&0x1fffffff;                     //play_desc2[1];
-		dma_desc2_addr->daddr = rec_desc2[2];
-		dma_desc2_addr->length = rec_desc2[3];
-		dma_desc2_addr->step_length = rec_desc2[4];
-		dma_desc2_addr->step_times = rec_desc2[5];
-		dma_desc2_addr->cmd = rec_desc2[6];
-		pci_sync_cache(0, (unsigned long)addr2, 32*7, SYNC_W);
-		TR("===rec2");
-		TR("====desc2:%x\n", dma_desc2_addr->ordered);
+		addr = (u32)(addr & 0x1fffffff);
 
-		addr=(u32)(addr&0x1fffffff);    
-		TR("====addr:%x\n",addr);
-		TR("====addr':%x",addr|0x0000000a);
-		do{
-			*(volatile u32*)(confreg_base+0x1160) = addr|0x0000000a;
-			delay(1000);	
-			TR("dma register:%x\n",(*(volatile u32*)(confreg_base+0x1160)));
-		}while(0);
+		*(volatile u32*)(CONFREG_BASE + 0x1160) = addr | 0x0000000a;
 	}
 }
-
-/*
-void dma_setup_trans(u32 * src_addr,u32 size)
-{
-	// play
-	if (AC97_PLAY==ac97_rw){
-		dma_reg_write(0x0,src_addr);
-		dma_reg_write(0x4,size>>2);
-	}
-	//record
-	else{
-		dma_reg_write(0x10,src_addr);
-		dma_reg_write(0x14,size>>2);
-	}
-}
-*/
 
 /* 测试录音结果 */
 int ac97_test(int argc,char **argv)
@@ -338,9 +393,10 @@ int ac97_test(int argc,char **argv)
 	char cmdbuf[100];
 	int i;
 
-	if(argc!=2 && argc!=1)return -1;
-	if(argc==2){
-		sprintf(cmdbuf,"load -o 0x%x -r %s",DMA_BUF|0xa0000000,argv[1]);
+	if ((argc!=2) && (argc!=1))
+		return -1;
+	if (argc == 2) {
+		sprintf(cmdbuf, "load -o 0x%x -r %s", DMA_BUF, argv[1]);
 		do_cmd(cmdbuf);
 	}
 	ac97_rw = AC97_PLAY;
@@ -353,50 +409,43 @@ int ac97_test(int argc,char **argv)
 	
 	/* 需要配置DMA */
 	dma_config();
-	TR("play data on 0x%x, sz=0x%x\n", (DMA_BUF|0xa0000000), BUF_SIZE);
-	*(volatile u32*)(confreg_base+0x1160) = 0x00200005;
-	TR("dma state1:%x\n%x\n%x\n%x\n%x\n", dma_reg_read(0xa0200004), dma_reg_read(0xa0200008), dma_reg_read(0xa020000c), dma_reg_read(0xa0200014), dma_reg_read(0xa0200018));
-	*(volatile u32*)(confreg_base+0x1160) = 0x00200005;
-	TR("dma state2:%x\n%x\n%x\n%x\n%x\n", dma_reg_read(0xa0200004), dma_reg_read(0xa0200008), dma_reg_read(0xa020000c), dma_reg_read(0xa0200014), dma_reg_read(0xa0200018));
 
-	//1.wait a trans complete
-//	while(((dma_reg_read(0x2c))&0x1)==0)
-//	idle();
-
-	//2.clear int status  bit.
-//	dma_reg_write(0x2c,0x1);
-	/* 等待 录音时间 */
-	for(i=0; i<8; i++){
-		udelay(1000000);
-		printf("."); 
+	for (i=0; i<8; i++) {
+		delay(1000000);
+		printf(".");
 	}
-	/* codec reset 复位AC97 codec */
-	ac97_reg_write(0x18,0x0|(0x0<<16)|(0<<31));
-	codec_wait(10000);
+	*(volatile u32*)(CONFREG_BASE + 0x1160) = 0x00000011;
+
+	/* codec reset */
+//	ls1x_ac97_write(AC97_RESET, 0x0000);
+
 #ifdef CONFIG_CHINESE
 	printf("放音结束\n");
 #else
 	printf("test done\n");
 #endif
+
+//	free(dma_desc_base);
+
 	return 0;
 }
 
 /* 把codec 输入的数据通过DMA传输到内存 */
 int ac97_read(int argc,char **argv)
 {
-	int i;
+	unsigned int i;
 	unsigned int j;
-	unsigned short * rec_buff;
-	unsigned int  *  ply_buff;
+	unsigned short *rec_buff;
+	unsigned int *ply_buff;
 	ac97_rw = AC97_RECORD;
 
 	init_audio_data();
-
-	/*1.dma_config read*/
-	dma_config();
 	
-	/*2.ac97 config read*/
+	/*1.ac97 config read*/
 	ac97_config();
+
+	/*2.dma_config read*/
+	dma_config();
 
 	/*3.set dma desc*/
 #ifdef CONFIG_CHINESE
@@ -404,33 +453,29 @@ int ac97_read(int argc,char **argv)
 #else
 	printf("please speck to microphone ");
 #endif
-	for(i=0;i<8;i++){
-		udelay(1000000);
+	for (i=0; i<8; i++) {
+		delay(1000000);
 		printf("."); 
 	}
+	*(volatile u32*)(CONFREG_BASE + 0x1160) = 0x00000012;
 #ifdef CONFIG_CHINESE
 	printf("录音结束\n");
 #else
 	printf("rec done\n");
 #endif
-	
-	/* 0xbfd01160 DMA模块控制寄存器位 */
-	*(volatile u32*)(confreg_base + 0x1160) = 0x00200006;
-	TR("dma state1:%x\n%x\n%x\n%x\n%x\n",dma_reg_read(0xa0200004),dma_reg_read(0xa0200008),dma_reg_read(0xa020000c),dma_reg_read(0xa0200014),dma_reg_read(0xa0200018));
-//	dma_setup_trans(REC_DMA_BUF,REC_BUF_SIZE);
 
 	/*4.wait dma done,return*/ 
 //	while(((dma_reg_read(0x2c))&0x8)==0)
-//		udelay(1000);//1 ms 
+//		delay(1000);//1 ms 
 //	dma_reg_write(0x2c,0x8);
 	
 	/*5.transform single channel to double channel*/
-	rec_buff = (unsigned short *)(REC_DMA_BUF | 0xa0000000);
-	ply_buff = (unsigned int *)(DMA_BUF | 0xa0000000);
+	rec_buff = (unsigned short *)REC_DMA_BUF;
+	ply_buff = (unsigned int *)DMA_BUF;
 
-	for(i=0; i<(REC_BUF_SIZE<<1); i++){
-		j = 0x0000ffff & (unsigned int) rec_buff[i];
-		ply_buff[i] = (j<<16)|(j);
+	for (i=0; i<(REC_BUF_SIZE/4); i++) {
+		j = 0x0000ffff & (unsigned int)rec_buff[i];
+		ply_buff[i] = (j<<16) | j;
 	}
 
 	return 0;
@@ -439,9 +484,9 @@ int ac97_read(int argc,char **argv)
 static const Cmd Cmds[] =
 {
 	{"MyCmds"},
-	{"ac97_test","file",0,"ac97_test file",ac97_test,0,99,CMD_REPEAT},
-	{"ac97_read","",0,"ac97_read",ac97_read,0,99,CMD_REPEAT},
-	{"ac97_config","",0,"ac97_config",ac97_config,0,99,CMD_REPEAT},
+	{"ac97_test", "file", 0, "ac97_test file", ac97_test, 0, 99, CMD_REPEAT},
+	{"ac97_read", "", 0, "ac97_read", ac97_read, 0, 99, CMD_REPEAT},
+	{"ac97_config", "", 0, "ac97_config", ac97_config, 0, 99, CMD_REPEAT},
 	{0, 0}
 };
 
