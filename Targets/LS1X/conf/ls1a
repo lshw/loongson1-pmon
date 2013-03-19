@@ -178,6 +178,9 @@ select		gmac
 
 #### SPI_SD_CARD
 sdcard0	at localbus0 flags 0
+option		SDCARD_USE_SPI1		#SPI控制器0或1
+option		SDCARD_CS=0			#片选
+option		SDCARD_CLK=25000000	#25MHz
 
 #### USB
 #uhci*		at pci? dev ? function ?

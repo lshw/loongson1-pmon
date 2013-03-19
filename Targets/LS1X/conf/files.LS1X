@@ -6,7 +6,7 @@ file	Targets/LS1X/ls1x/dc.c			mod_framebuffer
 file	Targets/LS1X/pci/pci_machdep.c
 file	Targets/LS1X/ls1x/tgt_machdep.c
 file	Targets/LS1X/dev/i2c.c
-file	Targets/LS1X/dev/spi.c
+#file	Targets/LS1X/dev/spi.c
 file	Targets/LS1X/dev/ac97.c
 #file	Targets/LS1X/ls1x/tgt_cmd.c
 #file	Targets/LS1X/ls1x/memscan.c
@@ -23,7 +23,7 @@ file	sys/dev/gmac/if_gmac.c gmac
 
 #file	Targets/LS1X/dev/can.c
 #LS1A使用LPC Flash 需要把spi flash禁用
-file    Targets/LS1X/dev/spi_w.c
+file    Targets/LS1X/dev/spi_flash.c
 file    sys/dev/nand/ls1g-nand.c  nand needs-flag
 file	Targets/LS1X/dev/nand_ops.c nand needs-flag
 
@@ -69,7 +69,7 @@ attach	syn at localbus
 
 device	sdcard
 attach	sdcard at localbus
-file	Targets/LS1X/dev/sdcardfs_spi.c sdcard needs-flag
+file	Targets/LS1X/dev/spi_sdcard.c sdcard needs-flag
 
 device	dmfe: ether, ifnet, ifmedia, mii
 attach	dmfe at localbus
