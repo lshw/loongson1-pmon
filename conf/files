@@ -194,7 +194,7 @@ file pmon/cmds/test/ir.c		(cmd_test | cmd_testfire)
 file pmon/cmds/test/usb_probe.c	(cmd_test | cmd_testfire) & mod_usb
 file pmon/cmds/test/test.c		(cmd_test & mod_display)
 file pmon/cmds/test/test_vga.c	(cmd_test & mod_display)
-file pmon/cmds/test/poll_test.c	(cmd_test | cmd_testfire)
+#file pmon/cmds/test/poll_test.c	(cmd_test | cmd_testfire)
 file pmon/cmds/test/test_fire.c	cmd_testfire & mod_display
 file pmon/cmds/test/can.c		(cmd_test | cmd_testfire)
 file pmon/cmds/test/acpi_test.c	(cmd_test | cmd_testfire)

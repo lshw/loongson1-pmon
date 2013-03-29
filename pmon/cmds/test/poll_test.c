@@ -24,6 +24,6 @@ static void init_cmd()
 	ls1x_gpio_direction_input(38);
 	/* level, func, arg */
 	tgt_poll_register(1, button_poll, 0);
-	cmdlist_expand(Cmds, 1);
+//	cmdlist_expand(Cmds, 1);
 }
 
