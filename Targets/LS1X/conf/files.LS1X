@@ -2,16 +2,18 @@
 #
 # Bonito Target specific files
 #
-file	Targets/LS1X/ls1x/dc.c			mod_framebuffer
-file	Targets/LS1X/pci/pci_machdep.c
 file	Targets/LS1X/ls1x/tgt_machdep.c
+#file	Targets/LS1X/ls1x/tgt_cmd.c
+
 file	Targets/LS1X/dev/i2c.c
 #file	Targets/LS1X/dev/spi.c
 file	Targets/LS1X/dev/ac97.c
-#file	Targets/LS1X/ls1x/tgt_cmd.c
 file	Targets/LS1X/dev/hpet.c
 file	Targets/LS1X/dev/acpi.c
 file	Targets/LS1X/dev/gpio.c
+file	Targets/LS1X/dev/lcd.c			mod_framebuffer
+file	Targets/LS1X/pci/pci_machdep.c
+
 #sw
 #file	sys/dev/gmac/synopGMAC_Host.c               gmac
 file	sys/dev/gmac/synopGMAC_Dev.c                gmac

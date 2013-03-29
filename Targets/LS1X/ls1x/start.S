@@ -44,9 +44,8 @@
 #include "target/prid.h"
 #include "target/sbd.h"
 #include "target/fcr.h"
-#include "target/via686b.h"
-#include "target/i8254.h"
-#include "target/isapnpreg.h"
+//#include "target/isapnpreg.h"
+
 #define DEBUG_LOCORE
 
 /***********************************MAIN FLOW****************************************/
