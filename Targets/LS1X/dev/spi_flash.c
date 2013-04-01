@@ -106,7 +106,7 @@ int set_wren(void)
 	int res;
 
 	res = read_sr();
-	while((res & 0x01) == 1){
+	while((res & 0x01) == 1) {
 		res = read_sr();
 	}
 	SET_SPI(SOFTCS,0x01);
@@ -915,7 +915,7 @@ int fl_erase_device(void *fl_base, int size, int verbose)
 	return 0;
 }
 
-/*************************************************************************/	//lxy
+/*************************************************************************/
 #ifdef NORFLASH_PARTITION
 int nor_mtd_read(struct mtd_info *mtd, loff_t from, size_t len,
 		     size_t *retlen, uint8_t *buf)
@@ -986,9 +986,12 @@ void norflash_init(void)
 	nor_mtd->read		= nor_mtd_read;
 	nor_mtd->write		= nor_mtd_write;
 	nor_mtd->erase		= nor_mtd_erase;
-	nor_mtd->size		= 0x800000;
 #ifdef W25Q128
 	nor_mtd->size		= 0x1000000;
+#elif W25X64
+	nor_mtd->size		= 0x800000;
+#else
+	nor_mtd->size		= 0x80000;
 #endif
 	nor_mtd->erasesize	= 64 * 1024;
 	nor_mtd->type		= MTD_NORFLASH;
@@ -1004,24 +1007,20 @@ void norflash_init(void)
 	add_mtd_device(nor_mtd, 0, 512*1024, "pmon_nor");					//512KB
 	add_mtd_device(nor_mtd, 512*1024, (512+7*1024)*1024, "kernel_nor");	//7.5MB
 	add_mtd_device(nor_mtd, 8*1024*1024, 8*1024*1024, "fs_nor");		//8MB
-#elif W25X64	//for bobodog program
-	add_mtd_device(nor_mtd, 0, 			0x80000, 	"pmon_nor");	
-	add_mtd_device(nor_mtd, 0x80000,	0x210000, 	"kernel_nor");
-	add_mtd_device(nor_mtd, 0x290000,	0x500000,	"fs_nor");
-	add_mtd_device(nor_mtd, 0x790000,	0x70000,	"data_nor");
+#elif W25X64
+	add_mtd_device(nor_mtd, 0, 512*1024, "pmon");					//512KB
+	add_mtd_device(nor_mtd, 512*1024, (512+6*1024)*1024, "kernel");	//6.5MB
+	add_mtd_device(nor_mtd, 7*1024*1024, 1*1024*1024, "fs");		//1MB
 #else
-	add_mtd_device(nor_mtd, 0, 			0x80000, 	"pmon_nor");	
-	add_mtd_device(nor_mtd, 0x80000,	0x2c0000, 	"kernel_nor");
-	add_mtd_device(nor_mtd, 0x340000, 	0x180000, 	"system_nor");
-	add_mtd_device(nor_mtd, 0x520000,	0x2e0000,	"data_nor");
+	add_mtd_device(nor_mtd, 0, 0x80000, "pmon");	//512KB
 #endif
 
 	wb_write_sr(0);
 	spi_initr();
 }
 #endif
+/*************************************************************************/
 
-/*************************************************************************/	//lxy
 static const Cmd Cmds[] =
 {
 	{"MyCmds"},
