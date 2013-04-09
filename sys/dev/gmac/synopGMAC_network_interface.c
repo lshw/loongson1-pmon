@@ -2146,35 +2146,33 @@ return;
  */
 s32  synopGMAC_init_network_interface(char* xname,u64 synopGMACMappedAddr)
 {
-//varables added by sw
-	struct ifnet* ifp;
+	struct ifnet *ifp;
 
 	static u8 mac_addr0[6] = DEFAULT_MAC_ADDRESS;
 	static int inited = 0;
 	int i;
 	u16 data;
-	struct synopGMACNetworkAdapter * synopGMACadapter;
-	if(!inited)
-	{
-		u8 v;
-		char *s=getenv("ethaddr");
-		if(s){
-			int allz,allf;
+	struct synopGMACNetworkAdapter *synopGMACadapter;
+
+	if(!inited) {
+		int32_t v;
+		char *s = getenv("ethaddr");
+		if (s) {
+			int allz, allf;
 			u8 macaddr[6];
 
-			for(i = 0, allz = 1, allf = 1; i < 6; i++) {
+			for (i=0, allz=1, allf=1; i<6; i++) {
 				gethex(&v, s, 2);
-				macaddr[i] = v;
+				macaddr[i] = (u8)v;
 				s += 3;         /* Don't get to fancy here :-) */
 				if(v != 0) allz = 0;
 				if(v != 0xff) allf = 0;
-			} 
-			if(!allz && !allf)
+			}
+			if (!allz && !allf)
 				memcpy(mac_addr0, macaddr, 6);
 		}
 		inited = 1;
 	}
-
 #ifdef LS1ASOC
 	*((volatile unsigned int*)0xbfd00420) &= ~0x00800000;	/* 使能GMAC0 */
 	#ifdef CONFIG_GMAC0_100M
@@ -2227,7 +2225,7 @@ s32  synopGMAC_init_network_interface(char* xname,u64 synopGMACMappedAddr)
 	/*Allocate Memory for the the GMACip structure*/
 	synopGMACadapter->synopGMACdev = (synopGMACdevice *) plat_alloc_memory(sizeof (synopGMACdevice));
 	memset((char *)synopGMACadapter->synopGMACdev ,0, sizeof (synopGMACdevice));
-	if(!synopGMACadapter->synopGMACdev){
+	if(!synopGMACadapter->synopGMACdev) {
 		TR0("Error in Memory Allocataion \n");
 	}
 		

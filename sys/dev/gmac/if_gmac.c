@@ -8,9 +8,9 @@
 
 #include "synopGMAC_plat.h"
 
+s32  synopGMAC_init_network_interface(char* xname,u64 synopGMACMappedAddr);
 
-static int
-syn_match(parent, match, aux)
+static int syn_match(parent, match, aux)
 	struct device *parent;
 #if defined(__BROKEN_INDIRECT_CONFIG) || defined(__OpenBSD__)
 	void *match;
@@ -22,19 +22,13 @@ syn_match(parent, match, aux)
 	return 1;
 }
 
-s32  synopGMAC_init_network_interface(char* xname,u64 synopGMACMappedAddr);
-
-static void
-syn_attach(parent, self, aux)
+static void syn_attach(parent, self, aux)
 	struct device *parent, *self;
 	void *aux;
 {
 	struct device *sc = self;
-
-synopGMAC_init_network_interface(sc->dv_xname,sc->dv_unit?GMAC1_ADDR:GMAC0_ADDR);
-
+	synopGMAC_init_network_interface(sc->dv_xname, sc->dv_unit?GMAC1_ADDR:GMAC0_ADDR);
 }
-
 
 struct cfattach syn_ca = {
 	sizeof(struct device), syn_match, syn_attach
@@ -43,6 +37,4 @@ struct cfattach syn_ca = {
 struct cfdriver syn_cd = {
 	NULL, "syn", DV_IFNET
 };
-
-
 
