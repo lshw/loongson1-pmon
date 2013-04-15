@@ -1317,7 +1317,8 @@ int ls1g_soc_nand_init(void)
 	printf("\nNAND DETE\n");
 
 #ifdef	LS1ASOC
-#if 1	//NAND复用LPC
+#ifdef	NAND_USE_LPC
+//#if 1	//NAND复用LPC
 	__rw(0xbfd00420, val);
 	val |= 0x2a000000;
 	__ww(0xbfd00420, val);
@@ -1325,7 +1326,8 @@ int ls1g_soc_nand_init(void)
 	__rw(0xbfd010c8, val);
 	val &= ~(0xffff<<6);	//nand_D0~D7 & nand_control pin
 	__ww(0xbfd010c8, val);
-#else //NAND复用SPI1
+#elif	NAND_USE_SPI1
+//#else //NAND复用SPI1
 	__rw(0xbfd00420, val);
 	val |= 0x14000000;
 	__ww(0xbfd00420, val);

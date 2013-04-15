@@ -215,6 +215,7 @@ pseudo-device	loop	1	# network loopback
 option		INPUT_FROM_BOTH
 option		OUTPUT_TO_BOTH
 select		nand
+option		NAND_USE_SPI1		#option		NAND_USE_LPC
 #select		nor_flash			#如果使用nor flash分区需要该选项
 #option		NORFLASH_PARTITION	#nor flash(spi flash)分区
 #option		W25Q128
