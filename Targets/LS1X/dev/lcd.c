@@ -31,8 +31,13 @@ typedef unsigned int dma_addr_t;
 #define DC_BASE_ADDR1 0xbc301250
 
 static int fb_xsize, fb_ysize, frame_rate;
+#if defined(LS1ASOC) || defined(LS1BSOC)
 static char *ADDR_CURSOR = 0xa3900000;
 static char *MEM_ptr = 0xa3200000;
+#elif defined(LS1CSOC)
+static char *ADDR_CURSOR = 0xa1900000;
+static char *MEM_ptr = 0xa1200000;
+#endif
 static int MEM_ADDR = 0;
 
 static struct vga_struc{

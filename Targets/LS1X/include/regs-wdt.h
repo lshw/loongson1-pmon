@@ -1,9 +1,9 @@
 #ifndef __ASM_MACH_LOONGSON1_REGS_WDT_H
 #define __ASM_MACH_LOONGSON1_REGS_WDT_H
 
-#ifdef LS1ASOC
+#if defined(LS1ASOC)
 #define LS1X_WDT_BASE			0xbfe7c060
-#elif LS1BSOC
+#elif defined(LS1BSOC) || defined(LS1CSOC)
 #define LS1X_WDT_BASE			0xbfe5c060
 #endif
 

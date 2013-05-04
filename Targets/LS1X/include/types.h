@@ -5,6 +5,11 @@
 typedef unsigned int u32;
 typedef unsigned short u16;
 typedef unsigned char u8;
+typedef signed long  s32;
+typedef signed short s16;
+typedef signed char  s8;
+typedef int bool;
+typedef unsigned long dma_addr_t;
 
 #define K1BASE 0xa0000000
 #define KSEG1(addr) ((void *)(K1BASE | (u32)(addr)))

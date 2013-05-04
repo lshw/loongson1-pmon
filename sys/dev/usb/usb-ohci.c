@@ -626,16 +626,20 @@ static void lohci_attach(struct device *parent, struct device *self, void *aux)
 
 	printf("usb lohci init\n");
 	/*end usb reset*/
-#if LS1ASOC
+#if defined(LS1ASOC)
 	/* enable USB */
 	*(volatile int *)0xbfd00420 &= ~0x200000;
 	/*ls1a usb reset stop*/
 	*(volatile int *)0xbff10204 |= 0x40000000;
-#else /* LS1BSOC */
+#elif defined(LS1BSOC) /* LS1BSOC */
 	/* enable USB */
 	*(volatile int *)0xbfd00424 &= ~0x800;
 	/*ls1b usb reset stop*/
 	*(volatile int *)0xbfd00424 |= 0x80000000;
+#elif defined(LS1CSOC)
+	*(volatile int *)0xbfd00424 &= ~(1 << 31);
+	delay(100);
+	*(volatile int *)0xbfd00424 |= (1 << 31);
 #endif
 
 	/* Or we just return false in the match function */
@@ -646,7 +650,7 @@ static void lohci_attach(struct device *parent, struct device *self, void *aux)
 
 	usb_ohci_dev[ohci_dev_index++] = ohci;
 
-	ohci->sc_sh = (bus_space_handle_t)cf->ca_baseaddr;;
+	ohci->sc_sh = (bus_space_handle_t)cf->ca_baseaddr;
 
 	usb_lowlevel_init(ohci);
 	ohci->hc.uop = &ohci_usb_op;

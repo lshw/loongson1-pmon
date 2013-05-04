@@ -229,7 +229,9 @@ void initmips(unsigned int memsz)
 	/*
 	 *  Probe clock frequencys so delays will work properly.
 	 */
-//	tgt_cpufreq();
+#ifndef LS1ASOC
+	tgt_cpufreq();
+#endif
 	SBD_DISPLAY("DONE",0);
 	
 	/*
@@ -535,17 +537,17 @@ void _probe_frequencies(void)
 	
 	/*clock manager register*/
 #define PLL_FREQ_REG(x) *(volatile unsigned int *)(0xbfe78030+x)
-#ifdef LS1ASOC
+#if defined(LS1ASOC)
 	{
 //		int val= PLL_FREQ_REG(0);
-//		md_pipefreq = ((val&7)+1)*APB_CLK;        /* NB FPGA*/
+//		md_pipefreq = ((val&7)+1)*APB_CLK;
 //		md_cpufreq  =  (((val>>8)&7)+3)*APB_CLK;
 
 		unsigned int val = strtoul(getenv("pll_reg0"), 0, 0);
 		md_pipefreq = ((val&7)+4)*APB_CLK;
 		md_cpufreq  =  (((val>>8)&7)+3)*APB_CLK;
 	}
-#else
+#elif defined(LS1BSOC)
 	{
 		int pll, ctrl, clk;
 		pll = PLL_FREQ_REG(0);
@@ -554,15 +556,38 @@ void _probe_frequencies(void)
 		md_pipefreq = ((ctrl&0x300)==0x300) ? APB_CLK : (ctrl&(1<<25)) ? clk/((ctrl>>20)&0x1f) : clk/2;
 		md_cpufreq  = ((ctrl&0xc00)==0xc00) ? APB_CLK : (ctrl&(1<<19)) ? clk/((ctrl>>14)&0x1f) : clk/2;
 	}
+#elif defined(LS1CSOC)
+	{
+		#define DIV_CPU_EN			(0x1 << 15)
+		#define DIV_CPU				(0x7f << 8)
+		#define DIV_CPU_SEL_EN			(0x1 << 1)
+		#define DIV_CPU_SEL				(0x1 << 0)
+		#define DIV_CPU_SHIFT			8
+		unsigned int pll_freq = *(volatile u32 *)0xbfe78030;
+		unsigned int clk_div = *(volatile u32 *)0xbfe78034;
+		u32 pll;
+		pll = ((pll_freq >> 8) & 0xff) * APB_CLK / 4;
+		if (clk_div & DIV_CPU_SEL) {
+			if(clk_div & DIV_CPU_EN) {
+				md_pipefreq = pll / ((clk_div & DIV_CPU) >> DIV_CPU_SHIFT);
+			} else {
+				md_pipefreq = pll / 2;
+			}
+		} else {
+			md_pipefreq = APB_CLK;
+		}
+		md_cpufreq  = md_pipefreq / ((1 << ((pll_freq & 0x3) + 1)) % 5);
+	}
 #endif
 
-//clk_invalid用于标记RTC是否有效 1：无效 0：有效
+	/* clk_invalid用于标记RTC是否有效 1：无效 0：有效 */
 #ifdef HAVE_TOD
 //	clk_invalid = 1;
 	clk_invalid = 0;
 #endif
-//如果定义了HAVE_TOD即使用RTC实时时钟（loongson 1B 有实时时钟模块）则执行下面的代码 用于计算CPU和总线(内存)的频率
-//这会导致1-2秒钟的延时
+
+/* 如果定义了HAVE_TOD即使用RTC实时时钟（loongson 1B 有实时时钟模块）则执行下面的代码 用于计算CPU和总线(内存)的频率
+   这会导致1-2秒钟的延时 */
 //#ifdef HAVE_TOD
 #if 0
 	int i, timeout, cur, sec, cnt;
@@ -771,7 +796,10 @@ void tgt_flashprogram(void *p, int size, void *s, int endian)
 	if(fl_program_device(p, s, size, TRUE)) {
 		printf("Programming failed!\n");
 	}
+	/* 当使用1C cpu时读0xbfc00000地址返回值不正确？导致校验不成功 */
+#ifndef LS1CSOC
 	fl_verify_device(p, s, size, TRUE);
+#endif
 }
 #endif /* PFLASH */
 
@@ -1324,7 +1352,7 @@ void tgt_reboot(void)
 	//	longreach = (void *)0xbfc00000;
 	//	(*longreach)();
 	writel(1, LS1X_WDT_EN);
-	writel(1, LS1X_WDT_TIMER);
+	writel(50000, LS1X_WDT_TIMER);
 	writel(1, LS1X_WDT_SET);
 #ifdef LS1ASOC
 	ls1x_gpio_direction_output(0, 1);

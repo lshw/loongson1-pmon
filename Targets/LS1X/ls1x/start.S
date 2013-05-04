@@ -265,7 +265,7 @@ locate:
     li  t1, 0x1f	// div 4, fast_read + burst_en + memory_en double I/O 模式 部分SPI flash可能不支持
     sb  t1, 0x4(t0)	// sfc_param
 
-#ifdef LS1ASOC/* to adjust the DDR frequency */
+#if defined(LS1ASOC)/* to adjust the DDR frequency */
 	li v0, 0xbfc00000+(NVRAM_POS+PLL_OFFS)
 //	li v0, 0xbfc80000+(NVRAM_POS+PLL_OFFS)	/* 注意：1A LPC Flash启动地址映射为0xbfc80000 */
 	lw a1, (v0)
@@ -297,7 +297,7 @@ locate:
 //	andi a2,0xf0f
 //	bnez a2,2b
 //	nop
-#else
+#elif defined(LS1BSOC)
     li  a0, 0xbfe78030
     /*31:dc_div_en,30-26:dc_div,25:cpu_div_en,24-20:cpu_div,19:ddr_div_en,18-14:ddr_div*/
 	li v0, 0xbfc00000+(NVRAM_POS+PLL_OFFS)
@@ -337,8 +337,29 @@ locate:
 
 2:
 	or v1, 0x2a00
-    sw v1, 4(a0)
-    sw a1, (a0);
+	sw v1, 4(a0)
+	sw a1, (a0);
+#elif defined(LS1CSOC)
+	/* config pll div for cpu and sdram */
+	#define	SDRAM_DIV_2		0x0
+	#define	SDRAM_DIV_3		0x2
+	#define	SDRAM_DIV_4		0x1
+	#define	PLL_M			0x54
+	#define	SDRAM_DIV		SDRAM_DIV_2
+	#define	SDRAM_PARAM_DIV_NUM		((1 << (SDRAM_DIV+1)) % 5)
+	#define	CPU_DIV		2
+
+	li	t0, 0xbfe78030
+	li	t1, 0x2
+	sw	t1, 0x4(t0)
+
+	li	t1, (0x80000008 | (PLL_M << 8) | (0x3 << 2) | SDRAM_DIV)
+	sw	t1, 0x0(t0)
+
+	li	t1, (0x8003 | (CPU_DIV << 8))
+	sw	t1, 0x4(t0)
+	DELAY(2000)
+
 #endif //#ifdef LS1ASOC
 
 	/* initialize UART */
@@ -352,14 +373,14 @@ locate:
 	sw zero,0x10c4(a0)
 	sw zero,0x10c8(a0)
 
-#if LS1ASOC
+#if defined(LS1ASOC)
 	/* 启动时默认关闭SATA GPU USB GMAC0 GMAC1 */
 	li a0,0xbfd00000
 	lw a2,0x420(a0);
 	xor a2,0x00500000	//关闭SATA GPU
 	xor a2,0x01a00000	//关闭USB GMAC0 GMAC1
 	sw a2,0x420(a0);
-#elif LS1BSOC
+#elif defined(LS1BSOC)
 	/* 启动时默认关闭USB GMAC0 GMAC1 */
 	li a0,0xbfd00000
 	lw a2,0x424(a0);
@@ -458,7 +479,7 @@ cpu_win_fixup:
 	// mmap[1:0] -> destination
 	//
 	// NOTE: the address windows has priority, win0 > win1 > ... > win7
-#ifdef LS1ASOC
+#if defined(LS1ASOC)
 //	set_cpu_window(0, 0x1fc00000, 0xfff00000, 0x1fc000f3) // boot rom
 	set_cpu_window(0, 0x10000000, 0xf8000000, 0x100000d1) // PCI mem0, mem1
 	set_cpu_window(1, 0x18000000, 0xfc000000, 0x180000d1) // PCI mem2
@@ -469,7 +490,7 @@ cpu_win_fixup:
 	set_cpu_window(5, 0x00000000, 0x00000000, 0x000000f0) // everything else
 	set_cpu_window(6, 0x00000000, 0x00000000, 0x000000f0) // everything else
 	set_cpu_window(7, 0x00000000, 0x00000000, 0x000000f0) // everything else
-#elif LS1BSOC
+#elif defined(LS1BSOC)
 	set_cpu_window(0, 0x1c300000, 0xfff00000, 0x1c3000d2) // dc       1M must cachable
 	set_cpu_window(1, 0x1fe10000, 0xffffe000, 0x1fe100d3) // gmac0	8K
 	set_cpu_window(2, 0x1fe20000, 0xffffe000, 0x1fe200d3) // gmac1	8K
@@ -491,6 +512,8 @@ cpu_win_fixup:
 	// after this fixup, the kernel code should be compiled with
 	// uncached instruction fetch patch
 
+	/* 配置内存 */
+#if defined(LS1ASOC) || defined(LS1BSOC)
 	/*
 	 * set *_ssel and *_tsel
 	 * *_ssel参数用于配置DDR IO的驱动强度 01: 弱驱动 11: 强驱动
@@ -507,7 +530,6 @@ cpu_win_fixup:
 	li	t1, 0x14000000
 	sw	t1, (t0)
 
-#	ddr2config by cww 20090901
 	PRINTSTR("DDR2 config begin\r\n")
 	bal     ddr2_config
 	nop
@@ -541,6 +563,18 @@ cpu_win_fixup:
 	or a2, a1
 	sw a2, 0x0(a0)
 
+#elif defined(LS1CSOC)
+	li msize, MEM_SIZE
+#include "sdram_cfg.S"
+
+	li  t1, 0xbfd00410
+	li  a1, SD_PARA0
+	sw  a1, 0x0(t1)
+	li  a1, SD_PARA1
+	sw  a1, 0x4(t1)
+
+    PRINTSTR("\r\n sdram init done \r\n")
+#endif
 /**************************************CACHE*****************************/
 
 #define CF_7_SE         (1 << 3)        /* Secondary cache enable */
@@ -1067,7 +1101,7 @@ LEAF(initserial)
 	sb	v1, NSREG(NS16550_FIFO)(v0)
 	li	v1, CFCR_DLAB
 	sb	v1, NSREG(NS16550_CFCR)(v0)
-#ifdef LS1ASOC
+#if defined(LS1ASOC)
 //	li	v1, ((APB_CLK*DDR_MULT)/(2*16*CONS_BAUD))     // 8MHz crystal,   M[7:3]=6     1fboard
 //	li a0, 0xbfe78030
 //	lw a0,(a0)
@@ -1081,7 +1115,7 @@ LEAF(initserial)
 	li a0,2*16*CONS_BAUD
 	divu v1,a0
 	mflo v1
-#else
+#elif defined(LS1BSOC)
 	move	v1,a0
 	bnez	v1,2f
 	nop
@@ -1117,6 +1151,22 @@ LEAF(initserial)
 2:
 	li a1,2*16*CONS_BAUD
 	divu v1,v1,a1
+#elif defined(LS1CSOC)
+	/* #uart3 config mux */
+	li	t1, 0xbfd011c4
+	li	t2, 0x0
+	sw	t2, 0x0(t1)
+
+	li	t2, 0x6
+	sw	t2, 0x10(t1)
+
+	li	t2, 0x0
+	sw	t2, 0x20(t1)
+
+	li	t2, 0x0
+	sw	t2, 0x30(t1)
+
+	li	v1, ((APB_CLK / 4) * (PLL_M / CPU_DIV)) / SDRAM_PARAM_DIV_NUM / (16*CONS_BAUD)
 #endif
 	sb	v1, NSREG(NS16550_DATA)(v0)
 	srl	v1, 8

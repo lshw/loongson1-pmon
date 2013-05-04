@@ -1,11 +1,8 @@
 #include <target/iorw.h>
+#include <target/types.h>
 #include <stdio.h>
 #include <pmon.h>
 #include <cpu.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <string.h>
-#include <linux/types.h>
 
 
 #define	GS232_HPET_BASE	0xbfe6c000

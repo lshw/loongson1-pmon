@@ -639,8 +639,9 @@ void dbginit(char *adr)
 	SBD_DISPLAY ("ENVI", CHKPNT_ENVI);
 	envinit ();
 
-	tgt_cpufreq();	//lxy
-	envinit ();
+#if defined(LS1ASOC)
+	tgt_cpufreq();
+#endif
 
 #if defined(SMP)
 	/* Turn on caches unless opted out */
