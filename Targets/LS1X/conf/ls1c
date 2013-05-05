@@ -76,7 +76,7 @@ select		cmd_shell		# Shell commands, vers, help, eval
 #
 select		mod_uart_ns16550	# Standard UART driver
 option		APB_CLK=24000000	# 外部晶振频率(Hz)
-option 		CPU_MULT=0x1c		# CPU(DDR)倍频
+option 		CPU_MULT=0x58		# CPU(DDR)倍频
 option 		DDR_MULT=5			# DDR倍频(LS1B该值无效)
 option		CONS_BAUD=B115200
 option		UART_BASE_ADDR=0xbfe4c000	#串口控制台基地址 需要不同的串口输出可以修改此值
@@ -91,6 +91,7 @@ option		MEM_SIZE=0x02000000	# 64M(16bit) 定义内存大小 注意32bit和16bit�
 select		ext2
 #select		yaffsfs		#lxy: there is a do_div error to open this with new cross-tool
 select		fatfs
+#select		fatfs_fast
 select		gzip
 select		ramfiles
 

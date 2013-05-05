@@ -98,10 +98,10 @@ void init_heaptop(void)
 		heaptop = 0x83000000;
 	} else {
 #endif
-//		heaptop = (unsigned int)(end + 65536)<CLIENTPC ? CLIENTPC : (end + 65536);
+		heaptop = (unsigned int)(end + 65536)<CLIENTPC ? CLIENTPC : (end + 65536);
 		/* 当内存小于等于32MB时，使用fast fat读U盘时失败，所以修改成如下 */
-		allocp1 = 0x81000000;
-		heaptop = 0x81000000;
+//		allocp1 = 0x81000000;
+//		heaptop = 0x81000000;
 	}
 #ifndef HEAP_ALLOC_UPWORD
 	allocp1 = heaptop;

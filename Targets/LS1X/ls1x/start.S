@@ -228,7 +228,7 @@ exc_common:
 	nop
 
 	.align 9
-		nop
+	nop
 	.align 8
 	.word read
 	.word write
@@ -282,7 +282,7 @@ locate:
 	nop
 1:
 #define DDRCFG_DATA (0x8888|(CPU_MULT-4)|((DDR_MULT-3)<<8))
-    li  a1, DDRCFG_DATA   // 1fboard 25MHz
+    li  a1, DDRCFG_DATA
 2:
 	li  a2, 0xa
 3:
@@ -299,7 +299,7 @@ locate:
 //	nop
 #elif defined(LS1BSOC)
     li  a0, 0xbfe78030
-    /*31:dc_div_en,30-26:dc_div,25:cpu_div_en,24-20:cpu_div,19:ddr_div_en,18-14:ddr_div*/
+    /* 31:dc_div_en,30-26:dc_div,25:cpu_div_en,24-20:cpu_div,19:ddr_div_en,18-14:ddr_div */
 	li v0, 0xbfc00000+(NVRAM_POS+PLL_OFFS)
 	lw v1, 4(v0)
 	lw a1, (v0)
@@ -334,26 +334,25 @@ locate:
     li v1, (1<<31)|(4<<26)|(1<<25)|(3<<20)|(1<<19)|(4<<14)|0x2a00
     li a1, CPU_MULT
 #endif
-
 2:
 	or v1, 0x2a00
 	sw v1, 4(a0)
 	sw a1, (a0);
+
 #elif defined(LS1CSOC)
 	/* config pll div for cpu and sdram */
-	#define	SDRAM_DIV_2		0x0
-	#define	SDRAM_DIV_3		0x2
-	#define	SDRAM_DIV_4		0x1
-	#define	PLL_M			0x54
-	#define	SDRAM_DIV		SDRAM_DIV_2
-	#define	SDRAM_PARAM_DIV_NUM		((1 << (SDRAM_DIV+1)) % 5)
-	#define	CPU_DIV		2
+	#define SDRAM_DIV_2	0x0
+	#define SDRAM_DIV_3	0x2
+	#define SDRAM_DIV_4	0x1
+	#define SDRAM_DIV		SDRAM_DIV_2
+	#define SDRAM_PARAM_DIV_NUM		((1 << (SDRAM_DIV+1)) % 5)
+	#define CPU_DIV		2
 
 	li	t0, 0xbfe78030
 	li	t1, 0x2
 	sw	t1, 0x4(t0)
 
-	li	t1, (0x80000008 | (PLL_M << 8) | (0x3 << 2) | SDRAM_DIV)
+	li	t1, (0x80000008 | (CPU_MULT << 8) | (0x3 << 2) | SDRAM_DIV)
 	sw	t1, 0x0(t0)
 
 	li	t1, (0x8003 | (CPU_DIV << 8))
@@ -409,7 +408,6 @@ locate:
 	beq a2, a1, get_pin_val_finish
 	nop
 	li output_en, 0x1
-#endif
 
 get_pin_val_finish:
 	PRINTSTR("output_en =")
@@ -422,6 +420,7 @@ get_pin_val_finish:
 	lw a0, 0x10e4(a1)
 	bal	hexserial
 	nop
+#endif
 
 	PRINTSTR("\r\nPMON2000 MIPS Initializing. Standby...\r\n")
 	PRINTSTR(" ERRORPC=")
@@ -679,6 +678,74 @@ acpi_begin:
 	b	1b
 	nop
 acpi_end:/* Startup as usual */
+
+/*
+ * Resume the CPU state, jump to the kernel
+ */
+LEAF(suspend_resume)
+	li	t0,	0xa01ffc00
+	lw	ra,	(t0)
+	lw	sp,	4(t0)
+	lw	s8,	8(t0)
+	lw	gp,	12(t0)
+	lw	s0,	16(t0)
+	lw	s1,	20(t0)
+	lw	s2,	24(t0)
+	lw	s3,	28(t0)
+	lw	s4,	32(t0)
+	lw	s5,	36(t0)
+	lw	s6,	40(t0)
+	lw	s7,	44(t0)
+
+	lw	k0,	48(t0)
+	lw	k1,	52(t0)
+
+	lw	v0,	56(t0)
+	lw	v1,	60(t0)
+
+	lw	t1,	64(t0)
+	mtc0	t1,	$12
+	lw	t1,	68(t0)
+	mtc0	t1,	$4
+	lw	t1,	72(t0)
+	mtc0	t1,	$5
+
+	jr	ra
+	nop
+END(suspend_resume)
+
+LEAF(suspend_save)
+	li	t0,	0xa01ffc00
+#	sw	ra,	(t0)
+	sw	sp,	4(t0)
+	sw	s8,	8(t0)
+	sw	gp,	12(t0)
+	sw	s0,	16(t0)
+	sw	s1,	20(t0)
+	sw	s2,	24(t0)
+	sw	s3,	28(t0)
+	sw	s4,	32(t0)
+	sw	s5,	36(t0)
+	sw	s6,	40(t0)
+	sw	s7,	44(t0)
+
+	sw	k0,	48(t0)
+	sw	k1,	52(t0)
+
+	sw	v0,	56(t0)
+	sw	v1,	60(t0)
+                                
+	mfc0	t1,	$12
+	sw	t1,	64(t0)
+	mfc0	t1,	$4
+	sw	t1,	68(t0)
+	mfc0	t1,	$5
+	sw	t1,	72(t0)
+
+	jr	ra
+	nop
+END(suspend_save)
+
 #endif
 
 /***********************MEMORY DEBUGGING AND COPY SELF TO RAM***********************/
@@ -703,8 +770,7 @@ PRINTSTR("end test\r\n");
 	jalr v0; \
 	nop;
 
-/*copy copy program to sdram to make copy fast*/
-
+/* copy copy program to sdram to make copy fast */
 	la		t0,121f
 	addu	t0,s0
 	la		t1,122f
@@ -716,7 +782,7 @@ PRINTSTR("end test\r\n");
 	sw		v0,(t2)
 	addu	t0,4
 	addu	t2,4
-	ble		t0,t1,1b	//if (t0 <= t1) goto 1b
+	ble		t0,t1,1b
 	nop
 
 	li		t0,0xa0000000
@@ -739,7 +805,6 @@ PRINTSTR("end test\r\n");
 	move	t2, a2
 
 	/* copy text section */
-	
 1:	and		t3, t0,0x0000ffff
 	bnez	t3, 2f
 	nop
@@ -756,7 +821,6 @@ PRINTSTR("end test\r\n");
 	addu	t1, 4
 	bne		t2, t0, 1b
 	nop
-
 	FCALL_PRINTSTR("\ncopy text section done.\r\n")
 	
 	/* Clear BSS */
@@ -856,73 +920,6 @@ LEAF(CPU_TLBInit)
 	jr	ra
 	nop
 END(CPU_TLBInit)
-
-/*
- * Resume the CPU state, jump to the kernel
- */
-LEAF(suspend_resume)
-	li	t0,	0xa01ffc00
-	lw	ra,	(t0)
-	lw	sp,	4(t0)
-	lw	s8,	8(t0)
-	lw	gp,	12(t0)
-	lw	s0,	16(t0)
-	lw	s1,	20(t0)
-	lw	s2,	24(t0)
-	lw	s3,	28(t0)
-	lw	s4,	32(t0)
-	lw	s5,	36(t0)
-	lw	s6,	40(t0)
-	lw	s7,	44(t0)
-
-	lw	k0,	48(t0)
-	lw	k1,	52(t0)
-
-	lw	v0,	56(t0)
-	lw	v1,	60(t0)
-
-	lw	t1,	64(t0)
-	mtc0	t1,	$12
-	lw	t1,	68(t0)
-	mtc0	t1,	$4
-	lw	t1,	72(t0)
-	mtc0	t1,	$5
-
-	jr	ra
-	nop
-END(suspend_resume)
-
-LEAF(suspend_save)
-	li	t0,	0xa01ffc00
-#	sw	ra,	(t0)
-	sw	sp,	4(t0)
-	sw	s8,	8(t0)
-	sw	gp,	12(t0)
-	sw	s0,	16(t0)
-	sw	s1,	20(t0)
-	sw	s2,	24(t0)
-	sw	s3,	28(t0)
-	sw	s4,	32(t0)
-	sw	s5,	36(t0)
-	sw	s6,	40(t0)
-	sw	s7,	44(t0)
-
-	sw	k0,	48(t0)
-	sw	k1,	52(t0)
-
-	sw	v0,	56(t0)
-	sw	v1,	60(t0)
-                                
-	mfc0	t1,	$12
-	sw	t1,	64(t0)
-	mfc0	t1,	$4
-	sw	t1,	68(t0)
-	mfc0	t1,	$5
-	sw	t1,	72(t0)
-
-	jr	ra
-	nop
-END(suspend_save)
 
 /***********************************FUNCTIONS**********************************/
 
@@ -1080,7 +1077,7 @@ END(tgt_getchar)
 #define B921600	921600
 
 LEAF(initserial)
-	.set noat	//lxy
+	.set noat
 	move AT,ra
 	
 	la	v0, COM1_BASE_ADDR
@@ -1103,54 +1100,54 @@ LEAF(initserial)
 	sb	v1, NSREG(NS16550_CFCR)(v0)
 #if defined(LS1ASOC)
 //	li	v1, ((APB_CLK*DDR_MULT)/(2*16*CONS_BAUD))     // 8MHz crystal,   M[7:3]=6     1fboard
-//	li a0, 0xbfe78030
-//	lw a0,(a0)
-	move a0, a1
-	and a0,0x700
-	srl a0,8
-	addiu a0,3
-	li v1,APB_CLK
-	multu a0,v1
-	mflo v1
-	li a0,2*16*CONS_BAUD
-	divu v1,a0
-	mflo v1
+//	li	a0, 0xbfe78030
+//	lw	a0, (a0)
+	move	a0, a1
+	and		a0, 0x700
+	srl		a0, 8
+	addiu	a0, 3
+	li		v1, APB_CLK
+	multu	a0, v1
+	mflo	v1
+	li		a0, 2*16*CONS_BAUD
+	divu	v1, a0
+	mflo	v1
 #elif defined(LS1BSOC)
-	move	v1,a0
-	bnez	v1,2f
+	move	v1, a0
+	bnez	v1, 2f
 	nop
-	li	v1,APB_CLK
-	li	a0,0xbfe78030
-	lw	a1,4(a0)
-	li	a2,0xc00	//lxy: check ddr Bypass
-	and	a1,a2
-	beq 	a1,a2,2f
+	li		v1, APB_CLK
+	li		a0, 0xbfe78030
+	lw		a1, 4(a0)
+	li		a2, 0xc00
+	and		a1, a2
+	beq		a1, a2,2f
 	nop
-	lw	a1,(a0)
-	andi	a2,a1,0x3f
-	addiu	a2,12
-	sll     a2,10
-	srl a1,8
-	andi	a1,0x3ff
-	addu	a1,a2
-	li	a2,(APB_CLK>>11)
-	multu   a1,a2
-	mflo    v1	//lxy: v1=pll
-	lw	a1,4(a0)
-	srl	a1,14	//lxy: get ddr_div
-	andi    a2,a1,0x20
-	beqz    a2,1f
+	lw		a1, (a0)
+	andi	a2, a1, 0x3f
+	addiu	a2, 12
+	sll		a2, 10
+	srl		a1, 8
+	andi	a1, 0x3ff
+	addu	a1, a2
+	li		a2, (APB_CLK>>11)
+	multu	a1, a2
+	mflo	v1
+	lw		a1, 4(a0)
+	srl		a1, 14
+	andi	a2, a1, 0x20
+	beqz	a2, 1f
 	nop
-	andi    a1,0x1f	//lxy: a1=ddr_div
-	divu    v1,a1	//lxy: lo=pll/ddr_div
-	mflo    v1	//lxy: v1=ddr_clk
+	andi	a1, 0x1f
+	divu	v1, a1
+	mflo	v1
 	b 2f
 	nop
 1:
-	srl v1,1	
+	srl		v1, 1	
 2:
-	li a1,2*16*CONS_BAUD
-	divu v1,v1,a1
+	li		a1, 2*16*CONS_BAUD
+	divu	v1, v1, a1
 #elif defined(LS1CSOC)
 	/* #uart3 config mux */
 	li	t1, 0xbfd011c4
@@ -1166,7 +1163,7 @@ LEAF(initserial)
 	li	t2, 0x0
 	sw	t2, 0x30(t1)
 
-	li	v1, ((APB_CLK / 4) * (PLL_M / CPU_DIV)) / SDRAM_PARAM_DIV_NUM / (16*CONS_BAUD)
+	li	v1, ((APB_CLK / 4) * (CPU_MULT / CPU_DIV)) / SDRAM_PARAM_DIV_NUM / (16*CONS_BAUD)
 #endif
 	sb	v1, NSREG(NS16550_DATA)(v0)
 	srl	v1, 8
@@ -1209,13 +1206,6 @@ hexchar:
 
 	.text
 	.align	2
-/*
- *   I2C Functions used in early startup code to get SPD info from
- *   SDRAM modules. This code must be entirely PIC and RAM independent.
- */
-
-
-
 
 #define Index_Store_Tag_D			0x09
 #define Index_Invalidate_I			0x00
@@ -1274,7 +1264,7 @@ cache_detect_4way:
 
 ####part 3####
 #	.set	mips3
-	lui	a0, 0x8000			//a0 = 0x8000 << 16
+	lui		a0, 0x8000			//a0 = 0x8000 << 16
 	addu	a1, $0, t5
 	addu	a2, $0, t6
 cache_init_d2way:
@@ -1326,10 +1316,10 @@ cache_flush_d2way:
 
 1:
 cache_init_finish:
-    jr	t1
-    nop
-    .set reorder
-	.end 	cache_init
+	jr	t1
+	nop
+	.set	reorder
+	.end	cache_init
 
 #ifdef LS1ASOC
 #include "ddr2fconfig-1a-samsung-CL3.S"

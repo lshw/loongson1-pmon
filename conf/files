@@ -197,7 +197,7 @@ file pmon/cmds/test/test_vga.c	(cmd_test & mod_display)
 #file pmon/cmds/test/poll_test.c	(cmd_test | cmd_testfire)
 file pmon/cmds/test/test_fire.c	cmd_testfire & mod_display
 file pmon/cmds/test/can.c		(cmd_test | cmd_testfire)
-file pmon/cmds/test/acpi_test.c	(cmd_test | cmd_testfire)
+file pmon/cmds/test/acpi_test.c	(cmd_test | cmd_testfire) & LS1ASOC
 file pmon/cmds/cmdtable.c 
 file pmon/cmds/debuggercmds.c		mod_debugger
 file pmon/cmds/devls.c 			(sys & cmd_devls)
@@ -251,6 +251,7 @@ file pmon/fs/iso9660fs.c		iso9660		needs-flag
 file pmon/fs/devfs.c			(scsi | ide | usbbus | sdcard | loopdev)
 file pmon/fs/diskfs.c			(scsi | ide | usbbus | sdcard | loopdev)
 file pmon/fs/fatfs.c			fatfs
+file pmon/fs/fatfs_fast.c			fatfs_fast
 file pmon/fs/ext2fs.c			ext2
 #file pmon/fs/yaffsfs.c			yaffsfs
 file pmon/fs/yaffs2/yaffsfs.c		    yaffsfs

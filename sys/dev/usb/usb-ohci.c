@@ -2837,15 +2837,6 @@ static int hc_start (ohci_t * ohci)
 	ohci->disabled = 0;
 	writel (ohci->hc_control, &ohci->regs->control);
 
-	{
-		int val;	
-		val = readl(&ohci->regs->intrstatus);
-		while(val & OHCI_INTR_SF){
-			udelay(10);
-			readl(&ohci->regs->intrstatus);
-		}
-	}
-
 	/* disable all interrupts */
 	mask = (OHCI_INTR_SO | OHCI_INTR_WDH | OHCI_INTR_SF | OHCI_INTR_RD |
 			OHCI_INTR_UE | OHCI_INTR_FNO | OHCI_INTR_RHSC |

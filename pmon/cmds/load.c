@@ -226,15 +226,14 @@ nload (argc, argv)
 		   ep = exec (id, bootfd, buf, &n, flags);
 	   }
 	} else {
-		if(flags&OFLAG){
-			dl_Oloadbuffer=malloc(0x1000);
-			if(dl_Oloadbuffer)
-			{
+		if (flags & OFLAG) {
+			dl_Oloadbuffer = malloc(0x1000);
+			if (dl_Oloadbuffer) {
 				  ep = exec (NULL, bootfd, buf, &n, flags);
 				  free(dl_Oloadbuffer);
 			}
 			else 
-				ep=-1;
+				ep = -1;
 		}
 		else 
 			ep = exec (NULL, bootfd, buf, &n, flags);
