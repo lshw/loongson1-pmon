@@ -20,35 +20,9 @@
 
 #ifdef __ASSEMBLER__
 #else /* !__ASSEMBLER */
-extern char           *heaptop;
+extern char *heaptop;
 
 #endif /* __ASSEMBLER__ */
-
-/* APB bus control registers */
-#define APB_MISC_BASE 0x1f004100
-
-#define GPIO_OE28_0    0x00
-#define GPIO_R28_0     0x10
-#define GPIO_W28_0     0x20
-#define APB_MISC_CTL   0x40
-
-
-/*
-#define GPIO_OE47_20	0x00
-#define GPIO_OE77_48	0x08
-#define GPIO_R47_20	0x10
-#define GPIO_R77_48	0x18
-#define GPIO_W47_20	0x20
-#define GPIO_W77_48	0x28
-#define APB_MISC_CTL	0x40
-*/
-#define AHB_MISC_BASE 0x1f003200
-
-#define GPIO_OE60_29	0x20
-#define GPIO_R60_29	0x24
-#define GPIO_W60_29	0x28
-
-
 
 #define RTC_INDEX_REG 0x70
 #define RTC_DATA_REG 0x71
@@ -83,16 +57,16 @@ extern char           *heaptop;
 #	define DEPTH_OFFS		(PLL_OFFS+8)
 #else	/* Use clock ram, 256 bytes only */
 #	define NVRAM_SECSIZE		512	/* Helper */
-#	define NVRAM_SIZE	        (NVRAM_SECSIZE-20)
+#	define NVRAM_SIZE		(NVRAM_SECSIZE-30)
 #	define NVRAM_OFFS		0
-#	define NVRAM_POS	    0x00070000
+#	define NVRAM_POS		0x00070000
 //#	define NVRAM_POS	    0x000F0000	//当PMON大小超过512K时需要修改该值,保留给环境变量的大小为0x10000=65536字节
                                         //如果SPI Flash大小为1MB，则NVRAM_POS=0x00100000-0x00010000=0x000F0000
 #	define ETHER_OFFS		(NVRAM_SECSIZE-6) 	/* Ethernet address base */
-#	define PLL_OFFS			(ETHER_OFFS-10)
-#	define XRES_OFFS		(PLL_OFFS-2)
-#	define YRES_OFFS		(PLL_OFFS-4)
-#	define DEPTH_OFFS		(PLL_OFFS+8)
+#	define PLL_OFFS		(NVRAM_SECSIZE-16)
+#	define XRES_OFFS		(NVRAM_SECSIZE-18)
+#	define YRES_OFFS		(NVRAM_SECSIZE-20)
+#	define DEPTH_OFFS		(NVRAM_SECSIZE-22)
 #endif
 
 /*********************************************************************/
@@ -119,14 +93,11 @@ extern char           *heaptop;
 #define PCI_LOCAL_MEM_PCI_BASE		0x00000000
 #define PCI_LOCAL_MEM_ISA_BASE		0x80000000
 #define PCI_LOCAL_REG_PCI_BASE		0x90000000
-
 #else
-
 #define PCI_MEM_SPACE_PCI_BASE		0x00000000
 #define PCI_LOCAL_MEM_PCI_BASE		0x80000000
 #define PCI_LOCAL_MEM_ISA_BASE		0x00800000
 #define PCI_LOCAL_REG_PCI_BASE		0x90000000
-
 #endif
 
 #define PCI_IO_SPACE_BASE		0x00000000

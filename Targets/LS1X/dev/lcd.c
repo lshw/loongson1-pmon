@@ -4,18 +4,10 @@
 
 #include <pmon.h>
 #include <pmon/dev/ns16550.h>
+#include <target/types.h>
 
 #include <stdlib.h>
 #include <stdio.h>
-
-typedef unsigned int  u32;
-typedef unsigned short u16;
-typedef unsigned char  u8;
-typedef signed int  s32;
-typedef signed short s16;
-typedef signed char  s8;
-typedef int bool;
-typedef unsigned int dma_addr_t;
 
 #define writeb(val, addr) (*(volatile u8*)(addr) = (val))
 #define writew(val, addr) (*(volatile u16*)(addr) = (val))
@@ -40,12 +32,12 @@ static char *MEM_ptr = 0xa1200000;
 #endif
 static int MEM_ADDR = 0;
 
-static struct vga_struc{
+static struct vga_struc {
 	unsigned int pclk, refresh;
 	int hr, hss, hse, hfl;
 	int vr, vss, vse, vfl;
 	int pan_config;
-}vgamode[] = {
+} vgamode[] = {
 		{/*"240x320_70.00"*/	6429,	60,	240,	250,	260,	280,	320,	324,	326,	328,	0x00000301},
 		{/*"320x240_60.00"*/	7154,	60,	320,	332,	364,	432,	240,	248,	254,	276,	0x00000103},/* HX8238-D控制器 */
 //		{/*"320x240_60.00"*/	6438,	60,	320,	336,	337,	408,	240,	250,	251,	263,	0x80001311},/* NT39016D控制器 */
@@ -167,7 +159,7 @@ enum {
 	OF_BUF_ADDR1 = 0x340,
 };
 
-#ifdef LS1ASOC
+#if defined(LS1ASOC)
 static unsigned int caclulatefreq(unsigned int sys_clk, unsigned int pclk)
 {
 #if 0
@@ -248,7 +240,7 @@ static unsigned int caclulatefreq(unsigned int sys_clk, unsigned int pclk)
 	return ((FRAC<<14) + (PIX12<<12) + (N<<8) + M);
 #endif
 }
-#else
+#elif defined(LS1BSOC)
 static void caclulatefreq(unsigned int ls1b_pll_freq, unsigned int ls1b_pll_div)
 {
 	unsigned int pll, ctrl;
@@ -315,7 +307,7 @@ static int config_fb(unsigned int base)
 //			&& vgamode[i].refresh == frame_rate) {
 			int out;
 			mode = i;
-		#ifdef LS1ASOC
+		#if defined(LS1ASOC)
 			out = caclulatefreq(APB_CLK/1000, vgamode[mode].pclk);
 			/*output pix1 clock  pll ctrl */
 			#ifdef DC_FB0
@@ -332,7 +324,8 @@ static int config_fb(unsigned int base)
 			*(volatile int *)0xbfd00414 = out;
 			delay(1000);
 
-		#elif defined(CONFIG_FB_DYN)	//LS1BSOC
+//		#elif defined(CONFIG_FB_DYN)	//LS1BSOC
+		#elif defined(LS1BSOC)
 		#ifdef CONFIG_VGA_MODEM	/* 只用于1B的外接VGA */
 		{
 			struct ls1b_vga *input_vga;

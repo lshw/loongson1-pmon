@@ -851,7 +851,7 @@ void tgt_mapenv(int (*func) __P((char *, char *)))
 	if(fl_devident((void *)(tgt_flashmap()->fl_map_base), NULL) == 0 ||
            cksum(nvram + NVRAM_OFFS, NVRAM_SIZE, 0) != 0) {
 #else
-    nvram = (char *)malloc(NVRAM_SECSIZE);
+	nvram = (char *)malloc(NVRAM_SECSIZE);
 	nvram_get(nvram);
 	if(cksum(nvram, NVRAM_SIZE, 0) != 0) {
 #endif
@@ -892,13 +892,13 @@ void tgt_mapenv(int (*func) __P((char *, char *)))
 	    hwethadr[2], hwethadr[3], hwethadr[4], hwethadr[5]);
 	(*func)("ethaddr", env);
 
-#ifdef LS1ASOC
+#if defined(LS1ASOC)
 	bcopy(&nvram[PLL_OFFS], &pll_reg0, 4);
 	if ((pll_reg0 >> 16) != 0x0000)
 		pll_reg0 = (((DDR_MULT - 3) << 8) | (CPU_MULT - 4));
 	sprintf(env, "0x%08x", pll_reg0);
 	(*func)("pll_reg0", env);
-#elif LS1BSOC
+#elif defined(LS1BSOC) || defined(LS1CSOC)
 	sprintf(env, "0x%08x", (pll_reg0=*(volatile int *)0xbfe78030));
 	(*func)("pll_reg0", env);
 #endif
