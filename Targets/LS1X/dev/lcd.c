@@ -12,21 +12,17 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define write_reg(addr,val) writel(val,addr)
-
-#define PLL_FREQ_REG(x) *(volatile unsigned int *)(0xbfe78030+x)
 #define DC_BASE_ADDR0 0xbc301240
 #define DC_BASE_ADDR1 0xbc301250
 
 static int fb_xsize, fb_ysize, frame_rate;
 #if defined(LS1ASOC) || defined(LS1BSOC)
-static char *ADDR_CURSOR = 0xa3900000;
-static char *MEM_ptr = 0xa3200000;
+static char *addr_cursor = 0xa3900000;
+static char *mem_ptr = 0xa3200000;
 #elif defined(LS1CSOC)
-static char *ADDR_CURSOR = 0xa1900000;
-static char *MEM_ptr = 0xa1200000;
+static char *addr_cursor = 0xa1900000;
+static char *mem_ptr = 0xa1200000;
 #endif
-static int MEM_ADDR = 0;
 
 static struct vga_struc {
 	unsigned int pclk, refresh;
@@ -241,15 +237,15 @@ static int config_cursor(void)
 	int ii;
 	
 	for(ii=0; ii<0x1000; ii+=4)
-		*(volatile unsigned int *)(ADDR_CURSOR + ii) = 0x88f31f4f;
+		*(volatile unsigned int *)(addr_cursor + ii) = 0x88f31f4f;
 
-	ADDR_CURSOR = (unsigned int)ADDR_CURSOR & 0x0fffffff;
+	addr_cursor = (unsigned int)addr_cursor & 0x0fffffff;
 
-	write_reg((0xbc301520+0x00), 0x00020200);
-	write_reg((0xbc301530+0x00), ADDR_CURSOR);
-	write_reg((0xbc301540+0x00), 0x00060122);
-	write_reg((0xbc301550+0x00), 0x00eeeeee);
-	write_reg((0xbc301560+0x00), 0x00aaaaaa);
+	writel(0x00020200, 0xbc301520+0x00);
+	writel(addr_cursor, 0xbc301530+0x00);
+	writel(0x00060122, 0xbc301540+0x00);
+	writel(0x00eeeeee, 0xbc301550+0x00);
+	writel(0x00aaaaaa, 0xbc301560+0x00);
 	return 0;
 }
 #endif
@@ -261,9 +257,10 @@ static int config_fb(unsigned int base)
 	for (i=0; i<sizeof(vgamode)/sizeof(struct vga_struc); i++) {
 		if (vgamode[i].hr == fb_xsize && vgamode[i].vr == fb_ysize) {
 //			&& vgamode[i].refresh == frame_rate) {
-			int out;
 			mode = i;
 		#if defined(LS1ASOC)
+		{
+			int out;
 			out = caclulatefreq(APB_CLK/1000, vgamode[mode].pclk);
 			/*output pix1 clock  pll ctrl */
 			#ifdef DC_FB0
@@ -279,7 +276,7 @@ static int config_fb(unsigned int base)
 			out = caclulatefreq(APB_CLK/1000, 200000);
 			*(volatile int *)0xbfd00414 = out;
 			delay(1000);
-
+		}
 //		#elif defined(CONFIG_FB_DYN)	//LS1BSOC
 		#elif defined(LS1BSOC)
 		#ifdef CONFIG_VGA_MODEM	/* 只用于1B的外接VGA */
@@ -294,22 +291,17 @@ static int config_fb(unsigned int base)
 				}
 			}
 			if (input_vga->ls1b_pll_freq) {
-				PLL_FREQ_REG(0) = input_vga->ls1b_pll_freq;
-				PLL_FREQ_REG(4) = input_vga->ls1b_pll_div;
+				weitel(input_vga->ls1b_pll_freq, LS1X_CLK_PLL_FREQ);
+				writel(input_vga->ls1b_pll_div, LS1X_CLK_PLL_DIV);
 				delay(100);
 				caclulatefreq(input_vga->ls1b_pll_freq, input_vga->ls1b_pll_div);
 			}
 		}
 		#else
 		{
-			int regval = 0;
-			u32 divider_int, pll;
+			u32 divider_int, div_reg;
 
-			pll = PLL_FREQ_REG(0);
-			pll = (12 + (pll & 0x3f)) * APB_CLK / 2
-				+ ((pll >> 8) & 0x3ff) * APB_CLK / 1024 / 2;
-
-			divider_int = pll / (vgamode[mode].pclk * 1000) / 4;
+			divider_int = tgt_pllfreq() / (vgamode[mode].pclk * 1000) / 4;
 			/* check whether divisor is too small. */
 			if (divider_int < 1) {
 				printf("Warning: clock source is too slow."
@@ -322,19 +314,20 @@ static int config_fb(unsigned int base)
 				divider_int = 15;
 			}
 			/* Set setting to reg. */
-			regval = PLL_FREQ_REG(4);
-			regval |= 0x00003000;	//dc_bypass 置1
-			regval &= ~0x00000030;	//dc_rst 置0
-			regval &= ~(0x1f<<26);	//dc_div 清零
-			regval |= divider_int << 26;
-			PLL_FREQ_REG(4) = regval;
-			regval &= ~0x00001000;	//dc_bypass 置0
-			PLL_FREQ_REG(4) = regval;
+			div_reg = readl(LS1X_CLK_PLL_DIV);
+			div_reg |= 0x00003000;	//dc_bypass 置1
+			div_reg &= ~0x00000030;	//dc_rst 置0
+			div_reg &= ~(0x1f<<26);	//dc_div 清零
+			div_reg |= divider_int << 26;
+			writel(div_reg, LS1X_CLK_PLL_DIV);
+			div_reg &= ~0x00001000;	//dc_bypass 置0
+			writel(div_reg, LS1X_CLK_PLL_DIV);
 		}
 		#endif //CONFIG_VGA_MODEM
 		#elif defined(LS1CSOC)
 		{
 			u32 lcd_div, div_reg;
+
 			lcd_div = tgt_pllfreq() / (vgamode[mode].pclk * 1000);
 			div_reg = readl(LS1X_CLK_PLL_DIV);
 			/* 注意：首先需要把分频使能位清零 */
@@ -358,72 +351,72 @@ static int config_fb(unsigned int base)
 	}
 
 	/* Disable the panel 0 */
-	write_reg((base+OF_BUF_CONFIG), 0x00000000);
-	write_reg((base+OF_BUF_ADDR0), MEM_ADDR);
-	write_reg((base+OF_BUF_ADDR1), MEM_ADDR);
-	write_reg((base+OF_DITHER_CONFIG), 0x00000000);
-	write_reg((base+OF_DITHER_TABLE_LOW), 0x00000000);
-	write_reg((base+OF_DITHER_TABLE_HIGH), 0x00000000);
+	writel(0x00000000, base+OF_BUF_CONFIG);
+	writel((unsigned int)mem_ptr & 0x0fffffff, base+OF_BUF_ADDR0);
+	writel((unsigned int)mem_ptr & 0x0fffffff, base+OF_BUF_ADDR1);
+	writel(0x00000000, base+OF_DITHER_CONFIG);
+	writel(0x00000000, base+OF_DITHER_TABLE_LOW);
+	writel(0x00000000, base+OF_DITHER_TABLE_HIGH);
 	#ifdef CONFIG_VGA_MODEM
-	write_reg((base+OF_PAN_CONFIG), 0x80001311);
+	writel(0x80001311, base+OF_PAN_CONFIG);
 	#else
-	write_reg((base+OF_PAN_CONFIG), vgamode[mode].pan_config);
+	writel(vgamode[mode].pan_config, base+OF_PAN_CONFIG);
 	#endif
-	write_reg((base+OF_PAN_TIMING), 0x00000000);
+	writel(0x00000000, base+OF_PAN_TIMING);
 
-	write_reg((base+OF_HDISPLAY), (vgamode[mode].hfl<<16)|vgamode[mode].hr);
-	write_reg((base+OF_HSYNC), 0x40000000|(vgamode[mode].hse<<16)|vgamode[mode].hss);
-	write_reg((base+OF_VDISPLAY), (vgamode[mode].vfl<<16)|vgamode[mode].vr);
-	write_reg((base+OF_VSYNC), 0x40000000|(vgamode[mode].vse<<16)|vgamode[mode].vss);
+	writel((vgamode[mode].hfl<<16)|vgamode[mode].hr, base+OF_HDISPLAY);
+	writel(0x40000000|(vgamode[mode].hse<<16)|vgamode[mode].hss, base+OF_HSYNC);
+	writel((vgamode[mode].vfl<<16)|vgamode[mode].vr, base+OF_VDISPLAY);
+	writel(0x40000000|(vgamode[mode].vse<<16)|vgamode[mode].vss, base+OF_VSYNC);
 
 #if defined(CONFIG_VIDEO_32BPP)
-	write_reg((base+OF_BUF_CONFIG),0x00100004);
-	write_reg((base+OF_BUF_STRIDE),(fb_xsize*4+255)&~255);
+	writel(0x00100004, base+OF_BUF_CONFIG);
+	writel((fb_xsize*4+255)&~255, base+OF_BUF_STRIDE);
 	#ifdef LS1BSOC
 	*(volatile int *)0xbfd00420 &= ~0x08;
 	*(volatile int *)0xbfd00420 |= 0x05;
 	#endif
 #elif defined(CONFIG_VIDEO_24BPP)
-	write_reg((base+OF_BUF_CONFIG),0x00100004);
-	write_reg((base+OF_BUF_STRIDE),(fb_xsize*3+255)&~255);
+	writel(0x00100004, base+OF_BUF_CONFIG);
+	writel((fb_xsize*3+255)&~255, base+OF_BUF_STRIDE);
 	#ifdef LS1BSOC
 	*(volatile int *)0xbfd00420 &= ~0x08;
 	*(volatile int *)0xbfd00420 |= 0x05;
 	#endif
 #elif defined(CONFIG_VIDEO_16BPP)
-	write_reg((base+OF_BUF_CONFIG),0x00100003);
-	write_reg((base+OF_BUF_STRIDE),(fb_xsize*2+255)&~255);
+	writel(0x00100003, base+OF_BUF_CONFIG);
+	writel((fb_xsize*2+255)&~255, base+OF_BUF_STRIDE);
 	#ifdef LS1BSOC
 	*(volatile int *)0xbfd00420 &= ~0x07;
 	#endif
 #elif defined(CONFIG_VIDEO_15BPP)
-	write_reg((base+OF_BUF_CONFIG),0x00100002);
-	write_reg((base+OF_BUF_STRIDE),(fb_xsize*2+255)&~255);
+	writel(0x00100002, base+OF_BUF_CONFIG);
+	writel((fb_xsize*2+255)&~255, base+OF_BUF_STRIDE);
 	#ifdef LS1BSOC
 	*(volatile int *)0xbfd00420 &= ~0x07;
 	#endif
 #elif defined(CONFIG_VIDEO_12BPP)
-	write_reg((base+OF_BUF_CONFIG),0x00100001);
-	write_reg((base+OF_BUF_STRIDE),(fb_xsize*2+255)&~255);
+	writel(0x00100001, base+OF_BUF_CONFIG);
+	writel((fb_xsize*2+255)&~255, base+OF_BUF_STRIDE);
 	#ifdef LS1BSOC
 	*(volatile int *)0xbfd00420 &= ~0x07;
 	#endif
 #else	/* 16bpp */
-	write_reg((base+OF_BUF_CONFIG),0x00100003);
-	write_reg((base+OF_BUF_STRIDE),(fb_xsize*2+255)&~255);
+	writel(0x00100003, base+OF_BUF_CONFIG);
+	writel((fb_xsize*2+255)&~255, base+OF_BUF_STRIDE);
 	#ifdef LS1BSOC
 	*(volatile int *)0xbfd00420 &= ~0x07;
 	#endif
 #endif	//#if defined(CONFIG_VIDEO_32BPP)
-	write_reg((base+OF_BUF_ORIG), 0);
+	writel(0, base+OF_BUF_ORIG);
 
 	{	/* 显示数据输出使能 */
 		int timeout = 204800;
 		u32 val;
 		val = readl((base+OF_BUF_CONFIG));
 		do {
-			write_reg((base+OF_BUF_CONFIG), val|0x100);
-			val = readl((base+OF_BUF_CONFIG));
+			writel(val|0x100, base+OF_BUF_CONFIG);
+			val = readl(base+OF_BUF_CONFIG);
 		} while (((val & 0x100) == 0) && (timeout-- > 0));
 	}
 	return 0;
@@ -434,13 +427,6 @@ int dc_init(void)
 	fb_xsize  = getenv("xres") ? strtoul(getenv("xres"),0,0) : FB_XSIZE;
 	fb_ysize  = getenv("yres") ? strtoul(getenv("yres"),0,0) : FB_YSIZE;
 	frame_rate  = getenv("frame_rate") ? strtoul(getenv("frame_rate"),0,0) : 60;
-
-	MEM_ADDR = (unsigned int)MEM_ptr & 0x0fffffff;
-
-	if(MEM_ptr == NULL) {
-		printf("frame buffer memory malloc failed!\n ");
-		exit(0);
-	}
 
 #ifdef DC_FB0
 	config_fb(DC_BASE_ADDR0);
@@ -460,6 +446,6 @@ int dc_init(void)
 	ili9341_hw_init();
 #endif
 
-	return MEM_ptr;
+	return mem_ptr;
 }
 

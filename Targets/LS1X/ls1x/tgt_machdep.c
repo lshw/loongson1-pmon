@@ -540,30 +540,28 @@ void _probe_frequencies(void)
 	SBD_DISPLAY ("FREQ", CHKPNT_FREQ);
 	
 	/*clock manager register*/
-#define PLL_FREQ_REG(x) *(volatile unsigned int *)(0xbfe78030+x)
 #if defined(LS1ASOC)
 	{
-//		int val= PLL_FREQ_REG(0);
+//		int val= readl(LS1X_CLK_PLL_FREQ);
 //		md_pipefreq = ((val&7)+1)*APB_CLK;
 //		md_cpufreq  =  (((val>>8)&7)+3)*APB_CLK;
 
 		unsigned int val = strtoul(getenv("pll_reg0"), 0, 0);
 		md_pipefreq = ((val&7)+4)*APB_CLK;
-		md_cpufreq  =  (((val>>8)&7)+3)*APB_CLK;
+		md_cpufreq = (((val>>8)&7)+3)*APB_CLK;
 	}
 #elif defined(LS1BSOC)
 	{
-		int pll, ctrl, clk;
-		pll = PLL_FREQ_REG(0);
-		ctrl = PLL_FREQ_REG(4);
-		clk = (12+(pll&0x3f))*APB_CLK/2 + ((pll>>8)&0x3ff)*APB_CLK/2/1024;
-		md_pipefreq = ((ctrl&0x300)==0x300) ? APB_CLK : (ctrl&(1<<25)) ? clk/((ctrl>>20)&0x1f) : clk/2;
-		md_cpufreq  = ((ctrl&0xc00)==0xc00) ? APB_CLK : (ctrl&(1<<19)) ? clk/((ctrl>>14)&0x1f) : clk/2;
+		unsigned int pll = readl(LS1X_CLK_PLL_FREQ);
+		unsigned int ctrl = readl(LS1X_CLK_PLL_DIV);
+		md_pllfreq = (12+(pll&0x3f))*APB_CLK/2 + ((pll>>8)&0x3ff)*APB_CLK/2/1024;
+		md_pipefreq = ((ctrl&0x300)==0x300) ? APB_CLK : (ctrl&(1<<25)) ? md_pllfreq/((ctrl>>20)&0x1f) : md_pllfreq/2;
+		md_cpufreq  = ((ctrl&0xc00)==0xc00) ? APB_CLK : (ctrl&(1<<19)) ? md_pllfreq/((ctrl>>14)&0x1f) : md_pllfreq/2;
 	}
 #elif defined(LS1CSOC)
 	{
-		unsigned int pll_freq = *(volatile u32 *)0xbfe78030;
-		unsigned int clk_div = *(volatile u32 *)0xbfe78034;
+		unsigned int pll_freq = readl(LS1X_CLK_PLL_FREQ);
+		unsigned int clk_div = readl(LS1X_CLK_PLL_DIV);
 		md_pllfreq = ((pll_freq >> 8) & 0xff) * APB_CLK / 4;
 		if (clk_div & DIV_CPU_SEL) {
 			if(clk_div & DIV_CPU_EN) {

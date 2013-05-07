@@ -640,7 +640,13 @@ void dbginit(char *adr)
 	envinit ();
 
 #if defined(LS1ASOC)
-	tgt_cpufreq();
+	{
+	char buf[10];
+	sprintf(buf, "%d", tgt_pipefreq());
+	setenv("cpuclock", buf);
+	sprintf(buf, "%d", tgt_cpufreq());
+	setenv("busclock", buf);
+	}
 #endif
 
 #if defined(SMP)
