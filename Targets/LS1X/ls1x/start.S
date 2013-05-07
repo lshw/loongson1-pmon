@@ -298,8 +298,8 @@ locate:
 //	bnez a2,2b
 //	nop
 #elif defined(LS1BSOC)
-    li  a0, 0xbfe78030
-    /* 31:dc_div_en,30-26:dc_div,25:cpu_div_en,24-20:cpu_div,19:ddr_div_en,18-14:ddr_div */
+	li a0, 0xbfe78030
+	/* 31:dc_div_en,30-26:dc_div,25:cpu_div_en,24-20:cpu_div,19:ddr_div_en,18-14:ddr_div */
 	li v0, 0xbfc00000+(NVRAM_POS+PLL_OFFS)
 	lw v1, 4(v0)
 	lw a1, (v0)
@@ -344,21 +344,19 @@ locate:
 	#define SDRAM_DIV_2	0x0
 	#define SDRAM_DIV_3	0x2
 	#define SDRAM_DIV_4	0x1
-	#define SDRAM_DIV		SDRAM_DIV_2
 	#define SDRAM_PARAM_DIV_NUM		((1 << (SDRAM_DIV+1)) % 5)
-	#define CPU_DIV		2
 
 	li	t0, 0xbfe78030
+	/* 注意：首先需要把分频使能位清零 */
 	li	t1, 0x2
 	sw	t1, 0x4(t0)
-
-	li	t1, (0x80000008 | (CPU_MULT << 8) | (0x3 << 2) | SDRAM_DIV)
+	/* 设置PLL倍频 及SDRAM分频 */
+	li	t1, (0x80000008 | (PLL_MULT << 8) | (0x3 << 2) | SDRAM_DIV)
 	sw	t1, 0x0(t0)
-
+	/* 设置CPU分频 */
 	li	t1, (0x8003 | (CPU_DIV << 8))
 	sw	t1, 0x4(t0)
 	DELAY(2000)
-
 #endif //#ifdef LS1ASOC
 
 	/* initialize UART */
@@ -678,74 +676,6 @@ acpi_begin:
 	b	1b
 	nop
 acpi_end:/* Startup as usual */
-
-/*
- * Resume the CPU state, jump to the kernel
- */
-LEAF(suspend_resume)
-	li	t0,	0xa01ffc00
-	lw	ra,	(t0)
-	lw	sp,	4(t0)
-	lw	s8,	8(t0)
-	lw	gp,	12(t0)
-	lw	s0,	16(t0)
-	lw	s1,	20(t0)
-	lw	s2,	24(t0)
-	lw	s3,	28(t0)
-	lw	s4,	32(t0)
-	lw	s5,	36(t0)
-	lw	s6,	40(t0)
-	lw	s7,	44(t0)
-
-	lw	k0,	48(t0)
-	lw	k1,	52(t0)
-
-	lw	v0,	56(t0)
-	lw	v1,	60(t0)
-
-	lw	t1,	64(t0)
-	mtc0	t1,	$12
-	lw	t1,	68(t0)
-	mtc0	t1,	$4
-	lw	t1,	72(t0)
-	mtc0	t1,	$5
-
-	jr	ra
-	nop
-END(suspend_resume)
-
-LEAF(suspend_save)
-	li	t0,	0xa01ffc00
-#	sw	ra,	(t0)
-	sw	sp,	4(t0)
-	sw	s8,	8(t0)
-	sw	gp,	12(t0)
-	sw	s0,	16(t0)
-	sw	s1,	20(t0)
-	sw	s2,	24(t0)
-	sw	s3,	28(t0)
-	sw	s4,	32(t0)
-	sw	s5,	36(t0)
-	sw	s6,	40(t0)
-	sw	s7,	44(t0)
-
-	sw	k0,	48(t0)
-	sw	k1,	52(t0)
-
-	sw	v0,	56(t0)
-	sw	v1,	60(t0)
-                                
-	mfc0	t1,	$12
-	sw	t1,	64(t0)
-	mfc0	t1,	$4
-	sw	t1,	68(t0)
-	mfc0	t1,	$5
-	sw	t1,	72(t0)
-
-	jr	ra
-	nop
-END(suspend_save)
-
 #endif
 
 /***********************MEMORY DEBUGGING AND COPY SELF TO RAM***********************/
@@ -920,6 +850,73 @@ LEAF(CPU_TLBInit)
 	jr	ra
 	nop
 END(CPU_TLBInit)
+
+/*
+ * Resume the CPU state, jump to the kernel
+ */
+LEAF(suspend_resume)
+	li	t0,	0xa01ffc00
+	lw	ra,	(t0)
+	lw	sp,	4(t0)
+	lw	s8,	8(t0)
+	lw	gp,	12(t0)
+	lw	s0,	16(t0)
+	lw	s1,	20(t0)
+	lw	s2,	24(t0)
+	lw	s3,	28(t0)
+	lw	s4,	32(t0)
+	lw	s5,	36(t0)
+	lw	s6,	40(t0)
+	lw	s7,	44(t0)
+
+	lw	k0,	48(t0)
+	lw	k1,	52(t0)
+
+	lw	v0,	56(t0)
+	lw	v1,	60(t0)
+
+	lw	t1,	64(t0)
+	mtc0	t1,	$12
+	lw	t1,	68(t0)
+	mtc0	t1,	$4
+	lw	t1,	72(t0)
+	mtc0	t1,	$5
+
+	jr	ra
+	nop
+END(suspend_resume)
+
+LEAF(suspend_save)
+	li	t0,	0xa01ffc00
+#	sw	ra,	(t0)
+	sw	sp,	4(t0)
+	sw	s8,	8(t0)
+	sw	gp,	12(t0)
+	sw	s0,	16(t0)
+	sw	s1,	20(t0)
+	sw	s2,	24(t0)
+	sw	s3,	28(t0)
+	sw	s4,	32(t0)
+	sw	s5,	36(t0)
+	sw	s6,	40(t0)
+	sw	s7,	44(t0)
+
+	sw	k0,	48(t0)
+	sw	k1,	52(t0)
+
+	sw	v0,	56(t0)
+	sw	v1,	60(t0)
+                                
+	mfc0	t1,	$12
+	sw	t1,	64(t0)
+	mfc0	t1,	$4
+	sw	t1,	68(t0)
+	mfc0	t1,	$5
+	sw	t1,	72(t0)
+
+	jr	ra
+	nop
+END(suspend_save)
 
 /***********************************FUNCTIONS**********************************/
 
@@ -1163,7 +1160,7 @@ LEAF(initserial)
 	li	t2, 0x0
 	sw	t2, 0x30(t1)
 
-	li	v1, ((APB_CLK / 4) * (CPU_MULT / CPU_DIV)) / SDRAM_PARAM_DIV_NUM / (16*CONS_BAUD)
+	li	v1, ((APB_CLK / 4) * (PLL_MULT / CPU_DIV)) / SDRAM_PARAM_DIV_NUM / (16*CONS_BAUD)
 #endif
 	sb	v1, NSREG(NS16550_DATA)(v0)
 	srl	v1, 8

@@ -1,5 +1,5 @@
 //#define	SD_FREQ	(6 * PLL_M) / (2 * SDRAM_PARAM_DIV_NUM)
-#define	SD_FREQ	(((APB_CLK / 4) * (PLL_M / CPU_DIV)) / SDRAM_PARAM_DIV_NUM)
+#define	SD_FREQ	(((APB_CLK / 4) * (PLL_MULT / CPU_DIV)) / SDRAM_PARAM_DIV_NUM)
 #define	ROW_WIDTH	13
 /* 颗粒行数 */
 #define	ROW_1K		0x7

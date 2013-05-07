@@ -1,20 +1,16 @@
 /* 
- * Display Controller for Loongson 1A/1B
+ * Display Controller for Loongson1
  */
 
 #include <pmon.h>
 #include <pmon/dev/ns16550.h>
+
 #include <target/types.h>
+#include <target/iorw.h>
+#include <target/regs-clk.h>
 
 #include <stdlib.h>
 #include <stdio.h>
-
-#define writeb(val, addr) (*(volatile u8*)(addr) = (val))
-#define writew(val, addr) (*(volatile u16*)(addr) = (val))
-#define writel(val, addr) (*(volatile u32*)(addr) = (val))
-#define readb(addr) (*(volatile u8*)(addr))
-#define readw(addr) (*(volatile u16*)(addr))
-#define readl(addr) (*(volatile u32*)(addr))
 
 #define write_reg(addr,val) writel(val,addr)
 
@@ -42,7 +38,7 @@ static struct vga_struc {
 		{/*"320x240_60.00"*/	7154,	60,	320,	332,	364,	432,	240,	248,	254,	276,	0x00000103},/* HX8238-D控制器 */
 //		{/*"320x240_60.00"*/	6438,	60,	320,	336,	337,	408,	240,	250,	251,	263,	0x80001311},/* NT39016D控制器 */
 		{/*"480x272_60.00"*/	12072,	60,	480,	481,	482,	525,	272,	273,	274,	288,	0x00000101},/* AT043TN24 */
-		{/*"480x640_60.00"*/    20217,	60,	480,    488,    496,    520,    640,    642,    644,    648,	0x00000101},/* jbt6k74控制器 */
+		{/*"480x640_60.00"*/	20217,	60,	480,    488,    496,    520,    640,    642,    644,    648,	0x00000101},/* jbt6k74控制器 */
 		{/*"640x480_60.00"*/	24480,	60,	640,	664,	728,	816,	480,	481,    484,    500,	0x00000101},/* AT056TN52 */
 		{/*"640x640_60.00"*/	33100,	60,	640,	672,	736,	832,	640,	641,	644,	663,	0x00000101},
 		{/*"640x768_60.00"*/	39690,	60,	640,	672,	736,	832,	768,	769,	772,	795,	0x00000101},
@@ -162,45 +158,6 @@ enum {
 #if defined(LS1ASOC)
 static unsigned int caclulatefreq(unsigned int sys_clk, unsigned int pclk)
 {
-#if 0
-	unsigned int N = 4, NO = 4, OD = 2;
-	unsigned int M, FRAC;
-	unsigned int flag = 0;
-	unsigned int MF;
-
-	while (flag == 0) {
-		flag = 1;
-		if ((sys_clk/N) < 5000) {
-			N--;
-			flag = 0;
-		}
-		if ((sys_clk/N) > 50000) {
-			N++;
-			flag = 0;
-		}
-	}
-
-	flag = 0;
-	while (flag == 0) {
-		flag = 1;
-		if ((pclk*NO) < 5000) {
-			NO *= 2;
-			OD++;
-			flag = 0;
-		}
-		if ((pclk*NO) > 700000) {
-			NO /= 2;
-			OD--;
-			flag = 0;
-		}
-	}
-
-	MF = pclk * N * NO * 262144 / sys_clk;
-	FRAC = MF % 262144;
-	M = pclk * N * NO / sys_clk;
-
-	return (FRAC<<14) + (OD<<12) + (N<<8) + M;
-#else
 	/* N值和OD值选择不正确会造成系统死机，莫名其妙。OD=2^PIX12 */
 	unsigned int N = 4, PIX12 = 2, OD = 4;
 	unsigned int M = 0, FRAC = 0;
@@ -238,7 +195,6 @@ static unsigned int caclulatefreq(unsigned int sys_clk, unsigned int pclk)
 //	printf("tmp2-tmp1=%d FRAC=%d\n", tmp2 - tmp1, FRAC);
 //	printf("PIX12=%d N=%d M=%d\n", PIX12, N, M);
 	return ((FRAC<<14) + (PIX12<<12) + (N<<8) + M);
-#endif
 }
 #elif defined(LS1BSOC)
 static void caclulatefreq(unsigned int ls1b_pll_freq, unsigned int ls1b_pll_div)
@@ -376,6 +332,18 @@ static int config_fb(unsigned int base)
 			PLL_FREQ_REG(4) = regval;
 		}
 		#endif //CONFIG_VGA_MODEM
+		#elif defined(LS1CSOC)
+		{
+			u32 lcd_div, div_reg;
+			lcd_div = tgt_pllfreq() / (vgamode[mode].pclk * 1000);
+			div_reg = readl(LS1X_CLK_PLL_DIV);
+			/* 注意：首先需要把分频使能位清零 */
+			writel(div_reg & ~DIV_DC_EN, LS1X_CLK_PLL_DIV);
+			div_reg |= DIV_DC_EN | DIV_DC_SEL_EN | DIV_DC_SEL;
+			div_reg &= ~DIV_DC;
+			div_reg |= lcd_div << DIV_DC_SHIFT;
+			writel(div_reg, LS1X_CLK_PLL_DIV);
+		}
 		#endif //#ifdef LS1ASOC
 		break;
 		}

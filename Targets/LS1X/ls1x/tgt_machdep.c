@@ -65,6 +65,7 @@
 #include <target/types.h>
 #include <target/lcd.h>
 #include <target/regs-wdt.h>
+#include <target/regs-clk.h>
 
 #include <pmon.h>
 
@@ -107,6 +108,7 @@ int kbd_available;
 int usb_kbd_available;
 int vga_available=0;
 
+static int md_pllfreq = 0;
 static int md_pipefreq = 0;
 static int md_cpufreq = 0;
 static int clk_invalid = 0;
@@ -292,24 +294,26 @@ void initmips(unsigned int memsz)
 	main();
 }
 
-
-#define FCR_PS2_BASE	0xbfe60000		//sw
+#if defined(LS1ASOC)
+#define FCR_PS2_BASE	0xbfe60000	
 #define PS2_RIBUF		0x00	/* Read */
 #define PS2_WOBUF		0x00	/* Write */
 #define PS2_RSR			0x04	/* Read */
 #define PS2_WSC			0x04	/* Write */
-#define PS2_DLL			0x08		//sw: is it right?
+#define PS2_DLL			0x08
 #define PS2_DLH			0x09
+
 int init_kbd(void)
 {
 	int ldd;
-//	ldd 5us/(1/clk)=5*t, kbdclk is ddrclk/2/ldd
+
 	ldd = 10*APB_CLK/1000000*DDR_MULT/2;
 	KSEG1_STORE8(FCR_PS2_BASE+PS2_DLL, ldd & 0xff);
 	KSEG1_STORE8(FCR_PS2_BASE+PS2_DLH, (ldd >> 8) & 0xff);
 //	pckbd_init_hw();
 	return 1;
 }
+#endif
 
 /*
  *  Put all machine dependent initialization here. This call
@@ -558,20 +562,14 @@ void _probe_frequencies(void)
 	}
 #elif defined(LS1CSOC)
 	{
-		#define DIV_CPU_EN			(0x1 << 15)
-		#define DIV_CPU				(0x7f << 8)
-		#define DIV_CPU_SEL_EN			(0x1 << 1)
-		#define DIV_CPU_SEL				(0x1 << 0)
-		#define DIV_CPU_SHIFT			8
 		unsigned int pll_freq = *(volatile u32 *)0xbfe78030;
 		unsigned int clk_div = *(volatile u32 *)0xbfe78034;
-		u32 pll;
-		pll = ((pll_freq >> 8) & 0xff) * APB_CLK / 4;
+		md_pllfreq = ((pll_freq >> 8) & 0xff) * APB_CLK / 4;
 		if (clk_div & DIV_CPU_SEL) {
 			if(clk_div & DIV_CPU_EN) {
-				md_pipefreq = pll / ((clk_div & DIV_CPU) >> DIV_CPU_SHIFT);
+				md_pipefreq = md_pllfreq / ((clk_div & DIV_CPU) >> DIV_CPU_SHIFT);
 			} else {
-				md_pipefreq = pll / 2;
+				md_pipefreq = md_pllfreq / 2;
 			}
 		} else {
 			md_pipefreq = APB_CLK;
@@ -631,7 +629,15 @@ void _probe_frequencies(void)
 	}
 #endif /* HAVE_TOD */
 }
-                                                                               
+
+/* return the PLL clock frequency */
+int tgt_pllfreq(void)
+{
+	if(md_pllfreq == 0) {
+		_probe_frequencies();
+	}
+	return(md_pllfreq);
+}
 
 /*
  *   Returns the CPU pipelie clock frequency

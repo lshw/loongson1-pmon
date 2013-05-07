@@ -314,6 +314,7 @@ void		tgt_clkpoll (void);
 int		tgt_clockram_read(char *, int, int);
 int		tgt_clockram_write(char *, int, int);
 void		tgt_cmd_vers (void);
+int		tgt_pllfreq (void);
 int		tgt_cpufreq (void);
 void		tgt_devconfig (void);
 void		tgt_devinit (void);
