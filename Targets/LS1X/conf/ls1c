@@ -79,9 +79,9 @@ option		CONS_BAUD=B115200
 option		UART_BASE_ADDR=0xbfe4c000	# 串口控制台基地址 需要不同的串口输出可以修改此值
 
 option		APB_CLK=24000000	# 外部晶振频率(Hz)
-option		PLL_MULT=0x5b		# CPU LCD CAM及外设倍频
-option		CPU_DIV=3			# LS1C的CPU分频
-option		SDRAM_DIV=SDRAM_DIV_3	# LS1C的SDRAM分频
+option		PLL_MULT=0x54		# CPU LCD CAM及外设倍频
+option		CPU_DIV=2			# LS1C的CPU分频
+option		SDRAM_DIV=SDRAM_DIV_2	# LS1C的SDRAM分频
 
 #option		CONFIG_DDR16BIT		# 使能16bit内存接口模式 否则32bit内存接口模式
 #option		EIGHT_BANK_MODE		# 定义该位表示内存颗粒使用8bank，屏蔽该位表示内存颗粒使用4bank

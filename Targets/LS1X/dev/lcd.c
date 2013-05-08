@@ -17,9 +17,11 @@
 
 static int fb_xsize, fb_ysize, frame_rate;
 #if defined(LS1ASOC) || defined(LS1BSOC)
+#define BURST_SIZE	0xff
 static char *addr_cursor = 0xa3900000;
 static char *mem_ptr = 0xa3200000;
 #elif defined(LS1CSOC)
+#define BURST_SIZE	0x7f
 static char *addr_cursor = 0xa1900000;
 static char *mem_ptr = 0xa1200000;
 #endif
@@ -371,39 +373,39 @@ static int config_fb(unsigned int base)
 
 #if defined(CONFIG_VIDEO_32BPP)
 	writel(0x00100004, base+OF_BUF_CONFIG);
-	writel((fb_xsize*4+255)&~255, base+OF_BUF_STRIDE);
+	writel((fb_xsize*4+BURST_SIZE)&~BURST_SIZE, base+OF_BUF_STRIDE);
 	#ifdef LS1BSOC
 	*(volatile int *)0xbfd00420 &= ~0x08;
 	*(volatile int *)0xbfd00420 |= 0x05;
 	#endif
 #elif defined(CONFIG_VIDEO_24BPP)
 	writel(0x00100004, base+OF_BUF_CONFIG);
-	writel((fb_xsize*3+255)&~255, base+OF_BUF_STRIDE);
+	writel((fb_xsize*3+BURST_SIZE)&~BURST_SIZE, base+OF_BUF_STRIDE);
 	#ifdef LS1BSOC
 	*(volatile int *)0xbfd00420 &= ~0x08;
 	*(volatile int *)0xbfd00420 |= 0x05;
 	#endif
 #elif defined(CONFIG_VIDEO_16BPP)
 	writel(0x00100003, base+OF_BUF_CONFIG);
-	writel((fb_xsize*2+255)&~255, base+OF_BUF_STRIDE);
+	writel((fb_xsize*2+BURST_SIZE)&~BURST_SIZE, base+OF_BUF_STRIDE);
 	#ifdef LS1BSOC
 	*(volatile int *)0xbfd00420 &= ~0x07;
 	#endif
 #elif defined(CONFIG_VIDEO_15BPP)
 	writel(0x00100002, base+OF_BUF_CONFIG);
-	writel((fb_xsize*2+255)&~255, base+OF_BUF_STRIDE);
+	writel((fb_xsize*2+BURST_SIZE)&~BURST_SIZE, base+OF_BUF_STRIDE);
 	#ifdef LS1BSOC
 	*(volatile int *)0xbfd00420 &= ~0x07;
 	#endif
 #elif defined(CONFIG_VIDEO_12BPP)
 	writel(0x00100001, base+OF_BUF_CONFIG);
-	writel((fb_xsize*2+255)&~255, base+OF_BUF_STRIDE);
+	writel((fb_xsize*2+BURST_SIZE)&~BURST_SIZE, base+OF_BUF_STRIDE);
 	#ifdef LS1BSOC
 	*(volatile int *)0xbfd00420 &= ~0x07;
 	#endif
 #else	/* 16bpp */
 	writel(0x00100003, base+OF_BUF_CONFIG);
-	writel((fb_xsize*2+255)&~255, base+OF_BUF_STRIDE);
+	writel((fb_xsize*2+BURST_SIZE)&~BURST_SIZE, base+OF_BUF_STRIDE);
 	#ifdef LS1BSOC
 	*(volatile int *)0xbfd00420 &= ~0x07;
 	#endif

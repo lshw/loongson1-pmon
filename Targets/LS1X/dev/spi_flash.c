@@ -49,7 +49,7 @@
 #define SPER      0x3
 #define PARAM     0x4
 #define SOFTCS    0x5
-#define PARAM2    0x6
+#define TIMING    0x6
 
 #define RFEMPTY 1
 #define	TFFULL	8
@@ -69,16 +69,16 @@ int write_sr(char val);
 void spi_initw(void)
 {
 	SET_SPI(SPSR, 0xc0); 
-  	SET_SPI(PARAM, 0x00);	//espr:0100
- 	SET_SPI(SPER, 0x04);	//spre:00 
-  	SET_SPI(PARAM2,0x01);
+  	SET_SPI(PARAM, 0x00);
+ 	SET_SPI(SPER, 0x04); 
+  	SET_SPI(TIMING,0x05);
 	SET_SPI(SPCR, 0x5d);
 	SET_SPI(SOFTCS,0x11);
 }
 
 void spi_initr(void)
 {
-  	SET_SPI(PARAM, 0x0f);             //espr:0100
+  	SET_SPI(PARAM, 0x0f);
 }
 
 ///////////////////read status reg /////////////////
@@ -763,7 +763,7 @@ int spi_read_area_fast(loff_t flashaddr, unsigned char *buffer, size_t size)
 		SET_SPI(SPSR, 0xc0); 
 	  	SET_SPI(PARAM, 0x0f);	//double I/O 模式 部分SPI flash可能不支持
 	 	SET_SPI(SPER, 0x04);	//spre:00
-	  	SET_SPI(PARAM2, 0x01);
+	  	SET_SPI(TIMING, 0x05);
 		SET_SPI(SPCR, 0x5d);
 		unsigned char *flash_addr = 0xbf000000 + flashaddr;
 		for(i=0; i<size; i++) {

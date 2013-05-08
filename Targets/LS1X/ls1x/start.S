@@ -260,10 +260,12 @@ locate:
 	mtc0	zero,COP_0_CAUSE_REG
 	.set	noreorder
 	
-/*spi speed*/
-    li  t0, 0xbfe80000
-    li  t1, 0x1f	// div 4, fast_read + burst_en + memory_en double I/O 模式 部分SPI flash可能不支持
-    sb  t1, 0x4(t0)	// sfc_param
+	/*spi speed*/
+	li  t0, 0xbfe80000
+	li  t1, 0x1f	// div 4, fast_read + burst_en + memory_en double I/O 模式 部分SPI flash可能不支持
+	sb  t1, 0x4(t0)	// sfc_param
+	li  t1, 0x05
+	sb  t1, 0x6(t0)
 
 #if defined(LS1ASOC)/* to adjust the DDR frequency */
 	li v0, 0xbfc00000+(NVRAM_POS+PLL_OFFS)
@@ -347,15 +349,38 @@ locate:
 	#define SDRAM_PARAM_DIV_NUM		((1 << (SDRAM_DIV+1)) % 5)
 
 	li	t0, 0xbfe78030
+	
+	li	v0, 0xbfc00000+(NVRAM_POS+PLL_OFFS)
+	lw	t2, 0(v0)
+	lw	t3, 4(v0)
+
+	li v0, 0x00000000
+	beq t2, v0, 1f
+	nop
+	li v0, 0xffffffff
+	beq t2, v0, 1f
+	nop
+
+	li v0, 0x00000000
+	beq t3, v0, 1f
+	nop
+	li v0, 0xffffffff
+	beq t3, v0, 1f
+	nop
+	nop
+	b 2f
+	nop
+1:
+	/* 设置PLL倍频 及SDRAM分频 */
+	li	t2, (0x80000008 | (PLL_MULT << 8) | (0x3 << 2) | SDRAM_DIV)
+	/* 设置CPU分频 */
+	li	t3, (0x00008003 | (CPU_DIV << 8))
+2:
 	/* 注意：首先需要把分频使能位清零 */
 	li	t1, 0x2
 	sw	t1, 0x4(t0)
-	/* 设置PLL倍频 及SDRAM分频 */
-	li	t1, (0x80000008 | (PLL_MULT << 8) | (0x3 << 2) | SDRAM_DIV)
-	sw	t1, 0x0(t0)
-	/* 设置CPU分频 */
-	li	t1, (0x8003 | (CPU_DIV << 8))
-	sw	t1, 0x4(t0)
+	sw	t2, 0x0(t0)
+	sw	t3, 0x4(t0)
 	DELAY(2000)
 #endif //#ifdef LS1ASOC
 
@@ -570,7 +595,7 @@ cpu_win_fixup:
 	li  a1, SD_PARA1
 	sw  a1, 0x4(t1)
 
-    PRINTSTR("\r\n sdram init done \r\n")
+    PRINTSTR("sdram init done \r\n")
 #endif
 /**************************************CACHE*****************************/
 

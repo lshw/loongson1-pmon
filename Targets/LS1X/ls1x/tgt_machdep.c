@@ -800,10 +800,7 @@ void tgt_flashprogram(void *p, int size, void *s, int endian)
 	if(fl_program_device(p, s, size, TRUE)) {
 		printf("Programming failed!\n");
 	}
-	/* 当使用1C cpu时读0xbfc00000地址返回值不正确？导致校验不成功 */
-#ifndef LS1CSOC
 	fl_verify_device(p, s, size, TRUE);
-#endif
 }
 #endif /* PFLASH */
 
