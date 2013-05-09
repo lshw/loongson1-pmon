@@ -118,39 +118,31 @@ static int _matchval __P((const struct stdenv *, char *));
 static const struct stdenv *getstdenv __P((const char *));
 static int _setenv __P((char *, char *));
 
-static int 
-_matchval (sp, value)
-    const struct stdenv *sp;
-    char *value;
+static int _matchval(const struct stdenv *sp, char *value)
 {
-    char *t, wrd[20];
-    int j;
+	char *t, wrd[20];
+	int j;
 
-    for (j = 0, t = sp->values; ; j++) {
-	t = getword (wrd, t);
-	if (t == 0)
-	    return (-2);
-	if (striequ (wrd, value))
-	    return (j);
-    }
+	for (j=0, t=sp->values; ; j++) {
+		t = getword(wrd, t);
+		if (t == 0)
+			return (-2);
+		if (striequ(wrd, value))
+			return (j);
+	}
 }
 
 
-static const struct stdenv *
-getstdenv (name)
-    const char *name;
+static const struct stdenv *getstdenv(const char *name)
 {
-    const struct stdenv *sp;
-    for (sp = stdenvtab; sp->name; sp++)
-	if (striequ (name, sp->name))
-	    return sp;
-    return 0;
+	const struct stdenv *sp;
+	for (sp=stdenvtab; sp->name; sp++)
+		if (striequ(name, sp->name))
+			return sp;
+	return 0;
 }
 
-
-static int
-_setenv (name, value)
-    char *name, *value;
+static int _setenv (char *name, char *value)
 {
     struct envpair *ep;
     struct envpair *bp = 0;

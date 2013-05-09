@@ -44,6 +44,7 @@
 #include "target/prid.h"
 #include "target/sbd.h"
 #include "target/fcr.h"
+#include <target/regs-clk.h>
 //#include "target/isapnpreg.h"
 
 #define DEBUG_LOCORE
@@ -252,12 +253,12 @@ exc_common:
  *  location into ra. Check to see if we run from ROM or if this is ramloaded.
  */
 locate:
-	la		s0,uncached
-	subu	s0,ra,s0
+	la		s0, uncached
+	subu	s0, ra, s0
 
-	li		t0,SR_BOOT_EXC_VEC
-	mtc0	t0,COP_0_STATUS_REG
-	mtc0	zero,COP_0_CAUSE_REG
+	li		t0, SR_BOOT_EXC_VEC
+	mtc0	t0, COP_0_STATUS_REG
+	mtc0	zero, COP_0_CAUSE_REG
 	.set	noreorder
 	
 	/*spi speed*/
@@ -726,21 +727,21 @@ PRINTSTR("end test\r\n");
 	nop;
 
 /* copy copy program to sdram to make copy fast */
-	la		t0,121f
-	addu	t0,s0
-	la		t1,122f
-	addu	t1,s0
+	la		t0, 121f
+	addu	t0, s0
+	la		t1, 122f
+	addu	t1, s0
 	
-	li		t2,0xa0000000
+	li		t2, 0xa0000000
 1:
-	lw		v0,(t0)
-	sw		v0,(t2)
-	addu	t0,4
-	addu	t2,4
-	ble		t0,t1,1b
+	lw		v0, (t0)
+	sw		v0, (t2)
+	addu	t0, 4
+	addu	t2, 4
+	ble		t0, t1, 1b
 	nop
 
-	li		t0,0xa0000000
+	li		t0, 0xa0000000
    	jr		t0	
 	nop		
 
@@ -1185,7 +1186,46 @@ LEAF(initserial)
 	li	t2, 0x0
 	sw	t2, 0x30(t1)
 
-	li	v1, ((APB_CLK / 4) * (PLL_MULT / CPU_DIV)) / SDRAM_PARAM_DIV_NUM / (16*CONS_BAUD)
+	li		a0, 0xbfe78030
+	lw		a1, 0(a0)
+	andi	a2, a1, 0x3
+	addiu	a2, 1			//sdram_div+1
+	li		t1, 1
+	sll		t1, a2			//1<<(sdram_div+1)
+	li		t2, 5
+	remu	t1, t2			//(1<<(sdram_div+1))%5
+	srl		a1, 8
+	andi	a1, 0xff
+	li		a2, APB_CLK
+	srl		a2, 2			//APB_CLK/4
+	multu	a1, a2
+	mflo	v1				//APB_CLK/4 * PLL_MULT
+	divu	v1, t1
+	mflo	v1				//APB_CLK/4 * PLL_MULT / (1<<(sdram_div+1))%5
+
+	lw		a1, 4(a0)
+	andi	a2, a1, DIV_CPU_SEL
+	bnez	a2, 1f
+	nop
+	li		v1, APB_CLK
+	b		3f
+	nop
+1:
+	andi	a2, a1, DIV_CPU_EN
+	bnez	a2, 2f
+	nop
+	srl		v1, 1			//APB_CLK/4 * PLL_MULT / (1<<(sdram_div+1))%5 / 2
+	b		3f
+	nop
+2:
+	andi	a1, DIV_CPU
+	srl		a1, DIV_CPU_SHIFT
+	divu	v1, a1
+	mflo	v1				//APB_CLK/4 * PLL_MULT / (1<<(sdram_div+1))%5 / CPU_DIV
+3:
+//	li	v1, ((APB_CLK / 4) * (PLL_MULT / CPU_DIV)) / SDRAM_PARAM_DIV_NUM / (16*CONS_BAUD)
+	li		a1, 16*CONS_BAUD
+	divu	v1, v1, a1
 #endif
 	sb	v1, NSREG(NS16550_DATA)(v0)
 	srl	v1, 8
