@@ -2860,9 +2860,9 @@ static int hc_start (ohci_t * ohci)
 
 #define mdelay(n) do {unsigned long msec=(n); while (msec--) udelay(1000);} while(0)
 	/* POTPGT delay is bits 24-31, in 2 ms units. */
-	mdelay ((roothub_a (ohci) >> 23) & 0x1fe);
+	mdelay((roothub_a (ohci) >> 23) & 0x1fe);
 
-	mdelay(1000);
+//	mdelay(1000);
 
 	/* connect the virtual root hub */
 	ohci->rh.devnum = 0;

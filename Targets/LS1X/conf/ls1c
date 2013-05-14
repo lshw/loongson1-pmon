@@ -24,7 +24,7 @@ option		WAYBITS_HIGH
 # Platform options
 #
 option		MIPS
-#option		INET
+option		INET
 
 #select		mod_flash_amd		# AMD flash device programming
 #select		mod_flash_intel		# intel flash device programming
@@ -154,16 +154,16 @@ pci*		at pcibr?
 #cd*		at scsibus? target ? lun ? 
 
 #### Networking Devices
-#syn0		at localbus0
+syn0		at localbus0
 #syn1		at localbus0
 option		CONFIG_GMAC0_100M	#GMAC0的使能百兆网络 否则千兆网络
-option		CONFIG_GMAC1_100M	#GMAC1的使能百兆网络 否则千兆网络
+#option		CONFIG_GMAC1_100M	#GMAC1的使能百兆网络 否则千兆网络
 #option		GMAC1_USE_UART01
 option		GMAC_PHY_BASE=1
 option		GMAC0_ADDR=0xbfe10000
 option		GMAC1_ADDR=0xbfe20000
-#select		gmac
-#option		GMAC
+select		gmac
+option		RMII
 #gt0		at localbus? base 4
 #gt1		at localbus? base 5
 #gt2		at localbus? base 6
@@ -175,6 +175,8 @@ option		GMAC1_ADDR=0xbfe20000
 #option		SDCARD_USE_SPI0		#SPI控制器0或1
 #option		SDCARD_CS=2			#片选
 #option		SDCARD_CLK=25000000	#25MHz
+
+#select			mod_sdio
 
 #### USB
 #uhci*		at pci? dev ? function ?

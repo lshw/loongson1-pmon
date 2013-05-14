@@ -1067,13 +1067,13 @@ unsigned long synopGMAC_linux_open(struct synopGMACNetworkAdapter *tp)
 	int delay = 100;
 //	DmaDesc * dbgdesc;	//sw: dbg
 	
-	//s32 reserve_len=2;
+//	s32 reserve_len=2;
 	u64 dma_addr;
 	u32 skb;	//sw	we just use the name skb in pomn
 	u32 skb1;
 	struct synopGMACNetworkAdapter *adapter = tp;
-        synopGMACdevice * gmacdev;
-	struct PmonInet * PInetdev;
+	synopGMACdevice *gmacdev;
+	struct PmonInet *PInetdev;
 	TR0("%s called \n",__FUNCTION__);
 	adapter = tp;
 	gmacdev = (synopGMACdevice *)adapter->synopGMACdev;
@@ -1086,8 +1086,8 @@ unsigned long synopGMAC_linux_open(struct synopGMACNetworkAdapter *tp)
 	
 	/*Attach the device to MAC struct This will configure all the required base addresses
 	  such as Mac base, configuration base, phy base address(out of 32 possible phys )*/
-	//	synopGMAC_attach(synopGMACadapter->synopGMACdev,(u32) synopGMACMappedAddr + MACBASE,(u32) synopGMACMappedAddr + DMABASE, DEFAULT_PHY_BASE);
-	//synopGMAC_attach(adapter->synopGMACdev,(u64) synopGMACMappedAddr + MACBASE,(u64) synopGMACMappedAddr + DMABASE, DEFAULT_PHY_BASE,PInetdev->dev_addr);
+//	synopGMAC_attach(synopGMACadapter->synopGMACdev,(u32) synopGMACMappedAddr + MACBASE,(u32) synopGMACMappedAddr + DMABASE, DEFAULT_PHY_BASE);
+//	synopGMAC_attach(adapter->synopGMACdev,(u64) synopGMACMappedAddr + MACBASE,(u64) synopGMACMappedAddr + DMABASE, DEFAULT_PHY_BASE,PInetdev->dev_addr);
 	synopGMAC_set_mac_addr(gmacdev,GmacAddr0High,GmacAddr0Low, PInetdev->dev_addr); 
 	
 	/*Lets read the version of ip in to device structure*/	
@@ -1115,42 +1115,37 @@ unsigned long synopGMAC_linux_open(struct synopGMACNetworkAdapter *tp)
 //	set_lpmode(gmacdev);
 //	set_phyled(gmacdev);
 
-
 #if SYNOP_TOP_DEBUG
 	printf("check phy init status = 0x%x\n",status);
 #endif
 
-
-	
 	/*Set up the tx and rx descriptor queue/ring*/
 //sw
 	synopGMAC_setup_tx_desc_queue(gmacdev,TRANSMIT_DESC_SIZE, RINGMODE);
 	synopGMAC_init_tx_desc_base(gmacdev);	//Program the transmit descriptor base address in to DmaTxBase addr
 
 #if SYNOP_TOP_DEBUG
-	//dumpreg(regbase);
+//	dumpreg(regbase);
 #endif
 	
 	synopGMAC_setup_rx_desc_queue(gmacdev,RECEIVE_DESC_SIZE, RINGMODE);
 	synopGMAC_init_rx_desc_base(gmacdev);	//Program the transmit descriptor base address in to DmaTxBase addr
 
-
-
 #if SYNOP_TOP_DEBUG
-	//dumpphyreg(regbase);
+//	dumpphyreg(regbase);
 #endif
 
-
-	
-	
 #ifdef ENH_DESC_8W
-	synopGMAC_dma_bus_mode_init(gmacdev, DmaBurstLength32 | DmaDescriptorSkip2 | DmaDescriptor8Words ); //pbl32 incr with rxthreshold 128 and Desc is 8 Words
+	synopGMAC_dma_bus_mode_init(gmacdev, DmaBurstLength32 | DmaDescriptorSkip2 | DmaDescriptor8Words); //pbl32 incr with rxthreshold 128 and Desc is 8 Words
 #else
-	synopGMAC_dma_bus_mode_init(gmacdev, DmaBurstLength4 | DmaDescriptorSkip1 );                      //pbl4 incr with rxthreshold 128 
+#if defined(LS1CSOC)
+	synopGMAC_dma_bus_mode_init(gmacdev, DmaBurstLength4 | DmaDescriptorSkip2);
+#else
+	synopGMAC_dma_bus_mode_init(gmacdev, DmaBurstLength4 | DmaDescriptorSkip1);	//pbl4 incr with rxthreshold 128
+#endif
 #endif
 	
-	synopGMAC_dma_control_init(gmacdev,DmaStoreAndForward |DmaTxSecondFrame|DmaRxThreshCtrl128 );	
-
+	synopGMAC_dma_control_init(gmacdev, DmaStoreAndForward|DmaTxSecondFrame|DmaRxThreshCtrl128);	
 
 //sw: dbg	
 /*
@@ -1158,7 +1153,6 @@ unsigned long synopGMAC_linux_open(struct synopGMACNetworkAdapter *tp)
 	gmacdev->Speed      =   SPEED1000;
 */
 
-	
 	/*Initialize the mac interface*/
 	synopGMAC_check_phy_init(adapter);
 	synopGMAC_mac_init(gmacdev);
@@ -1167,9 +1161,9 @@ unsigned long synopGMAC_linux_open(struct synopGMACNetworkAdapter *tp)
 
 	synopGMAC_pause_control(gmacdev); // This enables the pause control in Full duplex mode of operation
 
-	do{
+	do {
 		skb = (u32)plat_alloc_memory(RX_BUF_SIZE);		//should skb aligned here?
-		if(skb == NULL){
+		if (skb == NULL) {
 			TR0("ERROR in skb buffer allocation\n");
 			break;
 //			return -ESYNOPGMACNOMEM;
@@ -1177,13 +1171,11 @@ unsigned long synopGMAC_linux_open(struct synopGMACNetworkAdapter *tp)
 		
 		dma_addr = plat_dma_map_single(gmacdev,skb,RX_BUF_SIZE,SYNC_R);
 
-
-		status = synopGMAC_set_rx_qptr(gmacdev,dma_addr,RX_BUF_SIZE, (u32)skb,0,0,0);
-		if(status < 0)
-		{
+		status = synopGMAC_set_rx_qptr(gmacdev, dma_addr, RX_BUF_SIZE, (u32)skb, 0, 0, 0);
+		if (status < 0) {
 			plat_free_memory((void *)skb);
-		}	
-	}while(status >= 0 && status < RECEIVE_DESC_SIZE-1);
+		}
+	} while(status >= 0 && status < RECEIVE_DESC_SIZE-1);
 
 #if SYNOP_TOP_DEBUG
 	dumpdesc(gmacdev);
@@ -1201,10 +1193,9 @@ unsigned long synopGMAC_linux_open(struct synopGMACNetworkAdapter *tp)
 //sw	no interrupts in pmon	
 //	synopGMAC_enable_interrupt(gmacdev,DmaIntEnable);
 	synopGMAC_disable_interrupt_all(gmacdev);
-	
-	
+
 //	dumpreg(regbase);
-	
+
 	synopGMAC_enable_dma_rx(gmacdev);
 	synopGMAC_enable_dma_tx(gmacdev);
 #if SYNOP_TOP_DEBUG
@@ -1219,20 +1210,19 @@ unsigned long synopGMAC_linux_open(struct synopGMACNetworkAdapter *tp)
 
 #if SYNOP_PHY_LOOPBACK 
 {	
-		gmacdev->LinkState = LINKUP; 
-		gmacdev->DuplexMode = FULLDUPLEX;
-	        gmacdev->Speed      =   SPEED1000;
+	gmacdev->LinkState = LINKUP; 
+	gmacdev->DuplexMode = FULLDUPLEX;
+	gmacdev->Speed = SPEED1000;
 }
 #endif
-        plat_delay(DEFAULT_LOOP_VARIABLE);
+	plat_delay(DEFAULT_LOOP_VARIABLE);
 	synopGMAC_check_phy_init(adapter);
 	synopGMAC_mac_init(gmacdev);
-	
-		PInetdev->sc_ih = pci_intr_establish(0, 0, IPL_NET, synopGMAC_intr_handler, adapter, 0);
-		TR("register poll interrupt: gmac 0\n");
+
+	PInetdev->sc_ih = pci_intr_establish(0, 0, IPL_NET, synopGMAC_intr_handler, adapter, 0);
+	TR("register poll interrupt: gmac 0\n");
 
 	return retval;
-
 }
 
 /**
@@ -1580,9 +1570,14 @@ int init_phy(synopGMACdevice *gmacdev)
 {
 	u16 data;
 
-	synopGMAC_read_phy_reg(gmacdev->MacBase,gmacdev->PhyBase,2,&data);
+	synopGMAC_read_phy_reg(gmacdev->MacBase, gmacdev->PhyBase, 2, &data);
+#ifdef RMII
+	data = 0x400;
+	synopGMAC_write_phy_reg(gmacdev->MacBase, gmacdev->PhyBase, 0x19, data);
+	synopGMAC_read_phy_reg(gmacdev->MacBase, gmacdev->PhyBase, 0x19, &data);
+#endif
 	/*set 88e1111 clock phase delay*/
-	if(data == 0x141)
+	if (data == 0x141)
 		rtl88e1111_config_init(gmacdev);
 	return 0;
 }
@@ -2015,27 +2010,6 @@ int set_phyled(synopGMACdevice * gmacdev)
 	synopGMAC_write_phy_reg(gmacdev->MacBase,1,0x1c, 0xb842);
 }
 
-void memory_test()
-{
-	int dma_addr;
-	int skb;
-	
-while(1){
-	skb = (u32)plat_alloc_memory(RX_BUF_SIZE);		//should skb aligned here?
-	printf("==malloc addr: %x   size:1536B \n",skb);
-	if(skb == NULL){
-			TR0("ERROR in skb buffer allocation\n");
-	}
-		
-//	skb = (u32)CACHED_TO_UNCACHED((unsigned long)(skb));	
-	//dma_addr  = (unsigned long)vtophys((unsigned long)(skb));
-	dma_addr  = (unsigned long)UNCACHED_TO_PHYS((unsigned long)(skb));
-
-	printf("==free addr: %x   size:1536B \n",skb);
-	plat_free_memory(skb);
-	}
-}
-
 void reg_init(synopGMACdevice * gmacdev)
 {
 	u32 data;
@@ -2173,7 +2147,7 @@ s32  synopGMAC_init_network_interface(char* xname,u64 synopGMACMappedAddr)
 		}
 		inited = 1;
 	}
-#ifdef LS1ASOC
+#if defined(LS1ASOC)
 	*((volatile unsigned int*)0xbfd00420) &= ~0x00800000;	/* 使能GMAC0 */
 	#ifdef CONFIG_GMAC0_100M
 	*((volatile unsigned int*)0xbfd00420) |= 0x500;		/* 配置成百兆模式 */
@@ -2194,7 +2168,7 @@ s32  synopGMAC_init_network_interface(char* xname,u64 synopGMACMappedAddr)
 		*((volatile unsigned int*)0xbfd00420) &= ~0xc0;
 		#endif
 	}
-#elif LS1BSOC
+#elif defined(LS1BSOC)
 	/* 寄存器0xbfd00424有GMAC的使能开关 */
 	*((volatile unsigned int*)0xbfd00424) &= ~0x1000;	/* 使能GMAC0 */
 	#ifdef CONFIG_GMAC0_100M
@@ -2212,6 +2186,19 @@ s32  synopGMAC_init_network_interface(char* xname,u64 synopGMACMappedAddr)
 		*((volatile unsigned int*)0xbfd00424) &= ~0xa;	/* 否则配置成千兆模式 */
 		#endif
 	}
+#elif defined(LS1CSOC)
+	*((volatile unsigned int *)0xbfd00424) &= ~(7 << 28);
+#ifdef RMII
+    *((volatile unsigned int *)0xbfd00424) |= (1 << 30); //wl rmii
+#endif
+/*    *((volatile unsigned int *)0xbfd011c0) &= 0x000fffff; //gpio[37:21] used as mac
+    *((volatile unsigned int *)0xbfd011c4) &= 0xffffffc0;
+    *((volatile unsigned int *)0xbfd011d0) &= 0x000fffff;
+    *((volatile unsigned int *)0xbfd011d4) &= 0xffffffc6;
+    *((volatile unsigned int *)0xbfd011e0) &= 0x000fffff;
+    *((volatile unsigned int *)0xbfd011e4) &= 0xffffffc0;
+    *((volatile unsigned int *)0xbfd011f0) &= 0x000fffff;
+    *((volatile unsigned int *)0xbfd011f4) &= 0xffffffc0;*/
 #endif
 	
 	TR("Now Going to Call register_netdev to register the network interface for GMAC core\n");
@@ -2253,12 +2240,6 @@ s32  synopGMAC_init_network_interface(char* xname,u64 synopGMACMappedAddr)
 //	bcopy(mac_addr, synopGMACadapter->PInetdev->arpcom.ac_enaddr, sizeof(synopGMACadapter->PInetdev->arpcom.ac_enaddr));		//sw: set mac addr manually
 	bcopy(synopGMACadapter->PInetdev->dev_addr, synopGMACadapter->PInetdev->arpcom.ac_enaddr, sizeof(synopGMACadapter->PInetdev->arpcom.ac_enaddr));		//sw: set mac addr manually
 
-/*	
-	printf("\n===mac addr:");
-	for(i = 0;i < 6;i++)
-		printf(" %2x ",*(synopGMACadapter->PInetdev->arpcom.ac_enaddr+i));
-*/
-
 	bcopy(xname, ifp->if_xname, IFNAMSIZ);
 	
 	ifp->if_start = (void *)synopGMAC_linux_xmit_frames;
@@ -2270,7 +2251,7 @@ s32  synopGMAC_init_network_interface(char* xname,u64 synopGMACMappedAddr)
 
 	/*Now start the network interface*/
 	TR("\nNow Registering the netdevice\n");
-	//synopGMAC_linux_open(synopGMACadapter); 
+//	synopGMAC_linux_open(synopGMACadapter); 
 	if_attach(ifp);
 	ether_ifattach(ifp);
 	ifp->if_flags = ifp->if_flags | IFF_RUNNING;
