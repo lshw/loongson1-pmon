@@ -30,7 +30,7 @@
 #define GPIO_SCLK	(24) 	/* GPIO24 */
 #define GPIO_MOSI	(26)	/* GPIO26 */
 #define GPIO_MISO	(25)	/* GPIO25 */
-#define GPIO_CS	(28)	/* GPIO28 */
+#define GPIO_CS	(30)	/* GPIO28 */
 #define GPIO_REST	(39)	/* GPIO39 */
 
 
@@ -78,6 +78,7 @@ static int spi_write(int bitlen, int value)
 
 	for (j = 0; j < bitlen; j++) {
 		gpio_set_value(GPIO_SCLK, 0);
+		SPI_DELAY;
 		if (tmpdout & (1 << bitlen-1)) {
 			gpio_set_value(GPIO_MOSI, 1);
 			DEBUGPC("1");
@@ -107,12 +108,12 @@ static void nt35310_hw_init(void)
 {
 	DEBUGP("entering\n");
 
-	gpio_set_value(GPIO_REST, 1);
+//	gpio_set_value(GPIO_REST, 1);
 //	delay(100);
-	gpio_set_value(GPIO_REST, 0);
-	delay(10000);
-	gpio_set_value(GPIO_REST, 1);
-	delay(10000);
+//	gpio_set_value(GPIO_REST, 0);
+//	delay(10000);
+//	gpio_set_value(GPIO_REST, 1);
+//	delay(10000);
 
 	/* CMD2UNLOCK */
 	spi_write_cmd(0xed);
@@ -160,9 +161,9 @@ void nt35310_exit(void)
 {
 	ls1b_gpio_free(GPIO_SCLK);
 	ls1b_gpio_free(GPIO_MOSI);
-	ls1b_gpio_free(GPIO_MISO);
+//	ls1b_gpio_free(GPIO_MISO);
 	ls1b_gpio_free(GPIO_CS);
-	ls1b_gpio_free(GPIO_REST);
+//	ls1b_gpio_free(GPIO_REST);
 }
 
 int nt35310_init(void)
@@ -171,11 +172,11 @@ int nt35310_init(void)
 	/* FIXME: glofiish */
 	ls1x_gpio_direction_output(GPIO_SCLK, 1);
 	ls1x_gpio_direction_output(GPIO_MOSI, 1);
-	ls1x_gpio_direction_input(GPIO_MISO);
+//	ls1x_gpio_direction_input(GPIO_MISO);
 	ls1x_gpio_direction_output(GPIO_CS, 1);
 
 	/* get LCM out of reset */
-	ls1x_gpio_direction_output(GPIO_REST, 1);
+//	ls1x_gpio_direction_output(GPIO_REST, 1);
 
 	/* according to data sheet: wait 50ms (Tpos of LCM). However, 50ms
 	 * seems unreliable with later LCM batches, increasing to 90ms */
