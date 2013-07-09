@@ -35,6 +35,8 @@ static struct vga_struc {
 		{/*"240x320_70.00"*/	6429,	60,	240,	250,	260,	280,	320,	324,	326,	328,	0x00000301},
 		{/*"320x240_60.00"*/	7154,	60,	320,	332,	364,	432,	240,	248,	254,	276,	0x00000103},/* HX8238-D控制器 */
 //		{/*"320x240_60.00"*/	6438,	60,	320,	336,	337,	408,	240,	250,	251,	263,	0x80001311},/* NT39016D控制器 */
+//		{/*"320x480_60.00"*/	12908,	60,	320,	360,	364,	432,	480,	488,	490,	498,	0x00000301},/* NT35310控制器 */
+		{/*"320x480_60.00"*/	12908,	60,	320,	360,	364,	432,	480,	488,	490,	498,	0x00000101},/* NT35310控制器 */
 		{/*"480x272_60.00"*/	12072,	60,	480,	481,	482,	525,	272,	273,	274,	288,	0x00000101},/* AT043TN24 */
 		{/*"480x640_60.00"*/	20217,	60,	480,    488,    496,    520,    640,    642,    644,    648,	0x00000101},/* jbt6k74控制器 */
 		{/*"640x480_60.00"*/	24480,	60,	640,	664,	728,	816,	480,	481,    484,    500,	0x00000101},/* AT056TN52 */
@@ -426,6 +428,20 @@ static int config_fb(unsigned int base)
 
 int dc_init(void)
 {
+	/* Driver IC需要在ls1x lcd控制器初始化前现进行初始化，否则有可能出现没显示的现象 */
+#if defined(CONFIG_JBT6K74)
+	printf("NT35310 TFT LCD Driver IC\n");
+	jbt6k74_init();
+#endif
+#if defined(CONFIG_ILI9341)
+	printf("NT35310 TFT LCD Driver IC\n");
+	ili9341_hw_init();
+#endif
+#if defined(CONFIG_NT35310)
+	printf("NT35310 TFT LCD Driver IC\n");
+	nt35310_init();
+#endif
+
 	fb_xsize  = getenv("xres") ? strtoul(getenv("xres"),0,0) : FB_XSIZE;
 	fb_ysize  = getenv("yres") ? strtoul(getenv("yres"),0,0) : FB_YSIZE;
 	frame_rate  = getenv("frame_rate") ? strtoul(getenv("frame_rate"),0,0) : 60;
@@ -438,14 +454,6 @@ int dc_init(void)
 #endif
 #ifdef DC_CURSOR
 	config_cursor();
-#endif
-
-#if defined(CONFIG_JBT6K74)
-	jbt6k74_init();
-#endif
-
-#if defined(CONFIG_ILI9341)
-	ili9341_hw_init();
 #endif
 
 	return mem_ptr;

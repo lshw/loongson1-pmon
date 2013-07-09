@@ -403,6 +403,8 @@ file sys/dev/nand/yaf-nand/nand_util.c      nand | nor_flash	#lxy
 file	sys/dev/lcm/ili9341.c			mod_ili9341
 #lcm JBT6K74
 file	sys/dev/lcm/jbt6k74.c			mod_jbt6k74
+#lcm NT35310
+file	sys/dev/lcm/nt35310.c			mod_nt35310
 
 device loopdev
 attach loopdev at mainbus

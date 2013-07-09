@@ -214,6 +214,7 @@ option		DC_FB0
 #option		DC_CURSOR
 #option		X240x320
 #option		X320x240
+#option		X320x480
 option		X480x272
 #option		X480x640
 #option		X640x480
@@ -248,6 +249,9 @@ option		CONFIG_FB_DYN
 ### BL28027(RGB接口) ILI9341控制器 LCD驱动
 #select		mod_ili9341
 #option		CONFIG_ILI9341
+### NT35310(RGB接口)控制器 LCD驱动
+#select		mod_nt35310
+#option		CONFIG_NT35310
 
 option		wait_key
 #option		HAVE_MUT_COM		#多串口输入/输出,把控制台信息同时输入/输出到多个串口
