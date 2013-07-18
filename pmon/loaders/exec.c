@@ -39,8 +39,7 @@
 
 SLIST_HEAD(ExecTypes, ExecType) ExecTypes = SLIST_HEAD_INITIALIZER(ExecTypes);
 
-int
-exec_init(ExecType *exec)
+int exec_init(ExecType *exec)
 {
 	SLIST_INSERT_HEAD(&ExecTypes, exec, i_next);
 	return(0);
@@ -54,8 +53,7 @@ exec_init(ExecType *exec)
  *  n   should be a pointer to an int saying how much we have
  *      read from the input stream so far.
  */
-long
-exec (ExecId id, int fd, char *buf, int *n, int flags)
+long exec(ExecId id, int fd, char *buf, int *n, int flags)
 {
 	ExecType *p;
 	long ep;
@@ -63,7 +61,7 @@ exec (ExecId id, int fd, char *buf, int *n, int flags)
 	if (id == NULL) {
 		SLIST_FOREACH(p, &ExecTypes, i_next) {
 			if (p->flags != EXECFLAGS_NOAUTO) {
-				if ((ep = (*p->loader) (fd, buf, n, flags)) != -1) {
+				if ((ep = (*p->loader)(fd, buf, n, flags)) != -1) {
 					break;
 				}
 			}
@@ -88,7 +86,7 @@ ExecId getExec(char *execname)
 	ExecId id = NULL;
 
 	SLIST_FOREACH(p, &ExecTypes, i_next) {
-		if(strcmp(p->execname, execname) == 0) {
+		if (strcmp(p->execname, execname) == 0) {
 			id = (ExecId)p;
 		}
 	}
@@ -100,7 +98,7 @@ ExecId getExec(char *execname)
  * Return a string with supported executable types
  * Example "elf, srec, gz"
  */
-const char *getExecString()
+const char *getExecString(void)
 {
 	static char buffer[80];
 	ExecType *p;

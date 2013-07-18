@@ -850,7 +850,7 @@ static void ls1g_nand_init_info(struct ls1g_nand_info *info)
 
 int ls1g_nand_pmon_info_init(struct ls1g_nand_info *info, struct mtd_info *mtd)
 {
-	info->drcmr_dat = 0xa2000000;	//DMA描述符地址
+	info->drcmr_dat = 0xa0400000;	//DMA描述符地址
 //	info->drcmr_dat = (unsigned int)(malloc(sizeof(struct ls1g_nand_dma_desc)+32, M_DMAMAP, M_WAITOK));
 //	info->drcmr_dat = ((info->drcmr_dat+0x1f)&(~0x1f)) & 0xfffffff | 0xa0000000;
 	if(info->drcmr_dat == NULL)
@@ -859,7 +859,7 @@ int ls1g_nand_pmon_info_init(struct ls1g_nand_info *info, struct mtd_info *mtd)
 
 	info->mmio_base = 0x1fe78000 | 0xa0000000; //NAND寄存器基地址
 
-	info->data_buff = (unsigned char *)0xa2200000;//malloc(MAX_BUFF_SIZE,M_DMAMAP,M_WAITOK);	//DMA数据缓存
+	info->data_buff = (unsigned char *)0xa0500000;//malloc(MAX_BUFF_SIZE,M_DMAMAP,M_WAITOK);	//DMA数据缓存
 //	info->data_buff = ((unsigned int)(malloc(MAX_BUFF_SIZE+32, M_DMAMAP, M_WAITOK)) + 0x1f) & (~0x1f);
 //	info->data_buff = (unsigned char *)((((unsigned int)info->data_buff+0x1f)&(~0x1f)) & 0xfffffff | 0xa0000000);
 	if(info->data_buff == NULL)
@@ -868,7 +868,7 @@ int ls1g_nand_pmon_info_init(struct ls1g_nand_info *info, struct mtd_info *mtd)
 	info->data_buff_phys = (unsigned int)(info->data_buff) & 0x1fffffff;	//DAM数据缓存物理地址
 	printf("data_buff = 0x%08x\ndata_buff_phys = 0x%08x\n", info->data_buff, info->data_buff_phys);
 
-	info->data_ask = 0xa2400000;
+	info->data_ask = 0xa0600000;
 //	info->data_ask = (unsigned int)(malloc(sizeof(struct ls1g_nand_ask_regs)+32, M_DMAMAP, M_WAITOK));
 //	info->data_ask = (((info->data_ask+0x1f)&(~0x1f)) & 0xfffffff | 0xa0000000);
 	if(info->data_ask == NULL)

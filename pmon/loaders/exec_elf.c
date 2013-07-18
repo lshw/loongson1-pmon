@@ -64,8 +64,7 @@ int highmemcpy(long long dst,long long src,long long count);
 int highmemset(long long addr,unsigned char c,unsigned long long count);
 
 static int myflags;
-static int 
-   bootread (int fd, void *addr, int size)
+static int bootread(int fd, void *addr, int size)
 {
 	int i;
 
@@ -77,24 +76,25 @@ static int
 		return (-1);
 
 #if NGZIP > 0
-if(myflags&ZFLAG){
-	if(myflags&OFLAG){
-		if(lastaddr)dl_loffset +=(unsigned long long)(addr-lastaddr);
-		lastaddr=addr; 
-		i=0;
-		while(i<size)
-		{
-		int i1;
-		int len=min(0x1000,size-i);
-		i1=gz_read (fd,dl_Oloadbuffer,len);
-		if(i1<0)break;
-		highmemcpy(dl_loffset+i,dl_Oloadbuffer,i1);
-		i+=i1;
-		if(i1<len)break;
+	if (myflags&ZFLAG) {
+		if (myflags&OFLAG) {
+			if (lastaddr)dl_loffset += (unsigned long long)(addr-lastaddr);
+			lastaddr = addr;
+			i = 0;
+			while (i<size) {
+				int i1;
+				int len = min(0x1000,size-i);
+				i1 = gz_read (fd,dl_Oloadbuffer,len);
+				if (i1<0)
+					break;
+				highmemcpy(dl_loffset+i,dl_Oloadbuffer,i1);
+				i += i1;
+				if (i1<len)
+					break;
+			}
 		}
-	}
-	else i = gz_read (fd, addr + dl_offset, size);
-	}else
+		else i = gz_read (fd, addr + dl_offset, size);
+	} else
 #endif /* NGZIP */
 {
 	if(myflags&OFLAG){

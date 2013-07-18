@@ -178,15 +178,15 @@ option		SDCARD_CLK=25000000	#25MHz
 #uhci*		at pci? dev ? function ?
 #ohci0		at pci? dev ? function ?
 #ohci1		at pci? dev ? function ?
-lohci0		at localbus0 base 0xbfe08000
+#lohci0		at localbus0 base 0xbfe08000
 #ehci0		at localbus0
-usb*		at usbbus ?
-select		mod_usb
-select		mod_usb_storage
+#usb*		at usbbus ?
+#select		mod_usb
+#select		mod_usb_storage
 #select		mod_usb_uhci
-select		mod_usb_ohci
+#select		mod_usb_ohci
 #select		mod_usb_ehci
-select		mod_usb_kbd
+#select		mod_usb_kbd
 
 #### Pseudo devices
 pseudo-device	loop	1	# network loopback

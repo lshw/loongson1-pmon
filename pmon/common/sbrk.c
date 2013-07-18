@@ -40,41 +40,37 @@ extern char     end[];
 char           *allocp1 = end;
 char           *heaptop = end + 65536;
 
-int
-chg_heaptop (name, value)
-	char *name, *value;
+int chg_heaptop (char *name, char *value)
 {
 	u_int32_t top;
 
 	if (atob (&top, value, 16)) {
 #ifdef HEAP_ALLOC_UPWORD
-		if(top < (u_int32_t)allocp1) {
-			printf ("%x: heap is already above this point\n", top);
+		if (top < (u_int32_t)allocp1) {
+			printf("%x: heap is already above this point\n", top);
 			return 0;
 		}
 #else
-		if(top <heaptop) {
-			printf ("%x:  memory between %x-%x  is already been allocated,heap is already above this point\n", top,allocp1,heaptop);
+		if (top <heaptop) {
+			printf("%x:  memory between %x-%x  is already been allocated,heap is already above this point\n", top,allocp1,heaptop);
 			return 0;
 		}
 #endif
-		heaptop = (char *) top;
+		heaptop = (char *)top;
 		return 1;
 	}
-	printf ("%s: invalid address\n", value);
+	printf("%s: invalid address\n", value);
 	return 0;
 }
 
 
-char *
-sbrk (n)
-	int n;
+char *sbrk(int n)
 {
 	char *top;
 
 	top = heaptop;
 	if (!top) {
-		top = (char *) CLIENTPC;
+		top = (char *)CLIENTPC;
 	}
 #ifdef HEAP_ALLOC_UPWORD
 	if ((allocp1 + n) <= top) {
@@ -94,8 +90,8 @@ void init_heaptop(void)
 {
 #ifndef OLDSBRK
 	if (memorysize >= 0x4000000) {
-		allocp1 = 0x82000000;
-		heaptop = 0x83000000;
+		allocp1 = 0x80200000;
+		heaptop = 0x80300000;
 	} else {
 #endif
 		heaptop = (unsigned int)(end + 65536)<CLIENTPC ? CLIENTPC : (end + 65536);

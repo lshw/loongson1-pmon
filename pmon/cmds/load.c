@@ -69,7 +69,7 @@ static int nload __P((int, char **));
 
 /* ------------------------------------------------------- */
 
-const Optdesc         cmd_nload_opts[] =
+const Optdesc cmd_nload_opts[] =
 {
 	{"-s", "don't clear old symbols"},
 	{"-b", "don't clear breakpoints"},
@@ -94,12 +94,9 @@ const Optdesc         cmd_nload_opts[] =
 
 unsigned long long dl_loffset;
 char *dl_Oloadbuffer;
-
 unsigned long long strtoull(const char *nptr,char **endptr,int base);
-static int
-nload (argc, argv)
-	int argc;
-	char **argv;
+
+static int nload (int argc, char **argv)
 {
 	char path[256];
 	static char buf[2048];
@@ -111,12 +108,13 @@ nload (argc, argv)
 	int flags;
 	unsigned long offset;
 #ifdef HAVE_FLASH
-	void	    *flashaddr;
-	size_t	    flashsize;
+	void *flashaddr;
+	size_t flashsize;
 #endif
 
 	flags = 0;
-	optind = err = 0;
+	optind = 0;
+	err = 0;
 	offset = 0;
 	while ((c = getopt (argc, argv, "sbeatif:nrvwyko:O:")) != EOF) {
 		switch (c) {
@@ -162,9 +160,10 @@ nload (argc, argv)
 					err++;
 				}
 				break;
-		  case 'O': dl_loffset=strtoull(optarg,0,0);
-					flags|=OFLAG;
-					break;
+			case 'O':
+				dl_loffset=strtoull(optarg, 0, 0);
+				flags |= OFLAG;
+				break;
 			default:
 				err++;
 				break;
@@ -183,16 +182,16 @@ nload (argc, argv)
 	}
 
 
-	if ((bootfd = open (path, O_RDONLY | O_NONBLOCK)) < 0) {
-		perror (path);
+	if ((bootfd = open(path, O_RDONLY | O_NONBLOCK)) < 0) {
+		perror(path);
 		return EXIT_FAILURE;
 	}
 
 #ifdef HAVE_FLASH
 	if (flags & FFLAG) {
-		tgt_flashinfo (flashaddr, &flashsize);
+		tgt_flashinfo(flashaddr, &flashsize);
 		if (flashsize == 0) {
-			printf ("No FLASH at given address\n");
+			printf("No FLASH at given address\n");
 			return 0;
 		}
 		/* any loaded program will be trashed... */
@@ -212,9 +211,9 @@ nload (argc, argv)
 	}
 #endif
 
-	dl_initialise (offset, flags);
+	dl_initialise(offset, flags);
 
-	fprintf (stderr, "Loading file: %s ", path);
+	fprintf(stderr, "Loading file: %s ", path);
 	errno = 0;
 	n = 0;
 
@@ -223,32 +222,32 @@ nload (argc, argv)
 
 	   id = getExec("bin");
 	   if (id != NULL) {
-		   ep = exec (id, bootfd, buf, &n, flags);
+		   ep = exec(id, bootfd, buf, &n, flags);
 	   }
 	} else {
 		if (flags & OFLAG) {
 			dl_Oloadbuffer = malloc(0x1000);
 			if (dl_Oloadbuffer) {
-				  ep = exec (NULL, bootfd, buf, &n, flags);
+				  ep = exec(NULL, bootfd, buf, &n, flags);
 				  free(dl_Oloadbuffer);
 			}
 			else 
 				ep = -1;
 		}
 		else 
-			ep = exec (NULL, bootfd, buf, &n, flags);
+			ep = exec(NULL, bootfd, buf, &n, flags);
 	}
 
-	close (bootfd);
-	putc ('\n', stderr);
+	close(bootfd);
+	putc('\n', stderr);
 
 	if (ep == -1) {
-		fprintf (stderr, "%s: boot failed\n", path);
+		fprintf(stderr, "%s: boot failed\n", path);
 		return EXIT_FAILURE;
 	}
 
 	if (ep == -2) {
-		fprintf (stderr, "%s: invalid file format\n", path);
+		fprintf(stderr, "%s: invalid file format\n", path);
 		return EXIT_FAILURE;
 	}
 
@@ -256,10 +255,10 @@ nload (argc, argv)
 		printf ("Entry address is %08x\n", ep);
 		/* Flush caches if they are enabled */
 		if (md_cachestat())
-			flush_cache (DCACHE | ICACHE, NULL);
+			flush_cache(DCACHE | ICACHE, NULL);
 		md_setpc(NULL, ep);
 		if (!(flags & SFLAG)) {
-		    dl_setloadsyms ();
+		    dl_setloadsyms();
 		}
 	}
 #ifdef HAVE_FLASH
@@ -268,22 +267,20 @@ nload (argc, argv)
 		extern long dl_maxaddr;
 		if (flags & WFLAG)
 			bootbigend = !bootbigend;
-		tgt_flashprogram ((void *)flashaddr, 	   	/* address */
-				dl_maxaddr - dl_minaddr, 	/* size */
-				(void *)heaptop,		/* load */
+		tgt_flashprogram((void *)flashaddr,	/* address */
+				dl_maxaddr - dl_minaddr,	/* size */
+				(void *)heaptop,	/* load */
 				bootbigend);
 	}
 #endif
 	return EXIT_SUCCESS;
 }
 
-int
-cmd_nload (argc, argv)
-    int argc; char **argv;
+int cmd_nload (int argc, char **argv)
 {
-    int ret;
-    ret = spawn ("load", nload, argc, argv);
-    return (ret & ~0xff) ? 1 : (signed char)ret;
+	int ret;
+	ret = spawn("load", nload, argc, argv);
+	return (ret & ~0xff) ? 1 : (signed char)ret;
 }
 
 /*
@@ -292,18 +289,17 @@ cmd_nload (argc, argv)
  */
 static const Cmd Cmds[] =
 {
-   {"Boot and Load"},
-   {"load",	"[-beastifr][-o offs]",
-   cmd_nload_opts,
-   "load file",
-   cmd_nload, 1, 16, 0},
-   {0, 0}
+	{"Boot and Load"},
+	{"load",	"[-beastifr][-o offs]",
+	cmd_nload_opts,
+	"load file",
+	cmd_nload, 1, 16, 0},
+	{0, 0}
 };
 
 static void init_cmd __P((void)) __attribute__ ((constructor));
 
-static void
-   init_cmd()
+static void init_cmd(void)
 {
-   cmdlist_expand(Cmds, 1);
+	cmdlist_expand(Cmds, 1);
 }
