@@ -851,11 +851,9 @@ int fat_getChain(struct fat_sc *fsc, int start, struct fatchain *chain)
 
 	count = 0;
 	flag = start;
-	while(1)
-	{
+	while (1) {
 		entry = getFatEntry(fsc, flag);
-		if(entry == (CLUST_EOFE & mask & 0xfffffff7))
-		{
+		if (entry == (CLUST_EOFE & mask & 0xfffffff7)) {
 			printf("clust is error!");
 			return -1;
 		}
@@ -877,12 +875,10 @@ int fat_getChain(struct fat_sc *fsc, int start, struct fatchain *chain)
 	chain->entries[0] = start;
 	flag = start;
 	i = 0;
-	while(1)
-	{
+	while(1) {
 		entry = getFatEntry(fsc, flag);
 		chain->entries[i+1] = entry;
-		if(entry == (CLUST_EOFE & mask & 0xfffffff7))
-		{
+		if (entry == (CLUST_EOFE & mask & 0xfffffff7)) {
 			printf("clust is error!");
 			return -1;
 		}
@@ -920,7 +916,7 @@ int readsector(struct fat_sc *fsc, int sector, int count, u_int8_t *buffer)
 {
 	long long res;
 
-	res = (long long)(fsc->PartitionStart) * SECTORSIZE + SECTORSIZE * sector;
+	res = ((long long)(fsc->PartitionStart)) * SECTORSIZE + SECTORSIZE *((long long) sector);
 	res = devio_lseek(fsc->fd,	res, 0);
 	res =devio_read(fsc->fd, buffer, (SECTORSIZE * count));
 	if (res == (SECTORSIZE * count)) {

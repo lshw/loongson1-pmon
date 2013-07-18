@@ -185,7 +185,7 @@ file pmon/cmds/newmt/newmt.c	cmd_newmt
 file pmon/cmds/setup.c			cmd_setup & mod_display
 file pmon/cmds/display.c		mod_display needs-flag
 file pmon/cmds/test/serial.c	(cmd_test | cmd_testfire)
-file pmon/cmds/test/tsc2003.c	(cmd_test | cmd_testfire)
+#file pmon/cmds/test/tsc2003.c	(cmd_test | cmd_testfire)
 file pmon/cmds/test/ads7846.c	(cmd_test | cmd_testfire)
 file pmon/cmds/test/74LV165.c	(cmd_test | cmd_testfire)
 file pmon/cmds/test/MCP3201.c	(cmd_test | cmd_testfire)

@@ -175,9 +175,6 @@ option		SDCARD_CS=0			#片选
 option		SDCARD_CLK=25000000	#25MHz
 
 #### USB
-#uhci*		at pci? dev ? function ?
-#ohci0		at pci? dev ? function ?
-#ohci1		at pci? dev ? function ?
 #lohci0		at localbus0 base 0xbfe08000
 #ehci0		at localbus0
 #usb*		at usbbus ?
@@ -252,6 +249,9 @@ option		CONFIG_FB_DYN
 ### NT35310(RGB接口)控制器 LCD驱动
 select		mod_nt35310
 option		CONFIG_NT35310
+
+### I2C I2C控制器和设备初始化
+option		mod_i2c_ls1x
 
 option		wait_key
 #option		HAVE_MUT_COM		#多串口输入/输出,把控制台信息同时输入/输出到多个串口

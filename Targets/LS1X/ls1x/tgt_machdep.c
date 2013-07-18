@@ -66,6 +66,7 @@
 #include <target/lcd.h>
 #include <target/regs-wdt.h>
 #include <target/regs-clk.h>
+#include <target/i2c-ls1x.h>
 
 #include <pmon.h>
 
@@ -183,27 +184,6 @@ void hpet_test(void)
 //#ifdef
 //void can_test(void);
 //#endif
-
-#ifdef GS_SOC_I2C
-#include <target/i2c.h>
-void idelay(int n)
-{
-	int count = n;
-	while(count > 0)
-		count--;
-}
-
-int i2c_test(void)
-{
-	char i,j;
-	
-	for (i=0x10; i<0x20; i++) {	
-		i2c_write(i+10,i);
-		idelay(100);
-		printf("===i2c_read addr: 0x%x  ,val: 0x%x\n",i,i2c_read(i));
-	}
-}
-#endif
 
 unsigned int output_mode = 1;
 void initmips(unsigned int memsz)
@@ -335,8 +315,7 @@ extern int dc_init(void);
 extern unsigned long GPU_fbaddr;
 #endif
 
-void
-tgt_devconfig(void)
+void tgt_devconfig(void)
 {
 #if NMOD_VGACON > 0
 	int rc=0;
@@ -374,8 +353,13 @@ tgt_devconfig(void)
 	vga_available = 0;
 #endif
 
+#if defined(mod_i2c_ls1x)
+	ls1x_i2c_probe();
+#endif
+
 	config_init();
 	configure();
+
 /*
 #if (NMOD_VGACON >0) && defined(LS1ASOC)
 	printf("init ps/2 kbd\n");
@@ -405,11 +389,9 @@ extern int test_icache_3(int addr);
 extern void godson1_cache_flush(void);
 #define tgt_putchar_uc(x) (*(void (*)(char)) (((long)tgt_putchar)|0x20000000)) (x)
 
-#define I2C_WRITE
-int i2c_init(void);
 void init_lcd(void);
-void
-tgt_devinit(void)
+
+void tgt_devinit(void)
 {
 	SBD_DISPLAY("DINI",0);
 	
@@ -457,11 +439,6 @@ tgt_devinit(void)
 #endif
 
 	if(have_pci)_pci_businit(1);	/* PCI bus initialization */
-	
-#ifdef GS_SOC_I2C	
-	i2c_init();
-	i2c_test();
-#endif
 
 #ifdef GS_SOC_CAN
 	can_test();
@@ -657,6 +634,16 @@ int tgt_cpufreq(void)
 		_probe_frequencies();
 	}
 	return(md_cpufreq);
+}
+
+/* return the apb frequency */
+int tgt_apbfreq(void)
+{
+#if defined(LS1ASOC) || defined(LS1BSOC)
+	return tgt_cpufreq() / 2;
+#elif defined(LS1CSOC)
+	return tgt_cpufreq();
+#endif
 }
 
 time_t tgt_gettime(void)

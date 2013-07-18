@@ -335,27 +335,32 @@ md5_password (const char *key, char *crypted, int check)
 }
 #endif
 
-int cmd_md5sum(int argc,char **argv)
+int cmd_md5sum(int argc, char **argv)
 {
-int fd;
-int ret;
-char buf[512];
-unsigned char *p;
-int i;
-if(argc<2) return -1;
- md5_init();
- fd=open(argv[1],O_RDONLY);
- while(1)
- {
- ret = read(fd,buf,512);
- if(ret <= 0 ) break; 
- md5_update (buf, ret);
- }
- 
- p= md5_final ();
- for(i=0;i<16;i++)
- printf("%02x",p[i]);
- printf("\n");
+	int fd;
+	int ret;
+	char buf[512];
+	unsigned char *p;
+	int i;
+
+	if (argc<2)
+		return -1;
+	md5_init();
+	fd = open(argv[1], O_RDONLY);
+
+	while(1) {
+		ret = read(fd, buf, 512);
+		if (ret <= 0)
+			break; 
+		md5_update(buf, ret);
+	}
+
+	close(fd);
+
+	p= md5_final();
+	for (i=0; i<16; i++)
+		printf("%02x", p[i]);
+	printf("\n");
 
 	return 0;
 }
