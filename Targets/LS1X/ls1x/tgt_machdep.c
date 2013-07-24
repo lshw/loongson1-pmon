@@ -180,11 +180,6 @@ void hpet_test(void)
 }
 #endif
 
-//#define GS_SOC_CAN
-//#ifdef
-//void can_test(void);
-//#endif
-
 unsigned int output_mode = 1;
 void initmips(unsigned int memsz)
 {
@@ -318,13 +313,14 @@ extern unsigned long GPU_fbaddr;
 void tgt_devconfig(void)
 {
 #if NMOD_VGACON > 0
-	int rc=0;
+	int rc = 0;
 #if NMOD_FRAMEBUFFER > 0 
-	unsigned long fbaddress,ioaddress;
+	unsigned long fbaddress, ioaddress;
 	extern struct pci_device *vga_dev;
 #endif
 #endif
-	if(have_pci)_pci_devinit(1);	/* PCI device initialization */
+	if (have_pci)
+		_pci_devinit(1);	/* PCI device initialization */
 
 #if NMOD_FRAMEBUFFER > 0
 	printf("begin fb_init\n");
@@ -338,11 +334,11 @@ void tgt_devconfig(void)
 	ls1x_gpio_direction_output(GPIO_BACKLIGHT_CTRL, 1);	/* 使能LCD背光 */
 	#endif
 	printf("after fb_init\n");
-	rc=1;
+	rc = 1;
 #endif
 #if (NMOD_FRAMEBUFFER > 0) || (NMOD_VGACON > 0 )
 	if (rc > 0) {
-		if(!getenv("novga")) 
+		if (!getenv("novga"))
 			vga_available=1;
 		else 
 			vga_available=0;
@@ -383,69 +379,30 @@ void tgt_devconfig(void)
 	printf("devconfig done.\n");
 }
 
-extern int test_icache_1(short *addr);
-extern int test_icache_2(int addr);
-extern int test_icache_3(int addr);
-extern void godson1_cache_flush(void);
-#define tgt_putchar_uc(x) (*(void (*)(char)) (((long)tgt_putchar)|0x20000000)) (x)
-
-void init_lcd(void);
-
 void tgt_devinit(void)
 {
 	SBD_DISPLAY("DINI",0);
-	
+
 	/*
 	 *  Gather info about and configure caches.
 	 */
-	if(getenv("ocache_off")) {
+	if (getenv("ocache_off")) {
 		CpuOnboardCacheOn = 0;
-	}
-	else {
+	} else {
 		CpuOnboardCacheOn = 1;
 	}
-	if(getenv("ecache_off")) {
+
+	if (getenv("ecache_off")) {
 		CpuExternalCacheOn = 0;
-	}
-	else {
+	} else {
 		CpuExternalCacheOn = 1;
 	}
 
     CPU_ConfigCache();
 
-#define CONFIG_DE2114X y 
-#ifdef 	CONFIG_DE2114X
-{
-/* something wrong here 	sw
-	// *(volatile unsigned long *)(0xa0000000|AHB_MISC_BASE) =0x020b0000;
-	unsigned long t = *(volatile unsigned long *)(0xa0000000|AHB_MISC_BASE);
-	*(volatile unsigned long *)(0xa0000000|AHB_MISC_BASE) =0x00030000 | t;
-	// *(volatile unsigned long *)(0xa0000000|AHB_MISC_BASE) =0x00030000 | 0x020F0000;
-*/
-}
-#endif
-
-#if 0
-//#if LS1ASOC
-//sw: set clock delay
-	(*(volatile u32*)(0xbfd00410) = (0x24a8));
-//sw: enable gpio	
-	(*(volatile u32*)(0xbfd010c8) = (0xf00004));
-	(*(volatile u32*)(0xbfd010d8) = (0xf00000));
-//	(*(volatile u32*)(0xbc180000+0x20) = 0x0;
-//	(*(volatile u32*)(0xbc180000+0x24) = 0x80000000;
-	printf("==pci_businit: clock delay %x\n",readl(0xbfd00410));
-	printf("==gpio: gpio status %x\n",readl(0xbfd010e8));
-#endif
-
 	if(have_pci)_pci_businit(1);	/* PCI bus initialization */
 
-#ifdef GS_SOC_CAN
-	can_test();
-#endif
-	
 }
-
 
 
 /*
@@ -500,7 +457,7 @@ void init_legacy_rtc(void)
 	hour = (v>>16)&0x1f;
 	min =  (v>>10)&0x3f;
 	sec = (v>>4)&0x3f;
-	if( (year > 200) || (month < 1 || month > 12) ||
+	if ( (year > 200) || (month < 1 || month > 12) ||
 		(date < 1 || date > 31) || (hour > 23) || (min > 59) ||
 		(sec > 59) ){
 		tgt_printf("RTC time invalid, reset to epoch.\n");
@@ -608,29 +565,25 @@ void _probe_frequencies(void)
 /* return the PLL clock frequency */
 int tgt_pllfreq(void)
 {
-	if(md_pllfreq == 0) {
+	if (md_pllfreq == 0) {
 		_probe_frequencies();
 	}
 	return(md_pllfreq);
 }
 
-/*
- *   Returns the CPU pipelie clock frequency
- */
+/* Returns the CPU pipelie clock frequency */
 int tgt_pipefreq(void)
 {
-	if(md_pipefreq == 0) {
+	if (md_pipefreq == 0) {
 		_probe_frequencies();
 	}
 	return(md_pipefreq);
 }
 
-/*
- *   Returns the external clock frequency, usually the bus clock
- */
+/* Returns the external clock frequency, usually the bus clock */
 int tgt_cpufreq(void)
 {
-	if(md_cpufreq == 0) {
+	if (md_cpufreq == 0) {
 		_probe_frequencies();
 	}
 	return(md_cpufreq);
@@ -654,7 +607,7 @@ time_t tgt_gettime(void)
 #ifdef HAVE_TOD
 	unsigned int year,v;
 
-	if(!clk_invalid) {
+	if (!clk_invalid) {
 		v = inl(REG_TOY_READ0);
 		year = inl(REG_TOY_READ1);
 				                                       
@@ -686,8 +639,8 @@ void tgt_settime(time_t t)
 	struct tm *tm;
 
 	#ifdef HAVE_TOD
-	unsigned int year,v;
-	if(!clk_invalid) {
+	unsigned int year, v;
+	if (!clk_invalid) {
 		tm = gmtime(&t);
 
 		outl(REG_TOY_WRITE1,tm->tm_year + 1900);
@@ -707,10 +660,10 @@ void tgt_memprint(void)
 		CpuPrimaryInstCacheSize / 1024, CpuPrimaryInstCacheLSize, CpuNWayCache);
 	printf("Primary Data cache size %dkb (%d line, %d way)\n",
 		CpuPrimaryDataCacheSize / 1024, CpuPrimaryDataCacheLSize, CpuNWayCache);
-	if(CpuSecondaryCacheSize != 0) {
+	if (CpuSecondaryCacheSize != 0) {
 		printf("Secondary cache size %dkb\n", CpuSecondaryCacheSize / 1024);
 	}
-	if(CpuTertiaryCacheSize != 0) {
+	if (CpuTertiaryCacheSize != 0) {
 		printf("Tertiary cache size %dkb\n", CpuTertiaryCacheSize / 1024);
 	}
 }
@@ -1209,15 +1162,15 @@ static int cksum(void *p, size_t s, int set)
 	u_int8_t *sp = p;
 	int sz = s / 2;
 
-	if(set) {
+	if (set) {
 		*sp = 0;	/* Clear checksum */
 		*(sp+1) = 0;	/* Clear checksum */
 	}
-	while(sz--) {
+	while (sz--) {
 		sum += (*sp++) << 8;
 		sum += *sp++;
 	}
-	if(set) {
+	if (set) {
 		sum = -sum;
 		*(u_int8_t *)p = sum >> 8;
 		*((u_int8_t *)p+1) = sum;
