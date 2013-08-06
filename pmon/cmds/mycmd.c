@@ -175,117 +175,126 @@ return result;
 #define nr_str2addr strtoul
 #endif
 
-
 static	pcitag_t mytag=0;
 
 size_t fread (void *src, size_t size, size_t count, FILE *fp);
 size_t fwrite (const void *dst, size_t size, size_t count, FILE *fp);
 static char diskname[0x40];
 
-static int __disksyscall1(int type,long long addr,union commondata *mydata)
+static int __disksyscall1(int type, long long addr, union commondata *mydata)
 {
 	char fname[0x40];
 	FILE *fp;
 	if(strncmp(diskname,"/dev/",5)) sprintf(fname,"/dev/disk/%s",diskname);
 	else strcpy(fname,diskname);
-	fp=fopen(fname,"r+");
+	fp = fopen(fname,"r+");
 	if(!fp){printf("open %s error!\n",fname);return -1;}
 	fseek(fp,addr,SEEK_SET);
-switch(type)
-{
-case 1:fread(&mydata->data1,1,1,fp);break;
-case 2:fread(&mydata->data2,2,1,fp);break;
-case 4:fread(&mydata->data4,4,1,fp);break;
-case 8:fread(&mydata->data8,8,1,fp);break;
-}
+	switch (type) {
+		case 1:fread(&mydata->data1,1,1,fp);break;
+		case 2:fread(&mydata->data2,2,1,fp);break;
+		case 4:fread(&mydata->data4,4,1,fp);break;
+		case 8:fread(&mydata->data8,8,1,fp);break;
+	}
 	fclose(fp);
-return 0;
+	return 0;
 }
 
-static int __disksyscall2(int type,long long addr,union commondata *mydata)
+static int __disksyscall2(int type, long long addr, union commondata *mydata)
 {
 	char fname[0x40];
 	FILE *fp;
-	if(strncmp(diskname,"/dev/",5)) sprintf(fname,"/dev/disk/%s",diskname);
-	else strcpy(fname,diskname);
-	fp=fopen(fname,"r+");
-	if(!fp){printf("open %s error!\n",fname);return -1;}
-	fseek(fp,addr,SEEK_SET);
-switch(type)
-{
-case 1:fwrite(&mydata->data1,1,1,fp);break;
-case 2:fwrite(&mydata->data2,2,1,fp);break;
-case 4:fwrite(&mydata->data4,4,1,fp);break;
-case 8:fwrite(&mydata->data8,8,1,fp);break;
-}
+	if (strncmp(diskname, "/dev/", 5))
+		sprintf(fname, "/dev/disk/%s", diskname);
+	else
+		strcpy(fname, diskname);
+	fp = fopen(fname, "r+");
+	if (!fp) {
+		printf("open %s error!\n",fname);
+		return -1;
+	}
+	fseek(fp, addr, SEEK_SET);
+	switch (type) {
+		case 1:fwrite(&mydata->data1,1,1,fp);break;
+		case 2:fwrite(&mydata->data2,2,1,fp);break;
+		case 4:fwrite(&mydata->data4,4,1,fp);break;
+		case 8:fwrite(&mydata->data8,8,1,fp);break;
+	}
 	fclose(fp);
-return 0;
+	return 0;
 }
-
 
 unsigned char yaf_use = 0;		//lxy
 unsigned char yaf_w = 1;
-static int devcp(int argc,char **argv)
+static int devcp(int argc, char **argv)
 {
-char *buf;
-char *buf1;		//lxy
+	char *buf;
+	char *buf1;		//lxy
 
-int fp0,fp1;
-int n,i;
-int bs=0x20000;
-int seek=0,skip=0;
-char *fsrc=0,*fdst=0;
-unsigned int count=-1,nowcount=0;
-char pstr[80]="";
-int quiet=0;
+	int fp0, fp1;
+	int n, i;
+	int bs = 0x20000;
+	int seek = 0, skip = 0;
+	char *fsrc = 0, *fdst = 0;
+	unsigned int count = -1, nowcount = 0;
+	char pstr[80] = "";
+	int quiet = 0;
 
-yaf_use = 0;	//lxy
-yaf_w = 1;
+	yaf_use = 0;	//lxy
+	yaf_w = 1;
 
 
 #if NGZIP > 0
-int unzip=0;
+	int unzip=0;
 #endif
-if(argc<3)return -1;
-	fsrc=argv[1];
-	fdst=argv[2];
-	for(i=3;i<argc;i++)
-	{
-	if(!strncmp(argv[i],"bs=",3))
-	 	bs=strtoul(&argv[i][3],0,0);
-	else if(!strncmp(argv[i],"count=",6))
-	 	count=strtoul(&argv[i][6],0,0);
-	else  if(!strncmp(argv[i],"skip=",5))
-	 	skip=strtoul(&argv[i][5],0,0);
-	else if(!strncmp(argv[i],"seek=",5))
-	 	seek=strtoul(&argv[i][5],0,0);
-	else if(!strncmp(argv[i],"quiet=",6))
-		quiet=strtoul(&argv[i][6],0,0);
+	if (argc < 3)
+		return -1;
+	fsrc = argv[1];
+	fdst = argv[2];
+	for (i=3; i<argc; i++) {
+		if(!strncmp(argv[i],"bs=",3))
+		 	bs=strtoul(&argv[i][3],0,0);
+		else if(!strncmp(argv[i],"count=",6))
+		 	count=strtoul(&argv[i][6],0,0);
+		else  if(!strncmp(argv[i],"skip=",5))
+		 	skip=strtoul(&argv[i][5],0,0);
+		else if(!strncmp(argv[i],"seek=",5))
+		 	seek=strtoul(&argv[i][5],0,0);
+		else if(!strncmp(argv[i],"quiet=",6))
+			quiet=strtoul(&argv[i][6],0,0);
 #if NGZIP > 0
-	else if(!strcmp(argv[i],"unzip=1"))
-		unzip=1;
+		else if(!strcmp(argv[i],"unzip=1"))
+			unzip=1;
 #endif
-	else if (!strcmp(argv[i], "yaf"))		//lxy
-	{
-		yaf_use = 1;
-		bs += (4 * 1024);
-	}
-	else if (!strcmp(argv[i], "nw"))	//lxy
-		yaf_w = 0;
+		else if (!strcmp(argv[i], "yaf"))		//lxy
+		{
+			yaf_use = 1;
+			bs += (4 * 1024);
+		}
+		else if (!strcmp(argv[i], "nw"))	//lxy
+			yaf_w = 0;
 	}
 	
-	if(!fsrc||!fdst)return -1;
-	fp0=open(fsrc,O_RDONLY);
-	fp1=open(fdst,O_RDWR|O_CREAT|O_TRUNC);
+	if (!fsrc||!fdst)
+		return -1;
+	fp0 = open(fsrc, O_RDONLY);
+	fp1 = open(fdst, O_RDWR|O_CREAT|O_TRUNC);
 
-//	buf1=malloc(bs+32);	//lxy
-//	buf = ((int)buf1+31) & ~31;
-	buf=malloc(bs);
-	if(!buf){printf("malloc failed!,please set heaptop bigger\n");return -1;}
+	buf = malloc(bs);
+//	buf = (char *)(((long)malloc(bs + 32) + 32) & ~(32-1) | 0xa0000000);
+//	buf = 0xa1000000;
+	if (!buf) {
+		printf("malloc failed!,please set heaptop bigger\n");
+		return -1;
+	}
 
-	if(!fp0||!fp1){printf("open file error!\n");free(buf);return -1;}
-	lseek(fp0,skip*bs,SEEK_SET);
-	lseek(fp1,seek*bs,SEEK_SET);
+	if (!fp0||!fp1) {
+		printf("open file error!\n");
+		free(buf);
+		return -1;
+	}
+	lseek(fp0, skip*bs, SEEK_SET);
+	lseek(fp1, seek*bs, SEEK_SET);
 #if NGZIP > 0
 	if(unzip)if(gz_open(fp0)==-1)unzip=0;
 #endif
@@ -333,29 +342,27 @@ return 0;
 }
 
 #ifndef NOPCI
-static int __pcisyscall1(int type,unsigned long long addr,union commondata *mydata)
+static int __pcisyscall1(int type, unsigned long long addr, union commondata *mydata)
 {
-switch(type)
-{
-case 1:mydata->data1=_pci_conf_readn(mytag,addr,1);break;
-case 2:mydata->data2=_pci_conf_readn(mytag,addr,2);break;
-case 4:mydata->data4=_pci_conf_readn(mytag,addr,4);break;
-case 8:mydata->data8[0]=_pci_conf_readn(mytag,addr,4);
-	   mydata->data8[1]=_pci_conf_readn(mytag,addr+4,4);break;
-}
-return 0;
+	switch (type) {
+		case 1:mydata->data1=_pci_conf_readn(mytag,addr,1);break;
+		case 2:mydata->data2=_pci_conf_readn(mytag,addr,2);break;
+		case 4:mydata->data4=_pci_conf_readn(mytag,addr,4);break;
+		case 8:mydata->data8[0]=_pci_conf_readn(mytag,addr,4);
+			   mydata->data8[1]=_pci_conf_readn(mytag,addr+4,4);break;
+	}
+	return 0;
 }
 
-static int __pcisyscall2(int type,unsigned long long addr,union commondata *mydata)
+static int __pcisyscall2(int type, unsigned long long addr, union commondata *mydata)
 {
-switch(type)
-{
-case 1: _pci_conf_writen(mytag,addr,mydata->data1,1);return 0;
-case 2: _pci_conf_writen(mytag,addr,mydata->data2,2);return 0;
-case 4: _pci_conf_writen(mytag,addr,mydata->data4,4);return 0;
-case 8:break;
-}
-return -1;
+	switch (type) {
+		case 1: _pci_conf_writen(mytag,addr,mydata->data1,1);return 0;
+		case 2: _pci_conf_writen(mytag,addr,mydata->data2,2);return 0;
+		case 4: _pci_conf_writen(mytag,addr,mydata->data4,4);return 0;
+		case 8:break;
+	}
+	return -1;
 }
 #endif
 
@@ -1758,5 +1765,4 @@ init_cmd()
 {
 	cmdlist_expand(Cmds, 1);
 }
-
 

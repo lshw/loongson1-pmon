@@ -493,11 +493,15 @@ mtdfile_lseek (fd, offset, whence)
 
 
 
-int add_mtd_device(struct mtd_info *mtd,int offset,int size,char *name)
+int add_mtd_device(struct mtd_info *mtd, int offset, int size, char *name)
 {
 	struct mtdfile *rmp;
-	int len=sizeof(struct mtdfile);
-	if(name)len+=strlen(name);
+	int len = sizeof(struct mtdfile);
+
+	printf("Creat MTD partitions on \"%s\": name=\"%s\" size=%dByte\n", mtd->name, name, size);
+
+	if (name)
+		len += strlen(name);
 
 	rmp = (struct mtdfile *)malloc(len);
 	if (rmp == NULL) {
@@ -506,27 +510,28 @@ int add_mtd_device(struct mtd_info *mtd,int offset,int size,char *name)
 	}
 
 	bzero(rmp, len);
-	rmp->mtd =mtd;
-	rmp->index=mtdidx++;
-	rmp->part_offset=offset;
-	if(size) rmp->part_size=size;
-	else rmp->part_size=mtd->size - offset;
-	if(name)strcpy(rmp->name,name);
-	if(!mtdfiles.lh_first)
-	{
-	rmp->i_next.le_next=0;
-	rmp->i_next.le_prev=&rmp->i_next;
-	mtdfiles.lh_first=rmp;
+	rmp->mtd = mtd;
+	rmp->index = mtdidx++;
+	rmp->part_offset = offset;
+	if (size)
+		rmp->part_size = size;
+	else
+		rmp->part_size = mtd->size - offset;
+	if (name)
+		strcpy(rmp->name, name);
+	if (!mtdfiles.lh_first) {
+		rmp->i_next.le_next = 0;
+		rmp->i_next.le_prev = &rmp->i_next;
+		mtdfiles.lh_first = rmp;
 	}
 	else {
-	*mtdfiles.lh_first->i_next.le_prev=mtdfiles.lh_first;
-	LIST_INSERT_BEFORE(mtdfiles.lh_first, rmp, i_next);
-	*mtdfiles.lh_first->i_next.le_prev=0;
+		*mtdfiles.lh_first->i_next.le_prev=mtdfiles.lh_first;
+		LIST_INSERT_BEFORE(mtdfiles.lh_first, rmp, i_next);
+		*mtdfiles.lh_first->i_next.le_prev = 0;
 	}
 /*add into badblock table */
-	if(!strcmp(name,"g0"))
-	{
-		goodpart0=rmp;
+	if (!strcmp(name,"g0")) {
+		goodpart0 = rmp;
 	}
 	return 0;
 }
@@ -674,5 +679,4 @@ init_cmd()
 {
 	cmdlist_expand(Cmds, 1);
 }
-
 

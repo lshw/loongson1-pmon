@@ -209,7 +209,7 @@ void initmips(unsigned int memsz)
 #ifndef LS1ASOC
 	tgt_cpufreq();
 #endif
-	SBD_DISPLAY("DONE",0);
+	SBD_DISPLAY("DONE", 0);
 	
 	/*
 	 *  Init PMON and debug
@@ -232,7 +232,7 @@ void initmips(unsigned int memsz)
 	printf("BEV in SR set to zero.\n");
 
 #if NNAND
-	ls1g_soc_nand_init();
+	ls1x_nand_init();
 #endif
 
 #ifdef  MEMSCAN	
@@ -927,17 +927,17 @@ int tgt_unsetenv(char *name)
 	ep = nvrambuf + 2;
 
 	status = 0;
-	while((*ep != '\0') && (ep < nvrambuf + NVRAM_SIZE)) {
+	while ((*ep != '\0') && (ep < nvrambuf + NVRAM_SIZE)) {
 		np = name;
 		sp = ep;
 
-		while((*ep == *np) && (*ep != '=') && (*np != '\0')) {
+		while ((*ep == *np) && (*ep != '=') && (*np != '\0')) {
 			ep++;
 			np++;
 		}
-		if((*np == '\0') && ((*ep == '\0') || (*ep == '='))) {
-			while(*ep++);
-			while(ep < nvrambuf + NVRAM_SIZE) {
+		if ((*np == '\0') && ((*ep == '\0') || (*ep == '='))) {
+			while (*ep++);
+			while (ep < nvrambuf + NVRAM_SIZE) {
 				*sp++ = *ep++;
 			}
 			if(nvrambuf[2] == '\0') {
@@ -945,12 +945,12 @@ int tgt_unsetenv(char *name)
 			}
 			cksum(nvrambuf, NVRAM_SIZE, 1);
 #ifdef NVRAM_IN_FLASH
-			if(fl_erase_device(nvram, NVRAM_SECSIZE, FALSE)) {
+			if (fl_erase_device(nvram, NVRAM_SECSIZE, FALSE)) {
 				status = -1;
 				break;
 			}
 
-			if(fl_program_device(nvram, nvramsecbuf, NVRAM_SECSIZE, FALSE)) {
+			if (fl_program_device(nvram, nvramsecbuf, NVRAM_SECSIZE, FALSE)) {
 				status = -1;
 				break;
 			}
@@ -960,8 +960,8 @@ int tgt_unsetenv(char *name)
 			status = 1;
 			break;
 		}
-		else if(*ep != '\0') {
-			while(*ep++ != '\0');
+		else if (*ep != '\0') {
+			while (*ep++ != '\0');
 		}
 	}
 
@@ -980,7 +980,7 @@ int tgt_setenv(char *name, char *value)
 #endif
 
 	/* Non permanent vars. */
-	if(strcmp(EXPERT, name) == 0) {
+	if (strcmp(EXPERT, name) == 0) {
 		return(1);
 	}
 

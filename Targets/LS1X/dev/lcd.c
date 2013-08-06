@@ -18,12 +18,12 @@
 static int fb_xsize, fb_ysize, frame_rate;
 #if defined(LS1ASOC) || defined(LS1BSOC)
 #define BURST_SIZE	0xff
-static char *addr_cursor = 0xa0ef0000;
-static char *mem_ptr = 0xa0700000;
+static char *addr_cursor = 0xa0df0000;
+static char *mem_ptr = 0xa0600000;
 #elif defined(LS1CSOC)
 #define BURST_SIZE	0x7f
-static char *addr_cursor = 0xa1900000;
-static char *mem_ptr = 0xa1200000;
+static char *addr_cursor = 0xa0df0000;
+static char *mem_ptr = 0xa0600000;
 #endif
 
 static struct vga_struc {

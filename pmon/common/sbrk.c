@@ -40,7 +40,7 @@ extern char     end[];
 char           *allocp1 = end;
 char           *heaptop = end + 65536;
 
-int chg_heaptop (char *name, char *value)
+int chg_heaptop(char *name, char *value)
 {
 	u_int32_t top;
 
@@ -89,12 +89,13 @@ static void init_heaptop __P((void)) __attribute__ ((constructor));
 void init_heaptop(void)
 {
 #ifndef OLDSBRK
-	if (memorysize >= 0x4000000) {
+//	if (memorysize >= 0x4000000) {	/* 内存大于等于64MB */
+	if (memorysize >= 0x2000000) {	/* 内存大于等于32MB */
 		allocp1 = 0x80200000;
 		heaptop = 0x80300000;
 	} else {
 #endif
-		heaptop = (unsigned int)(end + 65536)<CLIENTPC ? CLIENTPC : (end + 65536);
+		heaptop = (unsigned int)(end + 65536) < CLIENTPC ? CLIENTPC : (end + 65536);
 		/* 当内存小于等于32MB时，使用fast fat读U盘时失败，所以修改成如下 */
 //		allocp1 = 0x81000000;
 //		heaptop = 0x81000000;
