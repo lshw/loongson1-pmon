@@ -11,7 +11,6 @@
 #include <pmon.h>
 #include <cpu.h>
 
-#include <include/types.h>
 #include <pmon/dev/loopdev.h>
 
 #include <sys/unistd.h>

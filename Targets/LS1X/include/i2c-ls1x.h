@@ -1,9 +1,6 @@
 #ifndef __I2C_LS1X_H_
 #define __I2C_LS1X_H_
 
-#include <target/types.h>
-#include <target/iorw.h>
-
 #define LS1X_I2C0_BASE			0xbfe58000
 #define LS1X_I2C1_BASE			0xbfe68000
 #define LS1X_I2C2_BASE			0xbfe70000

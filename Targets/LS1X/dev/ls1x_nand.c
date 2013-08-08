@@ -16,8 +16,6 @@
 #include <sys/malloc.h>
 
 #include <pmon.h>
-//#include <target/types.h>
-//#include <target/iorw.h>
 
 #define DMA_ACCESS_ADDR	0x1fe78040	/* DMA对NAND操作的地址 */
 #define ORDER_ADDR_IN	0xbfd01160	/* DMA配置寄存器 */
@@ -254,7 +252,7 @@ static void dma_cache_wback(unsigned long base, unsigned long num)
 
 static void dma_setup(unsigned int flags, struct ls1x_nand_info *info)
 {
-	int timeout = 2000;
+	int timeout = 8000;
 
 	writel(0, info->dma_desc + DMA_ORDERED);
 	writel(info->data_buff_phys, info->dma_desc + DMA_SADDR);
@@ -483,7 +481,7 @@ int ls1x_nand_init_buff(struct ls1x_nand_info *info)
 
 	order_addr_in = ORDER_ADDR_IN;
 
-	printf("data_buff = 0x%08x\ndata_buff_phys = 0x%08x\n", info->data_buff, info->data_buff_phys);
+	printf("data_buff_addr:0x%08x, dma_addr:0x%08x\n", info->data_buff, info->dma_desc);
 	
 	return 0;
 }

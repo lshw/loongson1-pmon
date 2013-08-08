@@ -30,27 +30,24 @@
  * SUCH DAMAGE.
  *
  */
-#if 1
+
 #include <sys/param.h>
 #include <sys/syslog.h>
-#include <machine/endian.h>
 #include <sys/device.h>
-#include <machine/cpu.h>
-#include <machine/pio.h>
-#include <machine/intr.h>
-#include <dev/pci/pcivar.h>
-#endif
 #include <sys/types.h>
 #include <termio.h>
 #include <string.h>
 #include <time.h>
 #include <stdlib.h>
 
+#include <dev/pci/pcivar.h>
 #include <dev/ic/mc146818reg.h>
 #include <linux/io.h>
 
 #include <autoconf.h>
 
+#include <machine/intr.h>
+#include <machine/endian.h>
 #include <machine/cpu.h>
 #include <machine/pio.h>
 #include "pflash.h"
@@ -61,9 +58,7 @@
 #include "include/fcr.h"
 #include <pmon/dev/gt64240reg.h>
 #include <pmon/dev/ns16550.h>
-#include <target/iorw.h>
-#include <target/types.h>
-#include <target/lcd.h>
+
 #include <target/regs-wdt.h>
 #include <target/regs-clk.h>
 #include <target/i2c-ls1x.h>

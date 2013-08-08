@@ -5,8 +5,7 @@
 #include <pmon.h>
 #include <pmon/dev/ns16550.h>
 
-#include <target/types.h>
-#include <target/iorw.h>
+#include <machine/pio.h>
 #include <target/regs-clk.h>
 
 #include <stdlib.h>

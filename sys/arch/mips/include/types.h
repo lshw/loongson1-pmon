@@ -43,6 +43,43 @@
 
 #include <sys/cdefs.h>
 
+
+typedef unsigned long long u64;
+typedef unsigned int u32;
+typedef unsigned short u16;
+typedef unsigned char u8;
+typedef signed long long s64;
+typedef signed long s32;
+typedef signed short s16;
+typedef signed char s8;
+typedef int bool;
+typedef unsigned long dma_addr_t;
+
+#define K1BASE 0xa0000000
+#define _KSEG1(addr) ((void *)(K1BASE | (u32)(addr)))
+
+#define KSEG1_STORE8(addr, value) *(volatile u8 *)(_KSEG1(addr)) = (value)
+#define KSEG1_STORE16(addr, value) *(volatile u16 *)(_KSEG1(addr)) = (value)
+#define KSEG1_STORE32(addr, value) *(volatile u32 *)(_KSEG1(addr)) = (value)
+
+#define KSEG1_LOAD8(addr) *(volatile u8 *)(_KSEG1(addr))
+#define KSEG1_LOAD16(addr) *(volatile u16 *)(_KSEG1(addr))
+#define KSEG1_LOAD32(addr) *(volatile u32 *)(_KSEG1(addr))
+
+#define STORE8(addr, value) *(volatile u8 *)(addr) = value
+#define STORE16(addr, value) *(volatile u16 *)(addr) = value
+#define STORE32(addr, value) *(volatile u32 *)(addr) = value
+
+#define LOAD8(addr) *(volatile u8 *)(addr)
+#define LOAD16(addr) *(volatile u16 *)(addr)
+#define LOAD32(addr) *(volatile u32 *)(addr)
+
+#define PHY(addr) \
+    (((u32)addr >= 0x80000000 && (u32)addr < 0xa0000000)? \
+    (u32)addr-0x80000000:(u32)addr >= 0xa0000000? \
+    (u32)addr-0xa0000000:(u32)addr)
+
+
 typedef	unsigned long	vm_offset_t;
 typedef	unsigned long	vm_size_t;
 

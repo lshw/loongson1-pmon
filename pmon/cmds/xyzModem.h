@@ -99,7 +99,6 @@ typedef struct {
 
 #ifndef	BOOL_WAS_DEFINED
 #define BOOL_WAS_DEFINED
-typedef unsigned int bool;
 #endif
 
 #define false 0

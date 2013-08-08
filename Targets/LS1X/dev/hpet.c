@@ -1,5 +1,4 @@
-#include <target/iorw.h>
-#include <target/types.h>
+#include <machine/pio.h>
 #include <stdio.h>
 #include <pmon.h>
 #include <cpu.h>

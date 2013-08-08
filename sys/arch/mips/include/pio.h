@@ -32,6 +32,8 @@
 #ifndef _MIPS_PIO_H_
 #define _MIPS_PIO_H_
 
+#include <sys/param.h>
+
 /*
  * I/O macros.
  */
@@ -54,6 +56,13 @@
 #define	in8rb(a)	(*(volatile unsigned char*)(a))
 #define in16rb(a)	(__in16rb((volatile u_int16_t *)(a)))
 #define in32rb(a)	(__in32rb((volatile u_int32_t *)(a)))
+
+#define writeb(val, addr) (*(volatile unsigned char *)(addr) = (val))
+#define writew(val, addr) (*(volatile unsigned short *)(addr) = (val))
+#define writel(val, addr) (*(volatile unsigned long *)(addr) = (val))
+#define readb(addr) (*(volatile unsigned char *)(addr))
+#define readw(addr) (*(volatile unsigned short *)(addr))
+#define readl(addr) (*(volatile unsigned long *)(addr))
 
 #define	_swap_(x) \
 	(((x) >> 24) | ((x) << 24) | \

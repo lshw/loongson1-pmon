@@ -103,7 +103,6 @@ CONFIG_VIDEO_HW_CURSOR:	     - Uses the hardware cursor capability of the
 #include <stdarg.h>
 #include <pmon.h>
 #include <cpu.h>
-//#include <target/types.h>
 #include "mod_sisfb.h"
 #include <dev/pci/pcivar.h>
 

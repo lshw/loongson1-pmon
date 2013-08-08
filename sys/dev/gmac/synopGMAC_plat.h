@@ -35,7 +35,7 @@
 
 #define SYNOP_GMAC0 1
 #define SYNOP_GMAC1 1
-
+/*
 typedef unsigned long long  u64;
 typedef unsigned long  u32;
 typedef unsigned short u16;
@@ -45,7 +45,7 @@ typedef signed long  s32;
 typedef signed short s16;
 typedef signed char  s8;
 typedef int bool;
-typedef unsigned long dma_addr_t;
+typedef unsigned long dma_addr_t;*/
 
 //sw
 /* write/read MMIO register */

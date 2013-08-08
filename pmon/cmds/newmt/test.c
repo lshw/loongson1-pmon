@@ -12,7 +12,7 @@ static void print_err_counts(void);
 
 int segs;
 
-static inline ulong roundup(ulong value, ulong mask)
+static inline ulong roundup_(ulong value, ulong mask)
 {
 	return (value + mask) & ~mask;
 }
@@ -40,7 +40,7 @@ void addr_tst1()
         	hprint(LINE_PAT, COL_PAT, p1);
 
 		/* Set pattern in our lowest multiple of 0x20000 */
-		p = (ulong *)roundup((ulong)v->map[0].start, 0x1ffff);
+		p = (ulong *)roundup_((ulong)v->map[0].start, 0x1ffff);
 		*p = p1;
 	
 		/* Now write pattern compliment */
@@ -84,7 +84,7 @@ void addr_tst1()
 		for (j=0; j<segs; j++) {
 			p = v->map[j].start;
 			/* Force start address to be a multiple of 256k */
-			p = (ulong *)roundup((ulong)p, bank - 1);
+			p = (ulong *)roundup_((ulong)p, bank - 1);
 			end = v->map[j].end;
 			while (p < end) {
 				*p = p1;

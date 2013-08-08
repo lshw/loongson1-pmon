@@ -70,11 +70,4 @@ static inline unsigned char linux_inb_p(unsigned long port)
         return __val;
 }
 
-
-
-
-#define readb(addr)             (*(volatile unsigned char *)(0xa0000000|(long)(addr)))
-#define readw(addr)             ((*(volatile unsigned short *)(0xa0000000|(long)(addr))))
-#define readl(addr)             ((*(volatile unsigned int *)(0xa0000000|(long)(addr))))
-
 #endif /* __LINUXIO_H_ */

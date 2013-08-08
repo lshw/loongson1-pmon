@@ -1,6 +1,5 @@
 #include <pmon.h>
 #include <cpu.h>
-#include <include/types.h>
 #include <string.h>
 #include <machine/pio.h>
 #include <time.h>

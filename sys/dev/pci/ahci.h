@@ -194,16 +194,6 @@ struct ahci_probe_ent {
 #define msleep(a)	udelay((a) * 1000)
 #define ssleep(a)	msleep((a) * 1000)
 
-static inline unsigned int readl(volatile void * regs)
-{
-	return *(volatile u32 *)regs;
-}
-
-static inline void writel (const unsigned int val, volatile void *regs)
-{
-	*(volatile u32 *)regs=val;
-}
-
 #define writel_with_flush(a,b)	do { writel(a,b); readl(b); } while (0)
 
 extern struct ahci_probe_ent *probe_ent;

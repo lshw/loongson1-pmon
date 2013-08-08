@@ -1,7 +1,7 @@
 #include <stdio.h>
-#include<linux/types.h>
-#include<linux/io.h>
-#include"kbd.h"
+#include <linux/types.h>
+#include <linux/io.h>
+#include "kbd.h"
 
 /*
  * Translation of escaped scancodes to keycodes.

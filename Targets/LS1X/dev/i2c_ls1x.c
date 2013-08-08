@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include <pmon.h>
+#include <machine/pio.h>
 #include <target/i2c-ls1x.h>
 
 struct ls1x_i2c ls1x_i2c0;

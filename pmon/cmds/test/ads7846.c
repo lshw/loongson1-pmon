@@ -2,7 +2,7 @@
 #include <cpu.h>
 #include <string.h>
 #include "target/fcr.h"
-
+/*
 #define K1BASE 0xa0000000
 #define KSEG1(addr) (K1BASE | (unsigned int)(addr))
 
@@ -12,7 +12,7 @@
 
 #define KSEG1_LOAD8(addr) *(volatile unsigned char *)(KSEG1(addr))
 #define KSEG1_LOAD16(addr) *(volatile unsigned short *)(KSEG1(addr))
-#define KSEG1_LOAD32(addr) *(volatile unsigned int *)(KSEG1(addr))
+#define KSEG1_LOAD32(addr) *(volatile unsigned int *)(KSEG1(addr))*/
 
 #define SPI_BASE  0x1fe80000
 
@@ -103,7 +103,7 @@ struct sb2f_board_intc_regs
 
 #define GPIO_IRQ 60
 static struct sb2f_board_intc_regs volatile *sb2f_board_hw0_icregs
-	= (struct sb2f_board_intc_regs volatile *)(KSEG1(SB2F_BOARD_INTREG_BASE));
+	= (struct sb2f_board_intc_regs volatile *)(_KSEG1(SB2F_BOARD_INTREG_BASE));
 
 int ads7846_pendown_state(void)
 {
