@@ -70,21 +70,6 @@ static inline long IS_ERR(const void *ptr)
 	return (unsigned long)ptr > (unsigned long)-1000L;
 }
 #define led_trigger_event(...)
-#define readb(addr)     (*(volatile unsigned char *)(addr))
-#define readw(addr)     (*(volatile unsigned short *)(addr))
-#define readl(addr)     (*(volatile unsigned int *)(addr))
-
-#define __raw_readb(addr)   (*(volatile unsigned char *)(addr))
-#define __raw_readw(addr)   (*(volatile unsigned short *)(addr))
-#define __raw_readl(addr)   (*(volatile unsigned int *)(addr))
-
-#define writeb(b,addr) ((*(volatile unsigned char *)(addr)) = (b))
-#define writew(w,addr) ((*(volatile unsigned short *)(addr)) = (w))
-#define writel(l,addr) ((*(volatile unsigned int *)(addr)) = (l))
-
-#define __raw_writeb(b,addr)    ((*(volatile unsigned char *)(addr)) = (b))
-#define __raw_writew(w,addr)    ((*(volatile unsigned short *)(addr)) = (w))
-#define __raw_writel(l,addr)    ((*(volatile unsigned int *)(addr)) = (l))
 #define min_t(type,x,y) ({ type __x = (x); type __y = (y); __x < __y ? __x: __y; })
 
 struct erase_info_user {
@@ -103,8 +88,6 @@ struct mtd_oob_buf {
 #define MTD_BLOCK_MAJOR 31
 #define MAX_MTD_DEVICES 16
 
-
-
 #define MTD_ABSENT		0
 #define MTD_RAM			1
 #define MTD_ROM			2
@@ -113,8 +96,6 @@ struct mtd_oob_buf {
 #define MTD_PEROM		5
 #define MTD_OTHER		14
 #define MTD_UNKNOWN		15
-
-
 
 #define MTD_CLEAR_BITS		1       // Bits can be cleared (flash)
 #define MTD_SET_BITS		2       // Bits can be set

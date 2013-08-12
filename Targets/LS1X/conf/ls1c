@@ -206,6 +206,9 @@ pseudo-device	loop	1	# network loopback
 option		INPUT_FROM_BOTH
 option		OUTPUT_TO_BOTH
 select		nand
+#option		NAND_BOOT				#表示使用nandflash启动
+#option		NAND_PAGE_SIZE=2048		#nand页大小
+#option		NAND_PARAMETER=0x000	#外部颗粒容量大小 NAND_PARAMETER（寄存器地址：0x1fe7_8018）
 #select		nor_flash			#如果使用nor flash分区需要该选项
 #option		NORFLASH_PARTITION	#nor flash(spi flash)分区
 #option		W25X64

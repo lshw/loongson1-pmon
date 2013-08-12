@@ -64,6 +64,13 @@
 #define readw(addr) (*(volatile unsigned short *)(addr))
 #define readl(addr) (*(volatile unsigned long *)(addr))
 
+#define __raw_writeb(b, addr)    ((*(volatile unsigned char *)(addr)) = (b))
+#define __raw_writew(w, addr)    ((*(volatile unsigned short *)(addr)) = (w))
+#define __raw_writel(l, addr)    ((*(volatile unsigned int *)(addr)) = (l))
+#define __raw_readb(addr)   (*(volatile unsigned char *)(addr))
+#define __raw_readw(addr)   (*(volatile unsigned short *)(addr))
+#define __raw_readl(addr)   (*(volatile unsigned int *)(addr))
+
 #define	_swap_(x) \
 	(((x) >> 24) | ((x) << 24) | \
 	(((x) >> 8) & 0xff00) | (((x) & 0xff00) << 8))

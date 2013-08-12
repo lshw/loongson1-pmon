@@ -45,7 +45,6 @@
 #include "target/sbd.h"
 #include "target/fcr.h"
 #include <target/regs-clk.h>
-//#include "target/isapnpreg.h"
 
 #define DEBUG_LOCORE
 
@@ -120,6 +119,18 @@ stack = start - 0x4000		/* Place PMON stack below PMON start in RAM */
 	mtc0	t0, COP_0_STATUS_REG
 	la	sp, stack
 	la	gp, _gp
+
+#if defined(NAND_BOOT) && defined(LS1CSOC)
+#include "nand_boot.S"
+	la	t0, start
+	la	t1, real_bin
+	sub	t1, t0	/* t1 = start - real_bin */
+	li	t0, DATA_BUFF
+	add	t1, t0	/* t1 = (start - real_bin) + DATA_BUFF */
+	jr	t1
+	nop
+real_bin:
+#endif
 
 	bal	uncached		/* Switch to uncached address space */
 	nop
