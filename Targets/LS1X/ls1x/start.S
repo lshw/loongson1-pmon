@@ -263,7 +263,7 @@ locate:
 	
 	/*spi speed*/
 	li  t0, 0xbfe80000
-	li  t1, 0x1f	// div 4, fast_read + burst_en + memory_en double I/O 模式 部分SPI flash可能不支持
+	li  t1, 0x17	// div 4, fast_read + burst_en + memory_en double I/O 模式 部分SPI flash可能不支持
 	sb  t1, 0x4(t0)	// sfc_param
 	li  t1, 0x05
 	sb  t1, 0x6(t0)

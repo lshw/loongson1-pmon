@@ -36,8 +36,8 @@
 
 /* 150uS minimum clock cycle, we have two of this plus our other
  * instructions */
-//#define SPI_DELAY	delay(50)	/* 200uS */
-#define SPI_DELAY
+#define SPI_DELAY	delay(10)	/* 200uS */
+//#define SPI_DELAY
 
 #define JBT_COMMAND	0x000
 #define JBT_DATA	0x100
@@ -49,6 +49,7 @@ static int spi_read(int bitlen)
 	int ret;
 
 	gpio_set_value(GPIO_CS, 0);
+	SPI_DELAY;
 
 /*	gpio_set_value(GPIO_SCLK, 0);
 	SPI_DELAY;
@@ -75,6 +76,7 @@ static int spi_write(int bitlen, int value)
 	int tmpdout = value;
 
 	gpio_set_value(GPIO_CS, 0);
+	SPI_DELAY;
 
 	for (j = 0; j < bitlen; j++) {
 		gpio_set_value(GPIO_SCLK, 0);
@@ -126,7 +128,7 @@ static void nt35310_hw_init(void)
 
 	/* EXIT_SLEEP_MODE */
 	spi_write_cmd(0x11);
-	delay(5000);
+	delay(8000);
 
 	/* RGB Interface Signal Control */
 	spi_write_cmd(0x3b);
