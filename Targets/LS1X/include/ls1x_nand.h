@@ -35,6 +35,7 @@
 
 #define DMA_REQ			(0x1 << 25)
 #define ECC_DMA_REQ		(0x1 << 24)
+#define WAIT_RSRD_DONE	(0x1 << 14)
 #define INT_EN			(0x1 << 13)
 #define RS_WR			(0x1 << 12)
 #define RS_RD			(0x1 << 11)
@@ -57,7 +58,7 @@
 #define nand_readl(info, off)		\
 	__raw_readl((info)->mmio_base + (off))
 
-#define MAX_BUFF_SIZE	8192
+#define MAX_BUFF_SIZE	0x100000	/* 1MByte */
 #define PAGE_SHIFT		12	/* 页内地址(列地址)A0-A11 */
 
 #if defined(LS1ASOC) || defined(LS1CSOC)
@@ -77,6 +78,5 @@
 #define	GPIO_CONF1	0xbfd010c4
 #define	GPIO_CONF2	0xbfd010c8
 #define	GPIO_MUX	0xbfd00420
-
 
 #endif

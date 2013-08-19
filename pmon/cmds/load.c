@@ -61,16 +61,15 @@
 extern int errno;                       /* global error number */
 extern char *heaptop;
 
-static int	bootfd;
-static int	bootbigend;
+static int bootfd;
+static int bootbigend;
 
 int cmd_nload __P((int, char *[]));
 static int nload __P((int, char **));
 
 /* ------------------------------------------------------- */
 
-const Optdesc cmd_nload_opts[] =
-{
+const Optdesc cmd_nload_opts[] = {
 	{"-s", "don't clear old symbols"},
 	{"-b", "don't clear breakpoints"},
 	{"-e", "don't clear exception handlers"},
@@ -79,6 +78,9 @@ const Optdesc cmd_nload_opts[] =
 	{"-i", "ignore checksum errors"},
 #ifdef HAVE_FLASH
 	{"-f flash_addr -o load_addr offsetr", ""},
+#endif
+#ifdef NAND_BOOT
+	{"-g nand_flash_addr -o load_addr offsetr", ""},
 #endif
 	{"-n", "don't load symbols"},
 	{"-y", "only load symbols"},
@@ -94,9 +96,9 @@ const Optdesc cmd_nload_opts[] =
 
 unsigned long long dl_loffset;
 char *dl_Oloadbuffer;
-unsigned long long strtoull(const char *nptr,char **endptr,int base);
+unsigned long long strtoull(const char *nptr, char **endptr, int base);
 
-static int nload (int argc, char **argv)
+static int nload(int argc, char **argv)
 {
 	char path[256];
 	static char buf[2048];
@@ -116,7 +118,7 @@ static int nload (int argc, char **argv)
 	optind = 0;
 	err = 0;
 	offset = 0;
-	while ((c = getopt (argc, argv, "sbeatif:nrvwyko:O:")) != EOF) {
+	while ((c = getopt (argc, argv, "sbeatif:g:nrvwyko:O:")) != EOF) {
 		switch (c) {
 			case 's':
 				flags |= SFLAG; break;
@@ -136,6 +138,13 @@ static int nload (int argc, char **argv)
 					err++;
 				}
 				flags |= FFLAG; break;
+#endif
+#ifdef NAND_BOOT
+			case 'g':
+				if (!get_rsa ((u_int32_t *)&flashaddr, optarg)) {
+					err++;
+				}
+				flags |= GFLAG; break;
 #endif
 #if notyet
 			case 'u':
@@ -161,7 +170,7 @@ static int nload (int argc, char **argv)
 				}
 				break;
 			case 'O':
-				dl_loffset=strtoull(optarg, 0, 0);
+				dl_loffset = strtoull(optarg, 0, 0);
 				flags |= OFLAG;
 				break;
 			default:
@@ -211,6 +220,30 @@ static int nload (int argc, char **argv)
 	}
 #endif
 
+#ifdef NAND_BOOT
+	if (flags & GFLAG) {
+		tgt_nand_flashinfo(flashaddr, &flashsize);
+		if (flashsize == 0) {
+			printf ("No FLASH at given address\n");
+			return 0;
+		}
+		/* any loaded program will be trashed... */
+		flags &= ~(SFLAG | BFLAG | EFLAG);
+		flags |= NFLAG;		/* don't bother with symbols */
+		/*
+		* Recalculate any offset given on command line.
+		* Addresses should be 0 based, so a given offset should be
+		* the actual load address of the file.
+		*/
+		offset = (unsigned long)heaptop - offset;
+#if BYTE_ORDER == LITTLE_ENDIAN
+		bootbigend = 0;
+#else
+		bootbigend = 1;
+#endif
+	}
+#endif
+
 	dl_initialise(offset, flags);
 
 	fprintf(stderr, "Loading file: %s ", path);
@@ -251,7 +284,7 @@ static int nload (int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 
-	if (!(flags & (FFLAG|YFLAG))) {
+	if (!(flags & (FFLAG | YFLAG | GFLAG))) {
 		printf ("Entry address is %08x\n", ep);
 		/* Flush caches if they are enabled */
 		if (md_cachestat())
@@ -273,6 +306,20 @@ static int nload (int argc, char **argv)
 				bootbigend);
 	}
 #endif
+
+#ifdef NAND_BOOT
+	if (flags & GFLAG) {
+		extern long dl_minaddr;
+		extern long dl_maxaddr;
+		if (flags & WFLAG)
+			bootbigend = !bootbigend;
+		tgt_nand_flashprogram((void *)flashaddr,	/* address */
+				dl_maxaddr - dl_minaddr,	/* size */
+				(void *)heaptop,	/* load */
+				bootbigend);
+	}
+#endif
+
 	return EXIT_SUCCESS;
 }
 

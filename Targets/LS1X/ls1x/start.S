@@ -353,7 +353,7 @@ locate:
 	sw v1, 4(a0)
 	sw a1, (a0);
 
-#elif defined(LS1CSOC)
+#elif defined(LS1CSOC) && !defined(NAND_BOOT)
 	/* config pll div for cpu and sdram */
 	#define SDRAM_DIV_2	0x0
 	#define SDRAM_DIV_3	0x2

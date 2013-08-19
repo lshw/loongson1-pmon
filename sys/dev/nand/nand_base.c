@@ -2379,31 +2379,20 @@ struct nand_flash_dev nand_flash_ids_1[] = {
 #endif
 
 /**
- * nand_scan - [NAND Interface] Scan for the NAND device
- * @mtd:	MTD device structure
- * @maxchips:	Number of chips to scan for
+ * nand_scan_ident - [NAND Interface] Scan for the NAND device
+ * @mtd:	     MTD device structure
+ * @maxchips:	     Number of chips to scan for
  *
- * This fills out all the uninitialized function pointers
- * with the defaults.
- * The flash ID is read and the mtd/chip structures are
- * filled with the appropriate values.
- * The mtd->owner field must be set to the module of the caller
+ * This is the first phase of the normal nand_scan() function. It
+ * reads the flash ID and sets up MTD fields accordingly.
  *
+ * The mtd->owner field must be set to the module of the caller.
  */
-int nand_scan(struct mtd_info *mtd, int maxchips)
+int nand_scan_ident(struct mtd_info *mtd, int maxchips)
 {
 	int i, busw, nand_maf_id;
 	struct nand_chip *chip = mtd->priv;
 	struct nand_flash_dev *type;
-	int ret;
-
-	/* Many callers got this wrong, so check for it for a while... */
-#if 0
-	if (!mtd->owner && caller_is_module()) {
-		printk(KERN_CRIT "nand_scan() called with NULL mtd->owner!\n");
-		BUG();
-	}
-#endif
 
 	/* Get buswidth to select the correct functions */
 	busw = chip->options & NAND_BUSWIDTH_16;
@@ -2435,6 +2424,23 @@ int nand_scan(struct mtd_info *mtd, int maxchips)
 	/* Store the number of chips and calc total size for mtd */
 	chip->numchips = i;
 	mtd->size = i * chip->chipsize;
+
+	return 0;
+}
+
+/**
+ * nand_scan_tail - [NAND Interface] Scan for the NAND device
+ * @mtd:	    MTD device structure
+ * @maxchips:	    Number of chips to scan for
+ *
+ * This is the second phase of the normal nand_scan() function. It
+ * fills out all the uninitialized function pointers with the defaults
+ * and scans for a bad block table if appropriate.
+ */
+int nand_scan_tail(struct mtd_info *mtd)
+{
+	int i;
+	struct nand_chip *chip = mtd->priv;
 
 	/* Preset the internal oob write buffer */
 	memset(chip->buffers.oobwbuf, 0xff, mtd->oobsize);
@@ -2583,61 +2589,36 @@ int nand_scan(struct mtd_info *mtd, int maxchips)
 		return 0;
 
 	/* Build bad block table */
-#if 0		//lxy
-	fixup_badblock(mtd);
 	return chip->scan_bbt(mtd);
-#else
-	return chip->scan_bbt(mtd);
-#endif
 }
 
-
-/**************************************************/		//lxy
-
-void fixup_badblock(struct mtd_info *mtd)
+/**
+ * nand_scan - [NAND Interface] Scan for the NAND device
+ * @mtd:	MTD device structure
+ * @maxchips:	Number of chips to scan for
+ *
+ * This fills out all the uninitialized function pointers
+ * with the defaults.
+ * The flash ID is read and the mtd/chip structures are
+ * filled with the appropriate values.
+ * The mtd->owner field must be set to the module of the caller
+ *
+ */
+int nand_scan(struct mtd_info *mtd, int maxchips)
 {
-	struct nand_chip *this = mtd->priv;
-	int i, numblocks, len, scanlen;
-	int startblock;
-	loff_t from, page_start;
-	size_t retlen;
-	unsigned char backup[mtd->erasesize];
-	unsigned int pages = mtd->erasesize/mtd->writesize;
+	int ret;
 
-			
-	memset(backup, 0, sizeof(backup));	
-	numblocks = mtd->size >> (this->bbt_erase_shift - 1);
-	startblock = 0;
-	for (from=0; startblock < numblocks; startblock++)
-	{
-		from = from & ~(mtd->erasesize - 1);
-		if (mtd->block_isbad(mtd, from))		//lxy: catch a badblock
-		{
-			for (i=0, page_start=0; i<pages; i++)			//lxy: backup the block's data
-			{
-				page_start += i * mtd->writesize;
-				mtd->read(mtd, page_start, mtd->writesize, &retlen, backup[i * mtd->writesize]);
-			}
-			this->erase_cmd(mtd, from & this->pagemask);		//lxy: erase the block
-			this->waitfunc(mtd, this);			
-			if (mtd->block_isbad(mtd, from) == 0)	//lxy: check whether it is a badblock again
-			{										
-				for (i=0, page_start=0; i<pages; i++)	//lxy: if not a badblock, then write back the data
-				{
-					page_start += i * mtd->writesize;
-					mtd->write(mtd, page_start, mtd->writesize, &retlen, backup[i * mtd->writesize]);
-				}
-			}
-			else
-				printf ("lxy: fixuping, it is a real badblock: 0x%x !\n", from);
-		}
-		
-		from += mtd->erasesize;
-	}
-	free(backup);
+	/* Many callers got this wrong, so check for it for a while... */
+/*	if (!mtd->owner && caller_is_module()) {
+		printk(KERN_CRIT "nand_scan() called with NULL mtd->owner!\n");
+		BUG();
+	}*/
+
+	ret = nand_scan_ident(mtd, maxchips);
+	if (!ret)
+		ret = nand_scan_tail(mtd);
+	return ret;
 }
-
-/*************************************************************************/
 
 /**
  * nand_release - [NAND Interface] Free resources held by the NAND device

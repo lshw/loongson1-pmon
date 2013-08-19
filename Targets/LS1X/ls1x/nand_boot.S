@@ -2,7 +2,8 @@
 #include <target/ls1x_nand.h>
 
 #define	DATA_LENGTH		0x80000	/* 512KB 预计使用512KB存放PMON */
-#define BOOT_ECCNAND
+
+#undef BOOT_ECCNAND
 
 #ifdef BOOT_ECCNAND
 #define DMA_READ_WORDS	(((NAND_PAGE_SIZE / 204) * 188) >> 2)
@@ -25,7 +26,7 @@ boot:
 
 	li	t0, 0xbfe78030
 
-	li	v0, 0xbfc00000+(NVRAM_POS+PLL_OFFS)
+/*	li	v0, 0xbfc00000+(NVRAM_POS+PLL_OFFS)
 	lw	t2, 0(v0)
 	lw	t3, 4(v0)
 
@@ -44,7 +45,7 @@ boot:
 	nop
 	nop
 	b 2f
-	nop
+	nop*/
 1:
 	/* 设置PLL倍频 及SDRAM分频 */
 	li	t2, (0x80000008 | (PLL_MULT << 8) | (0x3 << 2) | SDRAM_DIV)
@@ -70,26 +71,32 @@ boot:
 dma_nand_cfg_read:
 	#DMA read ddr operation
 	li a1, DMA_DESC	/* dma desc地址 自定义的一段内存地址 */
-	li a2, 0x00
-	sw a2, 0x0(a1)	/* dma_order_addr */
-	li a2, DATA_BUFF & 0x1fffffff
-	sw a2, 0x4(a1)	/* dma_mem_addr */
-	li a2, DMA_ACCESS_ADDR
-	sw a2, 0x8(a1)	/* dma_dev_addr */
-	li a2, DMA_READ_WORDS
-	sw a2, 0xc(a1)	/* dma_length */
-	li a2, 0x0
-	sw a2, 0x10(a1)	/* dma_step_length */
-	li a2, TRANS_TIME
-	sw a2, 0x14(a1)	/* step times */
-	li a2, 0x1 
-	sw a2, 0x18(a1)	/* dma cmd */
+	li t0, 0x00
+	sw t0, 0x0(a1)	/* dma_order_addr */
+	li t0, DATA_BUFF & 0x1fffffff
+	sw t0, 0x4(a1)	/* dma_mem_addr */
+
+	li t0, DMA_ACCESS_ADDR
+	li t1, DMA_ACCESS_ADDR
+	or t0, t0, t1
+	or t0, t0, t1
+	and t0, t0, 0x1fffffff
+	sw t0, 0x8(a1)	/* dma_dev_addr */
+
+	li t0, DMA_READ_WORDS
+	sw t0, 0xc(a1)	/* dma_length */
+	li t0, 0x0
+	sw t0, 0x10(a1)	/* dma_step_length */
+	li t0, TRANS_TIME
+	sw t0, 0x14(a1)	/* step times */
+	li t0, 0x1 
+	sw t0, 0x18(a1)	/* dma cmd */
 	nop
 
 	/* state_reg [12] =1 read  ddr and write devices, 0 write ddr and read devices */
 	li a1, ORDER_ADDR_IN
-	li a2, (DMA_DESC & 0x1fffffff) | 0x8	/* which dma channel to be configured */
-	sw a2, 0x0(a1)
+	li t0, (DMA_DESC & 0x1fffffff) | 0x8	/* which dma channel to be configured */
+	sw t0, 0x0(a1)
 	nop
 
 #ifdef	BOOT_ECCNAND	
@@ -111,9 +118,9 @@ ecc_rd:
 	nop
 
 1:
-	lw a2, 0x0(t2)
-	and a2, a2, 0x400
-	beqz a2, 1b	/* 等待nand命令完成 */
+	lw t0, 0x0(t2)
+	and t0, t0, 0x400
+	beqz t0, 1b	/* 等待nand命令完成 */
 	nop
 #ifdef	BOOT_ECCNAND	
 	sw		zero, 0x0(t2)	/* clear nand_control's cmd */

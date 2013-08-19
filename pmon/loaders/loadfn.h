@@ -48,6 +48,7 @@
 #define RFLAG 0x2000
 #define OFLAG 0x4000
 #define ZFLAG 0x8000
+#define GFLAG 0x8001		/*load into nand flash */
 
 #define DL_CONT		0
 #define DL_DONE		1

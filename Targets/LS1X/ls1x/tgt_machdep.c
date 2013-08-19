@@ -739,6 +739,31 @@ void tgt_flashprogram(void *p, int size, void *s, int endian)
 }
 #endif /* PFLASH */
 
+#ifdef NAND_BOOT
+void tgt_nand_flashinfo(void *p, size_t *t)
+{
+	if (!nand_probe_boot()) {
+		*t = 128 * 1024;	/* 用于bootloader的flash大小？ */
+	} else {
+		*t = 0;
+	}
+}
+
+void tgt_nand_flashprogram(void *p, int size, void *s, int endian)
+{
+	printf("Programming flash %x:%x into %x, edndian? %x\n", s, size, p, endian);
+	if (nand_erase_boot(p, size, TRUE)) {
+		printf("Erase failed!\n");
+		return;
+	}
+
+	if (nand_program_boot(p, s, size, TRUE)) {
+		printf("Programming failed!\n");
+	}
+	nand_verify_boot(p, s, size, TRUE);
+}
+#endif
+
 /*
  *  Network stuff.
  */
