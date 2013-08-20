@@ -237,10 +237,10 @@ static void caclulatefreq(unsigned int ls1b_pll_freq, unsigned int ls1b_pll_div)
 #ifdef DC_CURSOR
 static int config_cursor(void)
 {
-	int ii;
+	int i;
 	
-	for(ii=0; ii<0x1000; ii+=4)
-		*(volatile unsigned int *)(addr_cursor + ii) = 0x88f31f4f;
+	for (i=0; i<0x1000; i+=4)
+		*(volatile unsigned int *)(addr_cursor + i) = 0x88f31f4f;
 
 	addr_cursor = (unsigned int)addr_cursor & 0x0fffffff;
 
@@ -294,7 +294,7 @@ static int config_fb(unsigned int base)
 				}
 			}
 			if (input_vga->ls1b_pll_freq) {
-				weitel(input_vga->ls1b_pll_freq, LS1X_CLK_PLL_FREQ);
+				writel(input_vga->ls1b_pll_freq, LS1X_CLK_PLL_FREQ);
 				writel(input_vga->ls1b_pll_div, LS1X_CLK_PLL_DIV);
 				delay(100);
 				caclulatefreq(input_vga->ls1b_pll_freq, input_vga->ls1b_pll_div);

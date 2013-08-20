@@ -2056,7 +2056,7 @@ static int mdio_read(synopGMACPciNetworkAdapter *adapter, int addr, int reg)
 
 #ifdef	LS1A_CORE
 #if GMAC1_USE_UART01
-	ls1b_gpio_free(GPIO_BACKLIGHT_CTRL);
+	ls1x_gpio_free(GPIO_BACKLIGHT_CTRL);
 #endif
 #endif
 	
@@ -2077,7 +2077,7 @@ static void mdio_write(synopGMACPciNetworkAdapter *adapter, int addr, int reg, i
 
 #ifdef	LS1A_CORE
 #if GMAC1_USE_UART01
-	ls1b_gpio_free(GPIO_BACKLIGHT_CTRL);
+	ls1x_gpio_free(GPIO_BACKLIGHT_CTRL);
 #endif
 #endif
 

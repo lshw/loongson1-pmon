@@ -1,35 +1,45 @@
 #ifndef _GPIO_H_
 #define _GPIO_H_
 
-#define	EINVAL		22	/* Invalid argument */
+/* GPIO 0-31 group 0 */
+#define LS1X_GPIO_CFG0		0xbfd010c0	/* 配置寄存器 */
+#define LS1X_GPIO_OE0		0xbfd010d0	/* 输入使能寄存器 */
+#define LS1X_GPIO_IN0		0xbfd010e0	/* 输入寄存器 */
+#define LS1X_GPIO_OUT0		0xbfd010f0	/* 输出寄存器 */
 
-#define STLS1X_N_GPIO		64
-#define STLS1X_GPIO_IN_OFFSET	16
+/* GPIO 32-63 group 1 */
+#define LS1X_GPIO_CFG1		0xbfd010c4
+#define LS1X_GPIO_OE1		0xbfd010d4
+#define LS1X_GPIO_IN1		0xbfd010e4
+#define LS1X_GPIO_OUT1		0xbfd010f4
 
-#define _ACAST32_
-#define KSEG1			0xa0000000
-#define CPHYSADDR(a)		((_ACAST32_(a)) & 0x1fffffff)
-#define CKSEG1ADDR(a)		(CPHYSADDR(a) | KSEG1)
+#ifdef LS1ASOC
+/* GPIO 64-87 group 2 */
+#define LS1X_GPIO_CFG2		0xbfd010c8
+#define LS1X_GPIO_OE2		0xbfd010d8
+#define LS1X_GPIO_IN2		0xbfd010e8
+#define LS1X_GPIO_OUT2		0xbfd010f8
+#endif
 
-#define LOONGSON_REG(x)	\
-	(*(volatile u32 *)((char *)CKSEG1ADDR(x)))
-
-#define LOONGSON_GPIOCFG0	LOONGSON_REG(0xbfd010c0)
-#define LOONGSON_GPIOCFG1	LOONGSON_REG(0xbfd010c4)
-#define LOONGSON_GPIOIE0 	LOONGSON_REG(0xbfd010d0)
-#define LOONGSON_GPIOIE1	LOONGSON_REG(0xbfd010d4)
-#define LOONGSON_GPIOIN0	LOONGSON_REG(0xbfd010e0)
-#define LOONGSON_GPIOIN1	LOONGSON_REG(0xbfd010e4)
-#define LOONGSON_GPIOOUT0	LOONGSON_REG(0xbfd010f0)
-#define LOONGSON_GPIOOUT1	LOONGSON_REG(0xbfd010f4)
+#ifdef LS1CSOC
+/* GPIO 64-95 group 2 */
+#define LS1X_GPIO_CFG2		0xbfd010c8
+#define LS1X_GPIO_OE2		0xbfd010d8
+#define LS1X_GPIO_IN2		0xbfd010e8
+#define LS1X_GPIO_OUT2		0xbfd010f8
+/* GPIO 96-127 group 3 */
+#define LS1X_GPIO_CFG3		0xbfd010cc
+#define LS1X_GPIO_OE3		0xbfd010dc
+#define LS1X_GPIO_IN3		0xbfd010ec
+#define LS1X_GPIO_OUT3		0xbfd010fc
+#endif
 
 int gpio_get_value(int gpio);
-void gpio_set_value(int gpio, int state);
-int gpio_cansleep(int gpio);
+void gpio_set_value(int gpio, int value);
 int ls1x_gpio_direction_input(int gpio);
-int ls1x_gpio_direction_output(int gpio, int level);
+int ls1x_gpio_direction_output(int gpio, int value);
 int ls1x_gpio_get_value(int gpio);
 void ls1x_gpio_set_value(int gpio, int value);
-void ls1b_gpio_free(int gpio);
+void ls1x_gpio_free(int gpio);
 
 #endif

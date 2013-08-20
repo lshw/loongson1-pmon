@@ -403,11 +403,11 @@ int jbt6k74_display_onoff(int on)
 
 void jbt6k74_exit(void)
 {
-	ls1b_gpio_free(GPIO_SCLK);
-	ls1b_gpio_free(GPIO_MOSI);
-//	ls1b_gpio_free(GPIO_MISO);
-	ls1b_gpio_free(GPIO_CS);
-//	ls1b_gpio_free(GPIO_REST);
+	ls1x_gpio_free(GPIO_SCLK);
+	ls1x_gpio_free(GPIO_MOSI);
+//	ls1x_gpio_free(GPIO_MISO);
+	ls1x_gpio_free(GPIO_CS);
+//	ls1x_gpio_free(GPIO_REST);
 }
 
 int jbt6k74_init(void)

@@ -88,10 +88,10 @@ static void ili9341_gpio_init(void)
 
 static void ili9341_gpio_free(void)
 {
-	ls1b_gpio_free(SDI);
-	ls1b_gpio_free(SCL);
-	ls1b_gpio_free(CS);
-	ls1b_gpio_free(RESET);
+	ls1x_gpio_free(SDI);
+	ls1x_gpio_free(SCL);
+	ls1x_gpio_free(CS);
+	ls1x_gpio_free(RESET);
 }
 
 #if defined(CONFIG_ILI9341_8080)

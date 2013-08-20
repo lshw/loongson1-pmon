@@ -26,12 +26,19 @@
 #endif
 
 /* FIXME: glofish definitions */
-
+#if defined(LS1BSOC)
 #define GPIO_SCLK	(24) 	/* GPIO24 */
 #define GPIO_MOSI	(26)	/* GPIO26 */
 #define GPIO_MISO	(25)	/* GPIO25 */
 #define GPIO_CS	(30)	/* GPIO28 */
 #define GPIO_REST	(39)	/* GPIO39 */
+#elif defined(LS1CSOC)
+#define GPIO_SCLK	(78) 	/* GPIO24 */
+#define GPIO_MOSI	(79)	/* GPIO26 */
+#define GPIO_MISO	(80)	/* GPIO25 */
+#define GPIO_CS	(84)	/* GPIO28 */
+#define GPIO_REST	(39)	/* GPIO39 */
+#endif
 
 
 /* 150uS minimum clock cycle, we have two of this plus our other
@@ -161,11 +168,11 @@ static void nt35310_hw_init(void)
 
 void nt35310_exit(void)
 {
-	ls1b_gpio_free(GPIO_SCLK);
-	ls1b_gpio_free(GPIO_MOSI);
-//	ls1b_gpio_free(GPIO_MISO);
-	ls1b_gpio_free(GPIO_CS);
-//	ls1b_gpio_free(GPIO_REST);
+	ls1x_gpio_free(GPIO_SCLK);
+	ls1x_gpio_free(GPIO_MOSI);
+//	ls1x_gpio_free(GPIO_MISO);
+	ls1x_gpio_free(GPIO_CS);
+//	ls1x_gpio_free(GPIO_REST);
 }
 
 int nt35310_init(void)
