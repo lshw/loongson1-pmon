@@ -58,7 +58,7 @@
 #define nand_readl(info, off)		\
 	__raw_readl((info)->mmio_base + (off))
 
-#define MAX_BUFF_SIZE	0x100000	/* 1MByte */
+#define MAX_BUFF_SIZE	10240	/* 10KByte */
 #define PAGE_SHIFT		12	/* 页内地址(列地址)A0-A11 */
 
 #if defined(LS1ASOC) || defined(LS1CSOC)
