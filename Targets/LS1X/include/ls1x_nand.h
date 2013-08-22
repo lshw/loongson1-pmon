@@ -31,7 +31,7 @@
 
 /* NAND_TIMING寄存器定义 */
 #define HOLD_CYCLE	0x02
-#define WAIT_CYCLE	0x0c
+#define WAIT_CYCLE	0x0b
 
 #define DMA_REQ			(0x1 << 25)
 #define ECC_DMA_REQ		(0x1 << 24)
