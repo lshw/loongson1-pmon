@@ -1,31 +1,41 @@
 /* ac97 driver for loongson1 (alc203 alc655) */
 
-#include <pmon.h>
-#include <cpu.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
+#include <stdio.h>
 #include <string.h>
-#include <linux/types.h>
+
+#include <sys/malloc.h>
+#include <pmon.h>
+#include <machine/pio.h>
+
 #include "include/ac97_codec.h"
 
-#define CONFREG_BASE	0xbfd00000
+#define RX_DMA_DESC_SIZE	64
+#define TX_DMA_DESC_SIZE	64
+#define RX_BUFF_SIZE		0x00080000	/* 0.5MB */
+#define TX_BUFF_SIZE		0x00100000	/* 1MB */
 
-#define DMA_BASE	0xbfe74080
+#define RX_DMA_DESC		0x81400000
+#define TX_DMA_DESC		0x81400080
+#define RX_DATA_BUFF	0x81400100
+#define TX_DATA_BUFF	(RX_DATA_BUFF + RX_BUFF_SIZE + 64)
 
-#define dma_reg_write(addr, val) do{ *(volatile u32 *)(DMA_BASE+(addr))=val; }while(0)
-//#define dma_reg_read(addr) *(volatile u32 * )(DMA_BASE+(addr))
-#define dma_reg_read(addr) *(volatile u32 *)(addr)
+#define DMA_TX_ADDR		0xdfe72420	/* DMA发送操作的地址 */
+#define DMA_RX_ADDR		0x5fe74c4c	/* DMA接收操作的地址 */
+#define ORDER_ADDR_IN	0xbfd01160	/* DMA配置寄存器 */
+static unsigned int order_addr_in;
+#define DMA_DESC_NUM	28	/* DMA描述符占用的字节数 7x4 */
+/* DMA描述符 */
+#define DMA_ORDERED		0x00
+#define DMA_SADDR		0x04
+#define DMA_DADDR		0x08
+#define DMA_LENGTH		0x0c
+#define DMA_STEP_LENGTH		0x10
+#define DMA_STEP_TIMES		0x14
+#define	DMA_CMD			0x18
+
         
 #define DMA_BUF		0xa3b00000
-#define BUF_SIZE	0x00200000	/* 2MB */
-#define REC_DMA_BUF		(DMA_BUF + BUF_SIZE)
-#define REC_BUF_SIZE	BUF_SIZE
-#define SYNC_W		1    /* sync cache for writing data */
-#define CPU2FIFO	1
-
-#define AC97_RECORD	0
-#define AC97_PLAY	1
 
 #define LS1X_AC97_BASE	0xbfe74000
 #define LS1X_AC97_REG(x)	(LS1X_AC97_BASE + (x))
@@ -123,63 +133,24 @@
 #define ALC655 0x414c4760
 #define ALC203 0x414c4770
 
+struct ls1x_ac97_info {
+	/* AC97 registers*/
+	unsigned int	mmio_base;
+
+	unsigned int	rx_dma_desc;
+	unsigned int	rx_dma_desc_phys;
+	unsigned int	tx_dma_desc;
+	unsigned int	tx_dma_desc_phys;
+
+	unsigned char	*rx_data_buff;
+	unsigned int	rx_data_buff_phys;
+	unsigned char	*tx_data_buff;
+	unsigned int	tx_data_buff_phys;
+};
+
 static unsigned short sample_rate = 0xac44;
-static int ac97_rw = 0;
 static int codec_reset = 1;
 static int ls1x_ac97_reset = 1;
-
-/* DMA描述符 */
-struct desc {
-	u32 ordered;		//下一个描述符地址寄存器
-	u32 saddr;			//内存地址寄存器
-	u32 daddr;			//设备地址寄存器
-	u32 length;		//长度寄存器
-	u32 step_length;	//间隔长度寄存器
-	u32 step_times;	//循环次数寄存器
-	u32 cmd;			//控制寄存器
-};
-static struct desc *dma_desc_base;
-
-static u32 play_desc1[7] = {
-	0x1,
-	DMA_BUF & 0x1fffffff,
-	0xdfe72420,
-	0x8,
-	0x0,
-	(BUF_SIZE/8/4),
-	0x00001001
-};
-
-static u32 rec_desc1[7] = {
-	0x1,
-	REC_DMA_BUF & 0x1fffffff,
-	0xdfe74c4c,
-	0x8,
-	0x0,
-	(BUF_SIZE/8/4),
-	0x00000001
-};
-
-static u32 readl(u32 addr)
-{
-	return *(volatile u32 *)addr;
-}
-
-static void writel(u32 val, u32 addr)
-{
-	*(volatile u32 *)addr = val;
-}
-
-static void init_audio_data(void)
-{
-	unsigned int *data = (unsigned int*)DMA_BUF;
-	int i;
-
-	for (i=0; i<(BUF_SIZE>>3); i++) {
-		data[i*2] = 0;//0x7fffe000;
-		data[i*2+1] = 0;//0x1f2e3d4c;
-	}
-}
 
 static unsigned short ls1x_ac97_read(unsigned short reg)
 {
@@ -309,10 +280,8 @@ static void codec_init(void)
 	ls1x_ac97_write(AC97_GENERAL_PURPOSE, (1<<13)|(1<<10));
 }
 
-int ac97_config(void)
+static int ac97_config(void)
 {
-	int i = 0;
-
 #ifdef CONFIG_CHINESE
 	printf("配置 ac97 编解码器\n");
 #else
@@ -348,50 +317,138 @@ int ac97_config(void)
 	return 0;
 }
 
-void dma_config(void)
+static int ls1x_ac97_init_buff(struct ls1x_ac97_info *info)
 {
-	u32 addr;
+	/* dma描述符 */
+	info->rx_dma_desc = (unsigned int)(RX_DMA_DESC | 0xa0000000);	/* DMA描述符地址 */
+	/* PMON中使用该malloc(xx,xx)函数需要#include <sys/malloc.h> */
+//	info->rx_dma_desc = (unsigned int)(malloc(RX_DMA_DESC_SIZE, M_DEVBUF, M_WAITOK)) | 0xa0000000;
+	if(info->rx_dma_desc == NULL)
+		return -1;
+	info->rx_dma_desc_phys = (unsigned int)(info->rx_dma_desc) & 0x1fffffff;
 
-	dma_desc_base = (struct desc*)malloc(sizeof(struct desc) + 32);
-	addr = dma_desc_base = (u32)dma_desc_base & ~31;
-	
-	/* play */
-	if (AC97_PLAY == ac97_rw) {
-		dma_desc_base->ordered = play_desc1[0] | (addr & 0x1fffffff);
-		dma_desc_base->saddr = play_desc1[1];
-		dma_desc_base->daddr = play_desc1[2];
-		dma_desc_base->length = play_desc1[3];
-		dma_desc_base->step_length = play_desc1[4];
-		dma_desc_base->step_times = play_desc1[5];
-		dma_desc_base->cmd = play_desc1[6];
-		pci_sync_cache(0, (unsigned long)addr, 32*7, SYNC_W);
+	info->tx_dma_desc = (unsigned int)(TX_DMA_DESC | 0xa0000000);	/* DMA描述符地址 */
+//	info->tx_dma_desc = (unsigned int)(malloc(TX_DMA_DESC_SIZE, M_DEVBUF, M_WAITOK)) | 0xa0000000;
+	if(info->tx_dma_desc == NULL)
+		return -1;
+	info->tx_dma_desc_phys = (unsigned int)(info->tx_dma_desc) & 0x1fffffff;
 
-		addr = (u32)(addr & 0x1fffffff);
+	/* 数据缓存 */
+	info->rx_data_buff = (unsigned char *)(RX_DATA_BUFF | 0xa0000000);
+	if(info->rx_data_buff == NULL)
+		return -1;
+	info->rx_data_buff_phys = (unsigned int)(info->rx_data_buff) & 0x1fffffff;
 
-		*(volatile u32*)(CONFREG_BASE + 0x1160) = addr | 0x00000009;
-	}
-	/* record */
-	else {
-		dma_desc_base->ordered = rec_desc1[0] | (addr & 0x1fffffff);
-		dma_desc_base->saddr = rec_desc1[1];
-		dma_desc_base->daddr = rec_desc1[2];
-		dma_desc_base->length = rec_desc1[3];
-		dma_desc_base->step_length = rec_desc1[4];
-		dma_desc_base->step_times = rec_desc1[5];
-		dma_desc_base->cmd = rec_desc1[6];
-		pci_sync_cache(0, (unsigned long)addr, 32*7, SYNC_W);
+	info->tx_data_buff = (unsigned char *)(TX_DATA_BUFF | 0xa0000000);
+	if(info->tx_data_buff == NULL)
+		return -1;
+	info->tx_data_buff_phys = (unsigned int)(info->tx_data_buff) & 0x1fffffff;
 
-		addr = (u32)(addr & 0x1fffffff);
+	/*  */
+	info->mmio_base = LS1X_AC97_BASE;
+	order_addr_in = ORDER_ADDR_IN;
 
-		*(volatile u32*)(CONFREG_BASE + 0x1160) = addr | 0x0000000a;
-	}
+	return 0;
 }
 
-/* 测试录音结果 */
-int ac97_test(int argc,char **argv)
+static void ls1x_dma_init(struct ls1x_ac97_info *info)
 {
+	writel(0, info->rx_dma_desc + DMA_ORDERED);
+	writel(info->rx_data_buff_phys, info->rx_dma_desc + DMA_SADDR);
+	writel(DMA_RX_ADDR, info->rx_dma_desc + DMA_DADDR);
+//	writel((info->buf_count + 3) / 4, info->rx_dma_desc + DMA_LENGTH);
+	writel(0, info->rx_dma_desc + DMA_STEP_LENGTH);
+	writel(1, info->rx_dma_desc + DMA_STEP_TIMES);
+	writel(0, info->rx_dma_desc + DMA_CMD);
+
+	writel(0, info->tx_dma_desc + DMA_ORDERED);
+	writel(info->tx_data_buff_phys, info->tx_dma_desc + DMA_SADDR);
+	writel(DMA_TX_ADDR, info->tx_dma_desc + DMA_DADDR);
+//	writel((info->buf_count + 3) / 4, info->tx_dma_desc + DMA_LENGTH);
+	writel(0, info->tx_dma_desc + DMA_STEP_LENGTH);
+	writel(1, info->tx_dma_desc + DMA_STEP_TIMES);
+	writel(0, info->tx_dma_desc + DMA_CMD);
+}
+
+static void start_dma_rx(struct ls1x_ac97_info *info)
+{
+	int timeout = 30000;
+	int ret = 0;
+
+//	writel(0, info->rx_dma_desc + DMA_ORDERED);
+//	writel(info->rx_data_buff_phys, info->rx_dma_desc + DMA_SADDR);
+//	writel(DMA_RX_ADDR, info->rx_dma_desc + DMA_DADDR);
+	writel((RX_BUFF_SIZE + 3) / 4, info->rx_dma_desc + DMA_LENGTH);
+//	writel(0, info->rx_dma_desc + DMA_STEP_LENGTH);
+//	writel(1, info->rx_dma_desc + DMA_STEP_TIMES);
+//	writel(0, info->rx_dma_desc + DMA_CMD);
+
+//	writel(0x00000000, info->rx_dma_desc + DMA_CMD);
+	writel(0x00000001, info->rx_dma_desc + DMA_CMD);	/* 关中断方式 */
+
+	writel((info->rx_dma_desc_phys & (~0x1F)) | 0xa, order_addr_in);	/* 启动DMA */
+	while ((readl(order_addr_in) & 0x8) && (timeout-- > 0)) {
+//		printf("%s. %x\n",__func__, readl(order_addr_in));
+//		udelay(5);
+	}
+
+	while (1) {
+		writel((info->rx_dma_desc_phys & (~0x1F)) | 0x6, order_addr_in);
+//		printf("%s. %x\n",__func__, readl(info->rx_dma_desc + DMA_CMD));
+		ret = readl(info->rx_dma_desc + DMA_CMD);
+		if (ret & 0x08) {
+			break;
+		}
+//		udelay(5);
+	}
+	writel((info->rx_dma_desc_phys & (~0x1F)) | 0x12, order_addr_in);	/* 结束DMA */
+	printf("%s. %x\n",__func__, readl(info->rx_dma_desc + DMA_CMD));
+}
+
+static void start_dma_tx(struct ls1x_ac97_info *info)
+{
+	int timeout = 30000;
+	int ret = 0;
+
+//	writel(0, info->tx_dma_desc + DMA_ORDERED);
+//	writel(info->tx_data_buff_phys, info->tx_dma_desc + DMA_SADDR);
+//	writel(DMA_TX_ADDR, info->tx_dma_desc + DMA_DADDR);
+	writel((TX_BUFF_SIZE + 3) / 4, info->tx_dma_desc + DMA_LENGTH);
+//	writel(0, info->tx_dma_desc + DMA_STEP_LENGTH);
+//	writel(1, info->tx_dma_desc + DMA_STEP_TIMES);
+//	writel(0, info->tx_dma_desc + DMA_CMD);
+
+//	writel(0x00001000, info->tx_dma_desc + DMA_CMD);
+	writel(0x00003001, info->tx_dma_desc + DMA_CMD);	/* 关中断方式 */
+
+	writel((info->tx_dma_desc_phys & (~0x1F)) | 0x9, order_addr_in);	/* 启动DMA */
+	while ((readl(order_addr_in) & 0x8) && (timeout-- > 0)) {
+//		printf("%s. %x\n",__func__, readl(order_addr_in));
+//		udelay(5);
+	}
+
+	while (1) {
+		writel((info->tx_dma_desc_phys & (~0x1F)) | 0x5, order_addr_in);
+		writel((info->tx_dma_desc_phys & (~0x1F)) | 0x5, order_addr_in);	/* 避免读取的值不正确 */
+		delay(3);
+		ret = readl(info->tx_dma_desc + DMA_CMD);
+//		printf("%s. %x\n",__func__, ret);
+		if ((ret & 0x08) || (!(ret & 0xf0))) {
+			break;
+		}
+	}
+	writel((info->tx_dma_desc_phys & (~0x1F)) | 0x11, order_addr_in);	/* 结束DMA */
+	printf("%s. %x\n",__func__, readl(info->tx_dma_desc + DMA_CMD));
+}
+
+/* 测试录音放音 */
+int ac97_test(int argc, char **argv)
+{
+	struct ls1x_ac97_info *info;
+	unsigned int i, j;
+	unsigned short *rx_buff;
+	unsigned int *tx_buff;
 	char cmdbuf[100];
-	int i;
 
 	if ((argc!=2) && (argc!=1))
 		return -1;
@@ -399,7 +456,20 @@ int ac97_test(int argc,char **argv)
 		sprintf(cmdbuf, "load -o 0x%x -r %s", DMA_BUF, argv[1]);
 		do_cmd(cmdbuf);
 	}
-	ac97_rw = AC97_PLAY;
+
+	info = malloc(sizeof(struct ls1x_ac97_info), M_DEVBUF, M_WAITOK);
+	if (!info) {
+		printf("Unable to allocate ac97 device structure.\n");
+		return -1;
+	}
+
+	if (ls1x_ac97_init_buff(info)) {
+		printf("error: init buff have some error!\n");
+		return -1;
+	}
+
+	ls1x_dma_init(info);
+	ac97_config();
 
 #ifdef CONFIG_CHINESE
 	printf("开始放音：注意听是否跟所录声音一致\n");
@@ -408,16 +478,17 @@ int ac97_test(int argc,char **argv)
 #endif
 	
 	/* 需要配置DMA */
-	dma_config();
+	start_dma_rx(info);
 
-	for (i=0; i<8; i++) {
-		delay(1000000);
-		printf(".");
+	rx_buff = (unsigned short *)RX_DATA_BUFF;
+	tx_buff = (unsigned int *)TX_DATA_BUFF;
+
+	for (i=0; i<(RX_BUFF_SIZE/2); i++) {
+		j = 0x0000ffff & (unsigned int)rx_buff[i];
+		tx_buff[i] = (j<<16) | j;
 	}
-	*(volatile u32*)(CONFREG_BASE + 0x1160) = 0x00000011;
 
-	/* codec reset */
-//	ls1x_ac97_write(AC97_RESET, 0x0000);
+	start_dma_tx(info);
 
 #ifdef CONFIG_CHINESE
 	printf("放音结束\n");
@@ -425,58 +496,9 @@ int ac97_test(int argc,char **argv)
 	printf("test done\n");
 #endif
 
-//	free(dma_desc_base);
-
-	return 0;
-}
-
-/* 把codec 输入的数据通过DMA传输到内存 */
-int ac97_read(int argc,char **argv)
-{
-	unsigned int i;
-	unsigned int j;
-	unsigned short *rec_buff;
-	unsigned int *ply_buff;
-	ac97_rw = AC97_RECORD;
-
-	init_audio_data();
-	
-	/*1.ac97 config read*/
-	ac97_config();
-
-	/*2.dma_config read*/
-	dma_config();
-
-	/*3.set dma desc*/
-#ifdef CONFIG_CHINESE
-	printf("请用麦克风录一段音 ");
-#else
-	printf("please speck to microphone ");
-#endif
-	for (i=0; i<8; i++) {
-		delay(1000000);
-		printf("."); 
-	}
-	*(volatile u32*)(CONFREG_BASE + 0x1160) = 0x00000012;
-#ifdef CONFIG_CHINESE
-	printf("录音结束\n");
-#else
-	printf("rec done\n");
-#endif
-
-	/*4.wait dma done,return*/ 
-//	while(((dma_reg_read(0x2c))&0x8)==0)
-//		delay(1000);//1 ms 
-//	dma_reg_write(0x2c,0x8);
-	
-	/*5.transform single channel to double channel*/
-	rec_buff = (unsigned short *)REC_DMA_BUF;
-	ply_buff = (unsigned int *)DMA_BUF;
-
-	for (i=0; i<(REC_BUF_SIZE/4); i++) {
-		j = 0x0000ffff & (unsigned int)rec_buff[i];
-		ply_buff[i] = (j<<16) | j;
-	}
+//	free((unsigned int *)info->rx_dma_desc, M_DEVBUF);
+//	free((unsigned int *)info->tx_dma_desc, M_DEVBUF);
+	free(info, M_DEVBUF);
 
 	return 0;
 }
@@ -485,15 +507,12 @@ static const Cmd Cmds[] =
 {
 	{"MyCmds"},
 	{"ac97_test", "file", 0, "ac97_test file", ac97_test, 0, 99, CMD_REPEAT},
-	{"ac97_read", "", 0, "ac97_read", ac97_read, 0, 99, CMD_REPEAT},
-	{"ac97_config", "", 0, "ac97_config", ac97_config, 0, 99, CMD_REPEAT},
 	{0, 0}
 };
 
 static void init_cmd __P((void)) __attribute__ ((constructor));
 
-static void
-init_cmd()
+static void init_cmd(void)
 {
 	cmdlist_expand(Cmds, 1);
 }

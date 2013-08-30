@@ -61,7 +61,7 @@
 #define MAX_BUFF_SIZE	10240	/* 10KByte */
 #define PAGE_SHIFT		12	/* 页内地址(列地址)A0-A11 */
 
-#if defined(LS1ASOC) || defined(LS1CSOC)
+#if defined(LS1ASOC)
 	#define MAIN_ADDRH(x)		(x)
 	#define MAIN_ADDRL(x)		((x) << PAGE_SHIFT)
 	#define MAIN_SPARE_ADDRH(x)	(x)
@@ -71,6 +71,11 @@
 	#define MAIN_ADDRL(x)		((x) << (PAGE_SHIFT - 1))	/* 不访问spare区时A11无效 */
 	#define MAIN_SPARE_ADDRH(x)	((x) >> (32 - PAGE_SHIFT))
 	#define MAIN_SPARE_ADDRL(x)	((x) << PAGE_SHIFT)
+#elif defined(LS1CSOC)
+	#define MAIN_ADDRH(x)		(x)
+	#define MAIN_ADDRL(x)		(0)
+	#define MAIN_SPARE_ADDRH(x)	(x)
+	#define MAIN_SPARE_ADDRL(x)	(0)
 #endif
 
 #define ALIGN_DMA(x)       (((x)+ 3)/4)

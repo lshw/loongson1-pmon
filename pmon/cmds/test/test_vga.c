@@ -78,8 +78,7 @@ static int printticks(int n,int d)
 #include "../setup.h"
 
 extern int ls1b_serialtest(void);
-extern int ac97_test(int argc,char **argv);
-extern int ac97_read(int argc,char **argv);
+extern int ac97_test(int argc, char **argv);
 extern void ads7846_test(void);
 extern void button_test(void);
 
@@ -236,7 +235,6 @@ static int cmd_test_vga(int ac,char **av)
 				printf("Plese plug net wire into syn0\n");
 			#endif
 				pause();
-				ac97_read(1, NULL);
 				ac97_test(1, NULL);
 			break;
 			case TEST_SYN0:

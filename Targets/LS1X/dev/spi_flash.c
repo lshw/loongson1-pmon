@@ -7,9 +7,8 @@
 #include <errno.h>
 #include <pmon.h>
 #include <cpu.h>
-//#include <include/types.h>
 #include <pflash.h>
-#include<linux/mtd/mtd.h>
+#include <linux/mtd/mtd.h>
 
 #if 1
 #define K1BASE 0xa0000000
