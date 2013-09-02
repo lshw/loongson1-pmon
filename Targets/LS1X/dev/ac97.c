@@ -394,6 +394,8 @@ static void start_dma_rx(struct ls1x_ac97_info *info)
 
 	while (1) {
 		writel((info->rx_dma_desc_phys & (~0x1F)) | 0x6, order_addr_in);
+		do {
+		} while (readl(order_addr_in) & 0x4);
 //		printf("%s. %x\n",__func__, readl(info->rx_dma_desc + DMA_CMD));
 		ret = readl(info->rx_dma_desc + DMA_CMD);
 		if (ret & 0x08) {
@@ -403,6 +405,34 @@ static void start_dma_rx(struct ls1x_ac97_info *info)
 	}
 	writel((info->rx_dma_desc_phys & (~0x1F)) | 0x12, order_addr_in);	/* 结束DMA */
 	printf("%s. %x\n",__func__, readl(info->rx_dma_desc + DMA_CMD));
+}
+
+static void start_dma_rxs(struct ls1x_ac97_info *info, unsigned int saddr, unsigned int length)
+{
+	int timeout = 30000;
+	int ret = 0;
+
+	writel(saddr, info->rx_dma_desc + DMA_SADDR);
+	writel(length, info->rx_dma_desc + DMA_LENGTH);
+
+//	writel(0x00000000, info->rx_dma_desc + DMA_CMD);
+	writel(0x00000001, info->rx_dma_desc + DMA_CMD);	/* 关中断方式 */
+
+	writel((info->rx_dma_desc_phys & (~0x1F)) | 0xa, order_addr_in);	/* 启动DMA */
+	do {
+	} while ((readl(order_addr_in) & 0x8) && (timeout-- > 0));
+
+	do {
+		writel((info->rx_dma_desc_phys & (~0x1F)) | 0x6, order_addr_in);
+		do {
+		} while (readl(order_addr_in) & 0x4);
+//		printf("%s. %x\n",__func__, readl(info->rx_dma_desc + DMA_CMD));
+		ret = readl(info->rx_dma_desc + DMA_CMD);
+//		udelay(5);
+	} while(!(ret & 0x08));
+
+	writel((info->rx_dma_desc_phys & (~0x1F)) | 0x12, order_addr_in);	/* 结束DMA */
+//	printf("%s. %x\n",__func__, readl(info->rx_dma_desc + DMA_CMD));
 }
 
 static void start_dma_tx(struct ls1x_ac97_info *info)
@@ -428,8 +458,10 @@ static void start_dma_tx(struct ls1x_ac97_info *info)
 	}
 
 	while (1) {
-		writel((info->tx_dma_desc_phys & (~0x1F)) | 0x5, order_addr_in);
+//		writel((info->tx_dma_desc_phys & (~0x1F)) | 0x5, order_addr_in);
 		writel((info->tx_dma_desc_phys & (~0x1F)) | 0x5, order_addr_in);	/* 避免读取的值不正确 */
+		do {
+		} while (readl(order_addr_in) & 0x4);
 		delay(3);
 		ret = readl(info->tx_dma_desc + DMA_CMD);
 //		printf("%s. %x\n",__func__, ret);
@@ -439,6 +471,39 @@ static void start_dma_tx(struct ls1x_ac97_info *info)
 	}
 	writel((info->tx_dma_desc_phys & (~0x1F)) | 0x11, order_addr_in);	/* 结束DMA */
 	printf("%s. %x\n",__func__, readl(info->tx_dma_desc + DMA_CMD));
+}
+
+static void start_dma_txs(struct ls1x_ac97_info *info, unsigned int saddr, unsigned int length)
+{
+	int timeout = 30000;
+	int ret = 0;
+
+	writel(saddr, info->tx_dma_desc + DMA_SADDR);
+	writel(length, info->tx_dma_desc + DMA_LENGTH);
+
+//	writel(0x00001000, info->tx_dma_desc + DMA_CMD);
+	writel(0x00003001, info->tx_dma_desc + DMA_CMD);	/* 关中断方式 */
+
+	writel((info->tx_dma_desc_phys & (~0x1F)) | 0x9, order_addr_in);	/* 启动DMA */
+	do {
+	} while ((readl(order_addr_in) & 0x8) && (timeout-- > 0));
+
+	do {
+		writel((info->tx_dma_desc_phys & (~0x1F)) | 0x5, order_addr_in);
+		do {
+		} while (readl(order_addr_in) & 0x4);
+//		writel((info->tx_dma_desc_phys & (~0x1F)) | 0x5, order_addr_in);	/* 避免读取的值不正确 */
+//		delay(3);
+		ret = readl(info->tx_dma_desc + DMA_CMD);
+		delay(300);
+//		printf("%s. %x\n",__func__, ret);
+		if ((ret & 0x08) || (!(ret & 0xf0))) {
+			break;
+		}
+	} while (1);
+//	printf("%s. %x\n",__func__, ret);
+//	printf("%s. %x\n",__func__, readl(info->tx_dma_desc + DMA_CMD));
+	writel((info->tx_dma_desc_phys & (~0x1F)) | 0x11, order_addr_in);	/* 结束DMA */
 }
 
 /* 测试录音放音 */
@@ -479,6 +544,9 @@ int ac97_test(int argc, char **argv)
 	
 	/* 需要配置DMA */
 	start_dma_rx(info);
+/*	for (i = 0; i < RX_BUFF_SIZE; i += 512) {
+		start_dma_rxs(info, info->rx_data_buff_phys + i, 128);
+	}*/
 
 	rx_buff = (unsigned short *)RX_DATA_BUFF;
 	tx_buff = (unsigned int *)TX_DATA_BUFF;
@@ -488,7 +556,11 @@ int ac97_test(int argc, char **argv)
 		tx_buff[i] = (j<<16) | j;
 	}
 
-	start_dma_tx(info);
+//	start_dma_tx(info);
+//	start_dma_txs(info, info->tx_data_buff_phys + 0, TX_BUFF_SIZE/4);
+	for (i = 0; i < TX_BUFF_SIZE; i += 2048) {
+		start_dma_txs(info, info->tx_data_buff_phys + i, 512);
+	}
 
 #ifdef CONFIG_CHINESE
 	printf("放音结束\n");
