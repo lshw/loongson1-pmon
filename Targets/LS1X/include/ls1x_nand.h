@@ -6,7 +6,7 @@
 
 #define DMA_ACCESS_ADDR	0x1fe78040	/* DMA对NAND操作的地址 */
 #define ORDER_ADDR_IN	0xbfd01160	/* DMA配置寄存器 */
-#define DMA_DESC_NUM	28	/* DMA描述符占用的字节数 7x4 */
+#define DMA_DESC_NUM	64	/* DMA描述符占用的字节数 7x4 */
 /* DMA描述符 */
 #define DMA_ORDERED		0x00
 #define DMA_SADDR		0x04
@@ -61,7 +61,7 @@
 #define MAX_BUFF_SIZE	10240	/* 10KByte */
 #define PAGE_SHIFT		12	/* 页内地址(列地址)A0-A11 */
 
-#if defined(LS1ASOC)
+#if defined(LS1ASOC) || defined(LS1CSOC)
 	#define MAIN_ADDRH(x)		(x)
 	#define MAIN_ADDRL(x)		((x) << PAGE_SHIFT)
 	#define MAIN_SPARE_ADDRH(x)	(x)
@@ -71,11 +71,6 @@
 	#define MAIN_ADDRL(x)		((x) << (PAGE_SHIFT - 1))	/* 不访问spare区时A11无效 */
 	#define MAIN_SPARE_ADDRH(x)	((x) >> (32 - PAGE_SHIFT))
 	#define MAIN_SPARE_ADDRL(x)	((x) << PAGE_SHIFT)
-#elif defined(LS1CSOC)
-	#define MAIN_ADDRH(x)		(x)
-	#define MAIN_ADDRL(x)		(0)
-	#define MAIN_SPARE_ADDRH(x)	(x)
-	#define MAIN_SPARE_ADDRL(x)	(0)
 #endif
 
 #define ALIGN_DMA(x)       (((x)+ 3)/4)
