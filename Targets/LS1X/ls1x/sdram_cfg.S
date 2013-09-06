@@ -21,8 +21,8 @@
 #define	TCL			3
 #define	TRP			3
 #define	TRFC		9
-#define	TRAS		6
-#define	TREF		0xfff	//8530
+#define	TRAS		7
+#define	TREF		0x926
 #define	TWR			2
 
 #define	DEF_SEL		0x1
