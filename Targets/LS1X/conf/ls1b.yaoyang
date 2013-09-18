@@ -252,6 +252,7 @@ option		CONFIG_NT35310
 
 ### I2C I2C控制器和设备初始化
 option		mod_i2c_ls1x
+option		CONFIG_PCF857X
 
 option		wait_key
 #option		HAVE_MUT_COM		#多串口输入/输出,把控制台信息同时输入/输出到多个串口

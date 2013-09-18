@@ -79,7 +79,7 @@ option		CONS_BAUD=B115200
 option		UART_BASE_ADDR=0xbfe4c000	# 串口控制台基地址 需要不同的串口输出可以修改此值
 
 option		APB_CLK=24000000	# 外部晶振频率(Hz)
-option		PLL_MULT=0x54		# CPU LCD CAM及外设倍频
+option		PLL_MULT=0x5a		# CPU LCD CAM及外设倍频
 option		CPU_DIV=2			# LS1C的CPU分频
 option		SDRAM_DIV=SDRAM_DIV_2	# LS1C的SDRAM分频
 
@@ -261,7 +261,12 @@ option		CONFIG_FB_DYN
 #option		CONFIG_NT35310
 
 ### I2C I2C控制器和设备初始化
-#option		mod_i2c_ls1x
+option		mod_i2c_ls1x
+#option		CONFIG_PCF857X
+option		CONFIG_UDA1342
+
+### IIS IIS控制器和设备初始化
+option		mod_iis_ls1x
 
 option		wait_key
 #option		HAVE_MUT_COM		#多串口输入/输出,把控制台信息同时输入/输出到多个串口

@@ -202,7 +202,7 @@ static void inline ls1x_nand_stop(struct ls1x_nand_info *info)
 
 static void start_dma_nand(unsigned int flags, struct ls1x_nand_info *info)
 {
-	int timeout = 200;
+	int timeout = 500;
 	int ret;
 
 	writel(0, info->dma_desc + DMA_ORDERED);

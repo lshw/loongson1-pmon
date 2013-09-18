@@ -184,7 +184,9 @@ int ls1x_i2c_probe(void)
 	i2c->base = LS1X_I2C0_BASE;
 	ls1x_i2c_hwinit(i2c);
 
+#ifdef CONFIG_PCF857X
 	pcf857x_init();
+#endif
 }
 
 int pcf857x_init(void)
