@@ -54,6 +54,7 @@ char	*strncat __P((char *, const char *, size_t));
 char	*strchr __P((const char *, int));
 char	*strnchr __P((const char *, char, size_t));
 char	*strncpy __P((char *, const char *, size_t));
+int strcmp __P((const char *, const char *));
 int	strncmp __P((const char *, const char *, size_t));
 char	*strcpy __P((char *, const char *));
 char	*strrchr __P((const char *, int));

@@ -39,7 +39,7 @@
 #include <file.h>
 #include <ctype.h>
 #include <mtdfile.h>
-#include <sys/unistd.h>
+#include <unistd.h>
 #include <stdlib.h>
 #undef _KERNEL
 #include <errno.h>
@@ -50,30 +50,21 @@
 
 
 LIST_HEAD(mtdfiles, mtdfile) mtdfiles = LIST_HEAD_INITIALIZER(mtdfiles);
-static int mtdidx=0;
-static struct mtdfile *goodpart0=0;
+
+static int mtdidx = 0;
+static struct mtdfile *goodpart0 = 0;
 extern unsigned char use_yaf;		//lxy
+
 extern int nand_write_skip_bad(nand_info_t *nand, 
 	loff_t offset, size_t *length, 	u_char *buffer, int withoob);
 
+static int mtdfile_open(int , const char *, int, int);
+static int mtdfile_close(int);
+static int mtdfile_read(int, void *, size_t);
+static int mtdfile_write(int, const void *, size_t);
+static off_t mtdfile_lseek(int, off_t, int);
 
-extern	int write_nand(u32 ram,u32 flash,u32 len,u8 flag);
-extern	int read_nand(u32 ram,u32 flash,u32 len,u8 flag);
-
-
-static int mtdfile_open (int , const char *, int, int);
-static int mtdfile_close (int);
-static int mtdfile_read (int, void *, size_t);
-static int mtdfile_write (int, const void *, size_t);
-static off_t mtdfile_lseek (int, off_t, int);
-
-int highmemcpy(long long dst,long long src,long long count);
-void mycacheflush(long long addrin,unsigned int size,unsigned int rw);
-
-/*
- * Supported paths:
- *	/dev/mtd/0@offset,size
- */
+static int file_to_mtd_pos(int fd, int *plen);
 
 static int
    mtdfile_open (fd, fname, mode, perms)
@@ -161,10 +152,7 @@ foundit:
 	return (fd);
 }
 
-/** close(fd) close fd */
-static int
-   mtdfile_close (fd)
-   int             fd;
+static int mtdfile_close(int fd)
 {
 	mtdpriv *priv;
 
@@ -175,20 +163,12 @@ static int
 	return(0);
 }
 
-/** read(fd,buf,n) read n bytes into buf from fd */
-static int
-   mtdfile_read (fd, buf, n)
-   int fd;
-   void *buf;
-   size_t n;
+static int mtdfile_read(int fd, void *buf, size_t n)
 {
-#if 1
-
-	mtdfile        *p;
+	mtdfile *p;
 	mtdpriv *priv;
-	int maxlen,newpos,retlen=0, left=n;
-	int ret_val;
-	unsigned int temp_addr, temp_addr1;	
+	int maxlen, newpos;
+	size_t retlen, left;
 	unsigned int block_inc;
 
 	priv = (mtdpriv *)_file[fd].data;
@@ -197,105 +177,46 @@ static int
 	if (_file[fd].posn + n > priv->open_size)
 		n = priv->open_size - _file[fd].posn;
 	
-	if (p->mtd->type == MTD_NANDFLASH)
-	{
-	//	printf ("lxy: posn = 0x%x, open_off = 0x%x, part_off = 0x%x!\n", _file[fd].posn, priv->open_offset, p->part_offset);
+	if (p->mtd->type == MTD_NANDFLASH) {
 		block_inc = nand_read_skip_bad(p->mtd, _file[fd].posn+priv->open_offset+p->part_offset, &n, buf);
 		if (block_inc < 0)
 			printf ("lxy: error happen, while programing flash......\n");
 		else if (block_inc > 0)
 			_file[fd].posn += block_inc * p->mtd->erasesize;
-	//	ret_val = p->mtd->read(p->mtd,_file[fd].posn+priv->open_offset+p->part_offset,n,&n,buf);
-	}
-	else if (p->mtd->type == MTD_NORFLASH)
-	{
-		while(left)
-		{
-			newpos=file_to_mtd_pos(fd,&maxlen);
-			p->mtd->read(p->mtd,newpos,min(left,maxlen),&retlen,buf);
+	} else if (p->mtd->type == MTD_NORFLASH) {
+		while(left) {
+			newpos = file_to_mtd_pos(fd, &maxlen);
+			p->mtd->read(p->mtd, newpos, min(left, maxlen), &retlen, buf);
 			if(retlen<=0)break;
 			_file[fd].posn += retlen;
 			buf += retlen;
-			left -=retlen;
+			left -= retlen;
 		}
-
 		return (n-left);
 	}
-#if 0
-	while (ret_val)		//lxy
-	{
-		temp_addr = _file[fd].posn+priv->open_offset+p->part_offset;
-		temp_addr1 = (temp_addr+p->mtd->erasesize-1)&~(p->mtd->erasesize-1);
-		_file[fd].posn += (temp_addr1 - temp_addr);
-		ret_val = p->mtd->read(p->mtd,temp_addr1,n,&n,buf);
-	}
-#endif
 
 	_file[fd].posn += n;
       
 	return (n);
-
-#else
-	mtdfile        *p;
-	mtdpriv *priv;
-	int maxlen,newpos,retlen=0, left=n;
-
-	priv = (mtdpriv *)_file[fd].data;
-	p = priv->file;
-
-	if (_file[fd].posn + n > priv->open_size)
-		n = priv->open_size - _file[fd].posn;
-
-#if 1
-	newpos=file_to_mtd_pos(fd,&maxlen);
-	
-	retlen = read_nand(0xa3000000, newpos, n, 0);		//lxy: only read main
-	if (retlen == -1)
-	{
-		printf ("read_nand error......\n");
-		return -1;
-	}
-	memcpy(buf, 0xa3000000, n);
-	_file[fd].posn += n + retlen*p->mtd->erasesize;
-	return n;
-#else
-	while(left)
-	{
-		newpos=file_to_mtd_pos(fd,&maxlen);
-		p->mtd->read(p->mtd,newpos,min(left,maxlen),&retlen,buf);
-		if(retlen<=0)break;
-		_file[fd].posn += retlen;
-		buf += retlen;
-		left -=retlen;
-	}
-#endif
-      
-	return (n-left);
-#endif
 }
 
-
-static int
-   mtdfile_write (fd, buf, n)
-   int fd;
-   const void *buf;
-   size_t n;
+static int mtdfile_write(int fd, const void *data, size_t n)
 {
-#if 1
-
-	mtdfile        *p;
+	mtdfile *p;
 	mtdpriv *priv;
 	struct erase_info erase;
 	unsigned int start_addr;
-	unsigned int maxlen,newpos,retlen=0, left=n;
-	
+	int maxlen;
+	size_t retlen = 0, left = n;
+	void *buf = (void *)data;
+
 	unsigned int block_inc;
 	extern unsigned char yaf_use;	//lxy
 	extern unsigned char yaf_w;
-	size_t n1 = n;	
+	size_t n1 = n;
+
 	if (yaf_use)		//lxy: yaffs2'img need a block of 128Kb, also with 4Kb oob
 		n -= 4*1024;
-	
 
 	priv = (mtdpriv *)_file[fd].data;
 	p = priv->file;
@@ -303,160 +224,77 @@ static int
 	if (_file[fd].posn + n > priv->open_size)
 		n = priv->open_size - _file[fd].posn;
 
-	if (p->mtd->type == MTD_NANDFLASH)
-	{
-		start_addr= _file[fd].posn+priv->open_offset+p->part_offset;
-		n=(n+p->mtd->writesize-1)&~(p->mtd->writesize-1);
+	if (p->mtd->type == MTD_NANDFLASH) {
+		start_addr = _file[fd].posn + priv->open_offset + p->part_offset;
+		n = (n + p->mtd->writesize - 1) & ~(p->mtd->writesize - 1);
 
 		erase.mtd = p->mtd;
 		erase.callback = 0;
-		erase.addr = (start_addr+p->mtd->erasesize-1)&~(p->mtd->erasesize-1);
-		erase.len = (n+p->mtd->erasesize-1)&~(p->mtd->erasesize-1);
+		erase.addr = (start_addr + p->mtd->erasesize - 1) & ~(p->mtd->erasesize - 1);
+		erase.len = (n + p->mtd->erasesize - 1) & ~(p->mtd->erasesize - 1);
 		erase.priv = 0;
 
-	#if 0		//lxy
-		if(erase.addr>=start_addr && erase.addr<start_addr+erase.len)
-		{
-		p->mtd->erase(p->mtd,&erase);
-		}
-	#else
-		if (yaf_w)		//lxy: check bad block && erase
-		{
-			if(erase.addr>=start_addr && erase.addr<start_addr+erase.len)
-			{
+		if (yaf_w) {		//lxy: check bad block && erase
+			if(erase.addr>=start_addr && erase.addr<start_addr+erase.len) {
 				//lxy: if erase return !=0, then it is bad block, so we skip it
-				while (p->mtd->erase(p->mtd,&erase) !=0)
-				{
+				while (p->mtd->erase(p->mtd,&erase) != 0) {
 					erase.addr += p->mtd->erasesize;
 					start_addr += p->mtd->erasesize;
 					_file[fd].posn += p->mtd->erasesize;			
 				}
 			}
-		}
-		else		//lxy: only check bad block
-		{
+		} else {	//lxy: only check bad block
 			while (p->mtd->block_isbad(p->mtd, start_addr & ~(p->mtd->erasesize - 1))) {
-				printf ("Skip bad block 0x%08llx\n", start_addr & ~(p->mtd->erasesize - 1));
+				printf ("\nSkip bad block 0x%08llx\n", start_addr & ~(p->mtd->erasesize - 1));
 				erase.addr += p->mtd->erasesize;
 				start_addr += p->mtd->erasesize;
 				_file[fd].posn += p->mtd->erasesize;
 			}
 		}
-	#endif
 
-		if (yaf_use)	//lxy: program data
-		{
+		if (yaf_use) {	//lxy: program data
 			block_inc = nand_write_skip_bad(p->mtd, start_addr, &n1, buf, 1);
 			if (block_inc<0)
 				printf ("lxy: error while programing nandflash..........\n");
-			else if (block_inc>0)
-			{
-	//			printf ("lxy: warning, maybe programing flash without erase......\n");
+			else if (block_inc>0) {
 				_file[fd].posn += block_inc * p->mtd->erasesize;
 			}
+		} else {
+			p->mtd->write(p->mtd, start_addr, n, &n, buf);
 		}
-		else
-			p->mtd->write(p->mtd,start_addr,n,&n,buf);
 		
 		_file[fd].posn += n;
 
 		return (n1);		//lxy
-	}
-	else if (p->mtd->type == MTD_NORFLASH)
-	{
-		while(left)
-		{
-			start_addr=file_to_mtd_pos(fd,&maxlen);
-			maxlen=min(left,maxlen);
-//			maxlen=(maxlen+p->mtd->writesize-1)&~(p->mtd->writesize-1);		//lxy disable this for norflash
+	} else if (p->mtd->type == MTD_NORFLASH) {
+		while (left) {
+			start_addr = file_to_mtd_pos(fd, &maxlen);
+			maxlen = min(left, maxlen);
+//			maxlen = (maxlen+p->mtd->writesize-1)&~(p->mtd->writesize-1);		//lxy disable this for norflash
 
 			erase.mtd = p->mtd;
 			erase.callback = 0;
-			erase.addr = (start_addr+p->mtd->erasesize-1)&~(p->mtd->erasesize-1);
-			erase.len = (maxlen+p->mtd->erasesize-1)&~(p->mtd->erasesize-1);
+			erase.addr = (start_addr + p->mtd->erasesize - 1) & ~(p->mtd->erasesize - 1);
+			erase.len = (maxlen + p->mtd->erasesize - 1) & ~(p->mtd->erasesize - 1);
 			erase.priv = 0;
 
-			if(erase.addr>=start_addr && erase.addr<start_addr+maxlen)
-			{
-				p->mtd->erase(p->mtd,&erase);
+			if(erase.addr>=start_addr && erase.addr<start_addr+maxlen) {
+				p->mtd->erase(p->mtd, &erase);
 			}
 
-			p->mtd->write(p->mtd,start_addr,maxlen,&retlen,buf);
+			p->mtd->write(p->mtd, start_addr, maxlen, &retlen, buf);
 
-			if(retlen<=0)break;
+			if (retlen <= 0)
+				break;
 			_file[fd].posn += retlen;
 			buf += retlen;
-			if(left>retlen) left -=retlen;
-			else left=0;
-
+			if (left > retlen)
+				left -= retlen;
+			else
+				left = 0;
 		}
 		return (n-left);
 	}
-#else
-	mtdfile        *p;
-	mtdpriv *priv;
-	struct erase_info erase;
-	unsigned int start_addr;
-	int maxlen,newpos,retlen=0, left=n;
-	size_t n1;
-
-	priv = (mtdpriv *)_file[fd].data;
-	p = priv->file;
-
-	if (_file[fd].posn + n > priv->open_size)
-		n = priv->open_size - _file[fd].posn;
-
-#if 1
-	{
-		start_addr=file_to_mtd_pos(fd,&maxlen);
-		if(use_yaf)
-			n1 = n - 4*1024;
-		else
-			n1 = n;
-		memcpy(0xa3000000, buf, n1);
-		retlen = write_nand(0xa3000000, start_addr, n1, 0);		//lxy: write to main && oob
-		if (retlen == -1)
-		{
-			printf ("write error........\n");
-			return -1;
-		}
-		_file[fd].posn += n1 + retlen*p->mtd->erasesize ;
-		if (use_yaf)
-			return n;
-		else
-			return n1;
-	}
-#else
-		while(left)
-		{
-			start_addr=file_to_mtd_pos(fd,&maxlen);
-			maxlen=min(left,maxlen);
-			maxlen=(maxlen+p->mtd->writesize-1)&~(p->mtd->writesize-1);
-
-			erase.mtd = p->mtd;
-			erase.callback = 0;
-			erase.addr = (start_addr+p->mtd->erasesize-1)&~(p->mtd->erasesize-1);
-			erase.len = (maxlen+p->mtd->erasesize-1)&~(p->mtd->erasesize-1);
-			erase.priv = 0;
-
-			if(erase.addr>=start_addr && erase.addr<start_addr+maxlen)
-			{
-				p->mtd->erase(p->mtd,&erase);
-			}
-
-			p->mtd->write(p->mtd,start_addr,maxlen,&retlen,buf);
-
-			if(retlen<=0)break;
-			_file[fd].posn += retlen;
-			buf += retlen;
-			if(left>retlen) left -=retlen;
-			else left=0;
-
-		}
-#endif
-
-	return (n-left);
-#endif
 }
 
 /*************************************************************
@@ -536,9 +374,9 @@ int add_mtd_device(struct mtd_info *mtd, int offset, int size, char *name)
 	return 0;
 }
 
-int file_to_mtd_pos(int fd,int *plen)
+static int file_to_mtd_pos(int fd, int *plen)
 {
-    struct mtdfile *goodpart;
+	struct mtdfile *goodpart;
 	mtdfile *p;
 	mtdpriv *priv;
 	int add,file_start,offset,pos;
@@ -546,32 +384,29 @@ int file_to_mtd_pos(int fd,int *plen)
 	priv = (mtdpriv *)_file[fd].data;
 	p = priv->file;
 
-   offset=0;
-   file_start=p->part_offset+priv->open_offset;
-   pos=_file[fd].posn;
+	offset = 0;
+	file_start = p->part_offset + priv->open_offset;
+	pos = _file[fd].posn;
 
-if(getenv("goodpart"))
-{
-   goodpart=goodpart0;
-   add=goodpart0->part_offset;
-	 while(goodpart)
-	 {
-	  if(file_start<goodpart->part_offset)
-	  offset += add;
-	  if(file_start+pos+offset>=goodpart->part_offset && file_start+pos+offset<goodpart->part_offset+goodpart->part_size)break;
+	if (getenv("goodpart")) {
+		goodpart=goodpart0;
+		add=goodpart0->part_offset;
+		while(goodpart) {
+			if(file_start<goodpart->part_offset)
+			offset += add;
+			if(file_start+pos+offset>=goodpart->part_offset && file_start+pos+offset<goodpart->part_offset+goodpart->part_size)break;
 
 
-	  if(goodpart->i_next.le_next)add=goodpart->i_next.le_next->part_offset-goodpart->part_offset-goodpart->part_size;
-	  goodpart=goodpart->i_next.le_next;
-	 }
-	 if(plen)*plen=(goodpart->part_offset+goodpart->part_size)-(file_start+pos+offset);
-}
-else
-{
-	if(plen)*plen=(p->part_offset+p->part_size)-(file_start+pos+offset);
-}
+			if(goodpart->i_next.le_next)add=goodpart->i_next.le_next->part_offset-goodpart->part_offset-goodpart->part_size;
+			goodpart=goodpart->i_next.le_next;
+		}
+		if(plen)*plen=(goodpart->part_offset+goodpart->part_size)-(file_start+pos+offset);
+	} else {
+		if (plen)
+			*plen = (p->part_offset+p->part_size)-(file_start+pos+offset);
+	}
 
- return file_start+pos+offset;
+	return file_start + pos + offset;
 }
 
 int del_mtd_device (struct mtd_info *mtd)
@@ -592,8 +427,6 @@ int del_mtd_device (struct mtd_info *mtd)
 	return(-1);
 }
 
-
-
 static FileSystem mtdfs =
 {
 	"mtd", FS_MEM,
@@ -607,8 +440,7 @@ static FileSystem mtdfs =
 
 static void init_fs __P((void)) __attribute__ ((constructor));
 
-static void
-   init_fs()
+static void init_fs(void)
 {
 	/*
 	 * Install ram based file system.
@@ -617,11 +449,9 @@ static void
 
 }
 
-
-void mtd_erase(int argc,char **argv)
+static int mtd_erase(int argc, char **argv)
 {
 	int fd;
-	size_t n;
 	mtdfile	*p;
 	mtdpriv *priv;
 	struct erase_info erase;
@@ -635,47 +465,41 @@ void mtd_erase(int argc,char **argv)
 	priv = (mtdpriv *)_file[fd].data;
 	p = priv->file;
 	erase_block = p->part_size / p->mtd->erasesize;	
-	start_addr= _file[fd].posn+priv->open_offset+p->part_offset;
-	n=(128*1024 + p->mtd->writesize-1)&~(p->mtd->writesize-1);
+	start_addr = _file[fd].posn + priv->open_offset + p->part_offset;
 
 	erase.mtd = p->mtd;
 	erase.callback = 0;
-	erase.addr = (start_addr+p->mtd->erasesize-1)&~(p->mtd->erasesize-1);
-	erase.len = (n+p->mtd->erasesize-1)&~(p->mtd->erasesize-1);
+	erase.addr = (start_addr + p->mtd->erasesize - 1) & ~(p->mtd->erasesize - 1);
+	erase.len = p->mtd->erasesize;
 	erase.priv = 0;
-	
-	for (count=0; count<erase_block; count++)
-	{
-		if (p->mtd->erase(p->mtd,&erase) !=0)
-		{
+
+	printf("mtd_erase working: \n0x%08x  ", erase.addr);
+	for (count=0; count<erase_block; count++) {
+		if (p->mtd->erase(p->mtd,&erase) != 0) {
 			erase.addr += p->mtd->erasesize;
-//			start_addr += p->mtd->erasesize;
-//			_file[fd].posn += p->mtd->erasesize;
-//			printf ("erasing block address = 0x%x\n", erase.addr);
+			printf("0x%08x  ");
 			continue;
-		}
-		else
+		} else {
 			erase.addr += p->mtd->erasesize;
-		
-		printf ("erasing block address = 0x%x\n", erase.addr);
-//		dotik(256000,0);
+		}
+		printf("\b\b\b\b\b\b\b\b\b\b%08x  ", erase.addr);
 	}
-	printf("finish erase %s\n", argv[1]);
-	
 	close (fd);
+	printf("\nmtd_erase work done!\n");
+
+	return 0;
 }
 
 static const Cmd Cmds[] =
 {
 	{"MyCmds"},
-	{"mtd_erase",	"mtd_erase [device]", 0, "yaffs write and read", mtd_erase, 1, 99, 0},
+	{"mtd_erase", "mtd_erase [device]", 0, "yaffs write and read", mtd_erase, 1, 99, CMD_REPEAT},
 	{0, 0}
 };
 
 static void init_cmd __P((void)) __attribute__ ((constructor));
 
-void
-init_cmd()
+void init_cmd(void)
 {
 	cmdlist_expand(Cmds, 1);
 }
