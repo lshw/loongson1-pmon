@@ -10,19 +10,28 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+
+#include <sys/malloc.h>
 
 #define DC_BASE_ADDR0 0xbc301240
 #define DC_BASE_ADDR1 0xbc301250
 
+#define PAGE_SIZE	(1 << 12)
+#define PAGE_ALIGN(addr) ALIGN(addr, PAGE_SIZE)
+#define ALIGN(x, a)		__ALIGN_KERNEL((x), (a))
+#define __ALIGN_KERNEL(x, a)		__ALIGN_KERNEL_MASK(x, (typeof(x))(a) - 1)
+#define __ALIGN_KERNEL_MASK(x, mask)	(((x) + (mask)) & ~(mask))
+
 static int fb_xsize, fb_ysize, frame_rate;
 #if defined(LS1ASOC) || defined(LS1BSOC)
 #define BURST_SIZE	0xff
-static char *addr_cursor = 0xa0df0000;
-static char *mem_ptr = 0xa0600000;
+static char *addr_cursor = NULL;
+static char *mem_ptr = NULL;
 #elif defined(LS1CSOC)
 #define BURST_SIZE	0x7f
-static char *addr_cursor = 0xa0df0000;
-static char *mem_ptr = 0xa0600000;
+static char *addr_cursor = NULL;
+static char *mem_ptr = NULL;
 #endif
 
 static struct vga_struc {
@@ -196,6 +205,7 @@ static unsigned int caclulatefreq(unsigned int sys_clk, unsigned int pclk)
 	return ((FRAC<<14) + (PIX12<<12) + (N<<8) + M);
 }
 #elif defined(LS1BSOC)
+extern void _probe_frequencies(void);
 static void caclulatefreq(unsigned int ls1b_pll_freq, unsigned int ls1b_pll_div)
 {
 	unsigned int pll, ctrl;
@@ -425,8 +435,9 @@ static int config_fb(unsigned int base)
 	return 0;
 }
 
-int dc_init(void)
+unsigned long dc_init(void)
 {
+	unsigned int smem_len;
 	/* Driver IC需要在ls1x lcd控制器初始化前现进行初始化，否则有可能出现没显示的现象 */
 #if defined(CONFIG_JBT6K74)
 	printf("NT35310 TFT LCD Driver IC\n");
@@ -445,6 +456,15 @@ int dc_init(void)
 	fb_ysize  = getenv("yres") ? strtoul(getenv("yres"),0,0) : FB_YSIZE;
 	frame_rate  = getenv("frame_rate") ? strtoul(getenv("frame_rate"),0,0) : 60;
 
+	smem_len = PAGE_ALIGN(fb_xsize * fb_ysize * 4);
+	mem_ptr = (char *)malloc(smem_len, M_DEVBUF, M_WAITOK); /* 高位地在开始分配内存 */
+	if (!mem_ptr) {
+		printf("Unable to allocate memory for lcd.\n");
+		return -ENOMEM;
+	}
+	memset(mem_ptr, 0, smem_len);
+	mem_ptr = (char *)((unsigned int)mem_ptr | 0xa0000000); /* 需要转换为umap ucache的地址 */
+
 #ifdef DC_FB0
 	config_fb(DC_BASE_ADDR0);
 #endif
@@ -455,6 +475,6 @@ int dc_init(void)
 	config_cursor();
 #endif
 
-	return mem_ptr;
+	return (unsigned long)mem_ptr;
 }
 

@@ -1763,7 +1763,7 @@ int fb_init (unsigned long fbbase,unsigned long iobase)
 	if(fbbase<0x20000000) pGD->frameAdrs = 0xb0000000 | fbbase;
 	else pGD->frameAdrs = fbbase;
 
-	printf("cfb_console init,fb=%x\n",pGD->frameAdrs);
+	printf("cfb_console init, fb=0x%x\n",pGD->frameAdrs);
 
 	video_fb_address = (void *) VIDEO_FB_ADRS;
 #ifdef CONFIG_VIDEO_HW_CURSOR
