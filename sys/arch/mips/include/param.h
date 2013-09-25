@@ -130,9 +130,10 @@
  */ 
 #ifndef NKMEMCLUSTERS
 #ifdef PMON
-#define NKMEMCLUSTERS   (2048 * 1024 / CLBYTES)	/* 0.5Mb */
+//#define NKMEMCLUSTERS	(2048 * 1024 / CLBYTES)	/* 0.5Mb */
+#define NKMEMCLUSTERS	(15 * 1024 * 1024 / CLBYTES)	/* 15MB */
 #else
-#define NKMEMCLUSTERS   (128 * 1024 * 1024 / CLBYTES)
+#define NKMEMCLUSTERS	(128 * 1024 * 1024 / CLBYTES)
 #endif
 #endif
 

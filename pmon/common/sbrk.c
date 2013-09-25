@@ -91,8 +91,8 @@ void init_heaptop(void)
 #ifndef OLDSBRK
 //	if (memorysize >= 0x4000000) {	/* 内存大于等于64MB */
 	if (memorysize >= 0x2000000) {	/* 内存大于等于32MB */
-		allocp1 = 0x80200000;
-		heaptop = 0x80300000;
+		allocp1 = 0x80100000;
+		heaptop = 0x80200000;
 	} else {
 #endif
 		heaptop = (unsigned int)(end + 65536) < CLIENTPC ? CLIENTPC : (end + 65536);

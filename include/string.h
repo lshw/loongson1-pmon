@@ -64,7 +64,9 @@ char	*strtok __P((char *, const char *));
 char	*strstr __P((const char *, const char *));
 char	*strerror __P((int));
 int	strcasecmp __P((const char *, const char *));
-int	strncasecmp __P((const char *, const char *, size_t)); 
+int	strncasecmp __P((const char *, const char *, size_t));
+void *memcpy __P((void *, const void *, size_t));
+void *memset __P((void *, int, size_t));
 void	*memchr __P((const void *, int, size_t));
 
 #if !defined(_ANSI_SOURCE) && !defined(_POSIX_SOURCE)
