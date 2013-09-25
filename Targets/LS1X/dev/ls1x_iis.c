@@ -72,11 +72,11 @@ static void codec_init(void)
 	uda1342.addr = 0x1a;
 
 	/* 注意uda1342先发送高位再发送低位 */
-	buf[0] = 0x00; buf[1] = 0x5c; buf[2] = 0x02;
+	buf[0] = 0x00; buf[1] = 0x5c; buf[2] = 0x42;
 	i2c_master_send(&uda1342, buf, 3);
 	buf[0] = 0x01; buf[1] = 0x00; buf[2] = 0x04;	/* no mixer 输入不混合到输出 */
 	i2c_master_send(&uda1342, buf, 3);
-	buf[0] = 0x10; buf[1] = 0x00; buf[2] = 0x03;
+	buf[0] = 0x10; buf[1] = 0x00; buf[2] = 0x02;
 	i2c_master_send(&uda1342, buf, 3);
 	buf[0] = 0x11; buf[1] = 0x00; buf[2] = 0x00;
 	i2c_master_send(&uda1342, buf, 3);
@@ -99,10 +99,12 @@ static int iis_config(void)
 	printf("config iis codec\n");
 #endif
 
-//	sck_ratio = tgt_apbfreq()/256/48000/2 - 1;
-//	bck_ratio = tgt_apbfreq()/(16*2*48000)/2 - 1;
+#define SAMP_RATE 44100
+	sck_ratio = tgt_apbfreq()/(SAMP_RATE*2*2*2*16) - 1;
+	bck_ratio = tgt_apbfreq()/(SAMP_RATE*2*2*512) - 1;
 	sck_ratio = 0xf;
 	bck_ratio = 0x1;
+//	printf("sck_ratio=%x bck_ratio=%x\n", sck_ratio, bck_ratio);
 
 	writel((16<<24) | (16<<16) | (sck_ratio<<8) | (bck_ratio<<0), LS1X_IIS_CONFIG);
 	writel(0xc220, LS1X_IIS_CONTROL);
