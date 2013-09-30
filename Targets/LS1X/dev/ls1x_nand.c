@@ -181,7 +181,7 @@ static void dma_cache_wback(unsigned long base, unsigned long num)
 
 static int ls1x_nand_done(struct ls1x_nand_info *info)
 {
-	int ret, timeout = 200000;
+	int ret, timeout = 20000;
 
 	do {
 		ret = nand_readl(info, NAND_CMD);
