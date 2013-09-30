@@ -64,7 +64,7 @@
 
 #include <pflash.h>
 #include <flash.h>
-#include <dev/pflash_tgt.h>
+
 extern void    *callvec;
 unsigned int show_menu;
 
@@ -389,11 +389,11 @@ no_update:
 	#endif
 		run=1;
 	#ifdef AUTOLOAD
-		s = getenv ("al");
-		autoload (s);
+		s = getenv("al");
+		autoload(s);
 	#else
-		s = getenv ("autoboot");
-		autorun (s);
+		s = getenv("autoboot");
+		autorun(s);
 	#endif
 	}
 	}
@@ -450,9 +450,9 @@ static void autoload(char *s)
 		SBD_DISPLAY ("AUTO", CHKPNT_AUTO);
 		printf("Press <Enter> to execute loading image:%s\n",s);
 		printf("Press any other key to abort.\n");
-		ioctl (STDIN, CBREAK, &sav);
+		ioctl(STDIN, CBREAK, &sav);
 		lastt = 0;
-		ioctl (STDIN, FIONREAD, &cnt);
+		ioctl(STDIN, FIONREAD, &cnt);
 
 		while (dly != 0 && cnt == 0) {
 			delay(1000000);
@@ -462,51 +462,50 @@ static void autoload(char *s)
 
 		if (cnt > 0 && strchr("\n\r", getchar())) {
 			cnt = 0;
-		}
-		else if (cnt > 0 && strchr("u", getchar())) {
+		} else if (cnt > 0 && strchr("u", getchar())) {
 			do_cmd("test");
-			do_cmd ("load /dev/mtd0");
-			do_cmd ("g console=ttyS2,115200 root=/dev/mtdblock1 rw rootfstype=yaffs2 init=/sbin/init video=ls1bfb:vga1024x768-24@60");
+			do_cmd("load /dev/mtd0");
+			do_cmd("g console=ttyS2,115200 root=/dev/mtdblock1 rw rootfstype=yaffs2 init=/sbin/init video=ls1bfb:vga1024x768-24@60");
 		}
 
-		ioctl (STDIN, TCSETAF, &sav);
-		putchar ('\n');
+		ioctl(STDIN, TCSETAF, &sav);
+		putchar('\n');
 	#else
 		cnt = 0;
 	#endif
 
 		if (cnt == 0) {
 			if (getenv("autocmd")) {
-				strcpy(buf,getenv("autocmd"));
+				strcpy(buf, getenv("autocmd"));
 				do_cmd(buf);
 			}
-			rd= getenv("rd");
+			rd = getenv("rd");
 			if (rd != 0) {
 				sprintf(buf, "initrd %s", rd);
 				if(do_cmd(buf))
 					return;
 			}
 
-			strcpy(buf,"load ");
-			strcat(buf,s);
+			strcpy(buf, "load ");
+			strcat(buf, s);
 			if (do_cmd(buf))
 				return;
-			if ((pa=getenv("append"))) {
-				sprintf(buf,"g %s",pa);
+			if ((pa = getenv("append"))) {
+				sprintf(buf, "g %s", pa);
+			} else if ((pa = getenv("karg"))) {
+				sprintf(buf, "g %s", pa);
+			} else {
+				pa = getenv("dev");
+				strcpy(buf, "g root=/dev/");
+				if (pa != NULL  && strlen(pa) != 0)
+					strcat(buf, pa);
+				else
+					strcat(buf, "hda1");
+				strcat(buf, " console=tty");
 			}
-			else if ((pa=getenv("karg"))) {
-				sprintf(buf,"g %s",pa);
-			}
-			else {
-				pa=getenv("dev");
-				strcpy(buf,"g root=/dev/");
-				if (pa != NULL  && strlen(pa) != 0) strcat(buf,pa);
-				else strcat(buf,"hda1");
-				strcat(buf," console=tty");
-			}
-			printf("%s\n",buf);
-			delay(100000);
-			do_cmd (buf);
+			printf("%s\n", buf);
+//			delay(100000);
+			do_cmd(buf);
 		}
 	}
 }
@@ -628,7 +627,6 @@ void dbginit(char *adr)
 {
 	int	memsize, freq;
 	char	fs[10], *fp;
-	char	*s;
 
 /*	splhigh();*/
 

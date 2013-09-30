@@ -12,12 +12,12 @@ void tgt_puts(char *str);
 
 #ifndef SIM
 #include "memop.c"
-char *membase=0xffffffff80000000+(((MEMSIZE<256?MEMSIZE:256)-4)<<20);
-static char  *sbrk(int size)
+char *membase = (char *)(0xffffffff80000000 + (((MEMSIZE < 256 ? MEMSIZE : 256) - 4) << 20));
+static char *sbrk(int size)
 {
-char *p=membase;
-membase +=size;
-return p;
+	char *p = membase;
+	membase += size;
+	return p;
 }
 
 #include "malloc.c"
@@ -49,8 +49,7 @@ static int exit_code;
 static long bytes_out;
 static int crd_outfd;
 
-
-int dest;
+static void *dest;
 
 #define get_byte()  (inbuf[inptr++])
 
@@ -97,9 +96,9 @@ static void __init flush_window(void)
 	fwrite(window,1,outcnt,fpw);
 #else
 	tgt_putchar('.');
-	memcpy((void *)dest,window,outcnt);
+	memcpy((void *)dest, window, outcnt);
 #endif
-	dest=dest+outcnt;
+	dest = dest + outcnt;
     in = window;
     for (n = 0; n < outcnt; n++) {
 	    ch = *in++;
@@ -115,7 +114,7 @@ static void __init error(char *x)
 	exit_code = 1;
 }
 
-static int __init run_unzip(char *start,long to)
+static int __init run_unzip(char *start, long to)
 {
 	int result;
 	insize = 0;		/* valid bytes in inbuf */
@@ -143,14 +142,14 @@ static int __init run_unzip(char *start,long to)
 }
 
 #ifdef SIM
-int main(int argc,char **argv)
+int main(int argc, char **argv)
 {
-	fpw=fopen("tmp.txt","wb");
-	run_unzip(biosdata,0x80010000);
+	fpw = fopen("tmp.txt", "wb");
+	run_unzip(biosdata, 0x80010000);
 	fclose(fpw);
 }
 #else
 #include "initmips.c"
-int read,write,open,close,printf,vsprintf,getenv,tgt_reboot,CpuTertiaryCacheSize,tgt_reboot;
+int read, write, open, close, getenv, tgt_reboot, CpuTertiaryCacheSize, tgt_reboot;
 #endif
 

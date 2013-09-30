@@ -47,6 +47,9 @@
  *  boot device.
  */
 
+#ifndef __PFLASH_TGT_H_
+#define __PFLASH_TGT_H_
+
 #ifdef W25Q128
 #define	TARGET_FLASH_DEVICES_16 \
 	{ PHYS_TO_UNCACHED(0x1fc00000), 0x01000000, 1, 1, FL_BUS_8  },	\
@@ -60,6 +63,8 @@
 	{ PHYS_TO_UNCACHED(0x1fc00000), 0x00080000, 1, 1, FL_BUS_8  },	\
 	{ 0x00000000, 0x00000000 }	/* W25X40B 512K */
 //	#define	TARGET_FLASH_DEVICES_16 \
-	{ PHYS_TO_UNCACHED(0x1fc80000), 0x00080000, 1, 1, FL_BUS_8  },	\
-	{ 0x00000000, 0x00000000 }	/* 1A LPC Flash */
+//	{ PHYS_TO_UNCACHED(0x1fc80000), 0x00080000, 1, 1, FL_BUS_8  },	\
+//	{ 0x00000000, 0x00000000 }	/* 1A LPC Flash */
+#endif
+
 #endif

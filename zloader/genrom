@@ -92,12 +92,15 @@ asm volatile(\
 ::: "\$5","\$6");
 }
 #endif
+
+extern void *memset(void *s, int c, size_t count);
+
 void initmips(unsigned int msize,int dmsize,int dctrl)
 {
-	long *edata=(void *)$myedata;
-	long *end=(void *)$myend;
-	int *p;
-	int debug=(msize==0);
+	long *edata = (void *)$myedata;
+	long *end = (void *)$myend;
+	long *p;
+	int debug = (msize==0);
 //	CPU_TLBClear();
 	tgt_puts("Uncompressing Bios");
 	if(!debug||dctrl&1)enable_cache();
@@ -106,10 +109,10 @@ void initmips(unsigned int msize,int dmsize,int dctrl)
 		if(run_unzip(biosdata,$mystart)>=0)break;
 	}
 	tgt_puts("OK,Booting Bios\\r\\n");
-	for(p=edata;p<=end;p++){
-		*p=0;
+	for (p=edata; p<=end; p++){
+		*p = 0;
 	}
-	memset($mystart-0x1000,0,0x1000);//$mystart-0x1000 for frame(registers),memset for pretty
+	memset((void *)$mystart-0x1000, 0, 0x1000);//$mystart-0x1000 for frame(registers),memset for pretty
 #ifdef NOCACHE2
 	flush_cache();
 #else

@@ -247,8 +247,8 @@ exc_common:
 	.word open
 	.word close
 	.word nullfunction
-	.word printf
-	.word vsprintf
+//	.word printf
+//	.word vsprintf
 	.word nullfunction
 	.word nullfunction
 	.word getenv
