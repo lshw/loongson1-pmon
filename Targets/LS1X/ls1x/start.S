@@ -542,6 +542,24 @@ cpu_win_fixup:
 	and t1, t1, 0xffffff00
 	ori	t1, 0xd0
 	sw	t1, 0x8(t0)
+#elif defined(LS1CSOC)
+/*	set_cpu_window(0, 0x1c280000, 0xfff80000, 0x1c280083) // camera 512K
+	set_cpu_window(1, 0x1c300000, 0xfff00000, 0x1c300081) // dc 1M
+	set_cpu_window(2, 0x1fe10000, 0xffffe000, 0x1fe10082) // gmac0	8K
+	set_cpu_window(3, 0x1fe10000, 0xffff0000, 0x1fe100d0) // gmac0	64K
+	set_cpu_window(4, 0x1f000000, 0xff000000, 0x1f000082) // AXIMUX   16M
+	set_cpu_window(5, 0x00000000, 0x00000000, 0x000000f0) // ddr 0
+	set_cpu_window(6, 0x00000000, 0x00000000, 0x000000f0) // ddr 0
+	set_cpu_window(7, 0x00000000, 0x00000000, 0x000000f0) // ddr 0*/
+
+	set_cpu_window(0, 0x1c280000, 0xfff80000, 0x1c2800d3) // camera
+//	set_cpu_window(1, 0x1fc00000, 0xfff00000, 0x1fc000f2) //
+	set_cpu_window(2, 0x1c300000, 0xfff00000, 0x1c3000d1) // dc 1M
+//	set_cpu_window(3, 0x1f000000, 0xff000000, 0x1f0000d2) //
+	set_cpu_window(4, 0x00000000, 0x00000000, 0x000000f0)
+	set_cpu_window(5, 0x00000000, 0x00000000, 0x000000f0)
+	set_cpu_window(6, 0x00000000, 0x00000000, 0x000000f0) // ddr 0
+	set_cpu_window(7, 0x00000000, 0x00000000, 0x000000f0) // ddr 0
 #endif
 	// after this fixup, the kernel code should be compiled with
 	// uncached instruction fetch patch
@@ -1015,7 +1033,6 @@ LEAF(hexserial)
 END(hexserial)
 
 LEAF(tgt_putchar)
-	.set	noat
 	move	AT, ra
 	beqz	output_en, 2f
 	nop
@@ -1041,8 +1058,7 @@ LEAF(tgt_putchar)
 	sb	a0, NSREG(NS16550_DATA)(v0)
 2:
 	j	ra
-	nop	
-	.set	at
+	nop
 END(tgt_putchar)
 
 LEAF(tgt_testchar)
@@ -1055,7 +1071,6 @@ LEAF(tgt_testchar)
 END(tgt_testchar)
 
 LEAF(tgt_getchar)
-	.set	noat
 	move	AT, ra
 
 	beqz	output_en, 2f
@@ -1082,7 +1097,6 @@ LEAF(tgt_getchar)
 2:
 	jr ra
 	nop
-	.set	at
 END(tgt_getchar)
 
 
@@ -1111,7 +1125,6 @@ END(tgt_getchar)
 #define B921600	921600
 
 LEAF(initserial)
-	.set noat
 	move AT,ra
 	
 	la	v0, COM1_BASE_ADDR
@@ -1183,19 +1196,34 @@ LEAF(initserial)
 	li		a1, 2*16*CONS_BAUD
 	divu	v1, v1, a1
 #elif defined(LS1CSOC)
-	/* #uart3 config mux */
-	li	t1, 0xbfd011c4
-	li	t2, 0x0
-	sw	t2, 0x0(t1)
+	/* uart3 config mux 默认第一复用 */
+	li		a0, 0xbfd011c4
+	lw		a1, 0x0(a0)
+	and		a1, 0xfffffff9
+	sw		a1, 0x0(a0)
+	lw		a1, 0x10(a0)
+	ori		a1, 0x6
+	sw		a1, 0x10(a0)
+	lw		a1, 0x20(a0)
+	and		a1, 0xfffffff9
+	sw		a1, 0x20(a0)
+	lw		a1, 0x30(a0)
+	and		a1, 0xfffffff9
+	sw		a1, 0x30(a0)
 
-	li	t2, 0x6
-	sw	t2, 0x10(t1)
-
-	li	t2, 0x0
-	sw	t2, 0x20(t1)
-
-	li	t2, 0x0
-	sw	t2, 0x30(t1)
+/*	li		a0, 0xbfd011c0
+	lw		a1, 0x0(a0)
+	and		a1, 0xfffffffc
+	sw		a1, 0x0(a0)
+	lw		a1, 0x10(a0)
+	and		a1, 0xfffffffc
+	sw		a1, 0x10(a0)
+	lw		a1, 0x20(a0)
+	and		a1, 0xfffffffc
+	sw		a1, 0x20(a0)
+	lw		a1, 0x30(a0)
+	ori		a1, 0x3
+	sw		a1, 0x30(a0)*/
 
 	li		a0, 0xbfe78030
 	lw		a1, 0(a0)
@@ -1253,7 +1281,6 @@ LEAF(initserial)
 	sb  v1, NSREG(NS16550_IER)(v0)
 	j   ra
 	nop
-	.set at
 END(initserial)
 
 __main:
