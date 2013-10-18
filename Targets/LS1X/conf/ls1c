@@ -249,6 +249,7 @@ option		CONFIG_VIDEO_16BPP
 #option		CONFIG_VGA_MODEM		#VGA模式
 option		CONFIG_VIDEO_SW_CURSOR	#软件光标
 option		CONFIG_FB_DYN
+#option		CONFIG_BACK_LIGHT
 
 ### TPO TD028TTEC1 TFT LCD 驱动
 #select		mod_jbt6k74
@@ -263,6 +264,7 @@ option		CONFIG_FB_DYN
 ### I2C I2C控制器和设备初始化
 option		mod_i2c_ls1x
 #option		CONFIG_PCF857X
+#option		CONFIG_PCA953X
 option		CONFIG_UDA1342
 
 ### IIS IIS控制器和设备初始化

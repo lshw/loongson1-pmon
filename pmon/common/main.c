@@ -460,6 +460,11 @@ static void autoload(char *s)
 			ioctl (STDIN, FIONREAD, &cnt);
 		} 
 
+	/* LCD显示屏硬件初始化需要1秒(根据具体的屏可能有所不同) 所以背光需要1S后打开 
+	   可以利用上面的bootdelay延时 */
+	#ifdef CONFIG_BACK_LIGHT
+	#endif
+
 		if (cnt > 0 && strchr("\n\r", getchar())) {
 			cnt = 0;
 		} else if (cnt > 0 && strchr("u", getchar())) {

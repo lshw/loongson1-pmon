@@ -187,6 +187,9 @@ int ls1x_i2c_probe(void)
 #ifdef CONFIG_PCF857X
 	pcf857x_init();
 #endif
+#ifdef CONFIG_PCA953X
+	pca953x_init();
+#endif
 }
 
 int pcf857x_init(void)
@@ -202,3 +205,19 @@ int pcf857x_init(void)
 	buf[0] = 0xf9;
 	i2c_master_send(&pcf857x, buf, 1);
 }
+
+int pca953x_init(void)
+{
+	struct i2c_client pca953x;
+	u8 buf[3];
+	int status;
+
+	pca953x.addr = 0x26;
+
+	buf[0] = 0x06; buf[1] = 0xff; buf[2] = 0xf7;	/* 设置输出使能 */
+	status = i2c_master_send(&pca953x, buf, 3);
+	buf[0] = 0x02; buf[1] = 0xff; buf[2] = 0xff;
+	status = i2c_master_send(&pca953x, buf, 3);
+	printf("pca953x init complete %d\n", status);
+}
+
