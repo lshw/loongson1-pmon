@@ -1198,32 +1198,34 @@ LEAF(initserial)
 #elif defined(LS1CSOC)
 	/* uart3 config mux 默认第一复用 */
 	li		a0, 0xbfd011c4
-	lw		a1, 0x0(a0)
-	and		a1, 0xfffffff9
-	sw		a1, 0x0(a0)
+//	lw		a1, 0x00(a0)
+//	and		a1, 0xfffffff9
+//	sw		a1, 0x00(a0)
 	lw		a1, 0x10(a0)
-	ori		a1, 0x6
+	ori		a1, 0x06
 	sw		a1, 0x10(a0)
-	lw		a1, 0x20(a0)
-	and		a1, 0xfffffff9
-	sw		a1, 0x20(a0)
-	lw		a1, 0x30(a0)
-	and		a1, 0xfffffff9
-	sw		a1, 0x30(a0)
+//	lw		a1, 0x20(a0)
+//	and		a1, 0xfffffff9
+//	sw		a1, 0x20(a0)
+//	lw		a1, 0x30(a0)
+//	and		a1, 0xfffffff9
+//	sw		a1, 0x30(a0)
 
-/*	li		a0, 0xbfd011c0
-	lw		a1, 0x0(a0)
-	and		a1, 0xfffffffc
-	sw		a1, 0x0(a0)
+/*	li		a0, 0xbfd011f0
+	lw		a1, 0x00(a0)
+	ori		a1, 0x03
+	sw		a1, 0x00(a0)*/
+
+	/* UART2 */
+/*	li		a0, 0xbfd011c4
 	lw		a1, 0x10(a0)
-	and		a1, 0xfffffffc
-	sw		a1, 0x10(a0)
-	lw		a1, 0x20(a0)
-	and		a1, 0xfffffffc
-	sw		a1, 0x20(a0)
-	lw		a1, 0x30(a0)
-	ori		a1, 0x3
-	sw		a1, 0x30(a0)*/
+	ori		a1, 0x30
+	sw		a1, 0x10(a0)*/
+
+/*	li		a0, 0xbfd011f0
+	lw		a1, 0x00(a0)
+	ori		a1, 0x03
+	sw		a1, 0x00(a0)*/
 
 	li		a0, 0xbfe78030
 	lw		a1, 0(a0)
