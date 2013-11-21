@@ -426,11 +426,17 @@ locate:
 #ifdef BUZZER
 	/* disable buzzer gpio40*/
 	li	v0, 0xbfd010c4
-	li	t0, 0x00000100
-	sw	t0, 0(v0)
-	li	v0, 0xbfd010d4
-	li	t0, 0
-	sw	t0, 0(v0)
+	lw  t0, 0x00(v0)
+	or	t0, 0x00000100
+	sw	t0, 0x00(v0)
+
+	lw  t0, 0x10(v0)
+	and	t0, 0xfffffeff
+	sw	t0, 0x10(v0)
+
+	lw  t0, 0x30(v0)
+	and	t0, 0xfffffeff
+	sw	t0, 0x30(v0)
 #endif
 
 	li output_en, 0x1
