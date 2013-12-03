@@ -205,7 +205,12 @@ void initmips(unsigned int memsz)
 	tgt_cpufreq();
 #endif
 	SBD_DISPLAY("DONE", 0);
-	
+
+	/* I2C控制器提前到该处初始化,部分从设备需要用到I2C */
+#if defined(mod_i2c_ls1x)
+	ls1x_i2c_probe();
+#endif
+
 	/*
 	 *  Init PMON and debug
 	 */
@@ -318,7 +323,7 @@ void tgt_devconfig(void)
 		_pci_devinit(1);	/* PCI device initialization */
 
 #if NMOD_FRAMEBUFFER > 0
-	printf("begin fb_init\n");
+	printf("in fb_init\n");
 	fbaddress = dc_init();
 	fbaddress |= 0xa0000000;
 #ifdef GC300
@@ -328,7 +333,7 @@ void tgt_devconfig(void)
 	#ifdef LS1A_CORE
 	ls1x_gpio_direction_output(GPIO_BACKLIGHT_CTRL, 1);	/* 使能LCD背光 */
 	#endif
-	printf("after fb_init\n");
+
 	rc = 1;
 #endif
 #if (NMOD_FRAMEBUFFER > 0) || (NMOD_VGACON > 0 )
@@ -342,10 +347,6 @@ void tgt_devconfig(void)
 
 #ifdef	CONFIG_CLOUD
 	vga_available = 0;
-#endif
-
-#if defined(mod_i2c_ls1x)
-	ls1x_i2c_probe();
 #endif
 
 	config_init();

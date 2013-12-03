@@ -187,9 +187,8 @@ int ls1x_i2c_probe(void)
 #ifdef CONFIG_PCF857X
 	pcf857x_init();
 #endif
-#ifdef CONFIG_PCA953X
-	pca953x_init();
-#endif
+
+	return 0;
 }
 
 int pcf857x_init(void)
@@ -201,11 +200,12 @@ int pcf857x_init(void)
 
 	pcf857x.addr = 0x24;
 	status = i2c_master_send(&pcf857x, buf, 1);
-	printf("pcf857x init complete %d\n", status);
 	buf[0] = 0xf9;
 	i2c_master_send(&pcf857x, buf, 1);
+	return 0;
 }
 
+#if 0
 int pca953x_init(void)
 {
 	struct i2c_client pca953x;
@@ -219,5 +219,44 @@ int pca953x_init(void)
 	buf[0] = 0x02; buf[1] = 0xff; buf[2] = 0xff;
 	status = i2c_master_send(&pca953x, buf, 3);
 	printf("pca953x init complete %d\n", status);
+	return 0;
+}
+#endif
+
+void pca953x_gpio_direction_output(int addr, int off)
+{
+	struct i2c_client pca953x;
+	u8 buf[3];
+	int offset = 0;
+
+	pca953x.addr = addr;
+
+	buf[0] = 0x06;
+	i2c_master_send(&pca953x, buf, 1);
+	i2c_master_recv(&pca953x, buf, 2);
+	offset = (buf[1] << 8) | buf[0];
+	offset &= ~(1 << off);
+	buf[0] = 0x06; buf[1] = offset & 0xff; buf[2] = (offset >> 8) & 0xff;
+	i2c_master_send(&pca953x, buf, 3);
+}
+
+void pca953x_gpio_set_value(int addr, int off, int val)
+{
+	struct i2c_client pca953x;
+	u8 buf[3];
+	int offset = 0;
+
+	pca953x.addr = addr;
+
+	buf[0] = 0x02;
+	i2c_master_send(&pca953x, buf, 1);
+	i2c_master_recv(&pca953x, buf, 2);
+	offset = (buf[1] << 8) | buf[0];
+	if (val)
+		offset |= 1 << off;
+	else
+		offset &= ~(1 << off);
+	buf[0] = 0x02; buf[1] = offset & 0xff; buf[2] = (offset >> 8) & 0xff;
+	i2c_master_send(&pca953x, buf, 3);
 }
 

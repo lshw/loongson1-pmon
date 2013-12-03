@@ -503,7 +503,7 @@ int ls1x_nand_init(void)
 	struct ls1x_nand_info *info;
 	struct nand_chip *chip;
 
-	printf("\nNAND DETE\n");
+	printf("\nNAND dete\n");
 
 	/* Allocate memory for MTD device structure and private data */
 	ls1x_mtd = malloc(sizeof(struct mtd_info) + sizeof(struct ls1x_nand_info), M_DEVBUF, M_WAITOK);

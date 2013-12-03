@@ -117,12 +117,21 @@ static void nt35310_hw_init(void)
 {
 	DEBUGP("entering\n");
 
+#if defined(CONFIG_PCA953X)
+	pca953x_gpio_set_value(0x26, 12, 1);
+	delay(100);
+	pca953x_gpio_set_value(0x26, 12, 0);
+	delay(10000);
+	pca953x_gpio_set_value(0x26, 12, 1);
+	delay(10000);
+#else
 //	gpio_set_value(GPIO_REST, 1);
 //	delay(100);
 //	gpio_set_value(GPIO_REST, 0);
 //	delay(10000);
 //	gpio_set_value(GPIO_REST, 1);
 //	delay(10000);
+#endif
 
 	/* CMD2UNLOCK */
 	spi_write_cmd(0xed);
@@ -185,7 +194,11 @@ int nt35310_init(void)
 	ls1x_gpio_direction_output(GPIO_CS, 1);
 
 	/* get LCM out of reset */
+#if defined(CONFIG_PCA953X)
+	pca953x_gpio_direction_output(0x26, 12);
+#else
 //	ls1x_gpio_direction_output(GPIO_REST, 1);
+#endif
 
 	/* according to data sheet: wait 50ms (Tpos of LCM). However, 50ms
 	 * seems unreliable with later LCM batches, increasing to 90ms */

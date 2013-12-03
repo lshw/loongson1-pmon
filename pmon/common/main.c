@@ -454,8 +454,9 @@ static void autoload(char *s)
 		lastt = 0;
 		ioctl(STDIN, FIONREAD, &cnt);
 
+		/* 每次循环为100ms延时，原延时时间为1秒太长 */
 		while (dly != 0 && cnt == 0) {
-			delay(1000000);
+			delay(100000);
 			printf ("\b\b%02d", --dly);
 			ioctl (STDIN, FIONREAD, &cnt);
 		} 
@@ -463,6 +464,12 @@ static void autoload(char *s)
 	/* LCD显示屏硬件初始化需要1秒(根据具体的屏可能有所不同) 所以背光需要1S后打开 
 	   可以利用上面的bootdelay延时 */
 	#ifdef CONFIG_BACK_LIGHT
+	#if defined(mod_i2c_ls1x)
+		#ifdef CONFIG_PCA953X
+		pca953x_gpio_direction_output(0x26, 11);
+		pca953x_gpio_set_value(0x26, 11, 1);
+		#endif
+	#endif
 	#endif
 
 		if (cnt > 0 && strchr("\n\r", getchar())) {

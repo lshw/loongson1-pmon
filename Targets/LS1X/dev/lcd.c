@@ -443,15 +443,15 @@ unsigned long dc_init(void)
 	unsigned int smem_len;
 	/* Driver IC需要在ls1x lcd控制器初始化前现进行初始化，否则有可能出现没显示的现象 */
 #if defined(CONFIG_JBT6K74)
-	printf("NT35310 TFT LCD Driver IC\n");
+//	printf("JBT6K74 TFT LCD Driver IC\n");
 	jbt6k74_init();
 #endif
 #if defined(CONFIG_ILI9341)
-	printf("NT35310 TFT LCD Driver IC\n");
+//	printf("ILI9341 TFT LCD Driver IC\n");
 	ili9341_hw_init();
 #endif
 #if defined(CONFIG_NT35310)
-	printf("NT35310 TFT LCD Driver IC\n");
+//	printf("NT35310 TFT LCD Driver IC\n");
 	nt35310_init();
 #endif
 

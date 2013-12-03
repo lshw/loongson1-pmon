@@ -77,16 +77,15 @@ extern int strtoul __P((const char *, char **, int));
 
 void init_net __P((int));
 
-void
-init_net (int hwok)
+void init_net(int hwok)
 {
 	char *e;
 	int i, s;
 	struct pdevinit *pdev;
 	vm_offset_t maxaddr;
-extern struct pdevinit pdevinit[];
-extern vm_map_t mb_map, kernel_map;
-    
+	extern struct pdevinit pdevinit[];
+	extern vm_map_t mb_map, kernel_map;
+
 	sysloglevel = LOG_NOTICE;
 	if ((e = getenv ("loglevel")) != 0) {
 		char *ee;
@@ -160,16 +159,13 @@ extern vm_map_t mb_map, kernel_map;
 		}
 		
 		ifinit();
-		printf("ifinit done.\n");
 		domaininit();
-		printf("domaininit done.\n");
 		splx(s);
 	}
 
 	/* 
 	 * Initialise process table, we become first "process" 
 	 */
-	printf("init_proc....\n");
 	init_proc ();
 
 	/* enable realtime clock interrupts */
@@ -179,8 +175,6 @@ extern vm_map_t mb_map, kernel_map;
 
 	boottime = time;
 	spl0();
-	/*delay(1000000);*/
-	delay(10000);
 
 #ifdef INET
 	if (getenv("ifconfig") != 0) {
