@@ -82,8 +82,7 @@ static void __init gzip_release(void **ptr)
 {
 }
 
-
-/* ===========================================================================
+/*
  * Write the output window window[0..outcnt-1] and update crc and bytes_out.
  * (Used for the decompressed data only.)
  */
@@ -93,9 +92,8 @@ static void __init flush_window(void)
     unsigned n;
     uch *in, ch;
 #ifdef SIM 
-	fwrite(window,1,outcnt,fpw);
+	fwrite(window, 1, outcnt, fpw);
 #else
-	tgt_putchar('.');
 	memcpy((void *)dest, window, outcnt);
 #endif
 	dest = dest + outcnt;
@@ -108,6 +106,7 @@ static void __init flush_window(void)
     bytes_out += (ulg)outcnt;
     outcnt = 0;
 }
+
 static void __init error(char *x)
 {
 	tgt_puts(x);
@@ -123,8 +122,6 @@ static int __init run_unzip(char *start, long to)
 	exit_code = 0;
 	bytes_out = 0;
 	crc = (ulg)0xffffffffL; /* shift register contents */
-	
-
 
 	inbuf = start;
 	dest = (void *)to;

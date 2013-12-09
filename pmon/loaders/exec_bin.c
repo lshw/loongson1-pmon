@@ -41,39 +41,34 @@
 #include <pmon.h>
 #include <pmon/loaders/loadfn.h>
 
-static long   load_bin (int fd, char *buf, int *n, int flags);
-
 extern long dl_minaddr;
 extern long dl_maxaddr;
-
 extern long long dl_loffset;
+extern int highmemcpy(long long dst, long long src, long long count);
 
-int highmemcpy(long long dst,long long src,long long count);
-
-static long
-   load_bin (int fd, char *buf, int *n, int flags)
+static long load_bin(int fd, char *buf, int *n, int flags)
 {
-//	void *addr = (void *)dl_offset;
 	unsigned long long addr;
 	int size = 2048;
 	int n2;
 	int count = 0;
 
-	if(flags&OFLAG)addr = dl_loffset;
-	else addr = (void *)dl_offset;
+	if (flags & OFLAG)
+		addr = dl_loffset;
+	else
+		addr = (void *)dl_offset;
 
 	fprintf (stderr, "(bin)\n");
 
 	dl_minaddr = (long)addr;
-	
+
 	do {
-		if(flags&OFLAG)
-		{
-			n2 = read (fd, buf, size);
-			highmemcpy(addr,(long long)buf,n2);
+		if (flags & OFLAG) {
+			n2 = read(fd, buf, size);
+			highmemcpy((long long)addr, (long long)buf, (long long)n2);
 		}
 		else 
-			n2 = read (fd, addr, size);
+			n2 = read(fd, addr, size);
 		addr = (addr + n2);
 		count += n2;
 	} while (n2 >= size);
@@ -81,12 +76,11 @@ static long
 	dl_maxaddr = (long)addr;
 	printf("\nLoaded %d bytes\n", count);
 
-	return(dl_offset);
+	return dl_offset;
 }
 
 
-static ExecType bin_exec =
-{
+static ExecType bin_exec = {
 	"bin",
 	load_bin,
 	EXECFLAGS_NOAUTO,
@@ -95,8 +89,7 @@ static ExecType bin_exec =
 
 static void init_exec __P((void)) __attribute__ ((constructor));
 
-static void
-   init_exec()
+static void init_exec(void)
 {
 	/*
 	 * Install ram based file system.

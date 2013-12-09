@@ -39,8 +39,7 @@
 
 extern int getbaudval __P((int));
 
-static int
-nsinit (volatile ns16550dev *dp)
+static int nsinit(volatile ns16550dev *dp)
 {
 #ifdef USE_NS16550_FIFO
 	unsigned int x;
@@ -68,10 +67,9 @@ nsinit (volatile ns16550dev *dp)
 	return 0;
 }
 
-static int
-nsprogram (volatile ns16550dev *dp, unsigned long freq, int baudrate)
+static int nsprogram(volatile ns16550dev *dp, unsigned long freq, int baudrate)
 {
-static int rates[] = {
+	static int rates[] = {
 	50, 75, 110, 134, 150, 200, 300, 600, 1200, 1800, 2400,
 	4800, 9600, 19200, 38400, 57600, 115200, 230400, 380400, 460800, 921600, 0 };
 
@@ -106,8 +104,7 @@ static int rates[] = {
 }
 
 
-int
-ns16550 (int op, struct DevEntry *dev, unsigned long param, int data)
+int ns16550(int op, struct DevEntry *dev, unsigned long param, int data)
 {
 	volatile ns16550dev *dp;
 

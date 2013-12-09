@@ -126,8 +126,7 @@ static int bootread(int fd, void *addr, int size)
 }
 
 
-static int 
-   bootclear (int fd, void *addr, int size)
+static int bootclear(int fd, void *addr, int size)
 {
 
 	if (bootseg++ > 0)
@@ -145,8 +144,7 @@ static int
 	return size;
 }
 
-static Elf32_Shdr *
-   elfgetshdr (int fd, Elf32_Ehdr *ep)
+static Elf32_Shdr *elfgetshdr(int fd, Elf32_Ehdr *ep)
 {
 	Elf32_Shdr *shtab;
 	unsigned size = ep->e_shnum * sizeof(Elf32_Shdr);
@@ -177,8 +175,7 @@ if(myflags&ZFLAG){
 	return (shtab);
 }
 
-static void *
-   gettable (int size, char *name, int flags)
+static void *gettable(int size, char *name, int flags)
 {
 	unsigned long base;
 
@@ -200,8 +197,7 @@ static void *
 	return (void *) base;
 }
 
-static void *
-   readtable (int fd, int offs, void *base, int size, char *name, int flags)
+static void *readtable(int fd, int offs, void *base, int size, char *name, int flags)
 {
 #if NGZIP > 0
 if(myflags&ZFLAG){
@@ -220,10 +216,7 @@ if(myflags&ZFLAG){
 	return (void *) base;
 }
 
-
-
-static int
-   elfreadsyms (int fd, Elf32_Ehdr *eh, Elf32_Shdr *shtab, int flags)
+static int elfreadsyms(int fd, Elf32_Ehdr *eh, Elf32_Shdr *shtab, int flags)
 {
 	Elf32_Shdr *sh, *strh, *shstrh, *ksh;
 	Elf32_Sym *symtab;
@@ -639,8 +632,7 @@ if(myflags&ZFLAG)	gz_close(fd);
 }
 
 
-static ExecType elf_exec =
-{
+static ExecType elf_exec = {
 	"elf",
 	load_elf,
 	EXECFLAGS_NONE,
@@ -649,8 +641,7 @@ static ExecType elf_exec =
 
 static void init_exec __P((void)) __attribute__ ((constructor));
 
-static void
-   init_exec()
+static void init_exec(void)
 {
 	/*
 	 * Install ram based file system.

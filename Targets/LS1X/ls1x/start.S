@@ -69,6 +69,20 @@
 	.rdata;98: .asciz x; .text; la a0, 98b; bal stringserial; nop
 #endif
 
+#ifdef	FAST_STARTUP
+#define	FCALL_PRINTSTR(x) 
+#else
+#define	FCALL_PRINTSTR(x) \
+	.rdata;98: .asciz x; .text; la a0, 98b; la v0, stringserial; addu v0,s0;jalr v0; nop	
+#endif
+
+#undef BAL
+#define BAL(x) \
+	la v0,x; \
+	addu v0,s0; \
+	jalr v0; \
+	nop;
+
 /* Delay macro */
 #define	DELAY(count)	\
 	li v0, count;	\
@@ -87,7 +101,6 @@
 #define CP0_TAGLO  $28
 #define CP0_TAGHI  $29
 
-
 /*
  *   Register usage:
  *
@@ -101,7 +114,6 @@
  *	s7	rasave.
  *	s8	L3 Cache size.
  */
-
 
 	.set	noreorder
 	.globl	_start
@@ -451,37 +463,10 @@ locate:
 	li output_en, 0x1
 
 get_pin_val_finish:
-	PRINTSTR("output_en =")
-	move	a0, output_en
-	bal	hexserial
-	nop
-	
-	PRINTSTR("uart3_pin_val =")
-	li a1,0xbfd00000
-	lw a0, 0x10e4(a1)
-	bal	hexserial
-	nop
+
 #endif
 
-	PRINTSTR("\r\nPMON2000 MIPS Initializing. Standby...\r\n")
-	PRINTSTR(" ERRORPC=")
-	mfc0	a0, COP_0_ERROR_PC
-	bal	hexserial
-	nop
-	PRINTSTR("\r\n")
-
-	PRINTSTR(" CONFIG=")
-	mfc0	a0, COP_0_CONFIG
-	bal	hexserial
-	nop
-	PRINTSTR("\r\n")
-	
-	PRINTSTR(" PRID=")
-	mfc0	a0, COP_0_PRID
-	bal	hexserial
-	nop
-	PRINTSTR("\r\n")
-
+	/* Initializing. Standby... */
 	bnez s0, 1f
 	nop
 	li a0, 128
@@ -489,7 +474,7 @@ get_pin_val_finish:
 	nop
 1:
 
-// use only 8wins
+/* use only 8wins */
 #define CPU_WIN_BASE 0xbfd00000
 #define CPU_WIN_MASK 0xbfd00040
 #define CPU_WIN_MMAP 0xbfd00080
@@ -588,10 +573,9 @@ cpu_win_fixup:
 	li	t1, 0x14000000
 	sw	t1, (t0)
 
-	PRINTSTR("DDR2 config begin\r\n")
+	/* DDR2 config begin */
 	bal     ddr2_config
 	nop
-	PRINTSTR("DDR2 config end\r\n")
 
 	/* memory size defined in conf */
 	li msize, MEM_SIZE
@@ -630,8 +614,6 @@ cpu_win_fixup:
 	sw  a1, 0x0(t1)
 	li  a1, SD_PARA1
 	sw  a1, 0x4(t1)
-
-    PRINTSTR("sdram init done \r\n")
 #endif
 /**************************************CACHE*****************************/
 
@@ -644,12 +626,10 @@ cpu_win_fixup:
 #define NOP8 nop;nop;nop;nop;nop;nop;nop;nop
 
 do_caches:
-	TTYDBG("Init caches...\r\n")
-
+	/* Init caches... */
 	li	s7, 0                   /* no L2 cache */
 	li	s8, 0                   /* no L3 cache */
 
-	TTYDBG("godson1 caches found\r\n")
     bal     cache_init
     nop
 
@@ -658,12 +638,8 @@ do_caches:
 	or     a0, a0, 2
 	mtc0   a0, COP_0_CONFIG
 
-	TTYDBG("Init caches done, cfg = ")
-	mfc0	a0, COP_0_CONFIG
-	bal	hexserial
-	nop
-	TTYDBG("\r\n")
-	
+
+
 #ifdef LS1ASOC
 acpi_begin:
 
@@ -695,13 +671,9 @@ acpi_begin:
 	bnez	t1,	acpi_end	/* Resuming from suspend */
 	nop
 
-	PRINTSTR("ACPI_CONTEXT=")
 	li	t0,	0xa01ffc00
 	li	t1,	0xa01ffc48
-1:	lw	a0,	(t0)
-	bal	hexserial
-	nop
-	PRINTSTR("\r\n")
+1:
 	addiu t0,t0,4
 	bne t0,t1,1b
 	nop
@@ -711,25 +683,8 @@ acpi_begin:
 	or     a0,a0,2
 	mtc0   a0,COP_0_CONFIG
 
-#if 0
-	PRINTSTR("ACPI_MEM_CEHCK=")
-	li	a1, 0
-	li	t0, 0xa0000000
-	li	t2, 0xa0100000
-1:	lw	t1,(t0)
-	addu	a1, a1, t1
-	addiu t0, t0, 4
-	bne	t0,t2,1b
-	nop
-	addu a0,a1,zero
-	bal	hexserial
-	nop
-	PRINTSTR("\r\n")
-#endif
-
 	bal	CPU_TLBClear
 	nop
-	PRINTSTR("ACPI_RESUME\r\n")
 	bal	suspend_resume
 	nop
 	/* Resume will never get here */
@@ -740,26 +695,8 @@ acpi_end:/* Startup as usual */
 #endif
 
 /***********************MEMORY DEBUGGING AND COPY SELF TO RAM***********************/
-
-PRINTSTR("begin test\r\n");
 //#include "newtest.32/mydebug.S"
 bootnow:
-PRINTSTR("end test\r\n");
-
-
-#ifdef	FAST_STARTUP
-#define	FCALL_PRINTSTR(x) 
-#else
-#define	FCALL_PRINTSTR(x) \
-	.rdata;98: .asciz x; .text; la a0, 98b; la v0, stringserial; addu v0,s0;jalr v0; nop	
-#endif
-
-#undef BAL
-#define BAL(x) \
-	la v0,x; \
-	addu v0,s0; \
-	jalr v0; \
-	nop;
 
 /* copy copy program to sdram to make copy fast */
 	la		t0, 121f
@@ -782,7 +719,7 @@ PRINTSTR("end test\r\n");
 
 .align 3
 121: 
-	FCALL_PRINTSTR("Copy PMON to execute location...\r\n")
+	/* Copy PMON to execute location... */
 	la		a0, start
 	addu	a1, a0, s0
 	la		a2, _edata
@@ -799,12 +736,6 @@ PRINTSTR("end test\r\n");
 1:	and		t3, t0,0x0000ffff
 	bnez	t3, 2f
 	nop
-	move	a0, t0
-	BAL(hexserial)
-	nop
-	li		a0, '\r'
-	BAL(tgt_putchar)
-	nop
 2:	lw		t3, 0(t1)
 	nop
 	sw		t3, 0(t0)
@@ -812,7 +743,7 @@ PRINTSTR("end test\r\n");
 	addu	t1, 4
 	bne		t2, t0, 1b
 	nop
-	FCALL_PRINTSTR("\ncopy text section done.\r\n")
+	/* copy text section done. */
 	
 	/* Clear BSS */
 	la		a0, _edata
@@ -820,12 +751,7 @@ PRINTSTR("end test\r\n");
 2:	sw		zero, 0(a0)
 	bne		a2, a0, 2b
 	addu	a0, 4
-
-	FCALL_PRINTSTR("Copy PMON to execute location done.\r\n")
-	FCALL_PRINTSTR("sp=");
-	move	a0, sp
-	BAL(hexserial)
-	nop
+	/* Copy PMON to execute location done */
 
 	li		a0, 0
 	sw		a0, CpuTertiaryCacheSize /* Set L3 cache size */
