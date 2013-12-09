@@ -395,8 +395,8 @@ int iis_test(int argc, char **argv)
 	return 0;
 }
 
-static const Cmd Cmds[] =
-{
+#if 0
+static const Cmd Cmds[] = {
 	{"MyCmds"},
 	{"iis_test", "file", 0, "iis_test file", iis_test, 0, 99, CMD_REPEAT},
 	{0, 0}
@@ -408,4 +408,5 @@ static void init_cmd(void)
 {
 	cmdlist_expand(Cmds, 1);
 }
+#endif
 

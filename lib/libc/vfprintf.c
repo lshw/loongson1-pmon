@@ -35,27 +35,31 @@
 #include <string.h>
 #include <stdlib.h>
 
-
 /*
  *  vprintf and vfprintf. formats string for printing.
  */
 
-int vprintf (const char *fmt, va_list ap)
+int vprintf(const char *fmt, va_list ap)
 {
 	return vfprintf (stdout, fmt, ap);
 }
 
-int novga=0;
-int 
-vfprintf (FILE *fp, const char *fmt, va_list ap)
+static int inited = 0;
+int novga = 0;
+
+int vfprintf(FILE *fp, const char *fmt, va_list ap)
 {
 	int  n;
 	char buf[1024];
 
 #ifdef FASTBOOT
-	static int inited=0;
-	if(!inited){if(getenv("novga"))novga=1;inited=1;}
-if((fp==&_iob[1])&&!novga)return n;
+	if (!inited) {
+		if(getenv("novga"))
+			novga = 1;
+			inited = 1;
+	}
+	if((fp==&_iob[1]) && !novga)
+		return n;
 #endif
 /*
 	buf = malloc(2000);

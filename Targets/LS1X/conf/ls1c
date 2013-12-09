@@ -19,6 +19,7 @@ option		LS1CSOC
 option		GS232_SOC
 option		CPU_LS232
 option		WAYBITS_HIGH
+option		CPU_NAME="\"Loongson 1C\""
 
 #
 # Platform options

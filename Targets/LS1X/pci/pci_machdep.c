@@ -402,19 +402,18 @@ int  dump_pci(int argc,char **argv)
 return 0;
 }
 
-static const Cmd pciCmds[] =
-{
+#if 0
+static const Cmd pciCmds[] = {
 	{"MyCmds"},
-	{"dump_pci", "", NULL,
-		    "dump sb pci-bridge regs", dump_pci, 1, 2, 0},
+	{"dump_pci", "", NULL, "dump sb pci-bridge regs", dump_pci, 1, 2, 0},
 	{0, 0}
 };
 
 
 static void init_pcicmd __P((void)) __attribute__ ((constructor));
 
-static void
-init_pcicmd()
+static void init_pcicmd(void)
 {
 	cmdlist_expand(pciCmds, 1);
 }
+#endif

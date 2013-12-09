@@ -120,8 +120,8 @@ finish:
 	return 0;
 }
 
-static const Cmd Cmds[] =
-{
+#if 0
+static const Cmd Cmds[] = {
 	{"MyCmds"},
 	{"acpi_str","",0,"acpi_str",acpi_str,0,99,CMD_REPEAT},
 	{0, 0}
@@ -129,9 +129,8 @@ static const Cmd Cmds[] =
 
 static void init_cmd __P((void)) __attribute__ ((constructor));
 
-static void
-init_cmd()
+static void init_cmd(void)
 {
 	cmdlist_expand(Cmds, 1);
 }
-
+#endif

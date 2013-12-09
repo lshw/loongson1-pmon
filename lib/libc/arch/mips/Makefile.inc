@@ -36,7 +36,7 @@
 
 CFLAGS	+= -D_KERNEL
 
-SRCS+=	argvize.c atob.c atof.c atoi.c atol.c bzero.c bcmp.c calloc.c	\
+SRCS+=	abs.c argvize.c atob.c atof.c atoi.c atol.c bzero.c bcmp.c calloc.c	\
 	cc2str.c close.c ctype_.c dbl2asci.c errno.c ethers.c exit.c	\
 	fclose.c feof.c fflush.c ffs.c fls.c fgetc.c fgets.c fileno.c 	\
 	fprintf.c fputs.c fread.c fseek.c fwrite.c getc.c getchar.c	\

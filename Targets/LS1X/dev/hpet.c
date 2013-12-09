@@ -75,6 +75,7 @@ void hpet_test(void)
 
 }
 
+#if 0
 static const Cmd Cmds[] =
 {
 	{"MyCmds"},
@@ -89,3 +90,5 @@ init_cmd()
 {
 	cmdlist_expand(Cmds, 1);
 }
+#endif
+

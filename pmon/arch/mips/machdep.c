@@ -93,8 +93,7 @@ static int cputype;
 /*
  *  Return a ascii version of the processor type.
  */
-const char *
-md_cpuname()
+const char *md_cpuname(void)
 {
 /* XXX make more sophisticated dealing with rev numbers and 52x0 more precisely */
 
@@ -122,7 +121,7 @@ md_cpuname()
 #ifdef CPU_NAME
  		return CPU_NAME;
 #endif
-		return("GODSON1");
+		return NULL;
 	default:
 		return("unidentified");
 	}

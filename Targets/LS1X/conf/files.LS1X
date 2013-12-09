@@ -10,7 +10,7 @@ file	Targets/LS1X/dev/i2c_ls1x.c		mod_i2c_ls1x
 file	Targets/LS1X/dev/ac97.c
 file	Targets/LS1X/dev/ls1x_iis.c		mod_iis_ls1x
 file	Targets/LS1X/dev/hpet.c
-file	Targets/LS1X/dev/acpi.c
+#file	Targets/LS1X/dev/acpi.c
 file	Targets/LS1X/dev/gpio.c
 file	Targets/LS1X/dev/lcd.c			mod_framebuffer
 file	Targets/LS1X/pci/pci_machdep.c
@@ -28,7 +28,7 @@ file	Targets/LS1X/dev/spi_flash.c
 
 #file	sys/dev/nand/ls1g-nand.c  nand needs-flag
 file	Targets/LS1X/dev/ls1x_nand.c  nand needs-flag
-file	Targets/LS1X/dev/nand_ops.c nand needs-flag
+#file	Targets/LS1X/dev/nand_ops.c nand needs-flag
 
 #file 	sys/dev/phy/bcm5461config.c
 

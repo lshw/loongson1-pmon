@@ -173,6 +173,9 @@ file sys/kern/sys_socket.c		sys
 file sys/kern/uipc_socket.c		sys
 file sys/dev/bus_dma.c			sys
 
+file pmon/cmds/devcp.c
+file pmon/cmds/if_net.c
+file pmon/cmds/high_mem.c
 file pmon/cmds/boot.c			cmd_boot
 file pmon/cmds/call.c			cmd_call
 file pmon/cmds/mycmd.c			cmd_mycmd

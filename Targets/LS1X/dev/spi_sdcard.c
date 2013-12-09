@@ -594,6 +594,8 @@ static int sdcard_init(void)
 	return ret;
 }
 
+
+#if 0
 int test_sdcard(int argc, char **argv)
 {
 	char str[100];
@@ -650,8 +652,7 @@ void test_spi(void)
 	}
 }
 
-static const Cmd Cmds[] =
-{
+static const Cmd Cmds[] = {
 	{"MyCmds"},
 	{"test_sdcard", "", 0, "test_sdcard", test_sdcard, 0, 99, CMD_REPEAT},
 	{"test_spi", "", 0, "test spi controller", test_spi, 0, 99, CMD_REPEAT},
@@ -664,6 +665,7 @@ static void init_cmd(void)
 {
 	cmdlist_expand(Cmds, 1);
 }
+#endif
 
 /* Supported paths: /dev/sdcard */
 #define CACHEDSECTORS 16

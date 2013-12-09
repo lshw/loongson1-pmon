@@ -575,8 +575,8 @@ int ac97_test(int argc, char **argv)
 	return 0;
 }
 
-static const Cmd Cmds[] =
-{
+#if 0
+static const Cmd Cmds[] = {
 	{"MyCmds"},
 	{"ac97_test", "file", 0, "ac97_test file", ac97_test, 0, 99, CMD_REPEAT},
 	{0, 0}
@@ -588,4 +588,4 @@ static void init_cmd(void)
 {
 	cmdlist_expand(Cmds, 1);
 }
-
+#endif
