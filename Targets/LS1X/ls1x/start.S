@@ -413,11 +413,14 @@ locate:
 	bal	initserial
 	nop
 
-	/*disable all gpio*/
+	/* 芯片上电默认使用gpio(输入模式）但大多时候是使用模块的功能，如lcd i2c spi ac97等
+	   所以这里把gpio都关闭，方便使用模块功能。如果上电后需要gpio输出一个确定电平，
+	   如继电器、LDE等，可以修改这里的代码。*/
+	/* disable all gpio */
 	li a0,0xbfd00000
-	sw zero,0x10c0(a0)
-	sw zero,0x10c4(a0)
-	sw zero,0x10c8(a0)
+	sw zero,0x10c0(a0)	/* disable gpio 0-31 */
+	sw zero,0x10c4(a0)	/* disable gpio 32-63 */
+	sw zero,0x10c8(a0)	/* disable gpio 64-95 */
 
 #if defined(LS1ASOC)
 	/* 启动时默认关闭SATA GPU USB GMAC0 GMAC1 */

@@ -275,44 +275,6 @@ int erase_all(void)
 	return 1;
 }
 
-void spi_read_id(void)
-{
-	unsigned char val;
-	
-	spi_initw();
-	/*CE 0*/
-	SET_SPI(SOFTCS,0xef);
-	/*READ ID CMD*/
-	SET_SPI(TXFIFO,0x9f);
-	while(((GET_SPI(SPSR)) & RFEMPTY) == RFEMPTY){
-	}
-	GET_SPI(RXFIFO);
-
-	/*Manufacturer’s ID*/
-	SET_SPI(TXFIFO,0x00);
-	while(((GET_SPI(SPSR)) & RFEMPTY) == RFEMPTY){
-	}
-	val = GET_SPI(RXFIFO);
-	printf("Manufacturer's ID:         %x\n",val);
-
-	/*Device ID:Memory Type*/
-	SET_SPI(TXFIFO,0x00);
-	while(((GET_SPI(SPSR)) & RFEMPTY) == RFEMPTY){
-	}
-	val = GET_SPI(RXFIFO);
-	printf("Device ID-memory_type:     %x\n",val);
-
-	/*Device ID:Memory Capacity*/
-	SET_SPI(TXFIFO,0x00);
-	while(((GET_SPI(SPSR)) & RFEMPTY) == RFEMPTY){
-	}
-	val = GET_SPI(RXFIFO);
-	printf("Device ID-memory_capacity: %x\n",val);
-
-	/*CE 1*/
-	SET_SPI(SOFTCS,0xff);
-}
-
 void spi_write_byte(unsigned int addr,unsigned char data)
 {
 	/*byte_program,CE 0, cmd 0x2,addr2,addr1,addr0,data in,CE 1*/
@@ -362,6 +324,7 @@ void spi_write_byte(unsigned int addr,unsigned char data)
 	SET_SPI(SOFTCS,0xff);
 }
 
+#if 0
 int write_pmon_byte(int argc,char ** argv)
 {
 	unsigned int addr;
@@ -515,6 +478,46 @@ int read_pmon(int argc,char **argv)
 	printf("\n");
 	return 1;
 }
+
+void spi_read_id(void)
+{
+	unsigned char val;
+	
+	spi_initw();
+	/*CE 0*/
+	SET_SPI(SOFTCS,0xef);
+	/*READ ID CMD*/
+	SET_SPI(TXFIFO,0x9f);
+	while(((GET_SPI(SPSR)) & RFEMPTY) == RFEMPTY){
+	}
+	GET_SPI(RXFIFO);
+
+	/*Manufacturer’s ID*/
+	SET_SPI(TXFIFO,0x00);
+	while(((GET_SPI(SPSR)) & RFEMPTY) == RFEMPTY){
+	}
+	val = GET_SPI(RXFIFO);
+	printf("Manufacturer's ID:         %x\n",val);
+
+	/*Device ID:Memory Type*/
+	SET_SPI(TXFIFO,0x00);
+	while(((GET_SPI(SPSR)) & RFEMPTY) == RFEMPTY){
+	}
+	val = GET_SPI(RXFIFO);
+	printf("Device ID-memory_type:     %x\n",val);
+
+	/*Device ID:Memory Capacity*/
+	SET_SPI(TXFIFO,0x00);
+	while(((GET_SPI(SPSR)) & RFEMPTY) == RFEMPTY){
+	}
+	val = GET_SPI(RXFIFO);
+	printf("Device ID-memory_capacity: %x\n",val);
+
+	/*CE 1*/
+	SET_SPI(SOFTCS,0xff);
+}
+#endif
+
 
 int spi_erase_area(unsigned int saddr,unsigned int eaddr,unsigned sectorsize)
 {
@@ -1024,19 +1027,18 @@ void norflash_init(void)
 static const Cmd Cmds[] =
 {
 	{"MyCmds"},
-	{"spi_initw","",0,"spi_initw(sst25vf080b)",spi_initw,0,99,CMD_REPEAT},
-	{"read_pmon","",0,"read_pmon(sst25vf080b)",read_pmon,0,99,CMD_REPEAT},
-	{"write_pmon","",0,"write_pmon(sst25vf080b)",write_pmon,0,99,CMD_REPEAT},
+//	{"spi_initw","",0,"spi_initw(sst25vf080b)",spi_initw,0,99,CMD_REPEAT},
+//	{"read_pmon","",0,"read_pmon(sst25vf080b)",read_pmon,0,99,CMD_REPEAT},
+//	{"write_pmon","",0,"write_pmon(sst25vf080b)",write_pmon,0,99,CMD_REPEAT},
 	{"erase_all","",0,"erase_all(sst25vf080b)",erase_all,0,99,CMD_REPEAT},
-	{"write_pmon_byte","",0,"write_pmon_byte(sst25vf080b)",write_pmon_byte,0,99,CMD_REPEAT},
-	{"read_flash_id","",0,"read_flash_id(sst25vf080b)",spi_read_id,0,99,CMD_REPEAT},
+//	{"write_pmon_byte","",0,"write_pmon_byte(sst25vf080b)",write_pmon_byte,0,99,CMD_REPEAT},
+//	{"read_flash_id","",0,"read_flash_id(sst25vf080b)",spi_read_id,0,99,CMD_REPEAT},
 	{0,0}
 };
 
 static void init_cmd __P((void)) __attribute__ ((constructor));
 
-static void
-init_cmd()
+static void init_cmd(void)
 {
 	cmdlist_expand(Cmds,1);
 }

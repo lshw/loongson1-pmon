@@ -41,14 +41,13 @@ select		elf32only
 #
 # Command selection. Selects pmon commands
 #
-select		cmd_newmt
+#select		cmd_newmt
 select		cmd_setup
 select		mod_display
 #select		cmd_about		# Display info about PMON
 select		cmd_boot		# Boot wrapper
 select		cmd_mycmd
 #select		cmd_mycmd_debug # test cache and TLB
-select		cmd_newmt
 select		cmd_cache		# Cache enabling
 select		cmd_call		# Call a function command
 select		cmd_date		# Time of day command

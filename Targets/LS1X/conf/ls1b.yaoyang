@@ -39,14 +39,13 @@ select		elf32only
 #
 # Command selection. Selects pmon commands
 #
-select		cmd_newmt
+#select		cmd_newmt
 select		cmd_setup
 select		mod_display
 #select		cmd_about		# Display info about PMON
 select		cmd_boot		# Boot wrapper
-select		cmd_mycmd
+#select		cmd_mycmd
 #select		cmd_mycmd_debug # test cache and TLB
-select		cmd_newmt
 select		cmd_cache		# Cache enabling
 select		cmd_call		# Call a function command
 select		cmd_date		# Time of day command
@@ -55,19 +54,19 @@ select		cmd_flash		# Flash programming cmds
 select		cmd_hist		# Command history
 select		cmd_ifaddr		# Interface address command
 select		cmd_l			# Disassemble
-select		cmd_mem			# Memory manipulation commands
+#select		cmd_mem			# Memory manipulation commands
 select		cmd_more		# More paginator
-select		cmd_mt			# Simple memory test command
+#select		cmd_mt			# Simple memory test command
 select		cmd_misc		# Reboot & Flush etc.
 #select		cmd_stty		# TTY setings command
 select		cmd_tr			# Host port-through command
 select		cmd_devls		# Device list
 select		cmd_set			# As cmd_env but not req. cmd_hist
-select		cmd_testdisk
-select		cmd_test
+#select		cmd_testdisk
+#select		cmd_test
 #select		cmd_testfire
-select		cmd_xyzmodem
-select		pmon_zmodem_rz
+#select		cmd_xyzmodem
+#select		pmon_zmodem_rz
 #
 select		cmd_shell		# Shell commands, vers, help, eval
 #

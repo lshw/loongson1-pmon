@@ -466,8 +466,8 @@ static void autoload(char *s)
 	#ifdef CONFIG_BACK_LIGHT
 	#if defined(mod_i2c_ls1x)
 		#ifdef CONFIG_PCA953X
-		pca953x_gpio_direction_output(0x26, 11);
-		pca953x_gpio_set_value(0x26, 11, 1);
+//		pca953x_gpio_direction_output(0x26, 11);
+//		pca953x_gpio_set_value(0x26, 11, 1);
 		#endif
 	#endif
 	#endif
