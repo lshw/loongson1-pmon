@@ -1565,23 +1565,25 @@ void set_phy_manu(synopGMACdevice * gmacdev)
 }
 #endif
 
-
 int init_phy(synopGMACdevice *gmacdev)
 {
-	u16 data;
+	u16 data, data1;
 
 	synopGMAC_read_phy_reg(gmacdev->MacBase, gmacdev->PhyBase, 2, &data);
+	synopGMAC_read_phy_reg(gmacdev->MacBase, gmacdev->PhyBase, 3, &data1);
+//	printf("PHY ID %x %x\n", data, data1);
 #ifdef RMII
-	data = 0x400;
-	synopGMAC_write_phy_reg(gmacdev->MacBase, gmacdev->PhyBase, 0x19, data);
-	synopGMAC_read_phy_reg(gmacdev->MacBase, gmacdev->PhyBase, 0x19, &data);
+	/* RTL8201EL */
+	if ((data == 0x001c) && (data1 == 0xc815)) {
+		/*  设置寄存器25，使能RMII模式 */
+		synopGMAC_write_phy_reg(gmacdev->MacBase, gmacdev->PhyBase, 25, 0x400);
+	}
 #endif
 	/*set 88e1111 clock phase delay*/
 	if (data == 0x141)
 		rtl88e1111_config_init(gmacdev);
 	return 0;
 }
-
 
 #if UNUSED
 s32 synopGMAC_linux_do_ioctl(struct ifnet *ifp, struct ifreq *ifr, s32 cmd)
@@ -1906,7 +1908,6 @@ void dumpdesc(synopGMACdevice	* gmacdev)
 	
 }
 
-
 void dumpreg(u64 gbase)
 {
 	int i;
@@ -1974,7 +1975,6 @@ void setphysreg0(synopGMACdevice * gmacdev,int reg,int val)
 }
 */
 
-
 int set_lpmode(synopGMACdevice * gmacdev)
 {
 	u16 data;
@@ -2003,7 +2003,6 @@ int set_lpmode(synopGMACdevice * gmacdev)
 	return 1;
 	
 }
-
 
 int set_phyled(synopGMACdevice * gmacdev)
 {
@@ -2118,7 +2117,7 @@ return;
  *
  * \return Returns 0 on success and Error code on failure.
  */
-s32  synopGMAC_init_network_interface(char* xname,u64 synopGMACMappedAddr)
+s32  synopGMAC_init_network_interface(char* xname, u64 synopGMACMappedAddr)
 {
 	struct ifnet *ifp;
 
@@ -2204,21 +2203,21 @@ s32  synopGMAC_init_network_interface(char* xname,u64 synopGMACMappedAddr)
 	TR("Now Going to Call register_netdev to register the network interface for GMAC core\n");
 	synopGMACadapter = (struct synopGMACNetworkAdapter * )plat_alloc_memory(sizeof (struct synopGMACNetworkAdapter)); 
 //sw:	should i put sync_cache here?
-	memset((char *)synopGMACadapter ,0, sizeof (struct synopGMACNetworkAdapter));
+	memset((char *)synopGMACadapter , 0, sizeof(struct synopGMACNetworkAdapter));
 
-	synopGMACadapter->synopGMACdev    = NULL;
-	synopGMACadapter->PInetdev   = NULL;
+	synopGMACadapter->synopGMACdev = NULL;
+	synopGMACadapter->PInetdev = NULL;
 	
 	/*Allocate Memory for the the GMACip structure*/
-	synopGMACadapter->synopGMACdev = (synopGMACdevice *) plat_alloc_memory(sizeof (synopGMACdevice));
-	memset((char *)synopGMACadapter->synopGMACdev ,0, sizeof (synopGMACdevice));
+	synopGMACadapter->synopGMACdev = (synopGMACdevice *) plat_alloc_memory(sizeof(synopGMACdevice));
+	memset((char *)synopGMACadapter->synopGMACdev, 0, sizeof(synopGMACdevice));
 	if(!synopGMACadapter->synopGMACdev) {
 		TR0("Error in Memory Allocataion \n");
 	}
 		
 	/*Allocate Memory for the the GMAC-Pmon structure	sw*/
-	synopGMACadapter->PInetdev = (struct PmonInet *) plat_alloc_memory(sizeof (struct PmonInet));
-	memset((char *)synopGMACadapter->PInetdev ,0, sizeof (struct PmonInet));
+	synopGMACadapter->PInetdev = (struct PmonInet *) plat_alloc_memory(sizeof(struct PmonInet));
+	memset((char *)synopGMACadapter->PInetdev ,0, sizeof(struct PmonInet));
 	if(!synopGMACadapter->PInetdev){
 		TR0("Error in Pdev-Memory Allocataion \n");
 	}

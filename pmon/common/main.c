@@ -700,7 +700,7 @@ void dbginit(char *adr)
 #ifdef HAVE_LOGO
 	tgt_logo();
 #else
-	printf ("\n * PMON2000 Professional *"); 
+//	printf ("PMON2000 Professional"); 
 #endif
 	printf ("\nConfiguration [%s,%s", TARGETNAME,
 			BYTE_ORDER == BIG_ENDIAN ? "EB" : "EL");
