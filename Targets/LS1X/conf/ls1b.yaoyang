@@ -87,7 +87,7 @@ option		MEM_SIZE=0x08000000	# 64M(16bit) 定义内存大小 注意32bit和16bit�
 								# 请确保内存配置正确，内存工作不正常会导致系统莫名其妙的问题
 								# start.s文件中定义了引用那个内存配置，如#include "ddr2fconfig-samsung-CL3.S"
 
-select		ext2
+#select		ext2
 #select		yaffsfs		#lxy: there is a do_div error to open this with new cross-tool
 #select		fatfs
 select		fatfs_fast
@@ -156,7 +156,7 @@ syn0		at localbus0
 option		CONFIG_GMAC0_100M	#GMAC0的使能百兆网络 否则千兆网络
 option		CONFIG_GMAC1_100M	#GMAC1的使能百兆网络 否则千兆网络
 #option		GMAC1_USE_UART01
-option		GMAC_PHY_BASE=1
+option		GMAC_PHY_BASE=0		#注意:不同的PHY PHY_BASE可能不一样(0-31)
 option		GMAC0_ADDR=0xbfe10000
 option		GMAC1_ADDR=0xbfe20000
 select		gmac
@@ -195,8 +195,11 @@ pseudo-device	loop	1	# network loopback
 #option		FOR_GXEMUL
 #option		FLOATINGPT
 
-option		INPUT_FROM_BOTH
-option		OUTPUT_TO_BOTH
+#如果把这两个选项屏蔽，信息只会使用UART(串口)或VGA控制台其中一个作为输入输出，优先使用VGA控制台
+#如果只使用UART(串口)作控制台，需要设在环境变量 set novga 1
+option		INPUT_FROM_BOTH		#打印信息同时输出到UART(串口)和VGA控制台(lcd等显示器)
+option		OUTPUT_TO_BOTH		#信息可以通过UART(串口)或VGA控制台(键盘输入设备)输入
+
 select		nand
 #select		nor_flash			#如果使用nor flash分区需要该选项
 #option		NORFLASH_PARTITION	#nor flash(spi flash)分区

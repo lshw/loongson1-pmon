@@ -159,7 +159,7 @@ syn0		at localbus0
 option		CONFIG_GMAC0_100M	#GMAC0的使能百兆网络 否则千兆网络
 #option		CONFIG_GMAC1_100M	#GMAC1的使能百兆网络 否则千兆网络
 #option		GMAC1_USE_UART01
-option		GMAC_PHY_BASE=1		#注意:不同的PHY PHY_BASE可能不一样(0-31)
+option		GMAC_PHY_BASE=0		#注意:不同的PHY PHY_BASE可能不一样(0-31)
 option		GMAC0_ADDR=0xbfe10000
 option		GMAC1_ADDR=0xbfe20000
 select		gmac

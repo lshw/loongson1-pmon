@@ -1196,41 +1196,38 @@ s32 synopGMAC_get_mac_addr(synopGMACdevice *gmacdev, u32 MacHigh, u32 MacLow, u8
   * \note This is important function. No kernel api provided by Synopsys 
   */
 
-s32 synopGMAC_attach (synopGMACdevice * gmacdev, u64 macBase, u64 dmaBase, u32 phyBase,u8 *mac_addr) 
+s32 synopGMAC_attach(synopGMACdevice *gmacdev, u64 macBase, u64 dmaBase, u32 phyBase, u8 *mac_addr) 
 {
 	/*Make sure the Device data strucure is cleared before we proceed further*/
-	memset((void *) gmacdev,0,sizeof(synopGMACdevice));
+	int i;
+	u16 id0, id1;
+
+	memset((void *) gmacdev, 0, sizeof(synopGMACdevice));
 	/*Populate the mac and dma base addresses*/
 	gmacdev->MacBase = macBase;
 	gmacdev->DmaBase = dmaBase;
 	gmacdev->PhyBase = phyBase;
-	{
-		int i,j;
-		u16 data;
 
-		for (i = phyBase,j=0;j<32;i=(i+1)&0x1f,j++) 
-		{
-			synopGMAC_read_phy_reg(gmacdev->MacBase,i,2,&data);
-			if(data != 0 && data != 0xffff) break;
-			synopGMAC_read_phy_reg(gmacdev->MacBase,i,3,&data);
-			if(data != 0 && data != 0xffff) break;
-		}
-
-		if(j==32) { 
-			printf("phy_detect: can't find PHY!\n");
-		}
-
-		gmacdev->PhyBase = i;
+	for (i=phyBase; i<32; i++)  {
+		synopGMAC_read_phy_reg(gmacdev->MacBase, i, 2, &id0);
+		synopGMAC_read_phy_reg(gmacdev->MacBase, i, 3, &id1);
+//		printf("PHY ID %x %x\n", id0, id1);
+		if(id0 != 0 && id0 != 0x1fff)
+			if(id1 != 0 && id1 != 0xffff)
+				break;
 	}
 
+	if (i==32) {
+		printf("phy_detect: can't find PHY!\n");
+	}
+
+	gmacdev->PhyBase = i;
+	printf("phy base = %d\n", gmacdev->PhyBase);
 	/* Program/flash in the station/IP's Mac address */
-	synopGMAC_set_mac_addr(gmacdev,GmacAddr0High,GmacAddr0Low, mac_addr); 
+	synopGMAC_set_mac_addr(gmacdev, GmacAddr0High, GmacAddr0Low, mac_addr); 
 
 	return 0;	
 }
-
-
-
 
 /**
   * Initialize the rx descriptors for ring or chain mode operation.
@@ -1257,6 +1254,7 @@ void synopGMAC_rx_desc_init_ring(DmaDesc *desc, bool last_ring_desc)
 
 	return;
 }
+
 void synopGMAC_rx_desc_recycle(DmaDesc *desc, bool last_ring_desc)
 {
 	desc->status = DescOwnByDma;
