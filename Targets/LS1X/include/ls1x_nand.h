@@ -30,7 +30,7 @@
 #define NAND_CS_RDY		0x20
 
 /* NAND_TIMING寄存器定义 */
-#define HOLD_CYCLE	0x04
+#define HOLD_CYCLE	0x02
 #define WAIT_CYCLE	0x0c
 
 #define DMA_REQ			(0x1 << 25)
@@ -58,7 +58,7 @@
 #define nand_readl(info, off)		\
 	__raw_readl((info)->mmio_base + (off))
 
-#define MAX_BUFF_SIZE	10240	/* 10KByte */
+#define MAX_BUFF_SIZE	1048576	/* 1MByte 避免有时分配不成功？ */
 #define PAGE_SHIFT		12	/* 页内地址(列地址)A0-A11 */
 
 #if defined(LS1ASOC) || defined(LS1CSOC)
