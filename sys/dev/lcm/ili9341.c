@@ -1,4 +1,11 @@
-/*  */
+/*
+ *  Copyright (c) 2013 Tang, Haifeng <tanghaifeng-gz@loongson.cn>
+ *
+ *  This file is subject to the terms and conditions of the GNU General Public
+ *  License. See the file COPYING in the main directory of this archive for
+ *  more details.
+ */
+
 #include <pmon.h>
 #include <cpu.h>
 #include <sys/types.h>
@@ -9,24 +16,12 @@
 #include <stdio.h>
 
 #include "include/gpio.h"
+
+#define CONFIG_ILI9341_3L 1
+
+#ifdef CONFIG_ILI9341_8080
 #include "ili9341.h"
 #include "ili9341_lcd_dis.h"
-
-typedef unsigned int  u32;
-typedef unsigned short u16;
-typedef unsigned char  u8;
-typedef signed int  s32;
-typedef signed short s16;
-typedef signed char  s8;
-typedef int bool;
-typedef unsigned long dma_addr_t;
-
-#define writeb(val, addr) (*(volatile u8*)(addr) = (val))
-#define writew(val, addr) (*(volatile u16*)(addr) = (val))
-#define writel(val, addr) (*(volatile u32*)(addr) = (val))
-#define readb(addr) (*(volatile u8*)(addr))
-#define readw(addr) (*(volatile u16*)(addr))
-#define readl(addr) (*(volatile u32*)(addr))
 
 #define   BLACK                0x0000                // 黑色：    0,   0,   0 //
 #define   BLUE                 0x001F                // 蓝色：    0,   0, 255 //
@@ -44,10 +39,9 @@ typedef unsigned long dma_addr_t;
 #define   OLIVE                0x7BE0                // 橄榄绿：128, 128,   0 //
 #define   LGRAY                0xC618                // 灰白色：192, 192, 192 //
 #define   DGRAY                0x7BEF                // 深灰色：128, 128, 128 //
+#endif
 
 /* ILI9341引脚定义 */
-#define CONFIG_ILI9341_3L 1
-
 #ifdef CONFIG_ILI9341_8080
 #define LCDCS	29		//片选信号
 #define LCDA0	36		//命令信号
@@ -55,9 +49,10 @@ typedef unsigned long dma_addr_t;
 #define LCDRD	35		//数据信号
 #define RESET	34		//复位信号
 #elif CONFIG_ILI9341_3L
-#define	SDI		25
-#define	SCL		24
-#define	CS		30
+#define	SDI		79
+#define	SDO		80
+#define	SCL		78
+#define	CS		83
 #define	RESET	39
 #endif
 
@@ -79,19 +74,21 @@ static void ili9341_gpio_init(void)
 	ret &= ~(0xFFFF << 8);
 	writel(ret, 0xbfd010d0);
 #elif CONFIG_ILI9341_3L
-	ls1x_gpio_direction_output(CS, 0);
+	ls1x_gpio_direction_output(CS, 1);
 	ls1x_gpio_direction_output(SDI, 1);
+	ls1x_gpio_direction_input(SDO);
 	ls1x_gpio_direction_output(SCL, 1);
-	ls1x_gpio_direction_output(RESET, 1);
+//	ls1x_gpio_direction_output(RESET, 1);
 #endif
 }
 
 static void ili9341_gpio_free(void)
 {
 	ls1x_gpio_free(SDI);
+	ls1x_gpio_free(SDO);
 	ls1x_gpio_free(SCL);
 	ls1x_gpio_free(CS);
-	ls1x_gpio_free(RESET);
+//	ls1x_gpio_free(RESET);
 }
 
 #if defined(CONFIG_ILI9341_8080)
@@ -139,6 +136,7 @@ static void write_data8(unsigned char dat)
 	gpio_set_value(LCDWR, 1);
 #elif CONFIG_ILI9341_3L
 	int i;
+	gpio_set_value(CS, 0);
 	gpio_set_value(SCL, 0);
 	gpio_set_value(SDI, 1);
 	gpio_set_value(SCL, 1);
@@ -151,6 +149,7 @@ static void write_data8(unsigned char dat)
 		gpio_set_value(SCL, 1);
 		dat <<= 1;
 	}
+	gpio_set_value(CS, 1);
 #endif
 }
 
@@ -178,7 +177,16 @@ static int read_data8(void)
 	
 	return tmp1;
 #elif CONFIG_ILI9341_3L
-	return 0;
+	int i, val;
+	gpio_set_value(CS, 0);
+	for (i=0; i<8; i++) {
+		gpio_set_value(SCL, 0);
+		gpio_set_value(SCL, 1);
+		val = gpio_get_value(SDO);
+		val <<= 1;
+	}
+	gpio_set_value(CS, 1);
+	return val;
 #endif
 }
 
@@ -191,6 +199,7 @@ static void write_command(unsigned char command)
 	gpio_set_value(LCDA0, 1);
 #elif CONFIG_ILI9341_3L
 	int i;
+	gpio_set_value(CS, 0);
 	gpio_set_value(SCL, 0);
 	gpio_set_value(SDI, 0);
 	gpio_set_value(SCL, 1);
@@ -203,6 +212,7 @@ static void write_command(unsigned char command)
 		gpio_set_value(SCL, 1);
 		command <<= 1;
 	}
+	gpio_set_value(CS, 1);
 #endif
 }
 
@@ -353,7 +363,7 @@ void lcd_fill(unsigned int dat)
 // 备注:
 // 版本:
 //========================================================================
-void lcd_fill_s(unsigned int number,unsigned int color)
+void lcd_fill_s(unsigned int number, unsigned int color)
 {
 	while(number != 0){
 		fill_dot_lcd(color);
@@ -365,12 +375,12 @@ void lcd_fill_s(unsigned int number,unsigned int color)
 void ili9341_hw_init(void)
 { 
 	ili9341_gpio_init();
-	gpio_set_value(RESET, 1);	//LCD 复位有效(L) 
+//	gpio_set_value(RESET, 1);	//LCD 复位有效(L) 
 //	delay(100); // 延时100ms , Datasheet 要求至少大于1us
-	gpio_set_value(RESET, 0);	//LCD 复位无效(H)
-	delay(10); //硬件复位
-	gpio_set_value(RESET, 1);	//LCD 复位无效(H)
-	read_id4();
+//	gpio_set_value(RESET, 0);	//LCD 复位无效(H)
+//	delay(10); //硬件复位
+//	gpio_set_value(RESET, 1);	//LCD 复位无效(H)
+//	read_id4();
 
 #if defined(CONFIG_ILI9341_8080)
 	//************* Start Initial Sequence **********//
@@ -380,7 +390,6 @@ void ili9341_hw_init(void)
 	write_command(0xC0);	//Power Control 1 
 	write_data8(0x23);
 	write_data8(0x08);
-
 
 	write_command(0xC1);	//Power Control 2 
 	write_data8(0x04);     
@@ -423,7 +432,6 @@ void ili9341_hw_init(void)
 	write_data8(0x01);
 	write_data8(0x3f);		//319
 
-	//=======================================
 	write_command(0xE0);	//正伽玛校正
 	write_data8(0x1f);
 	write_data8(0x25);
@@ -467,6 +475,13 @@ void ili9341_hw_init(void)
 	write_command(0x3a);	/* COLMOD: Pixel Format Set (3Ah) */
 //	write_data8(0x66);		// 18 bits/pixel
 	write_data8(0x55);		// 16 bits/pixel
+
+	write_command(0x51);	/* Write Display Brightness (51h) */
+	write_data8(0xff);
+	write_command(0x53);	/* Write CTRL Display (53h) */
+	write_data8(0x2c);
+	write_command(0x55);	/* Write Content Adaptive Brightness Control (55h) */
+	write_data8(0x02);
 
 	write_command(0xb0);	/* RGB Interface Signal Control (B0h) */
 	write_data8(0xCC);		//DEN high enable , dotclk rising edge, HSYNC & VSYNC low level clock .
@@ -546,8 +561,7 @@ void ili9341_test(void)
 #include "LCD_ASCII.c"
 #include "GB_Table.c"
 
-static const Cmd Cmds[] =
-{
+static const Cmd Cmds[] = {
 	{"MyCmds"},
 	{"ili9341","", 0, "test ili9341", ili9341_hw_init, 0, 99, CMD_REPEAT},
 	{"ili9341_test","", 0, "test ili9341", ili9341_test, 0, 99, CMD_REPEAT},
@@ -556,8 +570,7 @@ static const Cmd Cmds[] =
 
 static void init_cmd __P((void)) __attribute__ ((constructor));
 
-static void
-init_cmd()
+static void init_cmd(void)
 {
 	cmdlist_expand(Cmds, 1);
 }

@@ -1211,11 +1211,10 @@ s32 synopGMAC_attach(synopGMACdevice *gmacdev, u64 macBase, u64 dmaBase, u32 phy
 	for (i=phyBase; i<32; i++)  {
 		synopGMAC_read_phy_reg(gmacdev->MacBase, i, 2, &id0);
 		synopGMAC_read_phy_reg(gmacdev->MacBase, i, 3, &id1);
-//		printf("PHY ID %x %x\n", id0, id1);
-		if(id0 != 0 && id0 != 0x1fff)
-			if(id1 != 0 && id1 != 0xffff)
-				break;
+		if((id0 != 0x1fff) && (id1 != 0xffff))
+			break;
 	}
+	printf("phy id = %x %x\n", id0, id1);
 
 	if (i==32) {
 		printf("phy_detect: can't find PHY!\n");

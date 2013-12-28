@@ -488,6 +488,13 @@ static int ls1x_nand_scan(struct mtd_info *mtd)
 
 int ls1x_nand_init_buff(struct ls1x_nand_info *info)
 {
+	/* DMA描述符地址 */
+//	info->dma_desc = (unsigned int)(DMA_DESC | 0xa0000000);
+	info->dma_desc = (unsigned int)malloc(_ALIGN(DMA_DESC_NUM, 32), M_DEVBUF, M_WAITOK) | 0xa0000000;
+	if(info->dma_desc == NULL)
+		return -1;
+	info->dma_desc_phys = (unsigned int)(info->dma_desc) & 0x1fffffff;
+
 	/* NAND的DMA数据缓存 */
 //	info->data_buff = (unsigned char *)(DATA_BUFF | 0xa0000000);
 	info->data_buff = (unsigned char *)malloc(_ALIGN(MAX_BUFF_SIZE, 32), M_DEVBUF, M_WAITOK);
@@ -495,13 +502,6 @@ int ls1x_nand_init_buff(struct ls1x_nand_info *info)
 		return -1;
 	info->data_buff = (unsigned char *)((unsigned int)info->data_buff | 0xa0000000);
 	info->data_buff_phys = (unsigned int)(info->data_buff) & 0x1fffffff;
-
-	/* DMA描述符地址 */
-//	info->dma_desc = (unsigned int)(DMA_DESC | 0xa0000000);
-	info->dma_desc = (unsigned int)malloc(_ALIGN(DMA_DESC_NUM, 32), M_DEVBUF, M_WAITOK) | 0xa0000000;
-	if(info->dma_desc == NULL)
-		return -1;
-	info->dma_desc_phys = (unsigned int)(info->dma_desc) & 0x1fffffff;
 
 	order_addr_in = ORDER_ADDR_IN;
 
