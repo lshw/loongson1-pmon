@@ -5,7 +5,7 @@
 #define LS1X_I2C1_BASE			0xbfe68000
 #define LS1X_I2C2_BASE			0xbfe70000
 
-#define I2C_CLOCK		400000		/* Hz. max 400 Kbits/sec */
+#define I2C_CLOCK		100000		/* Hz. max 400 Kbits/sec */
 
 /* registers */
 #define OCI2C_PRELOW		0

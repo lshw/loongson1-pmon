@@ -34,10 +34,10 @@ static inline u8 i2c_readb(struct ls1x_i2c *i2c, int reg)
  */
 static short ls1x_poll_status(struct ls1x_i2c *i2c, unsigned long bit)
 {
-	int loop_cntr = 10000;
+	int loop_cntr = 20000;
 
 	do {
-		udelay(10);
+		udelay(1);
 	} while ((i2c_readb(i2c, OCI2C_STATUS) & bit) && (--loop_cntr > 0));
 
 	return (loop_cntr > 0);
