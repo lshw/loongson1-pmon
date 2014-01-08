@@ -168,7 +168,7 @@ static int mtdfile_read(int fd, void *buf, size_t n)
 	mtdfile *p;
 	mtdpriv *priv;
 	int maxlen, newpos;
-	size_t retlen, left;
+	size_t retlen = 0, left = n;
 	unsigned int block_inc;
 
 	priv = (mtdpriv *)_file[fd].data;
