@@ -62,6 +62,7 @@
 #include <target/regs-wdt.h>
 #include <target/regs-clk.h>
 #include <target/i2c-ls1x.h>
+#include <target/ls1x_spi.h>
 
 #include <pmon.h>
 
@@ -210,6 +211,8 @@ void initmips(unsigned int memsz)
 #if defined(mod_i2c_ls1x)
 	ls1x_i2c_probe();
 #endif
+
+	ls1x_spi_probe();
 
 	/*
 	 *  Init PMON and debug
@@ -728,6 +731,8 @@ void tgt_flashinfo(void *p, size_t *t)
 
 void tgt_flashprogram(void *p, int size, void *s, int endian)
 {
+	extern struct ls1x_spi_device spi_flash;
+
 	printf("Programming flash %x:%x into %x\n", s, size, p);
 	if(fl_erase_device(p, size, TRUE)) {
 		printf("Erase failed!\n");
@@ -736,7 +741,10 @@ void tgt_flashprogram(void *p, int size, void *s, int endian)
 	if(fl_program_device(p, s, size, TRUE)) {
 		printf("Programming failed!\n");
 	}
+
+	ls1x_spi_flash_ren(&spi_flash, 1);
 	fl_verify_device(p, s, size, TRUE);
+	ls1x_spi_flash_ren(&spi_flash, 0);
 }
 #endif /* PFLASH */
 
@@ -1206,16 +1214,13 @@ static int cksum(void *p, size_t s, int set)
  */
 void nvram_get(char *buffer)
 {
-	spi_read_area(NVRAM_POS,buffer,NVRAM_SECSIZE);
-	spi_initr();
+	spi_flash_read_area(NVRAM_POS, buffer, NVRAM_SECSIZE);
 }
 
 void nvram_put(char *buffer)
 {
-	int i;
-	spi_erase_area(NVRAM_POS,NVRAM_POS+NVRAM_SECSIZE,0x10000);
-	spi_write_area(NVRAM_POS,buffer,NVRAM_SECSIZE);
-	spi_initr();
+	spi_flash_erase_area(NVRAM_POS, NVRAM_POS+NVRAM_SECSIZE, 0x10000);
+	spi_flash_write_area(NVRAM_POS, buffer, NVRAM_SECSIZE);
 }
 
 #endif
