@@ -94,7 +94,6 @@ static void ls1x_nand_ecc_hwctl(struct mtd_info *mtd, int mode)
 
 static int ls1x_nand_waitfunc(struct mtd_info *mtd, struct nand_chip *chip)
 {
-//	udelay(50);
 	return 0;
 }
 
@@ -270,34 +269,24 @@ static void ls1x_nand_cmdfunc(struct mtd_info *mtd, unsigned command, int column
 
 	switch (command) {
 	case NAND_CMD_READOOB:
-		info->buf_count = mtd->oobsize;
+		info->buf_count = mtd->oobsize - column;
 		info->buf_start = 0;
 		nand_writel(info, NAND_CMD, SPARE | READ);
-		nand_writel(info, NAND_ADDR_L, MAIN_SPARE_ADDRL(page_addr) + mtd->writesize);
+		nand_writel(info, NAND_ADDR_L, MAIN_SPARE_ADDRL(page_addr) + mtd->writesize + column);
 		nand_writel(info, NAND_ADDR_H, MAIN_SPARE_ADDRH(page_addr));
 		nand_writel(info, NAND_OPNUM, info->buf_count);
 		nand_writel(info, NAND_PARAM, (nand_readl(info, NAND_PARAM) & 0xc000ffff) | (info->buf_count << 16));
 		start_dma_nand(0, info);
-/*		if (!ls1x_nand_done(info)) {
-			printf("Wait time out!!!\n");
-			ls1x_nand_stop(info);
-			break;
-		}*/
 		break;
 	case NAND_CMD_READ0:
-		info->buf_count = mtd->writesize + mtd->oobsize;
+		info->buf_count = mtd->writesize + mtd->oobsize - column;
 		info->buf_start = 0;
 		nand_writel(info, NAND_CMD, SPARE | MAIN | READ);
-		nand_writel(info, NAND_ADDR_L, MAIN_SPARE_ADDRL(page_addr));
+		nand_writel(info, NAND_ADDR_L, MAIN_SPARE_ADDRL(page_addr) + column);
 		nand_writel(info, NAND_ADDR_H, MAIN_SPARE_ADDRH(page_addr));
 		nand_writel(info, NAND_OPNUM, info->buf_count);
 		nand_writel(info, NAND_PARAM, (nand_readl(info, NAND_PARAM) & 0xc000ffff) | (info->buf_count << 16)); /* 1C注意 */
 		start_dma_nand(0, info);
-/*		if (!ls1x_nand_done(info)) {
-			printf("Wait time out!!!\n");
-			ls1x_nand_stop(info);
-			break;
-		}*/
 		break;
 	case NAND_CMD_SEQIN:
 		info->buf_count = mtd->writesize + mtd->oobsize - column;
@@ -319,11 +308,6 @@ static void ls1x_nand_cmdfunc(struct mtd_info *mtd, unsigned command, int column
 		nand_writel(info, NAND_OPNUM, info->buf_count);
 		nand_writel(info, NAND_PARAM, (nand_readl(info, NAND_PARAM) & 0xc000ffff) | (info->buf_count << 16)); /* 1C注意 */
 		start_dma_nand(1, info);
-/*		if (!ls1x_nand_done(info)) {
-			printf("Wait time out!!!\n");
-			ls1x_nand_stop(info);
-			break;
-		}*/
 		break;
 	case NAND_CMD_RESET:
 		info->buf_count = 0x0;
@@ -378,7 +362,7 @@ static void ls1x_nand_cmdfunc(struct mtd_info *mtd, unsigned command, int column
 		*(info->data_buff + 4) = nand_readl(info, NAND_IDL) & 0xff;
 		break;
 	case NAND_CMD_ERASE2:
-	case NAND_CMD_READ1:
+//	case NAND_CMD_READ1:
 		info->buf_count = 0x0;
 		info->buf_start = 0x0;
 		break;
@@ -413,11 +397,6 @@ static int ls1x_nand_scan(struct mtd_info *mtd)
 	struct nand_chip *chip = (struct nand_chip *)info;
 	uint64_t chipsize;
 	int exit_nand_size;
-
-/*	if (nand_scan(mtd, 1)) {
-		printf("failed to scan nand\n");
-		return = -ENXIO;
-	}*/
 
 	if (nand_scan_ident(mtd, 1))
 		return -ENODEV;
