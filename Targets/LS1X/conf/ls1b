@@ -256,6 +256,9 @@ option		CONFIG_FB_DYN
 ### NT35310(RGB接口)控制器 LCD驱动
 #select		mod_nt35310
 #option		CONFIG_NT35310
+### ST7565(8080接口)控制器 点阵LCD驱动
+#select		mod_st7565
+#option		CONFIG_ST7565
 
 ### I2C I2C控制器和设备初始化
 option		mod_i2c_ls1x

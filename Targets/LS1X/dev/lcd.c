@@ -454,6 +454,10 @@ unsigned long dc_init(void)
 //	printf("NT35310 TFT LCD Driver IC\n");
 	nt35310_init();
 #endif
+#if defined(CONFIG_ST7565)
+//	printf("ST7565 LCD Driver IC\n");
+	st7565_init();
+#endif
 
 	fb_xsize  = getenv("xres") ? strtoul(getenv("xres"),0,0) : FB_XSIZE;
 	fb_ysize  = getenv("yres") ? strtoul(getenv("yres"),0,0) : FB_YSIZE;

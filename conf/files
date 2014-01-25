@@ -408,6 +408,8 @@ file	sys/dev/lcm/ili9341.c			mod_ili9341
 file	sys/dev/lcm/jbt6k74.c			mod_jbt6k74
 #lcm NT35310
 file	sys/dev/lcm/nt35310.c			mod_nt35310
+#lcm ST7565R
+file	sys/dev/lcm/st7565.c			mod_st7565
 
 device loopdev
 attach loopdev at mainbus
