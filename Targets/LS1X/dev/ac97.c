@@ -12,16 +12,18 @@
 
 #define RX_DMA_DESC_SIZE	64
 #define TX_DMA_DESC_SIZE	64
-#define RX_BUFF_SIZE		0x00080000	/* 0.5MB */
-#define TX_BUFF_SIZE		0x00100000	/* 1MB */
+#define RX_BUFF_SIZE		0x00040000	/* 256KB */
+#define TX_BUFF_SIZE		0x00040000	/* 256KB */
 
 #define RX_DMA_DESC		0x81400000
 #define TX_DMA_DESC		0x81400080
 #define RX_DATA_BUFF	0x81400100
 #define TX_DATA_BUFF	(RX_DATA_BUFF + RX_BUFF_SIZE + 64)
 
-#define DMA_TX_ADDR		0xdfe72420	/* DMA发送操作的地址 */
-#define DMA_RX_ADDR		0x5fe74c4c	/* DMA接收操作的地址 */
+//#define DMA_TX_ADDR		0xdfe72420	/* DMA发送操作的地址 */
+//#define DMA_RX_ADDR		0x5fe74c4c	/* DMA接收操作的地址 */
+#define DMA_TX_ADDR		0x8fe72420	/* DMA发送操作的地址 */
+#define DMA_RX_ADDR		0x0fe74c4c	/* DMA接收操作的地址 */
 #define ORDER_ADDR_IN	0xbfd01160	/* DMA配置寄存器 */
 static unsigned int order_addr_in;
 #define DMA_DESC_NUM	28	/* DMA描述符占用的字节数 7x4 */
@@ -218,14 +220,14 @@ static void codec_init(void)
 		/* 输出通道配置寄存器 */
 		x = readl(LS1X_AC97_OCC0);
 		conf = x & ~(FIFO_THRES_MASK << FIFO_THRES_OFFSET) & ~(SS_MASK << SS_OFFSET);
-		conf = (conf | (2 << FIFO_THRES_OFFSET) | (2 << SS_OFFSET) | DMA_EN | CH_EN) & (~SR);
+		conf = (conf | (3 << FIFO_THRES_OFFSET) | (0 << SS_OFFSET) | DMA_EN | CH_EN) & (~SR);
 		conf |= (conf << OCH1_CFG_R_OFFSET) | (conf << OCH0_CFG_L_OFFSET);
 		writel(conf, LS1X_AC97_OCC0);
 
 		/* 输入通道配置寄存器 */
 		x = readl(LS1X_AC97_ICC);
 		conf = x & ~(FIFO_THRES_MASK << FIFO_THRES_OFFSET) & ~(SS_MASK << SS_OFFSET);
-		conf = (conf | (2 << FIFO_THRES_OFFSET) | (2 << SS_OFFSET) | DMA_EN | CH_EN) & (~SR);
+		conf = (conf | (3 << FIFO_THRES_OFFSET) | (0 << SS_OFFSET) | DMA_EN | CH_EN) & (~SR);
 		conf |= (conf << ICH2_CFG_MIC_OFFSET) | (conf << ICH1_CFG_R_OFFSET) | (conf << ICH0_CFG_L_OFFSET);
 		writel(conf, LS1X_AC97_ICC);
 
@@ -299,8 +301,8 @@ static int ac97_config(void)
 	}
 
 	/* disables the generation of an interrupt */
-//	writel(0, LS1X_AC97_INTM);
-	writel(0xffffffff, LS1X_AC97_INTM);
+	writel(0, LS1X_AC97_INTM);
+//	writel(0xffffffff, LS1X_AC97_INTM);
 	readl(LS1X_AC97_INT_CLR);
 	readl(LS1X_AC97_INT_OCCLR);
 	readl(LS1X_AC97_INT_ICCLR);
@@ -511,7 +513,7 @@ int ac97_test(int argc, char **argv)
 {
 	struct ls1x_ac97_info *info;
 	unsigned int i, j;
-	unsigned short *rx_buff;
+	unsigned int *rx_buff;
 	unsigned int *tx_buff;
 	char cmdbuf[100];
 
@@ -537,23 +539,34 @@ int ac97_test(int argc, char **argv)
 	ac97_config();
 
 #ifdef CONFIG_CHINESE
-	printf("开始放音：注意听是否跟所录声音一致\n");
+	printf("录音中\n");
 #else
-	printf("begin test\n");
+	printf("Recording\n");
 #endif
-	
+
 	/* 需要配置DMA */
 	start_dma_rx(info);
 /*	for (i = 0; i < RX_BUFF_SIZE; i += 512) {
 		start_dma_rxs(info, info->rx_data_buff_phys + i, 128);
 	}*/
 
-	rx_buff = (unsigned short *)RX_DATA_BUFF;
+#ifdef CONFIG_CHINESE
+	printf("放音中：注意听是否跟所录声音一致\n");
+#else
+	printf("Playback\n");
+#endif
+
+	rx_buff = (unsigned int *)RX_DATA_BUFF;
 	tx_buff = (unsigned int *)TX_DATA_BUFF;
 
-	for (i=0; i<(RX_BUFF_SIZE/2); i++) {
+/*	for (i=0; i<(RX_BUFF_SIZE/2); i++) {
 		j = 0x0000ffff & (unsigned int)rx_buff[i];
 		tx_buff[i] = (j<<16) | j;
+	}*/
+
+	for (i=0; i<(RX_BUFF_SIZE); i++) {
+//		j = 0x0000ffff & *(rx_buff + i);
+		*(tx_buff + i) = *(rx_buff + i);
 	}
 
 //	start_dma_tx(info);
