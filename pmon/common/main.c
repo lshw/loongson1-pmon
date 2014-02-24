@@ -59,6 +59,7 @@
 #include "mod_debugger.h"
 #include "mod_symbols.h"
 
+#include "nand.h"
 #include "sd.h"
 #include "wd.h"
 
@@ -645,6 +646,25 @@ void dbginit(char *adr)
 	memsize = memorysize;
 
 	__init();	/* Do all constructor initialisation */
+
+	/*
+	 * Init system global parameters
+	 */
+	paraminit ();
+
+	/*
+	 * Initialise "virtual memory" maps
+	 */
+	vminit();
+
+	/*
+	 * Initialise memory allocator
+	 */
+	kmeminit();
+
+#if NNAND
+	ls1x_nand_init();
+#endif
 
 	SBD_DISPLAY ("ENVI", CHKPNT_ENVI);
 	envinit ();

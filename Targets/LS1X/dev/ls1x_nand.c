@@ -553,16 +553,96 @@ int ls1x_nand_init(void)
 	}
 #endif
 
-#if defined(NAND_BOOT) && defined(LS1CSOC)
-//	add_mtd_device(ls1x_mtd, 0, 1024*1024, "pmon");
+#if defined(NAND_BOOT_EN) && defined(LS1CSOC)
+	add_mtd_device(ls1x_mtd, 0, 1024*1024, "bootloader");
 	add_mtd_device(ls1x_mtd, 1024*1024, ((14-1)*1024)*1024, "kernel");
 #else
-	add_mtd_device(ls1x_mtd, 0, 14*1024*1024, "kernel");				//14MB
+	add_mtd_device(ls1x_mtd, 0, 14*1024*1024, "kernel");
 #endif
-//	add_mtd_device(ls1x_mtd, 14*1024*1024, 50*1024*1024, "os");		//50MB
-	add_mtd_device(ls1x_mtd, 14*1024*1024, 100*1024*1024, "os");		//100MB
-	add_mtd_device(ls1x_mtd, (100+14)*1024*1024, 14*1024*1024, "data");	//14MB
+	add_mtd_device(ls1x_mtd, 14*1024*1024, 100*1024*1024, "os");
+	add_mtd_device(ls1x_mtd, (100+14)*1024*1024, 14*1024*1024, "data");
 
 	return 0;
 }
 
+/******************************************************************************/
+/* 用于nand flash 环境变量读写的函数 */
+#if defined(NAND_BOOT_EN) && defined(LS1CSOC)
+int nand_probe_boot(void)
+{
+	return 0;
+}
+
+int nand_erase_boot(void *base, int size)
+{
+	int page_addr;
+	int page_per_block = ls1x_mtd->erasesize / ls1x_mtd->writesize;
+	int erase_num = 0;
+
+	page_addr = (unsigned int)base / ls1x_mtd->writesize;
+
+	erase_num = size / ls1x_mtd->erasesize;
+	if (size % ls1x_mtd->erasesize != 0)
+	    erase_num++;
+
+	while (erase_num > 0) {
+		ls1x_nand_cmdfunc(ls1x_mtd, NAND_CMD_ERASE1, 0, page_addr);
+		erase_num--;
+		page_addr += page_per_block;
+	}
+
+	return 0;
+}
+
+int nand_write_boot(void *base, void *buffer, int size)
+{
+	struct ls1x_nand_info *info = ls1x_mtd->priv;
+	unsigned char *data_buf = (unsigned char *)buffer;
+	unsigned int page_addr = (unsigned int)base / ls1x_mtd->writesize;
+	unsigned int buffer_size = size;
+
+	while (buffer_size > ls1x_mtd->writesize) {
+		ls1x_nand_cmdfunc(ls1x_mtd, NAND_CMD_SEQIN, 0x00, page_addr);
+		memcpy(info->data_buff, data_buf, ls1x_mtd->writesize);
+		ls1x_nand_cmdfunc(ls1x_mtd, NAND_CMD_PAGEPROG, 0, -1);
+
+		buffer_size -= ls1x_mtd->writesize;
+		data_buf += ls1x_mtd->writesize;
+		page_addr += 1;
+	}
+	if (buffer_size) {
+		ls1x_nand_cmdfunc(ls1x_mtd, NAND_CMD_SEQIN, 0x00, page_addr);
+		memcpy(info->data_buff, data_buf, buffer_size);
+		ls1x_nand_cmdfunc(ls1x_mtd, NAND_CMD_PAGEPROG, 0, -1);
+	}
+	return 0;
+}
+
+void nand_verify_boot(void *base, void *buffer, int size)
+{
+	
+}
+
+int nand_read_boot(void *base, void *buffer, int size)
+{
+	struct ls1x_nand_info *info = ls1x_mtd->priv;
+	unsigned char *data_buf = (unsigned char *)buffer;
+	unsigned int page_addr = (unsigned int)base / ls1x_mtd->writesize;
+	unsigned int buffer_size = size;
+
+	while (buffer_size > ls1x_mtd->writesize) {
+		ls1x_nand_cmdfunc(ls1x_mtd, NAND_CMD_READ0, 0x00, page_addr);
+		memcpy(data_buf, info->data_buff, ls1x_mtd->writesize);
+
+		buffer_size -= ls1x_mtd->writesize;
+		data_buf += ls1x_mtd->writesize;
+		page_addr += 1;
+	}
+	if (buffer_size) {
+		ls1x_nand_cmdfunc(ls1x_mtd, NAND_CMD_READ0, 0x00, page_addr);
+		memcpy(data_buf, info->data_buff, buffer_size);
+	}
+
+	return 0;
+}
+#endif

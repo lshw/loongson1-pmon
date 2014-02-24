@@ -209,9 +209,11 @@ option		INPUT_FROM_BOTH		#打印信息同时输出到UART(串口)和VGA控制台
 option		OUTPUT_TO_BOTH		#信息可以通过UART(串口)或VGA控制台(键盘输入设备)输入
 
 select		nand
-#option		NAND_BOOT				#表示使用nandflash启动
+#option		NAND_BOOT_EN			#表示使用nandflash启动
 #option		NAND_PAGE_SIZE=2048		#nand页大小
 #option		NAND_PARAMETER=0x000	#外部颗粒容量大小 NAND_PARAMETER（寄存器地址：0x1fe7_8018）
+									#注意：根据nand flash大小修改,低8bit保留
+
 #select		nor_flash			#如果使用nor flash分区需要该选项
 #option		NORFLASH_PARTITION	#nor flash(spi flash)分区
 #option		W25X64

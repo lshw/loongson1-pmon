@@ -79,7 +79,7 @@ const Optdesc cmd_nload_opts[] = {
 #ifdef HAVE_FLASH
 	{"-f flash_addr -o load_addr offsetr", ""},
 #endif
-#ifdef NAND_BOOT
+#ifdef NAND_BOOT_EN
 	{"-g nand_flash_addr -o load_addr offsetr", ""},
 #endif
 	{"-n", "don't load symbols"},
@@ -139,7 +139,7 @@ static int nload(int argc, char **argv)
 				}
 				flags |= FFLAG; break;
 #endif
-#ifdef NAND_BOOT
+#ifdef NAND_BOOT_EN
 			case 'g':
 				if (!get_rsa ((u_int32_t *)&flashaddr, optarg)) {
 					err++;
@@ -220,7 +220,7 @@ static int nload(int argc, char **argv)
 	}
 #endif
 
-#ifdef NAND_BOOT
+#ifdef NAND_BOOT_EN
 	if (flags & GFLAG) {
 		tgt_nand_flashinfo(flashaddr, &flashsize);
 		if (flashsize == 0) {
@@ -307,7 +307,7 @@ static int nload(int argc, char **argv)
 	}
 #endif
 
-#ifdef NAND_BOOT
+#ifdef NAND_BOOT_EN
 	if (flags & GFLAG) {
 		extern long dl_minaddr;
 		extern long dl_maxaddr;

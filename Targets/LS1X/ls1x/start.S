@@ -132,7 +132,7 @@ stack = start - 0x4000		/* Place PMON stack below PMON start in RAM */
 	la	sp, stack
 	la	gp, _gp
 
-#if defined(NAND_BOOT) && defined(LS1CSOC)
+#if defined(NAND_BOOT_EN) && defined(LS1CSOC)
 #include "nand_boot.S"
 	la	t0, start
 	la	t1, real_bin

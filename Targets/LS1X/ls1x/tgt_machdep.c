@@ -70,6 +70,7 @@
 #include "mod_x86emu.h"
 #include "mod_vgacon.h"
 #include "mod_framebuffer.h"
+
 #if (NMOD_X86EMU_INT10 > 0)||(NMOD_X86EMU >0)
 extern int vga_bios_init(void);
 #endif
@@ -78,6 +79,13 @@ extern int kbd_initialize(void);
 extern int write_at_cursor(char val);
 extern const char *kbd_error_msgs[];
 
+#if defined(NAND_BOOT_EN) && defined(LS1CSOC)
+extern int nand_probe_boot(void);
+extern int nand_erase_boot(void *base, int size);
+extern int nand_write_boot(void *base, void *buffer, int size);
+extern void nand_verify_boot(void *base, void *buffer, int size);
+extern int nand_read_boot(void *base, void *buffer, int size);
+#endif
 
 #include "flash.h"
 #if (NMOD_FLASH_AMD + NMOD_FLASH_INTEL + NMOD_FLASH_SST) == 0
@@ -234,10 +242,6 @@ void initmips(unsigned int memsz)
 
 	printf("BEV in SR set to zero.\n");
 
-#if NNAND
-	ls1x_nand_init();
-#endif
-
 #ifdef  MEMSCAN	
 	memscan();
 #endif	
@@ -318,8 +322,7 @@ void tgt_devconfig(void)
 #if NMOD_VGACON > 0
 	int rc = 0;
 #if NMOD_FRAMEBUFFER > 0 
-	unsigned long fbaddress, ioaddress;
-	extern struct pci_device *vga_dev;
+	unsigned long fbaddress;
 #endif
 #endif
 	if (have_pci)
@@ -638,7 +641,7 @@ void tgt_settime(time_t t)
 	struct tm *tm;
 
 	#ifdef HAVE_TOD
-	unsigned int year, v;
+	unsigned int v;
 	if (!clk_invalid) {
 		tm = gmtime(&t);
 
@@ -731,7 +734,7 @@ void tgt_flashinfo(void *p, size_t *t)
 
 void tgt_flashprogram(void *p, int size, void *s, int endian)
 {
-	extern struct ls1x_spi_device spi_flash;
+	extern struct spi_device spi_flash;
 
 	printf("Programming flash %x:%x into %x\n", s, size, p);
 	if(fl_erase_device(p, size, TRUE)) {
@@ -748,7 +751,7 @@ void tgt_flashprogram(void *p, int size, void *s, int endian)
 }
 #endif /* PFLASH */
 
-#ifdef NAND_BOOT
+#ifdef NAND_BOOT_EN
 void tgt_nand_flashinfo(void *p, size_t *t)
 {
 	if (!nand_probe_boot()) {
@@ -761,15 +764,15 @@ void tgt_nand_flashinfo(void *p, size_t *t)
 void tgt_nand_flashprogram(void *p, int size, void *s, int endian)
 {
 	printf("Programming flash %x:%x into %x, edndian? %x\n", s, size, p, endian);
-	if (nand_erase_boot(p, size, TRUE)) {
+	if (nand_erase_boot(p, size)) {
 		printf("Erase failed!\n");
 		return;
 	}
 
-	if (nand_program_boot(p, s, size, TRUE)) {
+	if (nand_write_boot(p, s, size)) {
 		printf("Programming failed!\n");
 	}
-	nand_verify_boot(p, s, size, TRUE);
+	nand_verify_boot(p, s, size);
 }
 #endif
 
@@ -1214,13 +1217,23 @@ static int cksum(void *p, size_t s, int set)
  */
 void nvram_get(char *buffer)
 {
+#ifdef NAND_BOOT_EN
+	nand_read_boot((void *)NVRAM_POS, (void *)buffer, NVRAM_SECSIZE);
+#else
 	spi_flash_read_area(NVRAM_POS, buffer, NVRAM_SECSIZE);
+#endif
 }
 
 void nvram_put(char *buffer)
 {
+#ifdef NAND_BOOT_EN
+	/* nand 简单的使用一块作为环境变量存储 */
+	nand_erase_boot((void *)NVRAM_POS, 4096);
+	nand_write_boot((void *)NVRAM_POS, (void *)buffer, NVRAM_SECSIZE);
+#else
 	spi_flash_erase_area(NVRAM_POS, NVRAM_POS+NVRAM_SECSIZE, 0x10000);
 	spi_flash_write_area(NVRAM_POS, buffer, NVRAM_SECSIZE);
+#endif
 }
 
 #endif
