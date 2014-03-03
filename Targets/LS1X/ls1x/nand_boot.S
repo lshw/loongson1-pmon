@@ -4,6 +4,7 @@
 #define	DATA_LENGTH		0x80000	/* 512KB 预计使用512KB存放PMON */
 
 #undef BOOT_ECCNAND
+//#define BOOT_ECCNAND
 
 #ifdef BOOT_ECCNAND
 #define DMA_READ_WORDS	(((NAND_PAGE_SIZE / 204) * 188) >> 2)
@@ -11,10 +12,10 @@
 #define NAND_READ_CMD	0x4903
 #define TRANS_TIME		(DATA_LENGTH / DMA_READ_WORDS)
 #else
-#define DMA_READ_WORDS	((DATA_LENGTH >> 2))
-#define NAND_READ_BYTES 4*DMA_READ_WORDS	
+#define DMA_READ_WORDS	(NAND_PAGE_SIZE >> 2)
+#define NAND_READ_BYTES	NAND_PAGE_SIZE	
 #define NAND_READ_CMD	0x103
-#define TRANS_TIME		0x1
+#define TRANS_TIME		(DATA_LENGTH / DMA_READ_WORDS)
 #endif
 
 boot:
@@ -25,33 +26,10 @@ boot:
 	#define SDRAM_PARAM_DIV_NUM		((1 << (SDRAM_DIV+1)) % 5)
 
 	li		t0, 0xbfe78030
-
-/*	li		v0, 0xbfc00000+(NVRAM_POS+PLL_OFFS)
-	lw		t2, 0(v0)
-	lw		t3, 4(v0)
-
-	li		v0, 0x00000000
-	beq		t2, v0, 1f
-	nop
-	li		v0, 0xffffffff
-	beq		t2, v0, 1f
-	nop
-
-	li		v0, 0x00000000
-	beq		t3, v0, 1f
-	nop
-	li		v0, 0xffffffff
-	beq		t3, v0, 1f
-	nop
-	nop
-	b		2f
-	nop*/
-1:
 	/* 设置PLL倍频 及SDRAM分频 */
 	li		t2, (0x80000008 | (PLL_MULT << 8) | (0x3 << 2) | SDRAM_DIV)
 	/* 设置CPU分频 */
 	li		t3, (0x00008003 | (CPU_DIV << 8))
-2:
 	/* 注意：首先需要把分频使能位清零 */
 	li		t1, 0x2
 	sw		t1, 0x4(t0)
@@ -61,15 +39,7 @@ boot:
 
 	/* 初始化sdram */
 #include "sdram_cfg.S"
-
 	li		t1, 0xbfd00410
-/*	sw		zero, 0x0(t1)
-	sw		zero, 0x4(t1)
-	sw		zero, 0x0(t1)
-	sw		zero, 0x4(t1)
-	sw		zero, 0x0(t1)
-	sw		zero, 0x4(t1)
-	nop*/
 	li		a1, SD_PARA0
 	sw		a1, 0x0(t1)
 	li		a1, SD_PARA1
@@ -82,7 +52,7 @@ boot:
 	sw		a1, 0x0(t1)
 	li		a1, SD_PARA1_EN
 	sw		a1, 0x4(t1)
-	DELAY(6000)
+	DELAY(100)
 
 dma_nand_cfg_read:
 	#DMA read ddr operation
@@ -115,20 +85,22 @@ dma_nand_cfg_read:
 	sw		t0, 0x0(a1)
 	nop
 
-#ifdef	BOOT_ECCNAND	
 	li		t4, TRANS_TIME
 	li		t3, 0x0
-#endif
+
 nand_rd_cmd:
 	li		t2, LS1X_NAND_BASE
-	li		t1, NAND_PARAMETER | 0x8005000
+	sw		zero, 0x04(t2)
+	sw		zero, 0x08(t2)
+	li		t1, 0x20c
+	sw		t1, 0x0c(t2)
+	li		t1, ((NAND_READ_BYTES << 16) | NAND_PARAMETER | 0x8005000)
 	sw		t1, 0x18(t2)
 	li		t1, NAND_READ_BYTES
 	sw		t1, 0x1c(t2)
-#ifdef	BOOT_ECCNAND	
+
 ecc_rd:
 	sw		t3, 0x8(t2)	/* page addr */
-#endif
 	li		t1, 0x00000040
 	sw		t1, 0x0(t2)
 	or		t1, 0x00000001
@@ -152,13 +124,11 @@ ecc_rd:
 	beqz	t0, 1b	/* 等待nand命令完成 */
 	nop
 
-#ifdef	BOOT_ECCNAND	
 	sw		zero, 0x0(t2)	/* clear nand_control's cmd */
 	sub		t4, 1
 	add		t3,	1			/* increase page addr */
 	bnez	t4, ecc_rd
 	nop
-#endif
 
 	li		t1, 0x10	/* stop DMA */
 	sw		t1, 0x0(a1)
