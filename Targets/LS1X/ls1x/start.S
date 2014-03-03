@@ -116,6 +116,7 @@
  */
 
 	.set	noreorder
+	.set	mips32
 	.globl	_start
 	.globl	start
 	.globl	__main
@@ -365,7 +366,7 @@ locate:
 	sw v1, 4(a0)
 	sw a1, (a0);
 
-#elif defined(LS1CSOC) && !defined(NAND_BOOT)
+#elif defined(LS1CSOC) && !defined(NAND_BOOT_EN)
 	/* config pll div for cpu and sdram */
 	#define SDRAM_DIV_2	0x0
 	#define SDRAM_DIV_3	0x2
@@ -610,13 +611,24 @@ cpu_win_fixup:
 
 #elif defined(LS1CSOC)
 	li msize, MEM_SIZE
+#if !defined(NAND_BOOT_EN)
 #include "sdram_cfg.S"
 
-	li  t1, 0xbfd00410
-	li  a1, SD_PARA0
-	sw  a1, 0x0(t1)
-	li  a1, SD_PARA1
-	sw  a1, 0x4(t1)
+	li  	t1, 0xbfd00410
+	li		a1, SD_PARA0
+	sw		a1, 0x0(t1)
+	li		a1, SD_PARA1
+	sw		a1, 0x4(t1)
+	li		a1, SD_PARA0
+	sw		a1, 0x0(t1)
+	li		a1, SD_PARA1
+	sw		a1, 0x4(t1)
+	li		a1, SD_PARA0
+	sw		a1, 0x0(t1)
+	li		a1, SD_PARA1_EN
+	sw		a1, 0x4(t1)
+//	DELAY(100)
+#endif
 #endif
 /**************************************CACHE*****************************/
 

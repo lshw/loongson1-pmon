@@ -63,10 +63,26 @@ boot:
 #include "sdram_cfg.S"
 
 	li		t1, 0xbfd00410
+/*	sw		zero, 0x0(t1)
+	sw		zero, 0x4(t1)
+	sw		zero, 0x0(t1)
+	sw		zero, 0x4(t1)
+	sw		zero, 0x0(t1)
+	sw		zero, 0x4(t1)
+	nop*/
 	li		a1, SD_PARA0
 	sw		a1, 0x0(t1)
 	li		a1, SD_PARA1
 	sw		a1, 0x4(t1)
+	li		a1, SD_PARA0
+	sw		a1, 0x0(t1)
+	li		a1, SD_PARA1
+	sw		a1, 0x4(t1)
+	li		a1, SD_PARA0
+	sw		a1, 0x0(t1)
+	li		a1, SD_PARA1_EN
+	sw		a1, 0x4(t1)
+	DELAY(6000)
 
 dma_nand_cfg_read:
 	#DMA read ddr operation
@@ -113,15 +129,29 @@ nand_rd_cmd:
 ecc_rd:
 	sw		t3, 0x8(t2)	/* page addr */
 #endif
-	li		t1, NAND_READ_CMD
+	li		t1, 0x00000040
+	sw		t1, 0x0(t2)
+	or		t1, 0x00000001
 	sw		t1, 0x0(t2)
 	nop
+1:
+	lw		t0, 0x0(t2)
+	and		t0, t0, 0x400
+	beqz	t0, 1b
+	nop
 
+
+	li		t1, 0x00000102
+	sw		t1, 0x0(t2)
+	or		t1, 0x00000001
+	sw		t1, 0x0(t2)
+	nop
 1:
 	lw		t0, 0x0(t2)
 	and		t0, t0, 0x400
 	beqz	t0, 1b	/* 等待nand命令完成 */
 	nop
+
 #ifdef	BOOT_ECCNAND	
 	sw		zero, 0x0(t2)	/* clear nand_control's cmd */
 	sub		t4, 1

@@ -37,5 +37,7 @@
 					(TRCD << 8) | (WIDTH_16 << 6) | (COL_512 << 3) | \
 					ROW_8K)
 
-#define	SD_PARA1	((CFG_VALID << 9) | (HANG_UP_N << 8) | \
+#define	SD_PARA1	((HANG_UP_N << 8) | (DEF_SEL_N << 7) | (TWR << 5) | (TREF >> 7))
+
+#define	SD_PARA1_EN	((CFG_VALID << 9) | (HANG_UP_N << 8) | \
 					(DEF_SEL_N << 7) | (TWR << 5) | (TREF >> 7))

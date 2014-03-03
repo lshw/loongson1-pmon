@@ -1,8 +1,8 @@
 #ifndef __LS1X_NAND_H_
 #define __LS1X_NAND_H_
 
-#define DMA_DESC 0x80400000
-#define DATA_BUFF 0x80500000
+#define DATA_BUFF	0xa0000000
+#define DMA_DESC	0xa0200000
 
 #define DMA_ACCESS_ADDR	0x1fe78040	/* DMA对NAND操作的地址 */
 #define ORDER_ADDR_IN	0xbfd01160	/* DMA配置寄存器 */
