@@ -58,7 +58,8 @@
 #define nand_readl(info, off)		\
 	__raw_readl((info)->mmio_base + (off))
 
-#define MAX_BUFF_SIZE	1048576	/* 1MByte 避免有时分配不成功？ */
+//#define MAX_BUFF_SIZE	1048576	/* 1MByte 避免有时分配不成功？ */
+#define MAX_BUFF_SIZE	10240
 #define PAGE_SHIFT		12	/* 页内地址(列地址)A0-A11 */
 
 #if defined(LS1ASOC) || defined(LS1CSOC)
@@ -72,8 +73,6 @@
 	#define MAIN_SPARE_ADDRH(x)	((x) >> (32 - PAGE_SHIFT))
 	#define MAIN_SPARE_ADDRL(x)	((x) << PAGE_SHIFT)
 #endif
-
-#define ALIGN_DMA(x)       (((x)+ 3)/4)
 
 #define	GPIO_CONF1	0xbfd010c4
 #define	GPIO_CONF2	0xbfd010c8

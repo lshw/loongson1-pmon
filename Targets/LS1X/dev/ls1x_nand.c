@@ -31,9 +31,11 @@ struct ls1x_nand_info {
 
 	unsigned int	dma_desc;
 	unsigned int	dma_desc_phys;
+	size_t			dma_desc_size;
 
 	unsigned char	*data_buff;
 	unsigned int	data_buff_phys;
+	size_t			data_buff_size;
 
 	/* relate to the command */
 //	int	use_ecc;	/* use HW ECC ? */
@@ -262,10 +264,6 @@ static void start_dma_nand(unsigned int flags, struct ls1x_nand_info *info)
 static void ls1x_nand_cmdfunc(struct mtd_info *mtd, unsigned command, int column, int page_addr)
 {
 	struct ls1x_nand_info *info = mtd->priv;
-	unsigned cmd_prev;
-	
-	cmd_prev = info->cmd;
-	info->cmd = command;
 
 	switch (command) {
 	case NAND_CMD_READOOB:
@@ -295,10 +293,6 @@ static void ls1x_nand_cmdfunc(struct mtd_info *mtd, unsigned command, int column
 		info->seqin_page_addr = page_addr;
 		break;
 	case NAND_CMD_PAGEPROG:
-		if (cmd_prev != NAND_CMD_SEQIN) {
-			printf("Prev cmd don't complete...\n");
-			break;
-		}
 		if (info->seqin_column < mtd->writesize)
 			nand_writel(info, NAND_CMD, SPARE | MAIN | WRITE);
 		else
@@ -461,25 +455,27 @@ static int ls1x_nand_scan(struct mtd_info *mtd)
 	return nand_scan_tail(mtd);
 }
 
-#define _ALIGN(x, a)		__ALIGN_KERNEL((x), (a))
-#define __ALIGN_KERNEL(x, a)		__ALIGN_KERNEL_MASK(x, (typeof(x))(a) - 1)
-#define __ALIGN_KERNEL_MASK(x, mask)	(((x) + (mask)) & ~(mask))
+#define ALIGN(x,a)		__ALIGN_MASK((x),(typeof(x))(a)-1)
+#define __ALIGN_MASK(x,mask)	(((x)+(mask))&~(mask))
 
 int ls1x_nand_init_buff(struct ls1x_nand_info *info)
 {
 	/* DMA描述符地址 */
+	info->dma_desc_size = ALIGN(DMA_DESC_NUM, PAGE_SIZE);	/* 申请内存大小，页对齐 */
 //	info->dma_desc = (unsigned int)(DMA_DESC | 0xa0000000);
-	info->dma_desc = (unsigned int)malloc(_ALIGN(DMA_DESC_NUM, 32), M_DEVBUF, M_WAITOK) | 0xa0000000;
+	info->dma_desc = ((unsigned int)malloc(info->dma_desc_size, M_DEVBUF, M_WAITOK) & 0x0fffffff) | 0xa0000000;
+	info->dma_desc = (unsigned int)ALIGN((unsigned int)info->dma_desc, 32);	/* 地址32字节对齐 */
 	if(info->dma_desc == NULL)
 		return -1;
 	info->dma_desc_phys = (unsigned int)(info->dma_desc) & 0x1fffffff;
 
 	/* NAND的DMA数据缓存 */
+	info->data_buff_size = ALIGN(MAX_BUFF_SIZE, PAGE_SIZE);	/* 申请内存大小，页对齐 */
 //	info->data_buff = (unsigned char *)(DATA_BUFF | 0xa0000000);
-	info->data_buff = (unsigned char *)malloc(_ALIGN(MAX_BUFF_SIZE, 32), M_DEVBUF, M_WAITOK);
+	info->data_buff = (unsigned char *)(((unsigned int)malloc(info->data_buff_size, M_DEVBUF, M_WAITOK) & 0x0fffffff) | 0xa0000000);
+	info->data_buff = (unsigned char *)ALIGN((unsigned int)info->data_buff, 32);	/* 地址32字节对齐 */
 	if(info->data_buff == NULL)
 		return -1;
-	info->data_buff = (unsigned char *)((unsigned int)info->data_buff | 0xa0000000);
 	info->data_buff_phys = (unsigned int)(info->data_buff) & 0x1fffffff;
 
 	order_addr_in = ORDER_ADDR_IN;
