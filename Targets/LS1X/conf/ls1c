@@ -217,6 +217,7 @@ select		nand
 #select		nor_flash			#如果使用nor flash分区需要该选项
 #option		NORFLASH_PARTITION	#nor flash(spi flash)分区
 #option		W25X64
+#option		W25Q80
 #select		loop
 #select		raw_ether
 

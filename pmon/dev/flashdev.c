@@ -74,6 +74,8 @@ struct fl_device fl_known_dev[] = {
 	16384*__KB, 64*__KB,  NULL, NULL},	//&fl_func_winb },
 	{ "winb25x64",	0xef, 0x17, FL_PROTO_AMD, FL_CAP_DE,
 	8192*__KB, 64*__KB,  NULL, NULL},	//&fl_func_winb },
+	{ "winb25x80",	0xef, 0x14, FL_PROTO_AMD, FL_CAP_DE,
+	1024*__KB, 64*__KB,  NULL, NULL},	//&fl_func_winb },
 	{ "winb25x40",	0xef, 0x13, FL_PROTO_AMD, FL_CAP_DE,
 	512*__KB, 64*__KB,  NULL, NULL},	//&fl_func_winb },
 #if NMOD_FLASH_AMD > 0

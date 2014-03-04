@@ -1169,9 +1169,10 @@ LEAF(initserial)
 	ori		a1, 0x30
 	sw		a1, 0x10(a0)*/
 
+	/* UART1 */
 /*	li		a0, 0xbfd011f0
 	lw		a1, 0x00(a0)
-	ori		a1, 0x03
+	ori		a1, 0x0c
 	sw		a1, 0x00(a0)*/
 
 	li		a0, 0xbfe78030
