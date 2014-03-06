@@ -632,13 +632,14 @@ extern unsigned long GPU_fbaddr;
 }
 #endif
 
+int	memsize; /* thf */
 
 /*
  *  PMON2000 entrypoint. Called after initial setup.
  */
 void dbginit(char *adr)
 {
-	int	memsize, freq;
+	int	freq;
 	char	fs[10], *fp;
 
 /*	splhigh();*/
