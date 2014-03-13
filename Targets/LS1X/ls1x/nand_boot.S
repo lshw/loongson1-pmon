@@ -52,43 +52,13 @@ boot:
 	sw		a1, 0x0(t1)
 	li		a1, SD_PARA1_EN
 	sw		a1, 0x4(t1)
-	DELAY(100)
+	DELAY(10)
 
-dma_nand_cfg_read:
-	#DMA read ddr operation
-	li		a1, DMA_DESC	/* dma desc地址 自定义的一段内存地址 */
-	li		t0, 0x00
-	sw		t0, 0x0(a1)	/* dma_order_addr */
-	li		t0, DATA_BUFF & 0x1fffffff
-	sw		t0, 0x4(a1)	/* dma_mem_addr */
-
-	li		t0, DMA_ACCESS_ADDR
-	li		t1, DMA_ACCESS_ADDR
-	or		t0, t0, t1
-	or		t0, t0, t1
-	and		t0, t0, 0x1fffffff
-	sw		t0, 0x8(a1)	/* dma_dev_addr */
-
-	li		t0, DMA_READ_WORDS
-	sw		t0, 0xc(a1)	/* dma_length */
-	li		t0, 0x0
-	sw		t0, 0x10(a1)	/* dma_step_length */
-	li		t0, TRANS_TIME
-	sw		t0, 0x14(a1)	/* step times */
-	li		t0, 0x1 
-	sw		t0, 0x18(a1)	/* dma cmd */
-	nop
-
-	/* state_reg [12] =1 read  ddr and write devices, 0 write ddr and read devices */
-	li		a1, ORDER_ADDR_IN
-	li		t0, (DMA_DESC & 0x1fffffff) | 0x8	/* which dma channel to be configured */
-	sw		t0, 0x0(a1)
-	nop
-
-	li		t4, TRANS_TIME
+	/* 初始化nand */
 	li		t3, 0x0
+	li		t4, TRANS_TIME
+	li		t5, DATA_BUFF & 0x1fffffff
 
-nand_rd_cmd:
 	li		t2, LS1X_NAND_BASE
 	sw		zero, 0x04(t2)
 	sw		zero, 0x08(t2)
@@ -99,8 +69,7 @@ nand_rd_cmd:
 	li		t1, NAND_READ_BYTES
 	sw		t1, 0x1c(t2)
 
-ecc_rd:
-	sw		t3, 0x8(t2)	/* page addr */
+	/* reset nand */
 	li		t1, 0x00000040
 	sw		t1, 0x0(t2)
 	or		t1, 0x00000001
@@ -112,24 +81,71 @@ ecc_rd:
 	beqz	t0, 1b
 	nop
 
+	/*  */
+nand_read:
+	/* 初始化DMA */
+	li		a1, DMA_DESC /* dma desc地址 自定义的一段内存地址 */
+	li		t0, 0x00
+	sw		t0, 0x0(a1) /* dma_order_addr */
 
+	sw		t5, 0x4(a1) /* dma_mem_addr */
+
+	li		t0, DMA_ACCESS_ADDR
+	and		t0, t0, 0x1fffffff
+	sw		t0, 0x8(a1) /* dma_dev_addr */
+
+	li		t0, DMA_READ_WORDS
+	sw		t0, 0xc(a1) /* dma_length */
+
+	li		t0, 0x0
+	sw		t0, 0x10(a1) /* dma_step_length */
+
+	li		t0, 0x1
+	sw		t0, 0x14(a1) /* step times */
+
+	li		t0, 0x1 
+	sw		t0, 0x18(a1) /* dma cmd */
+	nop
+
+	/* 启动nand读 */
+	sw		t3, 0x8(t2)	/* page addr */
 	li		t1, 0x00000102
 	sw		t1, 0x0(t2)
 	or		t1, 0x00000001
 	sw		t1, 0x0(t2)
 	nop
+
+	/* 启动dma */
+	li		a1, ORDER_ADDR_IN
+	li		t0, (DMA_DESC & 0x1fffffe0) | 0x8
+	sw		t0, 0x0(a1)
+	/* 等待dma命令完成 */
+1:
+	lw		t0, 0x0(a1)
+	and		t0, t0, 0x8
+	bnez	t0, 1b
+	nop
+
+	/* 等待nand命令完成 */
+#if 1
 1:
 	lw		t0, 0x0(t2)
 	and		t0, t0, 0x400
-	beqz	t0, 1b	/* 等待nand命令完成 */
+	beqz	t0, 1b
 	nop
+#else
+	DELAY(900)
+#endif
 
 	sw		zero, 0x0(t2)	/* clear nand_control's cmd */
+	li		t0, NAND_READ_BYTES
+	addu	t5, t0
 	sub		t4, 1
 	add		t3,	1			/* increase page addr */
-	bnez	t4, ecc_rd
+	bnez	t4, nand_read
 	nop
 
-	li		t1, 0x10	/* stop DMA */
-	sw		t1, 0x0(a1)
+	li		a1, ORDER_ADDR_IN
+	li		t0, (DMA_DESC & 0x1fffffe0) | 0x10 /* stop DMA */
+	sw		t0, 0x0(a1)
 

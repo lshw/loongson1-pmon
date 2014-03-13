@@ -236,7 +236,7 @@ static void start_dma_nand(unsigned int flags, struct ls1x_nand_info *info)
 			ls1x_nand_stop(info);
 		}
 	} else {
-		udelay(80);
+		udelay(50);
 	}
 #else
 	if (!ls1x_nand_done(info)) {
