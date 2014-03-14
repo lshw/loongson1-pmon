@@ -110,6 +110,21 @@ void init_net(int hwok)
 	}
 
 	/*
+	 * Init system global parameters
+	 */
+	paraminit ();
+
+	/*
+	 * Initialise "virtual memory" maps
+	 */
+	vminit();
+
+	/*
+	 * Initialise memory allocator
+	 */
+	kmeminit();
+
+	/*
 	 * Initialize callouts
 	 */
 	callout = malloc(sizeof(struct callout) * ncallout, M_TEMP, M_NOWAIT);

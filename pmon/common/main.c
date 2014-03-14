@@ -632,14 +632,12 @@ extern unsigned long GPU_fbaddr;
 }
 #endif
 
-int	memsize; /* thf */
-
 /*
  *  PMON2000 entrypoint. Called after initial setup.
  */
 void dbginit(char *adr)
 {
-	int	freq;
+	int	memsize, freq;
 	char	fs[10], *fp;
 
 /*	splhigh();*/
@@ -647,21 +645,6 @@ void dbginit(char *adr)
 	memsize = memorysize;
 
 	__init();	/* Do all constructor initialisation */
-
-	/*
-	 * Init system global parameters
-	 */
-	paraminit ();
-
-	/*
-	 * Initialise "virtual memory" maps
-	 */
-	vminit();
-
-	/*
-	 * Initialise memory allocator
-	 */
-	kmeminit();
 
 #if NNAND
 	ls1x_nand_init();

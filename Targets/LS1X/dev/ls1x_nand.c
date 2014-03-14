@@ -13,7 +13,7 @@
 #include <linux/mtd/mtd.h>
 #include <linux/mtd/nand.h>
 #include <linux/mtd/partitions.h>
-#include <sys/malloc.h>
+//#include <sys/malloc.h>
 
 #include <pmon.h>
 #include <target/ls1x_nand.h>
@@ -463,7 +463,7 @@ int ls1x_nand_init_buff(struct ls1x_nand_info *info)
 	/* DMA描述符地址 */
 	info->dma_desc_size = ALIGN(DMA_DESC_NUM, PAGE_SIZE);	/* 申请内存大小，页对齐 */
 //	info->dma_desc = (unsigned int)(DMA_DESC | 0xa0000000);
-	info->dma_desc = ((unsigned int)malloc(info->dma_desc_size, M_DEVBUF, M_WAITOK) & 0x0fffffff) | 0xa0000000;
+	info->dma_desc = ((unsigned int)malloc(info->dma_desc_size) & 0x0fffffff) | 0xa0000000;
 	info->dma_desc = (unsigned int)ALIGN((unsigned int)info->dma_desc, 32);	/* 地址32字节对齐 */
 	if(info->dma_desc == NULL)
 		return -1;
@@ -472,7 +472,7 @@ int ls1x_nand_init_buff(struct ls1x_nand_info *info)
 	/* NAND的DMA数据缓存 */
 	info->data_buff_size = ALIGN(MAX_BUFF_SIZE, PAGE_SIZE);	/* 申请内存大小，页对齐 */
 //	info->data_buff = (unsigned char *)(DATA_BUFF | 0xa0000000);
-	info->data_buff = (unsigned char *)(((unsigned int)malloc(info->data_buff_size, M_DEVBUF, M_WAITOK) & 0x0fffffff) | 0xa0000000);
+	info->data_buff = (unsigned char *)(((unsigned int)malloc(info->data_buff_size) & 0x0fffffff) | 0xa0000000);
 	info->data_buff = (unsigned char *)ALIGN((unsigned int)info->data_buff, 32);	/* 地址32字节对齐 */
 	if(info->data_buff == NULL)
 		return -1;
@@ -495,7 +495,7 @@ int ls1x_nand_init(void)
 	printf("\nNAND dete\n");
 
 	/* Allocate memory for MTD device structure and private data */
-	ls1x_mtd = malloc(sizeof(struct mtd_info) + sizeof(struct ls1x_nand_info), M_DEVBUF, M_WAITOK);
+	ls1x_mtd = malloc(sizeof(struct mtd_info) + sizeof(struct ls1x_nand_info));
 	if (!ls1x_mtd) {
 		printk("Unable to allocate fcr_soc NAND MTD device structure.\n");
 		return -ENOMEM;
@@ -536,7 +536,7 @@ int ls1x_nand_init(void)
 
 	/* Scan to find existence of the device */
 	if (ls1x_nand_scan(ls1x_mtd)) {
-		free(ls1x_mtd, M_DEVBUF);
+		free(ls1x_mtd);
 		return -ENXIO;
 	}
 

@@ -153,7 +153,6 @@ ConfigEntry	ConfigTable[] =
 
 unsigned long _filebase;
 
-extern int memsize;	/* thf */
 extern int memorysize;
 extern int memorysize_high;
 
@@ -912,7 +911,7 @@ void tgt_mapenv(int (*func) __P((char *, char *)))
     (*func)("vxWorks", env);
 #endif
 
-	sprintf(env, "%d", memsize / (1024 * 1024));
+	sprintf(env, "%d", memorysize / (1024 * 1024));
 	(*func)("memsize", env);
 
 	sprintf(env, "%d", memorysize_high / (1024 * 1024));
