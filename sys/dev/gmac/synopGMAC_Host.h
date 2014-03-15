@@ -1,20 +1,12 @@
 #ifndef SYNOP_GMAC_HOST_H
 #define SYNOP_GMAC_HOST_H 1
 
-/*
-#include <linux/pci.h>
-#include <linux/netdevice.h>
-#include <linux/etherdevice.h>
-*/
-
 #include "synopGMAC_plat.h"
-#include "synopGMAC_pci_bus_interface.h"
 #include "synopGMAC_Dev.h"
 #include "mii.h"
 
 //#define ENH_DESC
 //#define ENH_DESC_8W
-
 
 struct net_device_stats
 {
@@ -49,7 +41,7 @@ struct net_device_stats
 	unsigned long	tx_compressed;
 };
 
-struct	PmonInet{
+struct PmonInet {
 	struct device sc_dev;
 	void *sc_ih;
 
@@ -63,51 +55,22 @@ struct	PmonInet{
 //	int mc_count;
 
 };
-	
 
-
-//typedef struct synopGMACAdapterStruct{
-#if 0
-struct synopGMACAdapterStruct{
-
-/*Device Dependent Data structur*/
-struct synopGMACdevice * synopGMACdev;
-
-/*Os/Platform Dependent Data Structures*/
-//struct pci_dev * synopGMACpcidev;
-
-//struct net_device *synopGMACnetdev;
-
-struct net_device_stats synopGMACNetStats;
-//u32 synopGMACPciState[16];
-
-struct PmonInet * PInetdev;
-
-//} synopGMACPciNetworkAdapter;
-}synopGMACNetworkAdapter;
-#endif
-typedef struct synopGMACNetworkAdapter{
-
-/*Device Dependent Data structur*/
-synopGMACdevice * synopGMACdev;
-
-/*Os/Platform Dependent Data Structures*/
-//struct pci_dev * synopGMACpcidev;
-
-//struct net_device *synopGMACnetdev;
-
-struct net_device_stats synopGMACNetStats;
-//u32 synopGMACPciState[16];
-
-struct PmonInet * PInetdev;
-
-struct mii_if_info mii;
+typedef struct synopGMACNetworkAdapter {
+	/*Device Dependent Data structur*/
+	synopGMACdevice * synopGMACdev;
+	/*Os/Platform Dependent Data Structures*/
+//	struct pci_dev * synopGMACpcidev;
+//	struct net_device *synopGMACnetdev;
+	struct net_device_stats synopGMACNetStats;
+//	u32 synopGMACPciState[16];
+	struct PmonInet * PInetdev;
+	struct mii_if_info mii;
 } synopGMACPciNetworkAdapter;
 
 static struct mbuf * getmbuf(struct synopGMACNetworkAdapter * tp)
 {
 	struct mbuf *m;
-//	struct PomnInet * tp = adapter->PInetDev;
 
 	MGETHDR(m, M_DONTWAIT, MT_DATA);
 	if(m == NULL){
@@ -125,10 +88,6 @@ static struct mbuf * getmbuf(struct synopGMACNetworkAdapter * tp)
 	}
 	
 #if defined(__mips__)
-/*
-	pci_sync_cache(tp->sc_pc, (vm_offset_t)tp->tx_buffer[entry], len, SYNC_W);
-*/
-	;
 #define RFA_ALIGNMENT_FUDGE 2
 	m->m_data += RFA_ALIGNMENT_FUDGE;
 #else
@@ -136,9 +95,5 @@ static struct mbuf * getmbuf(struct synopGMACNetworkAdapter * tp)
 #endif
 	return m;
 }
-
-
-
-
 
 #endif
