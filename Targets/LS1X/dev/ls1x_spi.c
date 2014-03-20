@@ -212,7 +212,11 @@ static void ls1x_spi_hw_init(struct ls1x_spi *hw)
 int ls1x_spi_probe(void)
 {
 	spi0.base = LS1X_SPI0_BASE;
+#if defined(LS1ASOC)
+	spi0.clk = 133000000 / 2;
+#else
 	spi0.clk = tgt_apbfreq();
+#endif
 	ls1x_spi_hw_init(&spi0);
 
 	spi_flash.hw = &spi0;

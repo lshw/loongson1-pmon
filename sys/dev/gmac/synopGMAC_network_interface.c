@@ -788,6 +788,10 @@ static s32 synopGMAC_linux_open(struct synopGMACNetworkAdapter *tp)
 	synopGMAC_enable_dma_rx(gmacdev);
 	synopGMAC_enable_dma_tx(gmacdev);
 
+#if defined(LS1ASOC)
+	synopGMAC_mac_init(gmacdev);
+#endif
+
 	PInetdev->sc_ih = pci_intr_establish(0, 0, IPL_NET, synopGMAC_intr_handler, adapter, 0);
 	TR("register poll interrupt: gmac 0\n");
 
