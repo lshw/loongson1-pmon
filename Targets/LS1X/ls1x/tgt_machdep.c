@@ -336,9 +336,6 @@ void tgt_devconfig(void)
 	GPU_fbaddr = fbaddress ;
 #endif
 	fb_init(fbaddress, 0);
-	#ifdef LS1A_CORE
-	ls1x_gpio_direction_output(GPIO_BACKLIGHT_CTRL, 1);	/* 使能LCD背光 */
-	#endif
 
 	rc = 1;
 #endif

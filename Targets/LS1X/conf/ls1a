@@ -260,6 +260,7 @@ option		CONFIG_VIDEO_16BPP
 option		CONFIG_VGA_MODEM		#VGA模式
 option		CONFIG_VIDEO_SW_CURSOR	#软件光标
 option		CONFIG_FB_DYN
+#option		CONFIG_BACK_LIGHT
 option		GPIO_BACKLIGHT_CTRL=59	#lcd背光控制
 
 select		ide

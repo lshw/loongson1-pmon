@@ -1124,20 +1124,9 @@ static int mdio_read(synopGMACPciNetworkAdapter *adapter, int addr, int reg)
 	synopGMACdevice * gmacdev;
 	u16 data;
 	gmacdev = adapter->synopGMACdev;
-
-#ifdef	LS1A_CORE
-#if GMAC1_USE_UART01
-	ls1x_gpio_free(GPIO_BACKLIGHT_CTRL);
-#endif
-#endif
 	
 	synopGMAC_read_phy_reg((u32 *)gmacdev->MacBase,addr,reg, &data);
 
-#ifdef	LS1A_CORE
-#if GMAC1_USE_UART01
-	ls1x_gpio_direction_output(GPIO_BACKLIGHT_CTRL, 1);	//enable LCD black light. backlight pin mux mdio.
-#endif
-#endif
 	return data;
 }
 
@@ -1146,19 +1135,7 @@ static void mdio_write(synopGMACPciNetworkAdapter *adapter, int addr, int reg, i
 	synopGMACdevice * gmacdev;
 	gmacdev = adapter->synopGMACdev;
 
-#ifdef	LS1A_CORE
-#if GMAC1_USE_UART01
-	ls1x_gpio_free(GPIO_BACKLIGHT_CTRL);
-#endif
-#endif
-
 	synopGMAC_write_phy_reg((u32 *)gmacdev->MacBase,addr,reg,data);
-
-#ifdef	LS1A_CORE
-#if GMAC1_USE_UART01
-	ls1x_gpio_direction_output(GPIO_BACKLIGHT_CTRL, 1);	//enable LCD black light. backlight pin mux mdio.
-#endif
-#endif
 }
 
 /**
@@ -1213,7 +1190,6 @@ s32  synopGMAC_init_network_interface(char* xname, u64 synopGMACMappedAddr)
 		#endif
 		#ifdef GMAC1_USE_UART01
 		*((volatile unsigned int*)0xbfd00420) |= 0xc0;
-		ls1x_gpio_direction_output(GPIO_BACKLIGHT_CTRL, 1);	//enable LCD black light. backlight pin mux mdio.
 		#else
 		*((volatile unsigned int*)0xbfd00420) &= ~0xc0;
 		#endif

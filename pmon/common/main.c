@@ -471,6 +471,9 @@ static void autoload(char *s)
 //		pca953x_gpio_set_value(0x26, 11, 1);
 		#endif
 	#endif
+	#ifdef LS1A_CORE
+		ls1x_gpio_direction_output(GPIO_BACKLIGHT_CTRL, 1);	/* 使能LCD背光 */
+	#endif
 	#endif
 
 		if (cnt > 0 && strchr("\n\r", getchar())) {
