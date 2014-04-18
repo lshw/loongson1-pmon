@@ -269,3 +269,35 @@ void pca953x_gpio_set_value(int addr, int off, int val)
 	i2c_master_send(&pca953x, buf, 3);
 }
 
+void pca953x_gpio_direction_input(int addr, int off)
+{
+	struct i2c_client pca953x;
+	u8 buf[3];
+	int offset = 0;
+
+	pca953x.addr = addr;
+
+	buf[0] = 0x06;
+	i2c_master_send(&pca953x, buf, 1);
+	i2c_master_recv(&pca953x, buf, 2);
+	offset = (buf[1] << 8) | buf[0];
+	offset |= (1 << off);
+	buf[0] = 0x06; buf[1] = offset & 0xff; buf[2] = (offset >> 8) & 0xff;
+	i2c_master_send(&pca953x, buf, 3);
+}
+
+int pca953x_gpio_get_value(int addr, int off)
+{
+	struct i2c_client pca953x;
+	u8 buf[3];
+	int offset = 0;
+
+	pca953x.addr = addr;
+
+	buf[0] = 0x00;
+	i2c_master_send(&pca953x, buf, 1);
+	i2c_master_recv(&pca953x, buf, 2);
+	offset = (buf[1] << 8) | buf[0];
+
+	return ((offset >> off) & 0x0001);
+}
