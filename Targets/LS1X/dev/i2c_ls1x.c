@@ -196,7 +196,11 @@ int ls1x_i2c_probe(void)
 #ifdef CONFIG_PCF857X
 	pcf857x_init();
 #endif
-
+#ifdef CONFIG_PCA953X
+	/* 开机按键 */
+	pca953x_gpio_direction_output(0x26, 3);
+	pca953x_gpio_set_value(0x26, 3, 0);
+#endif
 	return 0;
 }
 

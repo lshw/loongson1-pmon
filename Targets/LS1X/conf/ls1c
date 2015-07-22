@@ -79,14 +79,14 @@ option		CONS_BAUD=B115200
 option		UART_BASE_ADDR=0xbfe4c000	# 串口控制台基地址 需要不同的串口输出可以修改此值
 
 option		APB_CLK=24000000	# 外部晶振频率(Hz)
-option		PLL_MULT=0x5a		# CPU LCD CAM及外设倍频
+option		PLL_MULT=0x54		# CPU LCD CAM及外设倍频
 option		CPU_DIV=2			# LS1C的CPU分频
 option		SDRAM_DIV=SDRAM_DIV_2	# LS1C的SDRAM分频
 
 #option		CONFIG_DDR16BIT		# 使能16bit内存接口模式 否则32bit内存接口模式
 #option		EIGHT_BANK_MODE		# 定义该位表示内存颗粒使用8bank，屏蔽该位表示内存颗粒使用4bank
 								# 内存颗粒有8bank和4bank的区分，请认真看清使用的内存颗粒的bank数，请认真参考内存手册
-option		MEM_SIZE=0x02000000	# 64M(16bit) 定义内存大小 注意32bit和16bit内存的区别 这里指总大小
+option		MEM_SIZE=0x04000000	# 64M(16bit) 定义内存大小 注意32bit和16bit内存的区别 这里指总大小
 								# 请确保内存配置正确，内存工作不正常会导致系统莫名其妙的问题
 								# start.s文件中定义了引用那个内存配置，如#include "ddr2fconfig-samsung-CL3.S"
 
@@ -182,15 +182,15 @@ option		RMII
 #uhci*		at pci? dev ? function ?
 #ohci0		at pci? dev ? function ?
 #ohci1		at pci? dev ? function ?
-lohci0		at localbus0 base 0xbfe28000
+#lohci0		at localbus0 base 0xbfe28000
 #ehci0		at localbus0
-usb*		at usbbus ?
-select		mod_usb
-select		mod_usb_storage
+#usb*		at usbbus ?
+#select		mod_usb
+#select		mod_usb_storage
 #select		mod_usb_uhci
-select		mod_usb_ohci
+#select		mod_usb_ohci
 #select		mod_usb_ehci
-select		mod_usb_kbd
+#select		mod_usb_kbd
 
 #### Pseudo devices
 pseudo-device	loop	1	# network loopback
@@ -228,13 +228,13 @@ option		DC_FB0
 #option		X240x320
 #option		X320x240
 #option		X320x480
-option		X480x272
+#option		X480x272
 #option		X480x640
 #option		X640x480
 #option		X640x640
 #option		X640x768
 #option		X640x800
-#option		X800x480
+option		X800x480
 #option		X800x600
 #option		X800x640
 #option		X832x600
@@ -255,7 +255,7 @@ option		CONFIG_VIDEO_16BPP
 #option		CONFIG_VGA_MODEM		#VGA模式
 option		CONFIG_VIDEO_SW_CURSOR	#软件光标
 option		CONFIG_FB_DYN
-#option		CONFIG_BACK_LIGHT
+option		CONFIG_BACK_LIGHT
 
 ### TPO TD028TTEC1 TFT LCD 驱动
 #select		mod_jbt6k74
@@ -270,11 +270,11 @@ option		CONFIG_FB_DYN
 ### I2C I2C控制器和设备初始化
 option		mod_i2c_ls1x
 #option		CONFIG_PCF857X
-#option		CONFIG_PCA953X
-option		CONFIG_UDA1342
+option		CONFIG_PCA953X
+#option		CONFIG_UDA1342
 
 ### IIS IIS控制器和设备初始化
-option		mod_iis_ls1x
+#option		mod_iis_ls1x
 
 option		wait_key
 #option		HAVE_MUT_COM		#多串口输入/输出,把控制台信息同时输入/输出到多个串口

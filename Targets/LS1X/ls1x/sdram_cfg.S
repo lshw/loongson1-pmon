@@ -34,7 +34,7 @@
 #define	SD_PARA0	(0x7f<<25 | \
 					(TRAS << 21) | \
 					(TRFC << 17) | (TRP << 14) | (TCL << 11) | \
-					(TRCD << 8) | (WIDTH_16 << 6) | (COL_512 << 3) | \
+					(TRCD << 8) | (WIDTH_16 << 6) | (COL_1K << 3) | \
 					ROW_8K)
 
 #define	SD_PARA1	((HANG_UP_N << 8) | (DEF_SEL_N << 7) | (TWR << 5) | (TREF >> 7))

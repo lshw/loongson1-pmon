@@ -1144,7 +1144,7 @@ LEAF(initserial)
 	divu	v1, v1, a1
 #elif defined(LS1CSOC)
 	/* uart3 config mux 默认第一复用 */
-	li		a0, 0xbfd011c4
+/*	li		a0, 0xbfd011c4
 //	lw		a1, 0x00(a0)
 //	and		a1, 0xfffffff9
 //	sw		a1, 0x00(a0)
@@ -1156,12 +1156,12 @@ LEAF(initserial)
 //	sw		a1, 0x20(a0)
 //	lw		a1, 0x30(a0)
 //	and		a1, 0xfffffff9
-//	sw		a1, 0x30(a0)
+//	sw		a1, 0x30(a0)*/
 
-/*	li		a0, 0xbfd011f0
+	li		a0, 0xbfd011f0
 	lw		a1, 0x00(a0)
 	ori		a1, 0x03
-	sw		a1, 0x00(a0)*/
+	sw		a1, 0x00(a0)
 
 	/* UART2 */
 /*	li		a0, 0xbfd011c4
