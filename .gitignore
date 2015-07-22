@@ -20,7 +20,7 @@ TAGS
 gzrom
 gzrom.bin
 pmon.bin.c
-
+*.old
 #
 # Generated include files
 #
