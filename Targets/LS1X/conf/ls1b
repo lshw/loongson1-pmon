@@ -266,5 +266,11 @@ option		mod_i2c_ls1x
 option		wait_key
 #option		HAVE_MUT_COM		#多串口输入/输出,把控制台信息同时输入/输出到多个串口
 option		BUZZER				#蜂鸣器
+option		BUZZER_GPIO=40
 #option		FAST_STARTUP		#快速启动
 option		CONFIG_CHINESE
+
+### 使用gpio输入的高低电平判断是否切换串口控制台
+#option		UART_CHANGE
+#option		UART_CHANGE_GPIO=3 #用于判断的gpio引脚号(根据使用修改)
+#option		UART_CHANGE_BASE=LS1X_UART3_BASE #要切换到的串口基地址

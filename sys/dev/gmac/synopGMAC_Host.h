@@ -53,7 +53,6 @@ struct PmonInet {
 
 //	int flags;
 //	int mc_count;
-
 };
 
 typedef struct synopGMACNetworkAdapter {

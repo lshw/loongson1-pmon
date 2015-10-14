@@ -13,7 +13,7 @@
 #include "synopGMAC_plat.h"
 #include "synopGMAC_Dev.h"
 
-dma_addr_t __attribute__((weak)) gmac_dmamap(unsigned long va, size_t size)
+dma_addr_t gmac_dmamap(unsigned long va, size_t size)
 {
 	return VA_TO_PA(va);
 }
@@ -89,3 +89,97 @@ void plat_delay(u32 delay)
 	return;
 }
 
+
+/**
+ * The Low level function to read register contents from Hardware.
+ * 
+ * @param[in] pointer to the base of register map  
+ * @param[in] Offset from the base
+ * \return  Returns the register contents 
+ */
+u32 synopGMACReadReg(u64 RegBase, u32 RegOffset)
+{
+	u64 addr;
+	u32 data;
+
+	addr = RegBase + (u64)RegOffset;
+
+	data = *(volatile u32 *)addr;
+
+	return data;
+}
+
+/**
+ * The Low level function to write to a register in Hardware.
+ * 
+ * @param[in] pointer to the base of register map  
+ * @param[in] Offset from the base
+ * @param[in] Data to be written 
+ * \return  void 
+ */
+void synopGMACWriteReg(u64 RegBase, u32 RegOffset, u32 RegData )
+{
+	u64 addr;
+
+	addr = RegBase + (u64)RegOffset;
+	*(volatile u32 *)addr = RegData;
+
+	return;
+}
+
+/**
+ * The Low level function to set bits of a register in Hardware.
+ * 
+ * @param[in] pointer to the base of register map  
+ * @param[in] Offset from the base
+ * @param[in] Bit mask to set bits to logical 1 
+ * \return  void 
+ */
+void synopGMACSetBits(u64 RegBase, u32 RegOffset, u32 BitPos)
+{
+	u32 data;
+	data = synopGMACReadReg(RegBase, RegOffset);
+	data |= BitPos; 
+	synopGMACWriteReg(RegBase, RegOffset, data);
+
+	return;
+}
+
+
+/**
+ * The Low level function to clear bits of a register in Hardware.
+ * 
+ * @param[in] pointer to the base of register map  
+ * @param[in] Offset from the base
+ * @param[in] Bit mask to clear bits to logical 0 
+ * \return  void 
+ */
+void  synopGMACClearBits(u64 RegBase, u32 RegOffset, u32 BitPos)
+{
+	u32 data;
+	data = synopGMACReadReg(RegBase, RegOffset);
+	data &= (~BitPos); 
+	synopGMACWriteReg(RegBase, RegOffset, data);
+
+	return;
+}
+
+/**
+ * The Low level function to Check the setting of the bits.
+ * 
+ * @param[in] pointer to the base of register map  
+ * @param[in] Offset from the base
+ * @param[in] Bit mask to set bits to logical 1 
+ * \return  returns TRUE if set to '1' returns FALSE if set to '0'. Result undefined there are no bit set in the BitPos argument.
+ * 
+ */
+bool  synopGMACCheckBits(u64 RegBase, u32 RegOffset, u32 BitPos)
+{
+	u32 data;
+	data = synopGMACReadReg(RegBase, RegOffset);
+	data &= BitPos; 
+	if(data)
+		return 1;
+	else
+		return 0;
+}

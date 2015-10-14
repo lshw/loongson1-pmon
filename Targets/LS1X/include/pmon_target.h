@@ -33,7 +33,7 @@
 
 #include <target/fcr.h>
 
-#ifdef SBD_DEBUG
+#ifndef SBD_DEBUG
 #define SBD_DISPLAY(text, code)		/* No display function */
 #else
 void hexserial __P((int));

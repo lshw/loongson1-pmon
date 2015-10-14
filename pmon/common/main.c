@@ -365,30 +365,43 @@ int main(void)
 	}
 
 	{
-	static int run=0;
+	static int run = 0;
 	char *s;
-	char *s1;
-	int ret1 = 0;
+	int ret = 0;
 
 	if (!run) {
-		s1 = getenv("update_usb");	//lxy
-		printf ("lxy: update_usb, %s !\n", s1);
-		if (!strcmp(s1, "yes")) {
-			printf ("lxy: going to update vmlinuz .....\n");
-			ret1 = do_cmd("devcp /dev/fat@usb0/vmlinuz /dev/mtd3");	
-			if (ret1 != 0)
+
+#ifdef BOOT_TEST_NAND_MEM
+		s = getenv("boot_test");
+		if (!strcmp(s, "yes")) {
+			ret = do_cmd("mt -v");
+			ret = ret + ls1x_nand_test();
+			printf("mt -v %x\n", ret);
+			if (ret == 0) {
+				ls1x_gpio_direction_output(BOOT_TEST_LED_GREEN, 0);
+				gpio_set_value(BOOT_TEST_LED_GREEN, 0);
+				setenv("boot_test", "no");
+			}
+		}
+#endif
+
+		s = getenv("update_usb");
+		printf("update_usb, %s !\n", s);
+		if (!strcmp(s, "yes")) {
+			printf("going to update vmlinuz .....\n");
+			ret = do_cmd("devcp /dev/fat@usb0/vmlinuz /dev/mtd3");	
+			if (ret != 0)
 				goto no_update;
 			setenv("al", "/dev/mtd3");
 			setenv("append", "console=ttyS2,115200 rdinit=/sbin/init");
 			setenv("update_usb", "no");
 		}
-
 no_update:
 
-	#ifdef	FAST_STARTUP
+	#ifdef FAST_STARTUP
 		do_cmd("test");
 	#endif
-		run=1;
+		run = 1;
 	#ifdef AUTOLOAD
 		s = getenv("al");
 		autoload(s);
@@ -461,20 +474,6 @@ static void autoload(char *s)
 			printf ("\b\b%02d", --dly);
 			ioctl (STDIN, FIONREAD, &cnt);
 		} 
-
-	/* LCD显示屏硬件初始化需要1秒(根据具体的屏可能有所不同) 所以背光需要1S后打开 
-	   可以利用上面的bootdelay延时 */
-	#ifdef CONFIG_BACK_LIGHT
-	#if defined(mod_i2c_ls1x)
-		#ifdef CONFIG_PCA953X
-		pca953x_gpio_direction_output(0x22, 11);
-		pca953x_gpio_set_value(0x22, 11, 1);
-		#endif
-	#endif
-	#ifdef LS1A_CORE
-		ls1x_gpio_direction_output(GPIO_BACKLIGHT_CTRL, 1);	/* 使能LCD背光 */
-	#endif
-	#endif
 
 		if (cnt > 0 && strchr("\n\r", getchar())) {
 			cnt = 0;

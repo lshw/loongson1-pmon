@@ -1189,6 +1189,7 @@ s32 synopGMAC_attach(synopGMACdevice *gmacdev, u64 macBase, u64 dmaBase, u32 phy
 
 	if (i==32) {
 		printf("phy_detect: can't find PHY!\n");
+		return -1;
 	}
 
 	gmacdev->PhyBase = i;
@@ -1196,7 +1197,7 @@ s32 synopGMAC_attach(synopGMACdevice *gmacdev, u64 macBase, u64 dmaBase, u32 phy
 	/* Program/flash in the station/IP's Mac address */
 	synopGMAC_set_mac_addr(gmacdev, GmacAddr0High, GmacAddr0Low, mac_addr); 
 
-	return 0;	
+	return 0;
 }
 
 
@@ -3078,6 +3079,7 @@ void synopGMAC_TS_set_clk_type(synopGMACdevice *gmacdev, u32 clk_type)
 /**
 
  * Enable Snapshot for messages relevant to Master.
+
  * When enabled, snapshot is taken for messages relevant to master mode only, else snapshot is taken for messages relevant
  * to slave node.
  * Valid only for Ordinary clock and Boundary clock

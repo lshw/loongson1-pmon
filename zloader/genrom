@@ -111,7 +111,7 @@ void initmips(unsigned int msize, int dmsize, int dctrl)
 		if (run_unzip(biosdata, $mystart) >= 0)
 			break;
 	}
-	tgt_puts("Unzip is completed\\r\\n");
+//	tgt_puts("Unzip is completed\\r\\n");
 	for (p=edata; p<=end; p++) {
 		*p = 0;
 	}

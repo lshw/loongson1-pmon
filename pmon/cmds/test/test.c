@@ -540,68 +540,27 @@ static int cmd_test(int ac,char **av)
 			break;
 			case TEST_NAND:
 			{
-				int i, cont, ret;
-				unsigned char *temp1 = (unsigned char *)0xa1000000;
-				unsigned char *temp2 = (unsigned char *)0xa2000000;
+				int ret;
 			#ifdef CONFIG_CHINESE
 				printf("NAND Flash 测试\n");
 			#else
 				printf ("NAND Flash test begin :\n");
 			#endif
-//				printf("/----------------- NAND Flash test ---------------/\n");
-				sprintf(cmd, "nandreadid");	//读取ID
-				ret = do_cmd(cmd);
-				if (ret == 0){
-					sprintf(cmd, "erase_nand 0 0x1");	//擦除第0块 block
-					do_cmd(cmd);
-					sprintf(cmd, "read_nand 0xa1000000  0x0  0x800 m");	//读第0页内容
-					do_cmd(cmd);
-					//打印读取的内容
-					for (i=0, cont=0; i<0x800; i++){
-						if(*(temp1+i) != 0xff){
-					#ifdef CONFIG_CHINESE
-							printf("NAND Flash 擦除错误！\n");
-					#else
-							printf ("NAND Flash erase error ~_~!!! \n");
-					#endif
-							cont++;
-						}
-//						if((i%16) == 0)
-//							printf("\n");
-//						printf("%02x ", *(temp1+i));
-					}
-//					printf("\n");
-					//修改
-					for (i=0; i<0x800; i++){
-						*(temp1 + i) = i;
-					}
-					sprintf(cmd, "write_nand 0xa1000000  0x0  0x800 m");	//写第0页内容
-					do_cmd(cmd);
-					sprintf(cmd, "read_nand 0xa2000000  0x0  0x800 m");	//读第0页内容
-					do_cmd(cmd);
-					for (i=0, cont=0; i<0x800; i++){
-						if (*(temp1 + i) != *(temp2 + i)){
-					#ifdef CONFIG_CHINESE
-							printf("NAND Flash 读写错误！\n");
-					#else
-							printf ("Nandflash read-write error ~_~!!!\n");
-					#endif
-							cont++;
-						}
-//						if((i%16) == 0)
-//							printf("\n");
-//						printf("%02x ", *(temp2+i));
-					}
-					if (cont == 0){
-					#ifdef CONFIG_CHINESE
-						printf("NAND Flash 测试通过\n");
-					#else
-						printf ("Nandflash test pass ^_^ !!!!!\n");
-					#endif
-					}
-					printf("\n");
+				ret = ls1x_nand_test();
+				if (ret == 0) {
+				#ifdef CONFIG_CHINESE
+					printf("NAND Flash 测试通过\n");
+				#else
+					printf ("Nandflash test pass ^_^ !!!!!\n");
+				#endif
+				} else {
+				#ifdef CONFIG_CHINESE
+					printf("NAND Flash 读写错误！\n");
+				#else
+					printf ("Nandflash read-write error ~_~!!!\n");
+				#endif
 				}
-//				printf("/--------------- NAND Flash test done -------------/\n");
+				printf("\n");
 			}
 			break;
 			case TEST_IR:

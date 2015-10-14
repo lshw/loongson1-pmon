@@ -79,8 +79,8 @@ int cmd_memtst(int ac, char **av)
 	cflag = 0;
 	vflag = 0;
 
-//	saddr = heaptop;
-	saddr = 0xa0100000;
+	saddr = heaptop;
+	saddr |= 0xa0000000;
 #if defined(__mips__)
 //	eaddr = (memorysize & 0x3fffffff) + ((int)heaptop & 0xc0000000);
 	eaddr = 0xa2000000;

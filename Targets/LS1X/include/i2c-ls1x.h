@@ -56,7 +56,13 @@ struct ls1x_i2c {
 //	struct i2c_adapter adap;
 };
 
+int i2c_master_send(const struct i2c_client *client, const char *buf, int count);
+int i2c_master_recv(const struct i2c_client *client, char *buf, int count);
+
 int ls1x_i2c_probe(void);
 int pcf857x_init(void);
+
+void pca953x_gpio_direction_output(int addr, int off);
+void pca953x_gpio_set_value(int addr, int off, int val);
 
 #endif

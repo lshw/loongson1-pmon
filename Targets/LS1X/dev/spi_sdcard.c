@@ -595,7 +595,7 @@ static int sdcard_init(void)
 }
 
 
-#if 0
+#if 1
 int test_sdcard(int argc, char **argv)
 {
 	char str[100];

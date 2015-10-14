@@ -51,19 +51,6 @@
 
 #include "synopGMAC_plat.h"
 
-//sw:	typedef are included in synopGMAC_plat.h
-//	it is strange that we should add it here again!!
-/*
-typedef unsigned long  u32;
-typedef unsigned short u16;
-typedef unsigned char  u8;
-typedef signed long  s32;
-typedef signed short s16;
-typedef signed char  s8;
-typedef int bool;
-typedef unsigned long dma_addr_t;
-*/
-
 /*SynopGMAC can support up to 32 phys*/
 #ifdef GMAC_PHY_BASE
 #define DEFAULT_PHY_BASE GMAC_PHY_BASE
@@ -72,15 +59,6 @@ typedef unsigned long dma_addr_t;
 #endif
 #define MACBASE 0x0000			// The Mac Base address offset is 0x0000
 #define DMABASE 0x1000			// Dma base address starts with an offset 0x1000
-
-
-enum GMACPhyBase
-{
-	PHY0  = 0,			//The device can support 32 phys, but we use first phy only
-	PHY1  = 1,
-	PHY16 = 16,
-	PHY31 = 31,
-};
 
 
 //#define TRANSMIT_DESC_SIZE  256		//Tx Descriptors needed in the Descriptor pool/queue

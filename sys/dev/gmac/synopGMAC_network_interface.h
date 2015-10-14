@@ -14,21 +14,4 @@
 #include "synopGMAC_Host.h"
 
 
-#define NET_IF_TIMEOUT (10*HZ)
-#define CHECK_TIME (HZ)
-
-s32 synopGMAC_init_network_interface(char* xname,u64 synopGMACMappedAddr);
-void synopGMAC_exit_network_interface(void);
-
-//s32 synopGMAC_linux_close(struct net_device *);
-s32 synopGMAC_linux_xmit_frames(struct ifnet *);
-struct net_device_stats * synopGMAC_linux_get_stats(struct synopGMACNetworkAdapter *);
-//void synopGMAC_linux_set_multicast_list(struct net_device *);
-//s32 synopGMAC_linux_set_mac_address(struct synopGMACNetwokrAdapter*,void *);
-//s32 synopGMAC_linux_change_mtu(struct net_device *,s32);
-s32 synopGMAC_linux_do_ioctl(struct ifnet *,struct ifreq *,s32);
-//void synopGMAC_linux_tx_timeout(struct net_device *);
-
-s32 synopGMAC_test(synopGMACdevice * gmacdev_0,synopGMACdevice * gmacdev_1);
-
 #endif /* End of file */

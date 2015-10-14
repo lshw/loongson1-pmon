@@ -19,7 +19,7 @@ option		LS1CSOC
 option		GS232_SOC
 option		CPU_LS232
 option		WAYBITS_HIGH
-option		CPU_NAME="\"Loongson 1C\""
+option		CPU_NAME="\"Loongson 1C300A OpenLoongson V2.0\""
 
 #
 # Platform options
@@ -45,7 +45,7 @@ select		cmd_setup
 select		mod_display
 #select		cmd_about		# Display info about PMON
 select		cmd_boot		# Boot wrapper
-#select		cmd_mycmd
+select		cmd_mycmd
 #select		cmd_mycmd_debug # test cache and TLB
 select		cmd_cache		# Cache enabling
 select		cmd_call		# Call a function command
@@ -76,19 +76,18 @@ select		cmd_shell		# Shell commands, vers, help, eval
 #
 select		mod_uart_ns16550	# Standard UART driver
 option		CONS_BAUD=B115200
-option		UART_BASE_ADDR=0xbfe4c000	# 串口控制台基地址 需要不同的串口输出可以修改此值
+option		UART_BASE_ADDR=0xbfe48000	# 串口控制台基地址 需要不同的串口输出可以修改此值
 
 option		APB_CLK=24000000	# 外部晶振频率(Hz)
 option		PLL_MULT=0x54		# CPU LCD CAM及外设倍频
 option		CPU_DIV=2			# LS1C的CPU分频
 option		SDRAM_DIV=SDRAM_DIV_2	# LS1C的SDRAM分频
 
-#option		CONFIG_DDR16BIT		# 使能16bit内存接口模式 否则32bit内存接口模式
-#option		EIGHT_BANK_MODE		# 定义该位表示内存颗粒使用8bank，屏蔽该位表示内存颗粒使用4bank
-								# 内存颗粒有8bank和4bank的区分，请认真看清使用的内存颗粒的bank数，请认真参考内存手册
-option		MEM_SIZE=0x04000000	# 64M(16bit) 定义内存大小 注意32bit和16bit内存的区别 这里指总大小
-								# 请确保内存配置正确，内存工作不正常会导致系统莫名其妙的问题
-								# start.s文件中定义了引用那个内存配置，如#include "ddr2fconfig-samsung-CL3.S"
+#ls1c300b，设置sdram cs1复用关系，开发板使用ejtag_sel gpio_0引脚(第五复用)作为第二片sdram的片选
+#注意sw2拨码开关的设置，使用ejtag烧录pmon时需要调整拨码开关，烧录完再调整回来
+option		MEM_SIZE=0x02000000	# 32MB 定义内存大小
+											# 请确保内存配置正确，内存工作不正常会导致系统莫名其妙的问题
+#option		SDRAM_USE_CS1
 
 #select		ext2
 #select		yaffsfs		#lxy: there is a do_div error to open this with new cross-tool
@@ -159,7 +158,7 @@ syn0		at localbus0
 option		CONFIG_GMAC0_100M	#GMAC0的使能百兆网络 否则千兆网络
 #option		CONFIG_GMAC1_100M	#GMAC1的使能百兆网络 否则千兆网络
 #option		GMAC1_USE_UART01
-option		GMAC_PHY_BASE=0		#注意:不同的PHY PHY_BASE可能不一样(0-31)
+option		GMAC_PHY_BASE=19		#注意:不同的PHY PHY_BASE可能不一样(0-31)
 option		GMAC0_ADDR=0xbfe10000
 option		GMAC1_ADDR=0xbfe20000
 select		gmac
@@ -255,7 +254,8 @@ option		CONFIG_VIDEO_16BPP
 #option		CONFIG_VGA_MODEM		#VGA模式
 option		CONFIG_VIDEO_SW_CURSOR	#软件光标
 option		CONFIG_FB_DYN
-option		CONFIG_BACK_LIGHT
+#option		CONFIG_BACK_LIGHT
+#option		GPIO_BACKLIGHT_CTRL=10	#lcd背光控制gpio
 
 ### TPO TD028TTEC1 TFT LCD 驱动
 #select		mod_jbt6k74
@@ -268,9 +268,9 @@ option		CONFIG_BACK_LIGHT
 #option		CONFIG_NT35310
 
 ### I2C I2C控制器和设备初始化
-option		mod_i2c_ls1x
+#option		mod_i2c_ls1x
 #option		CONFIG_PCF857X
-option		CONFIG_PCA953X
+#option		CONFIG_PCA953X
 #option		CONFIG_UDA1342
 
 ### IIS IIS控制器和设备初始化
@@ -279,5 +279,6 @@ option		CONFIG_PCA953X
 option		wait_key
 #option		HAVE_MUT_COM		#多串口输入/输出,把控制台信息同时输入/输出到多个串口
 #option		BUZZER				#蜂鸣器
+#option		BUZZER_GPIO=37
 #option		FAST_STARTUP		#快速启动
 #option		CONFIG_CHINESE

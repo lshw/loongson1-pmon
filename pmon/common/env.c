@@ -92,6 +92,9 @@ static struct stdenv {
 	{"update_usb", "no", "no yes"},	//lxy
 //	{"novga", "1", 0},	//当设置为novga=1时表示不使用vga lcd显示屏输出信息 信息只输出到串口 这样可以把菜单定位到串口，因为菜单默认定位到显示屏。
 	{"bootdelay", "8", 0},
+#ifdef BOOT_TEST_NAND_MEM
+	{"boot_test", "yes", "no yes"},
+#endif
 	/* 用于记录测试结果 */
 //	{"cputest", "等待测试", 0},
 //	{"memorytest", "等待测试", 0},

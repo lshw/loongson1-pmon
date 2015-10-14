@@ -2,7 +2,7 @@
 #define __LS1X_SPI_H_
 
 #define LS1X_SPI0_BASE			0xbfe80000
-#define LS1X_SPI1_BASE			0x1fec0000
+#define LS1X_SPI1_BASE			0xbfec0000
 
 #define REG_SPCR		0x00	//控制寄存器
 #define REG_SPSR		0x01	//状态寄存器

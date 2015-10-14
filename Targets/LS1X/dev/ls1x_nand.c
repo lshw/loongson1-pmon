@@ -132,8 +132,8 @@ static u16 ls1x_nand_read_word(struct mtd_info *mtd)
 
 	if (!(info->buf_start & 0x1) && info->buf_start < info->buf_count) {
 		retval = *(u16 *)(info->data_buff + info->buf_start);
+		info->buf_start += 2;
 	}
-	info->buf_start += 2;
 	return retval;
 }
 
@@ -163,7 +163,7 @@ static int ls1x_nand_verify_buf(struct mtd_info *mtd, const uint8_t *buf, int le
 
 	while (len--) {
 		if (buf[i++] != ls1x_nand_read_byte(mtd) ) {
-			printk("verify error..., i= %d !\n\n", i-1);
+			printf("verify error..., i= %d !\n\n", i-1);
 			return -1;
 		}
 	}
@@ -257,7 +257,7 @@ static void start_dma_nand(unsigned int flags, struct ls1x_nand_info *info)
 		timeout--;
 	}
 	if (!timeout) {
-		printk("%s. %x\n",__func__, ret);
+		printf("%s. %x\n",__func__, ret);
 	}
 }
 
@@ -267,20 +267,20 @@ static void ls1x_nand_cmdfunc(struct mtd_info *mtd, unsigned command, int column
 
 	switch (command) {
 	case NAND_CMD_READOOB:
-		info->buf_count = mtd->oobsize - column;
-		info->buf_start = 0;
+		info->buf_count = mtd->oobsize;
+		info->buf_start = column;
 		nand_writel(info, NAND_CMD, SPARE | READ);
-		nand_writel(info, NAND_ADDR_L, MAIN_SPARE_ADDRL(page_addr) + mtd->writesize + column);
+		nand_writel(info, NAND_ADDR_L, MAIN_SPARE_ADDRL(page_addr) + mtd->writesize);
 		nand_writel(info, NAND_ADDR_H, MAIN_SPARE_ADDRH(page_addr));
 		nand_writel(info, NAND_OPNUM, info->buf_count);
 		nand_writel(info, NAND_PARAM, (nand_readl(info, NAND_PARAM) & 0xc000ffff) | (info->buf_count << 16));
 		start_dma_nand(0, info);
 		break;
 	case NAND_CMD_READ0:
-		info->buf_count = mtd->writesize + mtd->oobsize - column;
-		info->buf_start = 0;
+		info->buf_count = mtd->writesize + mtd->oobsize;
+		info->buf_start = column;
 		nand_writel(info, NAND_CMD, SPARE | MAIN | READ);
-		nand_writel(info, NAND_ADDR_L, MAIN_SPARE_ADDRL(page_addr) + column);
+		nand_writel(info, NAND_ADDR_L, MAIN_SPARE_ADDRL(page_addr));
 		nand_writel(info, NAND_ADDR_H, MAIN_SPARE_ADDRH(page_addr));
 		nand_writel(info, NAND_OPNUM, info->buf_count);
 		nand_writel(info, NAND_PARAM, (nand_readl(info, NAND_PARAM) & 0xc000ffff) | (info->buf_count << 16)); /* 1C注意 */
@@ -497,7 +497,7 @@ int ls1x_nand_init(void)
 	/* Allocate memory for MTD device structure and private data */
 	ls1x_mtd = malloc(sizeof(struct mtd_info) + sizeof(struct ls1x_nand_info));
 	if (!ls1x_mtd) {
-		printk("Unable to allocate fcr_soc NAND MTD device structure.\n");
+		printf("Unable to allocate NAND MTD device structure.\n");
 		return -ENOMEM;
 	}
 
@@ -549,21 +549,24 @@ int ls1x_nand_init(void)
 	}
 #endif
 
-#if defined(NAND_BOOT_EN) && defined(LS1CSOC)
+//#if defined(NAND_BOOT_EN) && defined(LS1CSOC)
+#if defined(LS1CSOC)
 	add_mtd_device(ls1x_mtd, 0, 1024*1024, "bootloader");
-	add_mtd_device(ls1x_mtd, 1024*1024, ((14-1)*1024)*1024, "kernel");
+	add_mtd_device(ls1x_mtd, 1024*1024, 13*1024*1024, "kernel");
+	add_mtd_device(ls1x_mtd, 14*1024*1024, 50*1024*1024, "rootfs");
+	add_mtd_device(ls1x_mtd, (50+14)*1024*1024, 64*1024*1024, "data");
 #else
 	add_mtd_device(ls1x_mtd, 0, 14*1024*1024, "kernel");
-#endif
-	add_mtd_device(ls1x_mtd, 14*1024*1024, 100*1024*1024, "os");
+	add_mtd_device(ls1x_mtd, 14*1024*1024, 100*1024*1024, "rootfs");
 	add_mtd_device(ls1x_mtd, (100+14)*1024*1024, 14*1024*1024, "data");
+#endif
 
 	return 0;
 }
 
 /******************************************************************************/
 /* 用于nand flash 环境变量读写的函数 */
-#if defined(NAND_BOOT_EN) && defined(LS1CSOC)
+//#if defined(NAND_BOOT_EN) && defined(LS1CSOC)
 int nand_probe_boot(void)
 {
 	return 0;
@@ -614,11 +617,6 @@ int nand_write_boot(void *base, void *buffer, int size)
 	return 0;
 }
 
-void nand_verify_boot(void *base, void *buffer, int size)
-{
-	
-}
-
 int nand_read_boot(void *base, void *buffer, int size)
 {
 	struct ls1x_nand_info *info = ls1x_mtd->priv;
@@ -641,4 +639,61 @@ int nand_read_boot(void *base, void *buffer, int size)
 
 	return 0;
 }
-#endif
+
+int nand_verify_boot(void *base, void *buffer, int size)
+{
+	unsigned char *r_buf = NULL;
+	int i = 0;
+
+	r_buf = malloc(size);
+	if (!r_buf) {
+		printf("Unable to allocate NAND MTD device structure.\n");
+		return -ENOMEM;
+	}
+
+	nand_read_boot(base, r_buf, size);
+
+	while (size--) {
+		if (*((unsigned char *)buffer + i) != r_buf[i]) {
+			printf("verify error..., i= %d !\n\n", i-1);
+			free(r_buf);
+			return -1;
+		}
+		i++;
+	}
+
+	free(r_buf);
+	
+	return 0;
+}
+
+/* 只检测nand flash 0地址第0页 */
+int ls1x_nand_test(void)
+{
+	unsigned char *buffer = NULL;
+	int *nand_addr = 0;
+	int i, ret = 0;
+
+	if (nand_scan_ident(ls1x_mtd, 1)) {
+		return -ENODEV;
+	}
+
+	buffer = malloc(ls1x_mtd->writesize);
+	if (!buffer) {
+		printf("Unable to allocate NAND MTD device structure.\n");
+		return -ENOMEM;
+	}
+
+	for (i=0; i<ls1x_mtd->writesize; i++) {
+		*(buffer + i) = i;
+	}
+
+	nand_erase_boot(nand_addr, ls1x_mtd->writesize);
+	nand_write_boot(nand_addr, buffer, ls1x_mtd->writesize);
+	ret = nand_verify_boot(nand_addr, buffer, ls1x_mtd->writesize);
+
+	free(buffer);
+
+	return ret;
+}
+//#endif

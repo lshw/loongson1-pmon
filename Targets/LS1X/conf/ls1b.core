@@ -247,3 +247,12 @@ option		wait_key
 #option		BUZZER				#蜂鸣器
 #option		FAST_STARTUP		#快速启动
 option		CONFIG_CHINESE
+
+#用于启动时执行一次nand和内存测试
+#option		BOOT_TEST_NAND_MEM
+#option		BOOT_TEST_LED_GREEN=2
+
+### 使用gpio输入的高低电平判断是否切换串口控制台
+#option		UART_CHANGE
+#option		UART_CHANGE_GPIO=3 #用于判断的gpio引脚号(根据使用修改)
+#option		UART_CHANGE_BASE=LS1X_UART3_BASE #要切换到的串口基地址

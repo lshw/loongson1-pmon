@@ -34,6 +34,8 @@
 /*
  * NS16550 UART registers
  */
+#ifndef __NS16550_H_
+#define __NS16550_H_
 
 #define NS16550_CHANA	PHYS_TO_K1(UART0_BASE)
 #define NS16550_CHANB	PHYS_TO_K1(UART1_BASE)
@@ -90,9 +92,9 @@ extern int ns16550 __P((int, struct DevEntry *, unsigned long, int));
 #define B76800  76800
 #define B115200 115200
 #define B230400 230400
-#define B380400	380400
+#define B380400 380400
 #define B460800 460800
-#define B921600	921600
+#define B921600 921600
 
 #endif /* __LANGUAGE_ASSEMBLY */
 
@@ -179,4 +181,4 @@ extern int ns16550 __P((int, struct DevEntry *, unsigned long, int));
 #define	MSR_DDSR	0x02    /* DSR changed */
 #define	MSR_DCTS	0x01    /* CTS changed */
 
-
+#endif

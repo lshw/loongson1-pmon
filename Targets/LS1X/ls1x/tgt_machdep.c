@@ -63,6 +63,7 @@
 #include <target/regs-clk.h>
 #include <target/i2c-ls1x.h>
 #include <target/ls1x_spi.h>
+#include <target/ls1x_uart.h>
 
 #include <pmon.h>
 
@@ -83,7 +84,7 @@ extern const char *kbd_error_msgs[];
 extern int nand_probe_boot(void);
 extern int nand_erase_boot(void *base, int size);
 extern int nand_write_boot(void *base, void *buffer, int size);
-extern void nand_verify_boot(void *base, void *buffer, int size);
+extern int nand_verify_boot(void *base, void *buffer, int size);
 extern int nand_read_boot(void *base, void *buffer, int size);
 #endif
 
@@ -107,7 +108,6 @@ extern struct trapframe DBGREG;
 extern void *memset(void *, int, size_t);
 
 extern void stringserial(char *);
-
 
 int kbd_available;
 int usb_kbd_available;
@@ -185,6 +185,7 @@ void hpet_test(void)
 #endif
 
 unsigned int output_mode = 1;
+
 void initmips(unsigned int memsz)
 {
 	/*
@@ -193,7 +194,25 @@ void initmips(unsigned int memsz)
 	 */
 	memorysize = memsz > 256 ? 256 << 20 : memsz << 20;
 	memorysize_high = memsz > 256 ? (memsz - 256) << 20 : 0;
-	
+
+	/* gpio控制蜂鸣器开关 */
+#ifdef BUZZER
+	ls1x_gpio_direction_output(BUZZER_GPIO, 0);
+	gpio_set_value(BUZZER_GPIO, 0);
+#endif
+
+	/* 初始化串口控制台，由于串口已在汇编部分start.s初始完毕，所以不再执行初始化 */
+//	ls1x_uart_init(UART_BASE_ADDR, UART16550_DATA_8BIT, UART16550_PARITY_NONE, UART16550_STOP_1BIT);
+
+	/* 使用gpio输入的高低电平判断是否切换串口控制台 */
+#ifdef UART_CHANGE
+	ls1x_gpio_direction_input(UART_CHANGE_GPIO);
+	if (gpio_get_value(UART_CHANGE_GPIO)) {
+		ls1x_uart_init(UART_CHANGE_BASE, UART16550_DATA_8BIT, UART16550_PARITY_NONE, UART16550_STOP_1BIT);
+		ConfigTable[0].devinfo = (char *)UART_CHANGE_BASE;
+	}
+#endif
+
 #ifdef FAST_STARTUP
 	output_mode = *(volatile unsigned int *)(0xbfd010e4);
 	if ((output_mode & 0x03000000) == 0x03000000)
@@ -375,6 +394,19 @@ void tgt_devconfig(void)
 #ifdef NORFLASH_PARTITION
 	norflash_init();           //lxy
 #endif
+	/* LCD显示屏背光使能 */
+#ifdef CONFIG_BACK_LIGHT
+#if defined(mod_i2c_ls1x)
+	#ifdef CONFIG_PCA953X
+	pca953x_gpio_direction_output(0x20, GPIO_BACKLIGHT_CTRL);
+	pca953x_gpio_set_value(0x20, GPIO_BACKLIGHT_CTRL, 1);
+	#endif
+#endif
+#ifdef LS1A_CORE
+	ls1x_gpio_direction_output(GPIO_BACKLIGHT_CTRL, 1);	/* 使能LCD背光 */
+#endif
+#endif
+
 	printf("devconfig done.\n");
 }
 

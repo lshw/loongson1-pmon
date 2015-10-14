@@ -34,6 +34,8 @@ static char *addr_cursor = NULL;
 static char *mem_ptr = NULL;
 #endif
 
+unsigned long fb_addr;
+
 static struct vga_struc {
 	unsigned int pclk, refresh;
 	unsigned int hr, hss, hse, hfl;
@@ -45,15 +47,16 @@ static struct vga_struc {
 	{/*"320x240_60.00"*/	7154,	60,	320,	332,	364,	432,	240,	248,	254,	276,	0x00000103, 0xc0000000},/* HX8238-D控制器 */
 //	{/*"320x240_60.00"*/	6438,	60,	320,	336,	337,	408,	240,	250,	251,	263,	0x80001311, 0xc0000000},/* NT39016D控制器 */
 	{/*"320x480_60.00"*/	12908,	60,	320,	360,	364,	432,	480,	488,	490,	498,	0x00000101, 0xc0000000},/* NT35310控制器 */
-	{/*"480x272_60.00"*/	9009,	60,	480,	0,	0,	525,	272,	0,	0,	288,	0x00000101, 0x00000000},/* AT043TN13 DE mode */
+//	{/*"480x272_60.00"*/	9009,	60,	480,	0,	0,	525,	272,	0,	0,	288,	0x00000101, 0x00000000},/* AT043TN13 DE mode */
+	{/*"480x272_60.00"*/	9009,	60,	480,	488,	489,	531,	272,	276,	282,	288,	0x00000101, 0xc0000000},/* LT043A-02AT */
 	{/*"480x640_60.00"*/	20217,	60,	480,    488,    496,    520,    640,    642,    644,    648,	0x00000101, 0xc0000000},/* jbt6k74控制器 */
 //	{/*"640x480_60.00"*/	25200,	60,	640,	656,	666,	800,	480,	512,    514,    525,	0x00000101, 0xc0000000},/* AT056TN52 */
 	{/*"640x480_60.00"*/	25200,	60,	640,	656,	666,	800,	480,	512,    514,    525,	0x00000301, 0xc0000000},/* AT056TN53 */
 	{/*"640x640_60.00"*/	33100,	60,	640,	672,	736,	832,	640,	641,	644,	663,	0x00000101, 0xc0000000},
 	{/*"640x768_60.00"*/	39690,	60,	640,	672,	736,	832,	768,	769,	772,	795,	0x00000101, 0xc0000000},
 	{/*"640x800_60.00"*/	42130,	60,	640,	680,	744,	848,	800,	801,	804,	828,	0x00000101, 0xc0000000},
-//	{/*"800x480_60.00"*/	29232,	60,	800,	0,	0,	928,	480,	0,    0,    525,	0x00000101, 0x00000000},/* AT070TN93 HX8264 DE mode */
-	{/*"800x480_60.00"*/	29232,	60,	800,	840,	888,	928,	480,	493,    496,    525,	0x00000100, 0xc0000000},/* HX8264 HV mode */
+	{/*"800x480_60.00"*/	29232,	60,	800,	0,	0,	928,	480,	0,    0,    525,	0x00000101, 0x00000000},/* AT070TN93 HX8264 DE mode */
+//	{/*"800x480_60.00"*/	29232,	60,	800,	840,	888,	928,	480,	493,    496,    525,	0x00000100, 0xc0000000},/* HX8264 HV mode */
 
 //	{/*"800x600_60.00"*/	39790,	60,	800,	840,	968,	1056,	600,	601,	605,	628,	0x00000101, 0xc0000000},/* VESA */
 	{/*"800x600_75.00"*/	49500,	75,	800,	816,	896,	1056,	600,	601,	604,	625,	0x00000101, 0xc0000000},/* VESA */
@@ -61,7 +64,8 @@ static struct vga_struc {
 	{/*"832x600_60.00"*/	40010,	60,	832,	864,	952,	1072,	600,	601,	604,	622,	0x00000101, 0xc0000000},
 	{/*"832x608_60.00"*/	40520,	60,	832,	864,	952,	1072,	608,	609,	612,	630,	0x00000101, 0xc0000000},
 	{/*"1024x480_60.00"*/	38170,	60,	1024,	1048,	1152,	1280,	480,	481,	484,	497,	0x00000101, 0xc0000000},
-	{/*"1024x600_60.00"*/	48960,	60,	1024,	1064,	1168,	1312,	600,	601,	604,	622,	0x00000101, 0xc0000000},
+	{/*"1024x600_60.00"*/	51206,	60,	1024,	0,	0,	1344,	600,	0,	0,	635,	0x00000101, 0x00000000}, /* HDBO101XLE-21 DE mode */
+//	{/*"1024x600_60.00"*/	51206,	60,	1024,	1184,	1185,	1344,	600,	612,	613,	635,	0x00000101, 0xc0000000}, /* HDBO101XLE-21 HV mode */
 	{/*"1024x640_60.00"*/	52830,	60,	1024,	1072,	1176,	1328,	640,	641,	644,	663,	0x00000101, 0xc0000000},
 	{/*"1024x768_60.00"*/	65000,	60,	1024,	1048,	1184,	1344,	768,	771,	777,	806,	0x00000101, 0xc0000000},/* VESA */
 	{/*"1152x764_60.00"*/	71380,	60,	1152,	1208,	1328,	1504,	764,	765,    768,    791,	0x00000101, 0xc0000000},
@@ -269,6 +273,7 @@ static int config_cursor(void)
 static int config_fb(unsigned int base)
 {
 	int i, mode = -1;
+	u32 val;
 
 	for (i=0; i<sizeof(vgamode)/sizeof(struct vga_struc); i++) {
 		if (vgamode[i].hr == fb_xsize && vgamode[i].vr == fb_ysize) {
@@ -367,18 +372,18 @@ static int config_fb(unsigned int base)
 	}
 
 	/* Disable the panel 0 */
-	writel(0x00000000, base+OF_BUF_CONFIG);
 	writel((unsigned int)mem_ptr & 0x0fffffff, base+OF_BUF_ADDR0);
 	writel((unsigned int)mem_ptr & 0x0fffffff, base+OF_BUF_ADDR1);
-	writel(0x00000000, base+OF_DITHER_CONFIG);
-	writel(0x00000000, base+OF_DITHER_TABLE_LOW);
-	writel(0x00000000, base+OF_DITHER_TABLE_HIGH);
+//	writel(0x00000000, base+OF_DITHER_CONFIG);
+//	writel(0x00000000, base+OF_DITHER_TABLE_LOW);
+//	writel(0x00000000, base+OF_DITHER_TABLE_HIGH);
+	/* PAN_CONFIG寄存器最高位需要置1，否则lcd时钟延时一段时间才会有输出 */
 	#ifdef CONFIG_VGA_MODEM
 	writel(0x80001311, base+OF_PAN_CONFIG);
 	#else
-	writel(vgamode[mode].pan_config, base+OF_PAN_CONFIG);
+	writel(0x80001111 | vgamode[mode].pan_config, base+OF_PAN_CONFIG);
 	#endif
-	writel(0x00000000, base+OF_PAN_TIMING);
+//	writel(0x00000000, base+OF_PAN_TIMING);
 
 	writel((vgamode[mode].hfl<<16) | vgamode[mode].hr, base + OF_HDISPLAY);
 	writel(vgamode[mode].hvsync_polarity | (vgamode[mode].hse<<16) | vgamode[mode].hss, base + OF_HSYNC);
@@ -386,39 +391,39 @@ static int config_fb(unsigned int base)
 	writel(vgamode[mode].hvsync_polarity | (vgamode[mode].vse<<16) | vgamode[mode].vss, base + OF_VSYNC);
 
 #if defined(CONFIG_VIDEO_32BPP)
-	writel(0x00100004, base+OF_BUF_CONFIG);
+	writel(0x00100104, base+OF_BUF_CONFIG);
 	writel((fb_xsize*4+BURST_SIZE)&~BURST_SIZE, base+OF_BUF_STRIDE);
 	#ifdef LS1BSOC
 	*(volatile int *)0xbfd00420 &= ~0x08;
 	*(volatile int *)0xbfd00420 |= 0x05;
 	#endif
 #elif defined(CONFIG_VIDEO_24BPP)
-	writel(0x00100004, base+OF_BUF_CONFIG);
+	writel(0x00100104, base+OF_BUF_CONFIG);
 	writel((fb_xsize*3+BURST_SIZE)&~BURST_SIZE, base+OF_BUF_STRIDE);
 	#ifdef LS1BSOC
 	*(volatile int *)0xbfd00420 &= ~0x08;
 	*(volatile int *)0xbfd00420 |= 0x05;
 	#endif
 #elif defined(CONFIG_VIDEO_16BPP)
-	writel(0x00100003, base+OF_BUF_CONFIG);
+	writel(0x00100103, base+OF_BUF_CONFIG);
 	writel((fb_xsize*2+BURST_SIZE)&~BURST_SIZE, base+OF_BUF_STRIDE);
 	#ifdef LS1BSOC
 	*(volatile int *)0xbfd00420 &= ~0x07;
 	#endif
 #elif defined(CONFIG_VIDEO_15BPP)
-	writel(0x00100002, base+OF_BUF_CONFIG);
+	writel(0x00100102, base+OF_BUF_CONFIG);
 	writel((fb_xsize*2+BURST_SIZE)&~BURST_SIZE, base+OF_BUF_STRIDE);
 	#ifdef LS1BSOC
 	*(volatile int *)0xbfd00420 &= ~0x07;
 	#endif
 #elif defined(CONFIG_VIDEO_12BPP)
-	writel(0x00100001, base+OF_BUF_CONFIG);
+	writel(0x00100101, base+OF_BUF_CONFIG);
 	writel((fb_xsize*2+BURST_SIZE)&~BURST_SIZE, base+OF_BUF_STRIDE);
 	#ifdef LS1BSOC
 	*(volatile int *)0xbfd00420 &= ~0x07;
 	#endif
 #else	/* 16bpp */
-	writel(0x00100003, base+OF_BUF_CONFIG);
+	writel(0x00100103, base+OF_BUF_CONFIG);
 	writel((fb_xsize*2+BURST_SIZE)&~BURST_SIZE, base+OF_BUF_STRIDE);
 	#ifdef LS1BSOC
 	*(volatile int *)0xbfd00420 &= ~0x07;
@@ -428,7 +433,6 @@ static int config_fb(unsigned int base)
 
 	{	/* 显示数据输出使能 */
 		int timeout = 204800;
-		u32 val;
 		val = readl((base+OF_BUF_CONFIG));
 		do {
 			writel(val|0x100, base+OF_BUF_CONFIG);
@@ -471,6 +475,7 @@ unsigned long dc_init(void)
 	}
 	memset(mem_ptr, 0, smem_len);
 	mem_ptr = (char *)((unsigned int)mem_ptr | 0xa0000000); /* 需要转换为umap ucache的地址 */
+	fb_addr = (unsigned long)mem_ptr;
 
 #ifdef DC_FB0
 	config_fb(DC_BASE_ADDR0);

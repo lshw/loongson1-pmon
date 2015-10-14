@@ -19,62 +19,6 @@
 //static struct timer_list synopGMAC_cable_unplug_timer;
 static u32 GMAC_Power_down; // This global variable is used to indicate the ISR whether the interrupts occured in the process of powering down the mac or not
 
-#define MAC_ADDR {0x00, 0x55, 0x7B, 0xB5, 0x7D, 0xF7}	//sw: may be it should be F7 7D B5 7B 55 00
-
-/*Sample Wake-up frame filter configurations*/
-
-u32 synopGMAC_wakeup_filter_config0[] = {
-	0x00000000,	// For Filter0 CRC is not computed may be it is 0x0000
-	0x00000000,	// For Filter1 CRC is not computed may be it is 0x0000
-	0x00000000,	// For Filter2 CRC is not computed may be it is 0x0000
-	0x5F5F5F5F,     // For Filter3 CRC is based on 0,1,2,3,4,6,8,9,10,11,12,14,16,17,18,19,20,22,24,25,26,27,28,30 bytes from offset
-	0x09000000,     // Filter 0,1,2 are disabled, Filter3 is enabled and filtering applies to only multicast packets
-	0x1C000000,     // Filter 0,1,2 (no significance), filter 3 offset is 28 bytes from start of Destination MAC address 
-	0x00000000,     // No significance of CRC for Filter0 and Filter1
-	0xBDCC0000      // No significance of CRC for Filter2, Filter3 CRC is 0xBDCC
-};
-u32 synopGMAC_wakeup_filter_config1[] = {
-	0x00000000,	// For Filter0 CRC is not computed may be it is 0x0000
-	0x00000000,	// For Filter1 CRC is not computed may be it is 0x0000
-	0x7A7A7A7A,	// For Filter2 CRC is based on 1,3,4,5,6,9,11,12,13,14,17,19,20,21,25,27,28,29,30 bytes from offset
-	0x00000000,     // For Filter3 CRC is not computed may be it is 0x0000
-	0x00010000,     // Filter 0,1,3 are disabled, Filter2 is enabled and filtering applies to only unicast packets
-	0x00100000,     // Filter 0,1,3 (no significance), filter 2 offset is 16 bytes from start of Destination MAC address 
-	0x00000000,     // No significance of CRC for Filter0 and Filter1
-	0x0000A0FE      // No significance of CRC for Filter3, Filter2 CRC is 0xA0FE
-};
-u32 synopGMAC_wakeup_filter_config2[] = {
-	0x00000000,	// For Filter0 CRC is not computed may be it is 0x0000
-	0x000000FF,	// For Filter1 CRC is computed on 0,1,2,3,4,5,6,7 bytes from offset
-	0x00000000,	// For Filter2 CRC is not computed may be it is 0x0000
-	0x00000000,     // For Filter3 CRC is not computed may be it is 0x0000
-	0x00000100,     // Filter 0,2,3 are disabled, Filter 1 is enabled and filtering applies to only unicast packets
-	0x0000DF00,     // Filter 0,2,3 (no significance), filter 1 offset is 223 bytes from start of Destination MAC address 
-	0xDB9E0000,     // No significance of CRC for Filter0, Filter1 CRC is 0xDB9E
-	0x00000000      // No significance of CRC for Filter2 and Filter3 
-};
-
-/*
-The synopGMAC_wakeup_filter_config3[] is a sample configuration for wake up filter. 
-Filter1 is used here
-Filter1 offset is programmed to 50 (0x32)
-Filter1 mask is set to 0x000000FF, indicating First 8 bytes are used by the filter
-Filter1 CRC= 0x7EED this is the CRC computed on data 0x55 0x55 0x55 0x55 0x55 0x55 0x55 0x55
-
-Refer accompanied software DWC_gmac_crc_example.c for CRC16 generation and how to use the same.
-*/
-
-u32 synopGMAC_wakeup_filter_config3[] = {
-	0x00000000,	// For Filter0 CRC is not computed may be it is 0x0000
-	0x000000FF,	// For Filter1 CRC is computed on 0,1,2,3,4,5,6,7 bytes from offset
-	0x00000000,	// For Filter2 CRC is not computed may be it is 0x0000
-	0x00000000,     // For Filter3 CRC is not computed may be it is 0x0000
-	0x00000100,     // Filter 0,2,3 are disabled, Filter 1 is enabled and filtering applies to only unicast packets
-	0x00003200,     // Filter 0,2,3 (no significance), filter 1 offset is 50 bytes from start of Destination MAC address 
-	0x7eED0000,     // No significance of CRC for Filter0, Filter1 CRC is 0x7EED, 
-	0x00000000      // No significance of CRC for Filter2 and Filter3 
-};
-
 
 static int rtl88e1111_config_init(synopGMACdevice *gmacdev)
 {
@@ -150,7 +94,7 @@ static void synopGMAC_linux_cable_unplug_function(synopGMACPciNetworkAdapter *ad
 	}
 }
 
-s32 synopGMAC_check_phy_init (synopGMACPciNetworkAdapter *adapter) 
+s32 synopGMAC_check_phy_init (synopGMACPciNetworkAdapter *adapter)
 {	
 	struct ethtool_cmd cmd;
 	synopGMACdevice *gmacdev = adapter->synopGMACdev;
@@ -788,7 +732,7 @@ static s32 synopGMAC_linux_open(struct synopGMACNetworkAdapter *tp)
 	synopGMAC_enable_dma_rx(gmacdev);
 	synopGMAC_enable_dma_tx(gmacdev);
 
-#if defined(LS1ASOC)
+#if defined(LS1ASOC) || defined(LS1BSOC) || defined(LS1CSOC)
 	synopGMAC_mac_init(gmacdev);
 #endif
 
@@ -1152,7 +1096,7 @@ s32  synopGMAC_init_network_interface(char* xname, u64 synopGMACMappedAddr)
 
 	static u8 mac_addr0[6] = DEFAULT_MAC_ADDRESS;
 	static int inited = 0;
-	int i;
+	int i, ret;
 	struct synopGMACNetworkAdapter *synopGMACadapter;
 
 	if(!inited) {
@@ -1234,14 +1178,14 @@ s32  synopGMAC_init_network_interface(char* xname, u64 synopGMACMappedAddr)
 
 	synopGMACadapter->synopGMACdev = NULL;
 	synopGMACadapter->PInetdev = NULL;
-	
+
 	/*Allocate Memory for the the GMACip structure*/
 	synopGMACadapter->synopGMACdev = (synopGMACdevice *)plat_alloc_memory(sizeof(synopGMACdevice));
 	memset((char *)synopGMACadapter->synopGMACdev, 0, sizeof(synopGMACdevice));
 	if(!synopGMACadapter->synopGMACdev) {
 		TR0("Error in Memory Allocataion \n");
 	}
-		
+
 	/*Allocate Memory for the the GMAC-Pmon structure	sw*/
 	synopGMACadapter->PInetdev = (struct PmonInet *)plat_alloc_memory(sizeof(struct PmonInet));
 	memset((char *)synopGMACadapter->PInetdev, 0, sizeof(struct PmonInet));
@@ -1249,7 +1193,10 @@ s32  synopGMAC_init_network_interface(char* xname, u64 synopGMACMappedAddr)
 		TR0("Error in Pdev-Memory Allocataion \n");
 	}
 
-	synopGMAC_attach(synopGMACadapter->synopGMACdev, (u64)synopGMACMappedAddr + MACBASE, (u64)synopGMACMappedAddr + DMABASE, DEFAULT_PHY_BASE, mac_addr0);
+	ret = synopGMAC_attach(synopGMACadapter->synopGMACdev, (u64)synopGMACMappedAddr + MACBASE, (u64)synopGMACMappedAddr + DMABASE, DEFAULT_PHY_BASE, mac_addr0);
+	if (ret) {
+		return 1;
+	}
 	init_phy(synopGMACadapter->synopGMACdev);
 
 	ifp = &(synopGMACadapter->PInetdev->arpcom.ac_if);

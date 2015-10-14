@@ -133,6 +133,22 @@ stack = start - 0x4000		/* Place PMON stack below PMON start in RAM */
 	la	sp, stack
 	la	gp, _gp
 
+	/* initialize spi */
+	li  t0, 0xbfe80000
+	li  t1, 0x17	// div 4, fast_read + burst_en + memory_en double I/O 模式 部分SPI flash可能不支持
+	sb  t1, 0x4(t0)	// sfc_param
+	li  t1, 0x05
+	sb  t1, 0x6(t0)
+
+	/* 设置sdram cs1复用关系，开发板使用ejtag_sel gpio_0引脚(第五复用)作为第二片sdram的片选
+	  注意sw2拨码开关的设置，使用ejtag烧录pmon时需要调整拨码开关，烧录完再调整回来 */
+#ifdef SDRAM_USE_CS1
+	li		a0, 0xbfd011c0
+	lw		a1, 0x40(a0)
+	ori	a1, 0x01
+	sw		a1, 0x40(a0)
+#endif
+
 #if defined(NAND_BOOT_EN) && defined(LS1CSOC)
 #include "nand_boot.S"
 	la	t0, start
@@ -145,16 +161,16 @@ stack = start - 0x4000		/* Place PMON stack below PMON start in RAM */
 real_bin:
 #endif
 
-	bal	uncached		/* Switch to uncached address space */
-	nop
+//	bal	uncached		/* Switch to uncached address space */
+//	nop
 
 	bal	locate			/* Get current execute address */
 	nop
-
+/*
 uncached:
 	or	ra, UNCACHED_MEMORY_ADDR
 	j	ra
-	nop
+	nop*/
 
 /***********************************EXC VECTOR***************************************/
 
@@ -277,20 +293,16 @@ exc_common:
  *  location into ra. Check to see if we run from ROM or if this is ramloaded.
  */
 locate:
-	la		s0, uncached
+//	la		s0, uncached
+//	subu	s0, ra, s0
+	la		s0, start
 	subu	s0, ra, s0
+	and	s0, 0xffff0000
 
 	li		t0, SR_BOOT_EXC_VEC
 	mtc0	t0, COP_0_STATUS_REG
 	mtc0	zero, COP_0_CAUSE_REG
 	.set	noreorder
-	
-	/*spi speed*/
-	li  t0, 0xbfe80000
-	li  t1, 0x17	// div 4, fast_read + burst_en + memory_en double I/O 模式 部分SPI flash可能不支持
-	sb  t1, 0x4(t0)	// sfc_param
-	li  t1, 0x05
-	sb  t1, 0x6(t0)
 
 #if defined(LS1ASOC)/* to adjust the DDR frequency */
 	li v0, 0xbfc00000+(NVRAM_POS+PLL_OFFS)
@@ -309,16 +321,16 @@ locate:
 	nop
 1:
 #define DDRCFG_DATA (0x8888|(CPU_MULT-4)|((DDR_MULT-3)<<8))
-    li  a1, DDRCFG_DATA
+	li  a1, DDRCFG_DATA
 2:
 	li  a2, 0xa
 3:
-    li  a0, 0xbfe78030
-    sw  a1, 0x0(a0)
-    nop
-    sub  a2, 0x1
-    bnez a2, 3b
-    nop
+	li  a0, 0xbfe78030
+	sw  a1, 0x0(a0)
+	nop
+	sub  a2, 0x1
+	bnez a2, 3b
+	nop
 //	lw	a2, 0x0(a0)
 //	xor a2,a1
 //	andi a2,0xf0f
@@ -422,6 +434,34 @@ locate:
 	sw zero,0x10c0(a0)	/* disable gpio 0-31 */
 	sw zero,0x10c4(a0)	/* disable gpio 32-63 */
 	sw zero,0x10c8(a0)	/* disable gpio 64-95 */
+	sw zero,0x10cc(a0)
+
+	li t0, 0xffffffff
+	sw t0, 0x10d0(a0)
+	sw t0, 0x10d4(a0)
+	sw t0, 0x10d8(a0)
+	sw t0, 0x10dc(a0)
+
+	sw t0, 0x10f0(a0)
+	sw t0, 0x10f4(a0)
+	sw t0, 0x10f8(a0)
+	sw t0, 0x10fc(a0)
+
+	/* lcd soft_reset and panel config & timing */
+#ifdef DC_FB0
+/*	li a0, 0xbc301240
+	li a1, 0x00100103
+	sw a1, 0x0(a0)
+	li a1, 0x00000103
+	sw a1, 0x0(a0)		//soft_reset
+	li a1, 0x00100103
+	sw a1, 0x0(a0)
+
+	li a1, 0x80001111
+	sw a1, 0x180(a0)	//panel config
+	li a1, 0x33333333
+	sw a1, 0x1a0(a0)*/
+#endif
 
 #if defined(LS1ASOC)
 	/* 启动时默认关闭SATA GPU USB GMAC0 GMAC1 */
@@ -437,22 +477,6 @@ locate:
 //	ori a2,0x3800
 	ori a2,0x0800
 	sw a2,0x424(a0);
-#endif
-
-#ifdef BUZZER
-	/* disable buzzer gpio40*/
-	li	v0, 0xbfd010c4
-	lw  t0, 0x00(v0)
-	or	t0, 0x00000100
-	sw	t0, 0x00(v0)
-
-	lw  t0, 0x10(v0)
-	and	t0, 0xfffffeff
-	sw	t0, 0x10(v0)
-
-	lw  t0, 0x30(v0)
-	and	t0, 0xfffffeff
-	sw	t0, 0x30(v0)
 #endif
 
 	li output_en, 0x1
@@ -547,14 +571,14 @@ cpu_win_fixup:
 	set_cpu_window(6, 0x00000000, 0x00000000, 0x000000f0) // ddr 0
 	set_cpu_window(7, 0x00000000, 0x00000000, 0x000000f0) // ddr 0*/
 
-	set_cpu_window(0, 0x1c280000, 0xfff80000, 0x1c2800d3) // camera
+/*	set_cpu_window(0, 0x1c280000, 0xfff80000, 0x1c2800d3) // camera
 //	set_cpu_window(1, 0x1fc00000, 0xfff00000, 0x1fc000f2) //
 	set_cpu_window(2, 0x1c300000, 0xfff00000, 0x1c3000d1) // dc 1M
 //	set_cpu_window(3, 0x1f000000, 0xff000000, 0x1f0000d2) //
 	set_cpu_window(4, 0x00000000, 0x00000000, 0x000000f0)
 	set_cpu_window(5, 0x00000000, 0x00000000, 0x000000f0)
 	set_cpu_window(6, 0x00000000, 0x00000000, 0x000000f0) // ddr 0
-	set_cpu_window(7, 0x00000000, 0x00000000, 0x000000f0) // ddr 0
+	set_cpu_window(7, 0x00000000, 0x00000000, 0x000000f0) // ddr 0*/
 #endif
 	// after this fixup, the kernel code should be compiled with
 	// uncached instruction fetch patch
@@ -712,8 +736,7 @@ acpi_end:/* Startup as usual */
 /***********************MEMORY DEBUGGING AND COPY SELF TO RAM***********************/
 //#include "newtest.32/mydebug.S"
 bootnow:
-
-/* copy copy program to sdram to make copy fast */
+	/* copy program to sdram to make copy fast */
 	la		t0, 121f
 	addu	t0, s0
 	la		t1, 122f
@@ -725,14 +748,13 @@ bootnow:
 	sw		v0, (t2)
 	addu	t0, 4
 	addu	t2, 4
-	ble		t0, t1, 1b
+	ble	t0, t1, 1b
 	nop
 
 	li		t0, 0xa0000000
-   	jr		t0	
+	jr		t0	
 	nop		
 
-.align 3
 121: 
 	/* Copy PMON to execute location... */
 	la		a0, start
@@ -741,14 +763,14 @@ bootnow:
 	or		a0, 0xa0000000
 	or		a2, 0xa0000000
 	subu	t1, a2, a0
-	srl		t1, t1, 2
+	srl	t1, t1, 2
 
 	move	t0, a0
 	move	t1, a1
 	move	t2, a2
 
 	/* copy text section */
-1:	and		t3, t0,0x0000ffff
+1:	and	t3, t0, 0x0000ffff
 	bnez	t3, 2f
 	nop
 2:	lw		t3, 0(t1)
@@ -756,7 +778,7 @@ bootnow:
 	sw		t3, 0(t0)
 	addu	t0, 4
 	addu	t1, 4
-	bne		t2, t0, 1b
+	bne	t2, t0, 1b
 	nop
 	/* copy text section done. */
 	
@@ -764,21 +786,20 @@ bootnow:
 	la		a0, _edata
 	la		a2, _end
 2:	sw		zero, 0(a0)
-	bne		a2, a0, 2b
+	bne	a2, a0, 2b
 	addu	a0, 4
 	/* Copy PMON to execute location done */
 
 	li		a0, 0
 	sw		a0, CpuTertiaryCacheSize /* Set L3 cache size */
 
-	move	a0,msize
-	srl		a0,20
+	move	a0, msize
+	srl	a0, 20
 
 	la		v0, initmips
 	jalr	v0
 	nop
 
-.align 3
 122:
 
 stuck:
@@ -1047,7 +1068,7 @@ LEAF(tgt_getchar)
 END(tgt_getchar)
 
 
-/* baud rate definitions, matching include/termios.h */
+/* baud rate definitions, matching include/termio.h */
 #define B0      0
 #define B50     50      
 #define B75     75
@@ -1066,10 +1087,10 @@ END(tgt_getchar)
 #define B38400  38400
 #define B57600  57600
 #define B115200 115200
-#define B230400	230400
-#define B380400	380400
+#define B230400 230400
+#define B380400 380400
 #define B460800 460800
-#define B921600	921600
+#define B921600 921600
 
 LEAF(initserial)
 	move AT,ra
@@ -1144,7 +1165,8 @@ LEAF(initserial)
 	divu	v1, v1, a1
 #elif defined(LS1CSOC)
 	/* uart3 config mux 默认第一复用 */
-/*	li		a0, 0xbfd011c4
+#if (UART_BASE_ADDR == 0xbfe4c000)
+	li		a0, 0xbfd011c4
 //	lw		a1, 0x00(a0)
 //	and		a1, 0xfffffff9
 //	sw		a1, 0x00(a0)
@@ -1156,24 +1178,25 @@ LEAF(initserial)
 //	sw		a1, 0x20(a0)
 //	lw		a1, 0x30(a0)
 //	and		a1, 0xfffffff9
-//	sw		a1, 0x30(a0)*/
+//	sw		a1, 0x30(a0)
 
-	li		a0, 0xbfd011f0
-	lw		a1, 0x00(a0)
-	ori		a1, 0x03
-	sw		a1, 0x00(a0)
-
-	/* UART2 */
-/*	li		a0, 0xbfd011c4
-	lw		a1, 0x10(a0)
-	ori		a1, 0x30
-	sw		a1, 0x10(a0)*/
-
-	/* UART1 */
 /*	li		a0, 0xbfd011f0
 	lw		a1, 0x00(a0)
-	ori		a1, 0x0c
+	ori		a1, 0x03
 	sw		a1, 0x00(a0)*/
+#elif (UART_BASE_ADDR == 0xbfe48000)
+	/* UART2 */
+	li		a0, 0xbfd011c4
+	lw		a1, 0x10(a0)
+	ori		a1, 0x30
+	sw		a1, 0x10(a0)
+#elif (UART_BASE_ADDR == 0xbfe44000)
+	/* UART1 */
+	li		a0, 0xbfd011f0
+	lw		a1, 0x00(a0)
+	ori		a1, 0x0c
+	sw		a1, 0x00(a0)
+#endif
 
 	li		a0, 0xbfe78030
 	lw		a1, 0(a0)
@@ -1374,7 +1397,7 @@ cache_init_finish:
 #ifdef LS1ASOC
 #include "ddr2fconfig-1a-samsung-CL3.S"
 #elif LS1BSOC
-//#include "ddr2fconfig-samsung.S"
+//#include "ddr2fconfig-scs-CL5.S"
 #include "ddr2fconfig-samsung-CL3.S"
 //#include "ddr2fconfig.S"
 #endif

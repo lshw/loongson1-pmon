@@ -12,6 +12,10 @@ file	Targets/LS1X/dev/ls1x_iis.c		mod_iis_ls1x
 #file	Targets/LS1X/dev/acpi.c
 file	Targets/LS1X/dev/gpio.c
 file	Targets/LS1X/dev/lcd.c			mod_framebuffer
+#file	Targets/LS1X/dev/ls1x_sdio.c
+#file	Targets/LS1X/dev/ls1x_camera.c
+#file	Targets/LS1X/dev/ls1c_adc.c
+file	Targets/LS1X/dev/ls1x_uart.c
 file	Targets/LS1X/pci/pci_machdep.c
 
 #sw
