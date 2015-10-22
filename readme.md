@@ -1,5 +1,12 @@
 本项目，来自与龙芯广州分公司为龙芯俱乐部提供的龙芯1C开龙主板提供的pmon源码
 
+安装软件：
+ aptitude install bison flex xutils-dev
+编译安装pmoncfg文件:
+ cd tools/pmoncfg
+make pmoncfg
+make install
+
 编译：  
  pmon-ls1x-openloongson源码目录下  
  cd zloader.ls1c  

@@ -3,7 +3,7 @@
 BISON?= bison -y
 
 PROG=	pmoncfg
-DESTDIR=/opt/pmon2000/tools
+DESTDIR=/usr/local
 
 SRCS=	files.c gram.y hash.c main.c mkheaders.c mkioconf.c mkmakefile.c \
 	pack.c scan.l sem.c util.c 
