@@ -549,17 +549,16 @@ int ls1x_nand_init(void)
 	}
 #endif
 
-//#if defined(NAND_BOOT_EN) && defined(LS1CSOC)
-#if defined(LS1CSOC)
-	add_mtd_device(ls1x_mtd, 0, 1024*1024, "bootloader");
-	add_mtd_device(ls1x_mtd, 1024*1024, 13*1024*1024, "kernel");
-	add_mtd_device(ls1x_mtd, 14*1024*1024, 50*1024*1024, "rootfs");
-	add_mtd_device(ls1x_mtd, (50+14)*1024*1024, 64*1024*1024, "data");
-#else
+//if(strcmp("/dev/mtd1",getenv("al")) == 0) {
+//	add_mtd_device(ls1x_mtd, 0, 1024*1024, "bootloader");
+//	add_mtd_device(ls1x_mtd, 1024*1024, 13*1024*1024, "kernel");
+//	add_mtd_device(ls1x_mtd, 14*1024*1024, 50*1024*1024, "rootfs");
+//	add_mtd_device(ls1x_mtd, (50+14)*1024*1024, 64*1024*1024, "data");
+//}else {
 	add_mtd_device(ls1x_mtd, 0, 14*1024*1024, "kernel");
 	add_mtd_device(ls1x_mtd, 14*1024*1024, 100*1024*1024, "rootfs");
 	add_mtd_device(ls1x_mtd, (100+14)*1024*1024, 14*1024*1024, "data");
-#endif
+//}
 
 	return 0;
 }
