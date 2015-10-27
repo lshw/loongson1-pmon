@@ -48,10 +48,10 @@ cd ../../../../
 gitLog=`git log -1`
 hashNumber=`echo $gitLog | cut -d ' ' -f 2`
 hashNumber="GitHashNumber: "$hashNumber
-Author=`echo $gitLog | cut -d ' ' -f 4`
-Author="CommitAuthor: "$Author
-commitDate=`echo $gitLog | cut -d ' ' -f 7-11`
-commitDate="CommitDate: "$commitDate
+Author=`git log -1|grep ^Auth`
+Author="Commit"$Author
+commitDate=`git log -1 |grep ^Date`
+commitDate="Commit"$commitDate
 cd $pwd_dir
 usrName=`whoami`
 usrName="UsrName: "$usrName
