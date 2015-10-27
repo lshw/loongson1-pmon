@@ -38,10 +38,10 @@ PMONTOP=${.CURDIR}
 MAKE=make -m ${PMONTOP}/tools/mk
 
 pmontools:
-	@cd tools; ${MAKE}
+	@cd tools; make
 
 pmonlibs:
-	@cd lib; ${MAKE}
+	@cd lib; make
 clean:
 	perl -e 'for(<zloader.*>){system qq(cd $$_;make cleanall;cd -;);}'
 	perl -i -ne 'print;exit if(/^# DO NOT DELETE/);' lib/libc/Makefile
