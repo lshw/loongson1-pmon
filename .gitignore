@@ -15,6 +15,7 @@
 #
 # Top-level generic files
 #
+*.bak
 tags
 TAGS
 gzrom
