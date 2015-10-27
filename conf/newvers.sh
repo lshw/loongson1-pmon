@@ -57,60 +57,7 @@ usrName=`whoami`
 usrName="UsrName: "$usrName
 makeTime=`date`
 makeTime="MakeTime: "$makeTime
-user_ip=""
-all_ip=`/sbin/ifconfig`
-echo "$all_ip" | grep -q "eth0"
-if	[ $? -eq 0 ]
-then
-	tmp_ip=`/sbin/ifconfig eth0`
-	echo "$tmp_ip" | grep -q "inet"
-	if [ $? -eq 0 ]
-	then
-		user_ip=`echo $tmp_ip | cut -d ":" -f 8 | cut -d " " -f 1`
-	fi
-fi
-echo "$all_ip" | grep -q "eth1"
-if	[ $? -eq 0 ]
-then
-	tmp_ip=`/sbin/ifconfig eth1`
-	echo "$tmp_ip" | grep -q "inet"
-	if [ $? -eq 0 ]
-	then
-		user_ip=`echo $tmp_ip | cut -d ":" -f 8 | cut -d " " -f 1`
-	fi
-fi
-echo "$all_ip" | grep -q "eth2"
-if	[ $? -eq 0 ]
-then
-	tmp_ip=`/sbin/ifconfig eth2`
-	echo "$tmp_ip" | grep -q "inet"
-	if [ $? -eq 0 ]
-	then
-		user_ip=`echo $tmp_ip | cut -d ":" -f 8 | cut -d " " -f 1`
-	fi
-fi
-echo "$all_ip" | grep -q "eth3"
-if	[ $? -eq 0 ]
-then
-	tmp_ip=`/sbin/ifconfig eth3`
-	echo "$tmp_ip" | grep -q "inet"
-	if [ $? -eq 0 ]
-	then
-		user_ip=`echo $tmp_ip | cut -d ":" -f 8 | cut -d " " -f 1`
-	fi
-fi
-echo "$all_ip" | grep -q "wlan0"
-if	[ $? -eq 0 ]
-then
-	echo "wlan0"
-	tmp_ip=`/sbin/ifconfig wlan0`
-	echo "$tmp_ip" | grep -q "inet"
-	if [ $? -eq 0 ]
-	then
-		user_ip=`echo $tmp_ip | cut -d ":" -f 8 | cut -d " " -f 1`
-	fi
-fi	
-
+user_ip=`ifconfig |grep "inet addr"|grep -v "inet addr:127" |tr ":\r\n" "   "|awk '{print $3}'`
 user_ip="userIP: "$user_ip
 #git=$hashNumber"\\\n"$Author"\\\n"$commitDate"\\\n"$usrName"\\\n"$user_ip"\\\n"
 #char vers1[] = "${Author}";
