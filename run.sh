@@ -1,6 +1,7 @@
 #!/bin/bash
 PATH=/opt/gcc-3.4.6-2f/bin:$PATH
 #git pull
+make pmontools:w
 cd zloader.ls1c.openloongson
 make cfg all tgt=ram CROSS_COMPILE=mipsel-linux- LANG=C
 cp gzram ..
