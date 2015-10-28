@@ -115,6 +115,45 @@ void get_line(char *line, int how)
 }
 #endif
 
+int autoexec(char* dev) {
+	FILE	   *fp;
+	char buf[1000],ver[100],*env;
+	int ret=1,i;
+	sprintf(buf,"%s/autoexec.bat",dev);
+	if(fp=fopen(buf,"r")){
+		setenv("autoexec_dev",dev);
+		printf("\nrun autoexec.bat from %s\n",dev);
+		fgets(buf,300,fp);
+		for(i=0;i<20;i++) {
+			if(buf[i]==13) break; 
+			if(buf[i]==10) break; 
+			if(buf[i]==' ') break; 
+			if(buf[i]=="\t") break; 
+			ver[i]=buf[i];
+			ver[i+1]=0;
+		}
+		env=getenv("autoexec_ver");
+		if(!env) 
+			env="";
+		if( ver && strcmp(ver,env) != 0) { //if env == NULL, then strcmp fail!
+			printf("ver=%s\n",ver);
+			while(!feof(fp)) {
+				fgets(buf,300,fp);
+				if(strlen(buf)==0 || strncmp(buf,"[end]",5)==0) {
+					break;
+				}
+				printf("%s\n",buf);
+				do_cmd(buf);
+			}
+		}
+		fclose(fp);
+	ret=0;
+	if(ver[0]!='#') 
+		setenv("autoexec_ver",ver);
+	}
+	return ret;
+}
+
 static int load_menu_list(void)
 {
 	char* rootdev = NULL;
@@ -385,18 +424,14 @@ int main(void)
 		}
 #endif
 
-		s = getenv("update_usb");
-		printf("update_usb, %s !\n", s);
-		if (!strcmp(s, "yes")) {
-			printf("going to update vmlinuz .....\n");
-			ret = do_cmd("devcp /dev/fat@usb0/vmlinuz /dev/mtd3");	
-			if (ret != 0)
-				goto no_update;
-			setenv("al", "/dev/mtd3");
-			setenv("append", "console=ttyS2,115200 rdinit=/sbin/init");
-			setenv("update_usb", "no");
-		}
-no_update:
+/* autoexec */
+s=getenv("autoexec");
+if(s && strcmp(s,"yes") == 0) {
+if(autoexec("/dev/fat@usb0") == 1)
+	if(autoexec("/dev/ext2@usb0") == 1)
+		if(autoexec("/dev/fat@sdcard0") == 1)
+			autoexec("/dev/ext2@sdcard0");
+}
 
 	#ifdef FAST_STARTUP
 		do_cmd("test");
