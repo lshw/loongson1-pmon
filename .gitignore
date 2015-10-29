@@ -19,6 +19,7 @@
 tags
 TAGS
 gzrom
+gzram
 gzrom.bin
 pmon.bin.c
 *.old
