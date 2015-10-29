@@ -96,6 +96,7 @@ cmd_sdump (ac, av)
 
     if (!hostport)
       hostport = (optind < ac) ? av[optind++] : getenv ("hostport");
+    if (!hostport) hostport="tty0";
 
     if (optind < ac)
       return (-1);
@@ -119,7 +120,9 @@ cmd_sdump (ac, av)
 	ioctl (fd, TCSETAF, &tbuf);
 	
 	uleof = getenv ("uleof");
+	if(!uleof) uleof="%";
 	ulcr = getenv ("ulcr");
+	if(!ulcr) ulcr="crlf";
 	if (striequ (ulcr, "cr"))
 	  eol = "\r";
 	else if (striequ (ulcr, "lf"))

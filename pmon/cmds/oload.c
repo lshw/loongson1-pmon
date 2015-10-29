@@ -195,6 +195,7 @@ cmd_load (ac, av)
 
     if (!hostport)
       hostport = getenv ("hostport");
+    if(hostport == NULL) hostport="tty0";
     fp = fopen (hostport, "r");
     if (!fp) {
 	printf ("can't open %s\n", hostport);

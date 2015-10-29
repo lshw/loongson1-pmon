@@ -411,7 +411,7 @@ int main(void)
 	if (!run) {
 
 #ifdef BOOT_TEST_NAND_MEM
-		s = getenv("boot_test");
+		if((s = getenv("boot_test")) == NULL) s="";
 		if (!strcmp(s, "yes")) {
 			ret = do_cmd("mt -v");
 			ret = ret + ls1x_nand_test();
@@ -439,10 +439,10 @@ if(autoexec("/dev/fat@usb0") == 1)
 		run = 1;
 	#ifdef AUTOLOAD
 		s = getenv("al");
-		autoload(s);
+		if(s) autoload(s);
 	#else
 		s = getenv("autoboot");
-		autorun(s);
+		if(s) autorun(s);
 	#endif
 	}
 	}
@@ -454,8 +454,11 @@ if(autoexec("/dev/fat@usb0") == 1)
 			i=term_read(0,&c,1);
 			printf("haha:%d,%02x\n",i,c);
 		}
-		#endif		
+		#endif
+	if(getenv("prompt"))
 		strncpy (prompt, getenv ("prompt"), sizeof(prompt));
+	else
+		strcpy (prompt,"PMON> ");
 
 	#if NCMD_HIST > 0
 		if (strchr(prompt, '!') != 0) {
@@ -490,7 +493,11 @@ static void autoload(char *s)
 
 	if(s != NULL  && strlen(s) != 0) {
 	#ifdef	wait_key
-		char *d = getenv ("bootdelay");
+		char *d;
+		if(getenv("bootdelay"))
+			d = getenv ("bootdelay");
+		else
+			d = "8";
 
 		if (!d || !atob (&dly, d, 10) || dly < 0 || dly > 99) {
 			dly = 1;
@@ -579,6 +586,7 @@ static void autorun(char *s)
 
 	if(s != NULL  && strlen(s) != 0) {
 		d = getenv ("bootdelay");
+		if(d == NULL) d="8";
 		if(!d || !atob (&dly, d, 10) || dly < 0 || dly > 99) {
 			dly = 15;
 		}

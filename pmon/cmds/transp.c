@@ -65,12 +65,14 @@ cmd_transp (ac, av)
     struct termio   tbuf, consave, hostsave;
 
     trabort = getenv ("trabort");
+    if(trabort == NULL) trabort="^K";
     abortch = str2cc (trabort);
     if (abortch == 0) {
 	printf ("tr: error: bad trabort char\n");
 	return 1;
     }
     hostport = getenv ("hostport");
+    if(hostport == NULL) hostport="tty0";
     if (!strcmp(hostport, "tty0")) {
 	printf ("can't use tty0 as hostport in transparent mode\n");
 	return 1;

@@ -175,14 +175,21 @@ get_rsa_reg(register_t *vp, char *p)
 			break;
 
 		default:
-			printf ("%s:%d bad inbase value\n", getenv("inbase"), inbase);
+			if(getenv("inbase"))
+				printf ("%s:%d bad inbase value\n", getenv("inbase"), inbase);
+			else
+				printf ("?:%d bad inbase value\n", inbase);
 			return (0);
 		}
 
 		if (r == 0) {
 			r = md_ator (vp, p, 0);
 			if (r == 0) {
-				printf ("%s: bad base %s value\n", p, getenv ("inbase"));
+				if(getenv("inbase")
+					printf ("%s: bad base %s value\n", p, getenv ("inbase"));
+				else
+					printf ("%s: bad base ? value\n", p);
+
 			}
 		}
 #if NMOD_SYMBOLS > 0
@@ -215,7 +222,10 @@ get_rsa_reg(register_t *vp, char *p)
 			}
 		}
 		else {
-			printf ("%s: bad inalpha value\n", getenv ("inalpha"));
+			if(getenv("inalpha"))
+				printf ("%s: bad inalpha value\n", getenv ("inalpha"));
+			else
+				printf ("?: bad inalpha value\n");
 			return (0);
 		}
 	}
