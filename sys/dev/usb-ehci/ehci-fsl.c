@@ -122,7 +122,7 @@ int ehci_hcd_init(void)
 	out_be32(&ehci->snoop2, 0x80000000 | SNOOP_SIZE_2GB);
 
 	// Init phy 
-	if (!strcmp(getenv("usb_phy_type"), "utmi"))
+	if (getenv("usb_phy_type") != NULL && !strcmp(getenv("usb_phy_type"), "utmi"))
 		out_le32(&(hcor->or_portsc[0]), PORT_PTS_UTMI);
 	else
 		out_le32(&(hcor->or_portsc[0]), PORT_PTS_ULPI);

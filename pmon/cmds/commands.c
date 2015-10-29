@@ -49,12 +49,14 @@ transp (ac, av)
     struct termio   tbuf, consave, hostsave;
 
     trabort = getenv ("trabort");
+    if(trabort == NULL) trabort="^K";
     abortch = str2cc (trabort);
     if (abortch == 0) {
 	printf ("tr: error: trabort not set\n");
 	return 1;
     }
     hostport = getenv ("hostport");
+    if(hostport == NULL) hostport="tty0";
     if (strequ (hostport, "tty0")) {
 	printf ("can't use tty0 as hostport in transparent mode\n");
 	return 1;
@@ -594,6 +596,7 @@ sdump (ac, av)
 
     if (!hostport)
       hostport = (optind < ac) ? av[optind++] : getenv ("hostport");
+    if(hostport == NULL) hostport="tty0";
 
     if (optind < ac)
       return (-1);
@@ -617,7 +620,9 @@ sdump (ac, av)
 	ioctl (fd, TCSETAF, &tbuf);
 	
 	uleof = getenv ("uleof");
+	if(uleof == NULL) uleof = "%";
 	ulcr = getenv ("ulcr");
+	if(ulcr == NULL) ulcr = "crlf";
 	if (striequ (ulcr, "cr"))
 	  eol = "\r";
 	else if (striequ (ulcr, "lf"))

@@ -215,7 +215,7 @@ extern char	*optarg;
 #endif
 
 #ifdef __powerpc__
-	strcpy ((void *)0x4200, getenv ("vxWorks"));
+	if(getenv("vxWorks")) strcpy ((void *)0x4200, getenv ("vxWorks"));
 #endif
 
 	if (setjmp (gobuf) == 0) {
@@ -932,7 +932,10 @@ stop (cmdstr)
 		strcpy (cmd, cmdstr);
 	}
 	else {
-		strcpy (cmd, getenv ("brkcmd"));
+		if(getenv("brkcmd"))
+			strcpy (cmd, getenv ("brkcmd"));
+		else
+			cmd[0]=0;
 	}
 	do_cmd (cmd);
 	main ();
@@ -1086,7 +1089,10 @@ compute_validpc ()
     char           *av[NVALIDPC], tmp[80];
     int		    ac, i;
 
-    strcpy (tmp, getenv ("validpc"));
+    if(getenv("validpc"))
+	strcpy (tmp, getenv ("validpc"));
+    else
+        tmp[0]=0;
     ac = argvize (av, tmp);
     nvalidpc = 0;
     

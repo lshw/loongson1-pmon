@@ -255,7 +255,8 @@ pmon_stop (cmdstr)
 		strcpy (cmd, cmdstr);
 	}
 	else {
-		strcpy (cmd, getenv ("brkcmd"));
+		if(getenv("brkcmd")) strcpy (cmd, getenv ("brkcmd"));
+		else cmd[0]=0;
 	}
 	do_cmd (cmd);
 	main ();

@@ -549,7 +549,7 @@ int ls1x_nand_init(void)
 	}
 #endif
 
-//if(strcmp("/dev/mtd1",getenv("al")) == 0) {
+//if(getenv("al") && strcmp("/dev/mtd1",getenv("al")) == 0) {
 //	add_mtd_device(ls1x_mtd, 0, 1024*1024, "bootloader");
 //	add_mtd_device(ls1x_mtd, 1024*1024, 13*1024*1024, "kernel");
 //	add_mtd_device(ls1x_mtd, 14*1024*1024, 50*1024*1024, "rootfs");

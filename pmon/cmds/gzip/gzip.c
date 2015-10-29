@@ -145,7 +145,8 @@ char c,flag;
 static int first=1;
 err=0;
 fsize=0x100000;
-faddr= strtoul(getenv("heaptop"),0,16);
+if(getenv("heaptop")) faddr= strtoul(getenv("heaptop"),0,16);
+else  faddr=0;
 if(faddr<(unsigned int)heaptop)faddr=(unsigned int)heaptop;
 flag=0;
 
