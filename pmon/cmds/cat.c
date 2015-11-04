@@ -196,6 +196,10 @@ static const Cmd CatCmd[] =
 			0,
 			"Display file content.",
 			cmd_cat, 2, 2, 0},
+	{"ls",	"dir to display ",
+			0,
+			"Display file list.",
+			cmd_cat, 2, 2, 0},
 	{0, 0}
 };
 

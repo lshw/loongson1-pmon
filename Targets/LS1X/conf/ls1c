@@ -68,6 +68,7 @@ select		cmd_set			# As cmd_env but not req. cmd_hist
 #select		cmd_testfire
 select		cmd_xyzmodem
 select		pmon_zmodem_rz
+select		cmd_cat
 #
 select		cmd_shell		# Shell commands, vers, help, eval
 #
