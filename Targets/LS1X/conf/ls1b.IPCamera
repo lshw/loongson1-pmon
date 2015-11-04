@@ -91,8 +91,8 @@ option		MEM_SIZE=0x08000000	# 128M(16bit) 定义内存大小 注意32bit和16bit
 
 select		ext2
 #select 	yaffsfs
-#select		fatfs
-select		fatfs_fast
+select		fatfs
+#select		fatfs_fast
 select		gzip
 
 #select		mod_x86emu		# X86 emulation for VGA

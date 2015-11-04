@@ -83,7 +83,7 @@ option		CONS_BAUD=B115200
 option		UART_BASE_ADDR=0xbfe48000
 #select		ext2
 #select 	yaffsfs
-#select		fatfs
+select		fatfs
 #select		mod_x86emu		# X86 emulation for VGA
 #option 	    MY40IO
 #option 		GC300
