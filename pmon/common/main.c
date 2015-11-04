@@ -117,11 +117,13 @@ void get_line(char *line, int how)
 
 int autoexec(char* dev) {
 	FILE	   *fp;
-	char buf[1000],ver[100],*env;
+	char *buf,*ver,*env;
 	int ret=1,i;
+	buf=malloc(1024);
+	ver=malloc(128);
 	sprintf(buf,"%s/autoexec.bat",dev);
 	if(fp=fopen(buf,"r")){
-		setenv("autoexec_dev",dev);
+		setenv("autoexecDev",dev);
 		printf("\nrun autoexec.bat from %s\n",dev);
 		fgets(buf,300,fp);
 		for(i=0;i<20;i++) {
@@ -132,7 +134,7 @@ int autoexec(char* dev) {
 			ver[i]=buf[i];
 			ver[i+1]=0;
 		}
-		env=getenv("autoexec_ver");
+		env=getenv("autoexecVer");
 		if(!env) 
 			env="";
 		if( ver && strcmp(ver,env) != 0) { //if env == NULL, then strcmp fail!
@@ -148,9 +150,14 @@ int autoexec(char* dev) {
 		}
 		fclose(fp);
 	ret=0;
-	if(ver[0]!='#') 
-		setenv("autoexec_ver",ver);
+	if(ver[0]!='#') { 
+		setenv("autoexecVer",ver);
+		if(getenv("autoexecVer")&& strcmp(getenv("autoexecVer"),ver) == 0)
+	        	do_cmd("reboot");
+        }
 	}
+	free(ver);
+	free(buf);
 	return ret;
 }
 
