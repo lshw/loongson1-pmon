@@ -117,47 +117,50 @@ void get_line(char *line, int how)
 
 int autoexec(char* dev) {
 	FILE	   *fp;
-	char *buf,*ver,*env;
+	char *buf,*ver,*old_ver;
 	int ret=1,i;
 	buf=malloc(1024);
 	ver=malloc(128);
+	old_ver=malloc(128);
 	sprintf(buf,"%s/autoexec.bat",dev);
 	if(fp=fopen(buf,"r")){
-		setenv("autoexecDev",dev);
+		setenv("autoexecDev",dev); //可以在autoexec.bat中用${autoexecDev}调用
 		printf("\nrun autoexec.bat from %s\n",dev);
 		fgets(buf,300,fp);
-		for(i=0;i<20;i++) {
+		for(i=0;i<20;i++) { //第一行是版本号，
 			if(buf[i]==13) break; 
 			if(buf[i]==10) break; 
-			if(buf[i]==' ') break; 
+			if(buf[i]==' ') break; //空格截断
 			if(buf[i]=="\t") break; 
 			ver[i]=buf[i];
 			ver[i+1]=0;
 		}
-		env=getenv("autoexecVer");
-		if(!env) 
-			env="";
-		if( ver && strcmp(ver,env) != 0) { //if env == NULL, then strcmp fail!
+		old_ver=getenv("autoexecVer");
+		if(!old_ver)  //getenv函数有个问题， 会返回0值，造成strcmp崩溃，所以先要判断下
+			old_ver="";
+		if( ver && strcmp(ver,old_ver) != 0) { 
 			printf("ver=%s\n",ver);
-			while(!feof(fp)) {
-				fgets(buf,300,fp);
-				if(strlen(buf)==0 || strncmp(buf,"[end]",5)==0) {
+			while(!feof(fp)) {    //在pmon中feof()函数没有完成，会永远返回0，不能作为结束标志。
+				fgets(buf,300,fp);//获取一行，最长300字符
+				if(strlen(buf)==0 || strncmp(buf,"[end]",5)==0) {  //结束标志
 					break;
 				}
 				printf("%s\n",buf);
 				do_cmd(buf);
 			}
+			
 		}
 		fclose(fp);
-	ret=0;
-	if(ver[0]!='#') { 
+	ret=0; //返回完成， 就不会再查其他的位置的autoexec.bat
+	if(ver[0]!='#') {  //第一行的第一个字母是#,则不会更新环境变量autoexecVer, 就可以每次都自动执行。
 		setenv("autoexecVer",ver);
 		if(getenv("autoexecVer")&& strcmp(getenv("autoexecVer"),ver) == 0)
-	        	do_cmd("reboot");
+	        if(strcmp(ver,old_ver)!=0) 	do_cmd("reboot"); //版本有变化才reboot
         }
 	}
 	free(ver);
 	free(buf);
+	free(old_ver);
 	return ret;
 }
 
