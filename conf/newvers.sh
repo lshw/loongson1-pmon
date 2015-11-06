@@ -44,7 +44,19 @@ id=`basename ${d}`
 ost="PMON2000"
 osr="2.1"
 pwd_dir=`pwd`
-cd ../../../../
+if ! [ -x .git ] ; then
+cd ..
+if ! [ -x .git ] ; then
+cd ..
+if ! [ -x .git ] ; then
+cd ..
+if ! [ -x .git ] ; then
+cd ..
+fi
+fi
+fi
+fi
+giturl="GitUrl: "`git config remote.origin.url`
 gitLog=`git log -1`
 hashNumber=`echo $gitLog | cut -d ' ' -f 2`
 hashNumber="GitHashNumber: "$hashNumber
@@ -53,17 +65,11 @@ Author="Commit"$Author
 commitDate=`git log -1 |grep ^Date`
 commitDate="Commit"$commitDate
 cd $pwd_dir
-usrName=`whoami`
-usrName="UsrName: "$usrName
-makeTime=`date`
+makeTime=`date +%Y-%m-%d\ %H:%M:%S`
 makeTime="MakeTime: "$makeTime
-user_ip=`ifconfig |grep "inet addr"|grep -v "inet addr:127" |tr ":\r\n" "   "|awk '{print $3}'`
-user_ip="userIP: "$user_ip
 #git=$hashNumber"\\\n"$Author"\\\n"$commitDate"\\\n"$usrName"\\\n"$user_ip"\\\n"
 #char vers1[] = "${Author}";
 #char vers2[] = "${commitDate}";
-#char vers3[] = "${user_ip}";
-#char vers4[] = "${usrName}";
 #char vers5[] = "${makeTime}";
 
 cat >vers.c <<eof
@@ -72,7 +78,7 @@ char osrelease[] = "${osr}";
 char osversion[] = "${id}#${v}";
 char sccs[8] = { ' ', ' ', ' ', ' ', '@', '(', '#', ')' };
 char vers[] =
-    "${hashNumber}\\n${Author}\\n${commitDate}\\n${user_ip}\\n${usrName}\\n${makeTime}";
+    "${giturl}\\n${hashNumber}\\n${Author}\\n${commitDate}\\n${makeTime}";
 eof
 
 cat >vers.h <<eof
