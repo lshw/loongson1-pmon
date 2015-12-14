@@ -548,7 +548,13 @@ int ls1x_nand_init(void)
 		return 0;
 	}
 #endif
-
+#ifdef
+#if defined(LS1BSOC)
+	add_mtd_device(ls1x_mtd, 0, 0xe00000, "reset");
+	add_mtd_device(ls1x_mtd, 0xe00000, 0x4180000-0xe00000, "root");
+	add_mtd_device(ls1x_mtd, 0x4180000, 0x7500000-0x4180000, "home");
+	add_mtd_device(ls1x_mtd, 0x7500000, 0x8000000-0x7500000, "kernel");
+#else
 //if(getenv("al") && strcmp("/dev/mtd1",getenv("al")) == 0) {
 //	add_mtd_device(ls1x_mtd, 0, 1024*1024, "bootloader");
 //	add_mtd_device(ls1x_mtd, 1024*1024, 13*1024*1024, "kernel");
@@ -559,6 +565,7 @@ int ls1x_nand_init(void)
 	add_mtd_device(ls1x_mtd, 14*1024*1024, 100*1024*1024, "rootfs");
 	add_mtd_device(ls1x_mtd, (100+14)*1024*1024, 14*1024*1024, "data");
 //}
+#endif
 
 	return 0;
 }
