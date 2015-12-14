@@ -436,7 +436,11 @@ int main(void)
 
 /* autoexec */
 s=getenv("autoexec");
-if(s && strcmp(s,"yes") == 0) {
+
+#if !defined(LS1BSOC)
+if(s && strcmp(s,"yes") == 0) 
+#endif
+{
 if(autoexec("/dev/fat@usb0") == 1)
 	if(autoexec("/dev/ext2@usb0") == 1)
 		if(autoexec("/dev/fat@sdcard0") == 1)
