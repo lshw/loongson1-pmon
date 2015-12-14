@@ -442,7 +442,6 @@ int main(void)
 						if(autoexec("tftp://192.168.1.1") == 1)
 							if(autoexec("tftp://192.168.1.2") == 1)
 								autoexec("tftp://192.168.1.4");
-		setenv("autoexec","yes");
 
 	#ifdef FAST_STARTUP
 		do_cmd("test");
