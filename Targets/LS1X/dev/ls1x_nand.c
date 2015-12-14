@@ -548,7 +548,6 @@ int ls1x_nand_init(void)
 		return 0;
 	}
 #endif
-#ifdef
 #if defined(LS1BSOC)
 	add_mtd_device(ls1x_mtd, 0, 0xe00000, "reset");
 	add_mtd_device(ls1x_mtd, 0xe00000, 0x4180000-0xe00000, "root");
