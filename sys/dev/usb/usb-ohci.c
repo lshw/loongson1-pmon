@@ -2474,7 +2474,23 @@ int submit_common_msg(struct usb_device *dev, unsigned long pipe, void *buffer,
 	int maxsize = usb_maxpacket(dev, pipe);
 	int timeout, i;
 	struct ohci *gohci = dev->hc_private;
+  
+#ifdef LS1BSOC
+   //liushiwei-2016-03-02  is not udisk and not hub then  skip
+	unsigned char usbDeviceClass;
+	struct usb_interface_descriptor *iface;
+	usbDeviceClass = dev->descriptor.bDeviceClass;
+	if(usbDeviceClass == 0) {
+		//then see InterfaceClass
+		iface = &dev->config.if_desc[0];
+		usbDeviceClass=iface->bInterfaceClass;
+	}
 
+	if( usbDeviceClass != 9  && (dev->port == 1 || dev->port == 3)  ) { 
+		printf("usb port=%d, DeviceClass=0x%x,skip\n",dev->port,usbDeviceClass);
+		return -1;
+	}
+#endif
     //QYL-2008-03-07
     u_int32_t dev_num,ed_num;
     urb_priv_t *lurb_priv = NULL;
@@ -2580,7 +2596,7 @@ int submit_common_msg(struct usb_device *dev, unsigned long pipe, void *buffer,
 
 
     if (timeout == 0) 
-		printf("USB timeout dev:0x%x\n",(u_int32_t)dev);
+	printf("USB timeout dev:0x%x,devnum=0x%x,port=0x%x,deviceclass=0x%x,interfacesClass=0x%x\n",(u_int32_t)dev,dev->devnum,dev->port,dev->descriptor.bDeviceClass,iface->bInterfaceClass);
 
 #endif
 
