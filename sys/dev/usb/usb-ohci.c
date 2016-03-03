@@ -2476,7 +2476,8 @@ int submit_common_msg(struct usb_device *dev, unsigned long pipe, void *buffer,
 	struct ohci *gohci = dev->hc_private;
   
 #ifdef LS1BSOC
-   //liushiwei-2016-03-02  is not udisk and not hub then  skip
+   //liushiwei-2016-03-02  4个usb口，上面的2个，在pmon中跳过不用， 可以用来插一些会造成pmon死锁的usb设备。
+   //u盘升级， 请使用下面的2个口， 靠近线路板的2个口
 	unsigned char usbDeviceClass;
 	struct usb_interface_descriptor *iface;
 	usbDeviceClass = dev->descriptor.bDeviceClass;
