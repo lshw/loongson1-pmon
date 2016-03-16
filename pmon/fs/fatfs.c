@@ -48,7 +48,7 @@
 
 #include <pmon.h>
 #include <file.h>
-#include "fat_fast.h"
+#include "fat.h"
 #include <diskfs.h>
 static int MAX_BUFSZ_CLUSTS=32;
 
