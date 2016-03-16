@@ -470,6 +470,7 @@ int fat_init(int fd, struct fat_sc *fsc, int partition)
 		fsc->FatType = TYPE_FAT32;
 	}
 
+	free(fsc->LastSectorBuffer);
 	return (1);
 }
 
