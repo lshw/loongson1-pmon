@@ -9,6 +9,12 @@ fi
 
 PATH=/opt/gcc-3.4.6-2f/bin:`pwd`/tools/pmoncfg:$PATH
 
+if ! [ "`which pmoncfg`" ] ; then
+cd tools/pmoncfg
+make
+cd ../..
+fi
+
 if ! [ "`which bison`" ] ;then
  apt-get install bison
 fi
