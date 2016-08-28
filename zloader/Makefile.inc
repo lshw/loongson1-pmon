@@ -125,7 +125,7 @@ endif
 cleanall: clean
 	make -C ../Targets/${TARGET}/compile/${TARGETEL}/ clean
 clean:
-	rm -rf *.o zlib_gzip zloader pmon.bin.c gzrom gzrom.bin gzram  initmips.c pmon.bin.gz zlib_deflate/*.o zlib_inflate/*.o zlib_gzrom zlib_gzrom.bin
+	rm -rf *.o zlib_gzip zloader pmon.bin.c gzrom gzrom.bin gzram  initmips.c pmon.bin.gz pmon.bin.c ld.script zlib_deflate/*.o zlib_inflate/*.o zlib_gzrom zlib_gzrom.bin
 cfg1:
 	perl -i -ne 'print;exit if(/^# DO NOT DELETE/);' ../lib/libc/Makefile 
 	perl -i -ne 'print;exit if(/^# DO NOT DELETE/);' ../lib/libm/Makefile 
