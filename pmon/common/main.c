@@ -117,9 +117,11 @@ void get_line(char *line, int how)
 
 int autoexec(char* dev) {
 	FILE	   *fp;
-	char *buf,*ver,*old_ver;
+	char *cmd,*buf,*ver,*old_ver;
 	int ret=1,i;
-	buf=malloc(1024);
+	buf=malloc(32768);
+	int filelen,cmdlen;
+	cmd=malloc(1024);
 	ver=malloc(128);
 	old_ver=malloc(128);
 	sprintf(buf,"%s/autoexec.bat",dev);
@@ -138,28 +140,44 @@ int autoexec(char* dev) {
 		old_ver=getenv("autoexecVer");
 		if(!old_ver)  //getenv函数有个问题， 会返回0值，造成strcmp崩溃，所以先要判断下
 			old_ver="";
+		printf("old_ver=%s,new_ver=%s\n",old_ver,ver);
 		if( ver && strcmp(ver,old_ver) != 0) { 
 			printf("ver=%s\n",ver);
-			while(!feof(fp)) {    //在pmon中feof()函数没有完成，会永远返回0，不能作为结束标志。
-				fgets(buf,300,fp);//获取一行，最长300字符
-				if(strlen(buf)==0 || strncmp(buf,"[end]",5)==0) {  //结束标志
-					break;
+			filelen=fread (buf, 1, 32768, fp); //一次读入
+			fclose(fp);
+			cmdlen=0;
+			memset(cmd,0,1024);
+			if(filelen>0) 
+				for(i=0;i<filelen;i++) {
+					switch(buf[i]) {
+						case 0:
+						case 13:
+						case 10:
+						case '#':
+							if(cmdlen>0 && cmd[0]!='#' && strncmp(cmd,"[end]",5)!=0) //不是"[end]"
+								do_cmd(cmd);
+							memset(cmd,0,1024);
+							cmdlen=0;
+							break;
+						default:
+							cmd[cmdlen]=buf[i];
+							cmdlen++;
+							break;
+					}
 				}
-				printf("%s\n",buf);
-				do_cmd(buf);
-			}
-			
+
 		}
-		fclose(fp);
-	ret=0; //返回完成， 就不会再查其他的位置的autoexec.bat
-	if(ver[0]!='#') {  //第一行的第一个字母是#,则不会更新环境变量autoexecVer, 就可以每次都自动执行。
-		setenv("autoexecVer",ver);
-		if(getenv("autoexecVer")&& strcmp(getenv("autoexecVer"),ver) == 0)
-	        if(strcmp(ver,old_ver)!=0) 	do_cmd("reboot"); //版本有变化才reboot
-        }
+		ret=0; //返回完成， 就不会再查其他的位置的autoexec.bat
+		if(ver[0]!='#') {  //第一行的第一个字母是#,则不会更新环境变量autoexecVer, 就可以每次都自动执行。
+			setenv("autoexecVer",ver);
+			if(getenv("autoexecVer")&& strcmp(getenv("autoexecVer"),ver) == 0)
+				if(strcmp(ver,old_ver)!=0) 	
+					do_cmd("reboot"); //版本有变化才reboot
+		}
 	}
 	free(ver);
 	free(buf);
+	free(cmd);
 	free(old_ver);
 	return ret;
 }
