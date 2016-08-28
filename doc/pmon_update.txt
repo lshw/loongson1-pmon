@@ -1,0 +1,24 @@
+升级pmon的方法
+
+一般用tftpd的方式把新的pmon传到目标板，
+
+先载入gzram到内存，运行，看没有问题， 再把pmon.bin烧录进rom
+
+升级后，可能会清除所有的env变量
+对于openloongson，需要设置如下变量，可以根据需要调整:
+set ifconfig  syn0:192.168.1.2
+set al /dev/mtd0
+set append "root=/dev/mtdblock1 console=ttyS2,115200 noinitrd init=/linuxrc rw rootfstype=yaffs2"
+
+载入pmon到ram的命令如下:
+boot tftp://192.168.1.1/gzram.openloongson
+
+功能都正常后，可以刷进rom
+
+刷pmon的命令如下：(小心变砖,变砖后热插拔修复)
+load -rf bfc00000 tftp://192.168.1.1/pmon_openloongson.bin
+
+
+自动刷机包的方式:
+boot tftp://192.168.1.1/install
+会自动执行autoexec.bat定义的刷机过程

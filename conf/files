@@ -254,7 +254,6 @@ file pmon/fs/iso9660fs.c		iso9660		needs-flag
 file pmon/fs/devfs.c			(scsi | ide | usbbus | sdcard | loopdev)
 file pmon/fs/diskfs.c			(scsi | ide | usbbus | sdcard | loopdev)
 file pmon/fs/fatfs.c			fatfs
-file pmon/fs/fatfs_fast.c			fatfs_fast
 file pmon/fs/ext2fs.c			ext2
 #file pmon/fs/yaffsfs.c			yaffsfs
 file pmon/fs/yaffs2/yaffsfs.c		    yaffsfs

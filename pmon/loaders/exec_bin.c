@@ -49,7 +49,7 @@ extern int highmemcpy(long long dst, long long src, long long count);
 static long load_bin(int fd, char *buf, int *n, int flags)
 {
 	unsigned long long addr;
-	int size = 2048;
+	int size = 4096*16*16;
 	int n2;
 	int count = 0;
 

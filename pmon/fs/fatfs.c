@@ -50,6 +50,7 @@
 #include <file.h>
 #include "fat.h"
 #include <diskfs.h>
+static int MAX_BUFSZ_CLUSTS=32;
 
 extern int errno;
 
@@ -71,7 +72,7 @@ int readsector(struct fat_sc *, int , int , u_int8_t *);
 int parseShortFilename(struct direntry *, char *);
 int fat_getChain(struct fat_sc *, int , struct fatchain *);
 int getSectorIndex(struct fat_sc *, struct fatchain *, int ,int);
-int getSectorIndex_read(struct fat_sc *fsc, struct fatchain * , int );
+int getSectorIndex_read(struct fat_sc *fsc, struct fatchain * , int, int);
 int fat_getPartition(struct fat_sc *, int );
 int fat_findfile(struct fat_sc *, char *);
 int fat_subdirscan(struct fat_sc *, char *, struct fatchain *);
@@ -165,9 +166,12 @@ fat_open(int fd, const char *path, int flags, int mode)
 	}
 
 	fsc->LastSector = -1;	/* No valid sector in sector buffer */
+	fsc->BytesOfBuffer = 0;
+	fsc->SectorsOfBuffer = 0;
 
 	_file[fd].posn = 0;
 	_myfile[fd] = (void *)fsc;
+//	free(fsc);
 	return (fd);
 }
 
@@ -217,21 +221,26 @@ fat_read(int fd, void *buf, size_t len)
 	}
 
 	while (len) {
-		offset = _file[fd].posn % SECTORSIZE;
 		sectorIndex = _file[fd].posn / SECTORSIZE;
 		
-		sector = getSectorIndex_read(fsc, &fsc->file.Chain, sectorIndex);
+		sector = getSectorIndex_read(fsc, &fsc->file.Chain, sectorIndex, (len + SECTORSIZE -1)/SECTORSIZE);
 
-		copylen = len;
-		if (copylen > (SECTORSIZE - offset)) {
-			copylen = (SECTORSIZE - offset);
-		}
 
-		if (sector != fsc->LastSector) {
-			res = readsector(fsc, sector, 1, fsc->LastSectorBuffer);
+		if(fsc->LastSector == -1 || sector < fsc->LastSector ||  sector >= fsc->LastSector + fsc->SectorsOfBuffer)
+		{
+			fsc->SectorsOfBuffer = fsc->nextSectorsOfBuffer;
+			fsc->BytesOfBuffer = fsc->nextBytesOfBuffer;
+			fsc->LastSector = sector;
+			res = readsector(fsc, sector, fsc->SectorsOfBuffer, fsc->LastSectorBuffer);
 			if (res < 0)
 				break;
-			fsc->LastSector = sector;
+		}
+
+		offset = (sector - fsc->LastSector)*SECTORSIZE + (_file[fd].posn % SECTORSIZE);
+
+		copylen = len;
+		if (copylen > (fsc->BytesOfBuffer - offset)) {
+			copylen = (fsc->BytesOfBuffer - offset);
 		}
 		
 		memcpy(buf, &fsc->LastSectorBuffer[offset], copylen);
@@ -318,22 +327,32 @@ init_fs()
  * Internal function
  ***************************************************************************************************/
 
-int getSectorIndex_read(struct fat_sc *fsc, struct fatchain * chain, int index)
+int getSectorIndex_read(struct fat_sc *fsc, struct fatchain * chain, int index, int need)
 {
-	int clusterIndex;
-	int sectorIndex;
+	int clusterIndex, sectorIndex;
 	int sector;
-	int entry;
+	int entry, lastentry, entry0;
+	int i;
 
-	clusterIndex = index / fsc->SecPerClust;
 	sectorIndex = index % fsc->SecPerClust;
 
-	if (clusterIndex < chain->count)
-		entry = chain->entries[clusterIndex];
-	else
-		entry = -1;
+	for(i=0,clusterIndex = index / fsc->SecPerClust;i<min(((need+fsc->SecPerClust-1)/fsc->SecPerClust),MAX_BUFSZ_CLUSTS);i++,clusterIndex++)
+	{
 
-	sector = fsc->DataSectorBase + (entry - 2) * fsc->SecPerClust + sectorIndex;
+		if (clusterIndex < chain->count)
+			entry = chain->entries[clusterIndex];
+		else
+			break;
+		if(i==0) entry0 = entry;
+
+		if(i!=0 && lastentry + 1 != entry) break;
+		lastentry = entry;
+	}
+	
+	fsc->nextSectorsOfBuffer = min((i * fsc->SecPerClust - sectorIndex),need);
+	fsc->nextBytesOfBuffer = fsc->nextSectorsOfBuffer*SECTORSIZE;
+
+	sector = fsc->DataSectorBase + (entry0 - 2) * fsc->SecPerClust + sectorIndex;
 	return (sector);
 }
 
@@ -414,6 +433,12 @@ int fat_init(int fd, struct fat_sc *fsc, int partition)
 	fsc->BytesPerSec = letoh16(bpb->bpbBytesPerSec);
 	fsc->ResSectors = letoh16(bpb->bpbResSectors);
 	fsc->SecPerClust = bpb->bpbSecPerClust;
+	fsc->BytesPerClust = fsc->SecPerClust*SECTORSIZE;
+
+	MAX_BUFSZ_CLUSTS = 0x100000/fsc->BytesPerClust;
+
+	fsc->LastSectorBuffer = malloc(fsc->BytesPerClust*MAX_BUFSZ_CLUSTS);
+
 	fsc->NumFATs = bpb->bpbFATs;
 	fsc->FatCacheNum = -1;
 	fsc->RootClus = bpb->efat32.bpbRootClus;
@@ -445,6 +470,7 @@ int fat_init(int fd, struct fat_sc *fsc, int partition)
 		/* Volume is FAT32 */
 		fsc->FatType = TYPE_FAT32;
 	}
+	free(fsc->LastSectorBuffer);
 
 	return (1);
 }

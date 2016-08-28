@@ -92,7 +92,6 @@ option		SDRAM_USE_CS1
 #select		ext2
 #select		yaffsfs		#lxy: there is a do_div error to open this with new cross-tool
 select		fatfs
-#select		fatfs_fast
 select		gzip
 select		ramfiles
 
