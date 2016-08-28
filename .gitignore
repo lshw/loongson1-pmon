@@ -10,7 +10,8 @@
 *.o
 #*.a
 .cvsignore
-
+*.rej
+*.orig
 
 #
 # Top-level generic files
