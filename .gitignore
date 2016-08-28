@@ -12,6 +12,8 @@
 .cvsignore
 *.rej
 *.orig
+pmon*.bin
+gzram.*
 
 #
 # Top-level generic files
