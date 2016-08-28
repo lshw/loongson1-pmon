@@ -1,0 +1,10 @@
+Pmon编译指南
+执行 build_openloongson.sh
+会自动从mirrors.ustc.edu.cn下载 交叉编译gcc2.95.3到 /opt/gcc-3.4.6-2f
+然后编译会得到2个文件
+一个ram版本  gzram.openloongson
+一个rom版本  pmon_openloongson.bin
+编译脚本在debian5-debian9下运行没有问题。
+   刘世伟 2016-08-27
+
+
