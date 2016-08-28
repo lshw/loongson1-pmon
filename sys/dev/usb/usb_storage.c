@@ -1420,7 +1420,7 @@ void usb_strategy(struct buf *bp)
 		}
 		if(ret != blkcnt)
 			bp->b_flags |= B_ERROR;	
-		dotik(30000, 0);
+		//dotik(30000, 0);
 	}
 done:
 	biodone(bp);
