@@ -88,7 +88,7 @@ struct fl_device fl_known_dev[] = {
 	{ "Am29LV040",	0x01, 0x4f, FL_PROTO_AMD, FL_CAP_DE,
 	512*__KB, 64*__KB,  NULL, &fl_func_amd },
 	{ "S29GL128",	0x01, 0x7e, FL_PROTO_AMD, FL_CAP_DE,
-	16384*__KB, 128*__KB,  NULL, &fl_func_amd },
+	16384*__KB, 64*__KB,  NULL, &fl_func_amd },
 	{ "Am29LV160",	0x01, 0xc4, FL_PROTO_AMD, FL_CAP_DE,
 	2048*__KB, 64*__KB,  NULL, &fl_func_amd },
 	{ "Am29LV017",	0x01, 0xc8, FL_PROTO_AMD, FL_CAP_DE,
