@@ -1,16 +1,10 @@
 本项目，来自与龙芯广州分公司为龙芯俱乐部提供的龙芯1C开龙主板提供的pmon源码  
   
-安装软件：  
- aptitude install bison flex xutils-dev  
-编译安装pmoncfg文件:  
- cd tools/pmoncfg  
-make pmoncfg  
-make install  
-  
 编译：  
- pmon-ls1x-openloongson源码目录下  
- cd zloader.ls1c  
- make cfg all tgt=rom CROSS_COMPILE=mipsel-linux-  
+ git clone https://github.com/lshw/loongson1-pmon
+ cd loongson1-pmon
+ ./build_openloongson.sh
+ 执行 build_openloongson.sh 生成2个文件:gzram.* pmon_*.bin 
   
 配置文件  
  pmon-ls1x-openloongson/Targets/LS1X/conf/ls1c  
