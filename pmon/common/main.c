@@ -526,7 +526,7 @@ static void autoload(char *s)
 
 		/* 每次循环为100ms延时，原延时时间为1秒太长 */
 		while (dly != 0 && cnt == 0) {
-			delay(100000);
+			delay(200000);
 			printf ("\b\b%02d", --dly);
 			ioctl (STDIN, FIONREAD, &cnt);
 		} 
