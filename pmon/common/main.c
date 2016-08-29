@@ -65,6 +65,7 @@
 
 #include <pflash.h>
 #include <flash.h>
+#include <sys/device.h>
 
 extern void    *callvec;
 unsigned int show_menu;
@@ -117,8 +118,26 @@ void get_line(char *line, int how)
 
 int autoexec(char* dev) {
 	FILE	   *fp;
-	char *cmd,*buf,*ver,*old_ver;
-	int ret=1,i;
+	char *cmd,*buf,*ver,*old_ver, devb[20];
+	int ret=1,i,m,have=0;
+	struct device *deva, *next_dev;
+	m=strlen(dev);
+	for(i=4;i<m;i++){
+		if(dev[i]=='@')break;
+	}
+	i++;  //找到设备名 &dev[i]
+	if(strncmp(dev,"/dev/",5)==0) {
+		for (deva  = TAILQ_FIRST(&alldevs); deva != NULL; deva = TAILQ_NEXT(deva,dv_list)) {
+			if(strcmp(deva->dv_xname,&dev[i])==0) {
+				have=1;
+				break;
+			}
+		}
+		if(have==0)
+			return ret;
+	}
+
+	printf("%s ",dev);
 	buf=malloc(32768);
 	int filelen,cmdlen;
 	cmd=malloc(1024);
@@ -126,7 +145,6 @@ int autoexec(char* dev) {
 	old_ver=malloc(128);
 	sprintf(buf,"%s/autoexec.bat",dev);
 	if(fp=fopen(buf,"r")){
-		setenv("autoexecDev",dev); //可以在autoexec.bat中用${autoexecDev}调用
 		printf("\nrun autoexec.bat from %s\n",dev);
 		fgets(buf,300,fp);
 		for(i=0;i<20;i++) { //第一行是版本号，
@@ -142,7 +160,7 @@ int autoexec(char* dev) {
 			old_ver="";
 		printf("old_ver=%s,new_ver=%s\n",old_ver,ver);
 		if( ver && strcmp(ver,old_ver) != 0) { 
-			printf("ver=%s\n",ver);
+			setenv("autoexecDev",dev); //可以在autoexec.bat中用${autoexecDev}调用
 			filelen=fread (buf, 1, 32768, fp); //一次读入
 			fclose(fp);
 			cmdlen=0;
@@ -165,14 +183,12 @@ int autoexec(char* dev) {
 							break;
 					}
 				}
-
 		}
 		ret=0; //返回完成， 就不会再查其他的位置的autoexec.bat
 		if(ver[0]!='#') {  //第一行的第一个字母是#,则不会更新环境变量autoexecVer, 就可以每次都自动执行。
 			setenv("autoexecVer",ver);
-			if(getenv("autoexecVer")&& strcmp(getenv("autoexecVer"),ver) == 0)
-				if(strcmp(ver,old_ver)!=0) 	
-					do_cmd("reboot"); //版本有变化才reboot
+			if(strcmp(ver,old_ver)!=0)
+				do_cmd("reboot"); //版本有变化才reboot
 		}
 	}
 	free(ver);
