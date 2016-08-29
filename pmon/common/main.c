@@ -471,8 +471,8 @@ int main(void)
 		/* autoexec */
 		if(autoexec("/dev/fat@usb0") == 1)
 			if(autoexec("/dev/ext2@usb0") == 1)
-				if(autoexec("/dev/fat@sdcard0") == 1)
-					if(autoexec("/dev/ext2@sdcard0") == 1 )
+				//if(autoexec("/dev/fat@sdcard0") == 1)
+					//if(autoexec("/dev/ext2@sdcard0") == 1 )
 						if(autoexec("tftp://192.168.1.1") == 1)
 							if(autoexec("tftp://192.168.1.2") == 1)
 								autoexec("tftp://192.168.1.4");
