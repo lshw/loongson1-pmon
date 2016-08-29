@@ -472,13 +472,11 @@ int main(void)
 s=getenv("autoexec");
 
 #if !defined(LS1BSOC)
-if(s && strcmp(s,"yes") == 0) 
+if(s && strcmp(s,"yes") == 0)
 #endif
 {
 if(autoexec("/dev/fat@usb0") == 1)
-	if(autoexec("/dev/ext2@usb0") == 1)
-		if(autoexec("/dev/fat@sdcard0") == 1)
-			autoexec("/dev/ext2@sdcard0");
+	autoexec("/dev/ext2@usb0");
 }
 
 	#ifdef FAST_STARTUP
