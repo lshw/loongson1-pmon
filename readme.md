@@ -1,4 +1,4 @@
-本项目，来自与龙芯广州分公司为龙芯俱乐部提供的龙芯1C开龙主板提供的pmon源码  
+本项目，来自于龙芯广州分公司为龙芯俱乐部提供的龙芯1C开龙主板提供的pmon源码  
   
 编译：  
  git clone https://github.com/lshw/loongson1-pmon
