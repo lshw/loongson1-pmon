@@ -143,7 +143,11 @@ int autoexec(char* dev) {
 	cmd=malloc(1024);
 	ver=malloc(128);
 	old_ver=malloc(128);
-	sprintf(buf,"%s/autoexec.bat",dev);
+#ifdef LS1BSOC
+	sprintf(buf,"%s/autoexec.1b",dev); //1b开发板
+#else   
+	sprintf(buf,"%s/autoexec.bat",dev); //开龙
+#endif
 	if(fp=fopen(buf,"r")){
 		printf("\nrun autoexec.bat from %s\n",dev);
 		fgets(buf,300,fp);
