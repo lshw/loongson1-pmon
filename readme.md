@@ -1,10 +1,10 @@
 本项目，来自于龙芯广州分公司为龙芯俱乐部提供的龙芯1C开龙主板提供的pmon源码  
   
 编译：  
- git clone https://github.com/lshw/loongson1-pmon
- cd loongson1-pmon
- ./build_openloongson.sh
- 执行 build_openloongson.sh 生成2个文件:gzram.* pmon_*.bin 
+ git clone https://github.com/lshw/loongson1-pmon  
+ cd loongson1-pmon  
+ ./build_openloongson.sh  
+ 执行 build_openloongson.sh 生成2个文件:gzram.* pmon_*.bin  
   
 配置文件  
  pmon-ls1x-openloongson/Targets/LS1X/conf/ls1c  
@@ -33,10 +33,10 @@ nand flash分区：
   
   如果用spiflash启动，不用nand启动的话可以根据自己使用的情况修改分区，注意linux内核中也要修改。 
 
-龙芯1C的u盘刷机文件名是autoexec.bat ,里面可以放置pmon命令，会在开机时自动执行， 第一行为版本号，用于防止重复刷机
+龙芯1C的u盘刷机文件名是autoexec.bat ,里面可以放置pmon命令，会在开机时自动执行， 第一行为版本号，用于防止重复刷机  
 
 
 
-另外， 此源码也可用于龙芯1B开发板，执行build_ls1b_dev.sh ,生成龙芯1B的pmon，
-龙芯1B的u盘刷机文件名是autoexec.1b ,里面可以放置pmon命令，会在开机时自动执行， 第一行为版本号，用于防止重复刷机
+另外， 此源码也可用于龙芯1B开发板，执行build_ls1b_dev.sh ,生成龙芯1B的pmon，  
+龙芯1B的u盘刷机文件名是autoexec.1b ,里面可以放置pmon命令，会在开机时自动执行， 第一行为版本号，用于防止重复刷机  
 
