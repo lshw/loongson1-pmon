@@ -17,6 +17,6 @@ fi
 make pmontools
 cd zloader.ls1b.dev
 make cfg all tgt=rom CROSS_COMPILE=mipsel-linux- LANG=C
-cp gzrom.bin ..
+cp gzrom.bin ../pmon_ls1b_dev.bin
 make cfg all tgt=ram CROSS_COMPILE=mipsel-linux- LANG=C
-cp gzram ..
+cp gzram ../gzram.ls1b_dev.bin

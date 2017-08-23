@@ -31,4 +31,12 @@ nand flash分区：
   devcp tftp://192.168.1.3/rootfs-yaffs2.img /dev/mtd2 yaf nw  
   就是/dev/mtd0不用，注意不要烧录错  
   
-  如果用spiflash启动，不用nand启动的话可以根据自己使用的情况修改分区，注意linux内核中也要修改。  
+  如果用spiflash启动，不用nand启动的话可以根据自己使用的情况修改分区，注意linux内核中也要修改。 
+
+龙芯1C的u盘刷机文件名是autoexec.bat ,里面可以放置pmon命令，会在开机时自动执行， 第一行为版本号，用于防止重复刷机
+
+
+
+另外， 此源码也可用于龙芯1B开发板，执行build_ls1b_dev.sh ,生成龙芯1B的pmon，
+龙芯1B的u盘刷机文件名是autoexec.1b ,里面可以放置pmon命令，会在开机时自动执行， 第一行为版本号，用于防止重复刷机
+
