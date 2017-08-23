@@ -53,10 +53,10 @@ commitDate=`git log -1 |grep ^Date`
 commitDate="Commit"$commitDate
 usrName="UsrName: "`whoami`
 makeTime="MakeTime: `date +%Y-%m-%d\ %H:%M:%S\ %z`"
-user_ip=`ifconfig |grep "inet addr"|grep -v "inet addr:127" |tr ":\r\n" "   "|awk '{print $3}'|tr -d ' '`
+user_ip=`ifconfig |grep "inet addr"|grep -v "inet addr:127" |tr ":\r\n" "   "|awk '{print $3}'|tr -d ' '|tail -n 1`
 if ! [ "$user_ip" ] ;then
 #debian9
-user_ip=`ifconfig |grep "inet "|grep -v "inet 127" |awk '{print $2}'|tr -d ' '`
+user_ip=`ifconfig |grep "inet "|grep -v "inet 127" |awk '{print $2}'|tr -d ' ' |tail -n 1`
 fi
 user_ip="userIP: $user_ip"
 cat >vers.c <<eof
