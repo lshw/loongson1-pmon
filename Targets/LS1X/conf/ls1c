@@ -27,8 +27,8 @@ option		CPU_NAME="\"Loongson 1C300 OpenLoongson\""
 option		MIPS
 option		INET
 
-#select		mod_flash_amd		# AMD flash device programming
-#select		mod_flash_intel		# intel flash device programming
+select		mod_flash_amd		# AMD flash device programming
+select		mod_flash_intel		# intel flash device programming
 select		mod_flash_sst		# intel flash device programming
 select		mod_debugger		# Debugging module
 select		mod_symbols		# Symbol table handling
