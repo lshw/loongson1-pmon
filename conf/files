@@ -416,7 +416,7 @@ file    pmon/dev/loopdev.c loopdev needs-flag
 file fb/sis/sis_main.c mod_sisfb needs-flag
 
 #boot menu 
-file pmon/loaders/exec_txt.c 	mod_txt
+file pmon/loaders/exec_txt.c 	mod_txt |mod_cat
 file pmon/cmds/menulist2f.c     mod_display
 file pmon/cmds/boot_cfg.c
 file pmon/common/bootkernel.c
@@ -426,4 +426,4 @@ file pmon/common/bootkernel.c
 file pmon/cmds/password.c      
 file pmon/dev/md5.c            
 #command: cat
-file pmon/cmds/cat.c	mod_cat
+file pmon/cmds/cat.c	cmd_cat

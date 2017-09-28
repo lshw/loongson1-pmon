@@ -665,7 +665,7 @@ static const Cmd Cmds[] =
 			0,
 			"define symbol",
 			cmd_sym, 3, 5, CMD_REPEAT},
-	{"ls",		"[-ln sym*|-va adr]",
+	{"lsy",		"[-ln sym*|-va adr]",
 			ls_opts,
 			"list symbols",
 			cmd_ls, 1, 99, CMD_REPEAT},
