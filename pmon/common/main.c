@@ -149,7 +149,11 @@ int autoexec(char* dev) {
 	sprintf(buf,"%s/autoexec.bat",dev); //开龙
 #endif
 	if(fp=fopen(buf,"r")){
+#ifdef LS1BSOC
+		printf("\nrun autoexec.1b from %s\n",dev);
+#else   
 		printf("\nrun autoexec.bat from %s\n",dev);
+#endif
 		fgets(buf,300,fp);
 		for(i=0;i<20;i++) { //第一行是版本号，
 			if(buf[i]==13) break; 
