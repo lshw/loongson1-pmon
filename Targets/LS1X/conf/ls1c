@@ -19,7 +19,7 @@ option		LS1CSOC
 option		GS232_SOC
 option		CPU_LS232
 option		WAYBITS_HIGH
-option		CPU_NAME="\"Loongson 1C300A OpenLoongson V2.0\""
+option		CPU_NAME="\"Loongson 1C300 OpenLoongson\""
 
 #
 # Platform options
@@ -88,7 +88,7 @@ option		SDRAM_DIV=SDRAM_DIV_2	# LS1C的SDRAM分频
 #注意sw2拨码开关的设置，使用ejtag烧录pmon时需要调整拨码开关，烧录完再调整回来
 option		MEM_SIZE=0x02000000	# 32MB 定义内存大小
 											# 请确保内存配置正确，内存工作不正常会导致系统莫名其妙的问题
-#option		SDRAM_USE_CS1
+option		SDRAM_USE_CS1  #ls1c300b
 
 select		ext2
 #select		yaffsfs		#lxy: there is a do_div error to open this with new cross-tool
