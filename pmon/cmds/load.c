@@ -134,8 +134,13 @@ static int nload(int argc, char **argv)
 				flags |= IFLAG; break;
 #ifdef HAVE_FLASH
 			case 'f':
+				if(sdcard_init() == 0xff00){
+				  printf("Please eject TF card.");
+				  err++;
+				  break;
+				}
 				if (!get_rsa ((u_int32_t *)&flashaddr, optarg)) {
-					err++;
+				  err++;
 				}
 				flags |= FFLAG; break;
 #endif

@@ -579,7 +579,7 @@ unsigned int Write_Single_Block(unsigned long int ByteAddress,unsigned char *Wri
 	return Response;
 }
 
-static int sdcard_init(void)
+int sdcard_init(void)
 {
 //	static int inited=0;
 	int ret;
