@@ -554,8 +554,8 @@ int ls1x_nand_init(void)
 	add_mtd_device(ls1x_mtd, 0x4180000, 0x7500000-0x4180000, "home");
 	add_mtd_device(ls1x_mtd, 0x7500000, 0x8000000-0x7500000, "kernel");
 #else
-	add_mtd_device(ls1x_mtd, 0, 20*1024*1024, "kernel");
-	add_mtd_device(ls1x_mtd, 20*1024*1024, 108*1024*1024, "rootfs");
+	add_mtd_device(ls1x_mtd, 2*1024*1024, 20*1024*1024, "kernel");
+	add_mtd_device(ls1x_mtd, 22*1024*1024, 106*1024*1024, "rootfs");
 #endif
 
 	return 0;
