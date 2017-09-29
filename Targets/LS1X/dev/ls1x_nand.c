@@ -554,16 +554,8 @@ int ls1x_nand_init(void)
 	add_mtd_device(ls1x_mtd, 0x4180000, 0x7500000-0x4180000, "home");
 	add_mtd_device(ls1x_mtd, 0x7500000, 0x8000000-0x7500000, "kernel");
 #else
-//if(getenv("al") && strcmp("/dev/mtd1",getenv("al")) == 0) {
-//	add_mtd_device(ls1x_mtd, 0, 1024*1024, "bootloader");
-//	add_mtd_device(ls1x_mtd, 1024*1024, 13*1024*1024, "kernel");
-//	add_mtd_device(ls1x_mtd, 14*1024*1024, 50*1024*1024, "rootfs");
-//	add_mtd_device(ls1x_mtd, (50+14)*1024*1024, 64*1024*1024, "data");
-//}else {
-	add_mtd_device(ls1x_mtd, 0, 14*1024*1024, "kernel");
-	add_mtd_device(ls1x_mtd, 14*1024*1024, 100*1024*1024, "rootfs");
-	add_mtd_device(ls1x_mtd, (100+14)*1024*1024, 14*1024*1024, "data");
-//}
+	add_mtd_device(ls1x_mtd, 0, 20*1024*1024, "kernel");
+	add_mtd_device(ls1x_mtd, 20*1024*1024, 108*1024*1024, "rootfs");
 #endif
 
 	return 0;
