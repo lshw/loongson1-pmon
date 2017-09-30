@@ -90,7 +90,7 @@ option		MEM_SIZE=0x04000000	# 64M(16bit) 定义内存大小 注意32bit和16bit�
 								# start.s文件中定义了引用那个内存配置，如#include "ddr2fconfig-samsung-CL3.S"
 
 select		ext2
-#select		yaffsfs		#lxy: there is a do_div error to open this with new cross-tool
+select		yaffsfs		#lxy: there is a do_div error to open this with new cross-tool
 select		fatfs
 select		gzip
 select		ramfiles
