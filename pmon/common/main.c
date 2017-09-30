@@ -483,8 +483,11 @@ s=getenv("autoexec");
 if(s && strcmp(s,"yes") == 0)
 #endif
 {
-if(autoexec("/dev/fat@usb0") == 1)
-	autoexec("/dev/ext2@usb0");
+  if(autoexec("/dev/fat@usb0") == 1
+      && autoexec("/dev/ext2@usb0") == 1)
+    if(sdcard_init() == 0xff00)
+      if(autoexec("/dev/fat@sdcard0") == 1)
+	autoexec("/dev/ext2@sdcard0");
 }
 
 	#ifdef FAST_STARTUP
