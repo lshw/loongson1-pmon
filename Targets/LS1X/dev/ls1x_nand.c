@@ -548,15 +548,9 @@ int ls1x_nand_init(void)
 		return 0;
 	}
 #endif
-#if defined(LS1BSOC)
-	add_mtd_device(ls1x_mtd, 0, 0xe00000, "reset");
-	add_mtd_device(ls1x_mtd, 0xe00000, 0x4180000-0xe00000, "root");
-	add_mtd_device(ls1x_mtd, 0x4180000, 0x7500000-0x4180000, "home");
-	add_mtd_device(ls1x_mtd, 0x7500000, 0x8000000-0x7500000, "kernel");
-#else
 	add_mtd_device(ls1x_mtd, 2*1024*1024, 20*1024*1024, "kernel");
 	add_mtd_device(ls1x_mtd, 22*1024*1024, 106*1024*1024, "rootfs");
-#endif
+	add_mtd_device(ls1x_mtd, 0, 2*1024*1024, "pmon(nand)");
 
 	return 0;
 }
