@@ -586,12 +586,12 @@ int sdcard_init(void)
 
 //	if(inited)
 //		return 0;
-/*
 #ifdef SDCARD_DETECT
-        if(ls1x_gpio_direction_input(SDCARD_DETECT)==1)
-	return 0xff01; //not find
-#endif	
-*/
+	ls1x_gpio_direction_input(SDCARD_DETECT);
+	if (gpio_get_value(SDCARD_DETECT)) {
+	  return 0xff01; //not find
+	}
+#endif
 	ls1x_spi_init();
 	set_cs(1);
 	ret = SD_Overall_Initiation();
