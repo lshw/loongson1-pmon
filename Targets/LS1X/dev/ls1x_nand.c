@@ -480,7 +480,7 @@ int ls1x_nand_init_buff(struct ls1x_nand_info *info)
 
 	order_addr_in = ORDER_ADDR_IN;
 
-	printf("data_buff_addr:0x%08x, dma_addr:0x%08x\n", info->data_buff, info->dma_desc);
+	//printf("data_buff_addr:0x%08x, dma_addr:0x%08x\n", info->data_buff, info->dma_desc);
 	
 	return 0;
 }
@@ -492,7 +492,7 @@ int ls1x_nand_init(void)
 	struct ls1x_nand_info *info;
 	struct nand_chip *chip;
 
-	printf("\nNAND dete\n");
+	printf("\nNAND detect\n");
 
 	/* Allocate memory for MTD device structure and private data */
 	ls1x_mtd = malloc(sizeof(struct mtd_info) + sizeof(struct ls1x_nand_info));
