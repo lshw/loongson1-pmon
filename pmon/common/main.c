@@ -116,9 +116,10 @@ void get_line(char *line, int how)
 }
 #endif
 
-int autoexec(char* dev) {
+int autoexec(const char* dev) {
 	FILE	   *fp;
-	char *cmd,*buf,*ver,*old_ver, devb[20];
+	char *cmd,*buf,*ver,devb[20];
+	const char *old_ver;
 	int ret=1,i,m,have=0;
 	struct device *deva, *next_dev;
 	m=strlen(dev);
@@ -138,11 +139,10 @@ int autoexec(char* dev) {
 	}
 
 	printf("%s ",dev);
-	buf=malloc(32768);
+	buf=malloc(2048);
 	int filelen,cmdlen;
 	cmd=malloc(1024);
 	ver=malloc(128);
-	old_ver=malloc(128);
 #ifdef LS1BSOC
 	sprintf(buf,"%s/autoexec.1b",dev); //1b开发板
 #else   
@@ -169,10 +169,10 @@ int autoexec(char* dev) {
 		printf("old_ver=%s,new_ver=%s\n",old_ver,ver);
 		if( ver && strcmp(ver,old_ver) != 0) { 
 			setenv("autoexecDev",dev); //可以在autoexec.bat中用${autoexecDev}调用
-			filelen=fread (buf, 1, 32768, fp); //一次读入
+			filelen=fread (buf, 1, sizeof(buf), fp); //一次读入
 			fclose(fp);
 			cmdlen=0;
-			memset(cmd,0,1024);
+			memset(cmd,0,sizeof(cmd));
 			if(filelen>0) 
 				for(i=0;i<filelen;i++) {
 					switch(buf[i]) {
@@ -202,7 +202,6 @@ int autoexec(char* dev) {
 	free(ver);
 	free(buf);
 	free(cmd);
-	free(old_ver);
 	return ret;
 }
 
@@ -477,6 +476,7 @@ int main(void)
 #endif
 
 /* autoexec */
+
 s=getenv("autoexec");
 
 #if !defined(LS1BSOC)
