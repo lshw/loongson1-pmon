@@ -142,7 +142,7 @@ int autoexec(const char* dev) {
 	buf=malloc(2048);
 	int filelen,cmdlen;
 	cmd=malloc(1024);
-	ver=malloc(128);
+	ver=malloc(30);
 #ifdef LS1BSOC
 	sprintf(buf,"%s/autoexec.1b",dev); //1b开发板
 #else   
@@ -163,16 +163,23 @@ int autoexec(const char* dev) {
 			ver[i]=buf[i];
 			ver[i+1]=0;
 		}
+#ifdef UPDATE_KEY
+	if (gpio_get_value(UPDATE_KEY)==0) 
+	  old_ver="";
+	printf("key2 is down, update...\n",old_ver,ver);
+#else
 		old_ver=getenv("autoexecVer");
 		if(!old_ver)  //getenv函数有个问题， 会返回0值，造成strcmp崩溃，所以先要判断下
 			old_ver="";
 		printf("old_ver=%s,new_ver=%s\n",old_ver,ver);
-		if( ver && strcmp(ver,old_ver) != 0) { 
+		if( ver && strcmp(ver,old_ver) != 0) 
+#endif
+		{ 
 			setenv("autoexecDev",dev); //可以在autoexec.bat中用${autoexecDev}调用
-			filelen=fread (buf, 1, sizeof(buf), fp); //一次读入
+			filelen=fread (buf, 1, 2048, fp); //一次读入
 			fclose(fp);
 			cmdlen=0;
-			memset(cmd,0,sizeof(cmd));
+			memset(cmd,0,1024);
 			if(filelen>0) 
 				for(i=0;i<filelen;i++) {
 					switch(buf[i]) {
@@ -180,8 +187,10 @@ int autoexec(const char* dev) {
 						case 13:
 						case 10:
 						case '#':
-							if(cmdlen>0 && cmd[0]!='#' && strncmp(cmd,"[end]",5)!=0) //不是"[end]"
-								do_cmd(cmd);
+							if(cmdlen>0 && cmd[0]!='#' && strncmp(cmd,"[end]",5)!=0) { //不是"[end]"
+							printf("%s\r\n",cmd);	
+						  	  do_cmd(cmd);
+							}
 							memset(cmd,0,1024);
 							cmdlen=0;
 							break;
@@ -192,6 +201,8 @@ int autoexec(const char* dev) {
 					}
 				}
 		}
+		printf("OK\r\n");
+		unsetenv("autoexecDev");
 		ret=0; //返回完成， 就不会再查其他的位置的autoexec.bat
 		if(ver[0]!='#') {  //第一行的第一个字母是#,则不会更新环境变量autoexecVer, 就可以每次都自动执行。
 			setenv("autoexecVer",ver);
@@ -476,10 +487,11 @@ int main(void)
 #endif
 
 /* autoexec */
-
+#ifdef UPDATE_KEY
+	ls1x_gpio_direction_input(UPDATE_KEY);
+	if (gpio_get_value(UPDATE_KEY)==0) 
+#else
 s=getenv("autoexec");
-
-#if !defined(LS1BSOC)
 if(s && strcmp(s,"yes") == 0)
 #endif
 {
