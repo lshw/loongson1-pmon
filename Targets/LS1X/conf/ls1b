@@ -175,7 +175,7 @@ option		SDCARD_CS=2			#片选
 option		SDCARD_DETECT=41		#插入侦测 gpio41
 option		SDCARD_CLK=25000000	#25MHz
 
-option		WRITE_ROM_LED=1 #devcp写mtd时LED6闪动 GPIO1
+#option		WRITE_ROM_LED=1 #devcp写mtd时LED6闪动 GPIO1
 #option		UPDATE_KEY=60   #jp22的2-3短接 进入强制刷机
 
 #### USB
