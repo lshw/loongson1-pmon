@@ -40,7 +40,9 @@ static int devcp(int argc, char **argv)
 		return -1;
 	fp0 = open(fsrc, O_RDONLY);
 	fp1 = open(fdst, O_RDWR|O_CREAT|O_TRUNC);
-
+#ifdef WRITE_ROM_LED
+	ls1x_gpio_direction_output(WRITE_ROM_LED, 1);
+#endif
 	if (!strncmp(_file[fp1].fs->devname, "mtd", 3)) {
 		mtdpriv *priv;
 		mtdfile *p;
@@ -124,9 +126,18 @@ static int devcp(int argc, char **argv)
 			sprintf(pstr, "%d", nowcount);
 			printf("%s", pstr);
 		}
+#ifdef WRITE_ROM_LED
+		gpio_set_value(WRITE_ROM_LED, 0);
+#endif
 		if (write(fp1, buf, rcount) < rcount || rcount <bs)
 			break;
+#ifdef WRITE_ROM_LED
+		gpio_set_value(WRITE_ROM_LED, 1);
+#endif
 	}
+#ifdef WRITE_ROM_LED
+	gpio_set_value(WRITE_ROM_LED, 1);
+#endif
 	free(buf);
 #if NGZIP > 0
 	if (unzip)

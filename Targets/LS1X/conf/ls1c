@@ -83,7 +83,6 @@ option		APB_CLK=24000000	# 外部晶振频率(Hz)
 option		PLL_MULT=0x54		# CPU LCD CAM及外设倍频
 option		CPU_DIV=2			# LS1C的CPU分频
 option		SDRAM_DIV=SDRAM_DIV_2	# LS1C的SDRAM分频
-
 #ls1c300b，设置sdram cs1复用关系，开发板使用ejtag_sel gpio_0引脚(第五复用)作为第二片sdram的片选
 #注意sw2拨码开关的设置，使用ejtag烧录pmon时需要调整拨码开关，烧录完再调整回来
 option		MEM_SIZE=0x02000000	# 32MB 定义内存大小
@@ -175,6 +174,8 @@ option		SDCARD_USE_SPI0		#SPI控制器0或1
 option		SDCARD_CS=2			#片选
 option		SDCARD_DETECT=56		#插入侦测 gpio56
 option		SDCARD_CLK=25000000	#25MHz
+
+option		WRITE_ROM_LED=53 #devcp写mtd时闪动
 
 select			mod_sdio
 

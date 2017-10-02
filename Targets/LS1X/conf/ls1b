@@ -175,6 +175,8 @@ option		SDCARD_CS=2			#片选
 option		SDCARD_DETECT=41		#插入侦测 gpio41
 option		SDCARD_CLK=25000000	#25MHz
 
+option		WRITE_ROM_LED=1 #devcp写mtd时LED6闪动 GPIO1
+
 #### USB
 #uhci*		at pci? dev ? function ?
 #ohci0		at pci? dev ? function ?
