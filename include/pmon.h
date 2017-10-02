@@ -304,7 +304,6 @@ struct fl_map;
 
 /* spi_sdcard.c */
 int sdcard_init(void);
-void set_cs(int bit);
 
 /*
  *  Target dependent functions

@@ -116,312 +116,133 @@ void get_line(char *line, int how)
 }
 #endif
 
-int autoexec(const char* dev) {
-	FILE	   *fp;
-	char *cmd,*buf,*ver,devb[20];
-	const char *old_ver;
-	int ret=1,i,m,have=0;
-	struct device *deva, *next_dev;
-	m=strlen(dev);
-	for(i=4;i<m;i++){
-		if(dev[i]=='@')break;
-	}
-	i++;  //找到设备名 &dev[i]
-	if(strncmp(dev,"/dev/",5)==0) {
-		for (deva  = TAILQ_FIRST(&alldevs); deva != NULL; deva = TAILQ_NEXT(deva,dv_list)) {
-			if(strcmp(deva->dv_xname,&dev[i])==0) {
-				have=1;
-				break;
-			}
-		}
-		if(have==0)
-			return ret;
-	}
+int autoexec(const char *dev) {
+  FILE	   *fp;
+  char *cmd,*buf,*ver;
+  const char *old_ver;
+  int ret=1,i,m,have=0;
+  struct device *deva;
+  m=strlen(dev);
+  for(i=4;i<m;i++){
+    if(dev[i]=='@')break;
+  }
+  i++;  //找到设备名 &dev[i]
+  if(strncmp(dev,"/dev/",5)==0) {
+    for (deva  = TAILQ_FIRST(&alldevs); deva != NULL; deva = TAILQ_NEXT(deva,dv_list)) {
+      if(strcmp(deva->dv_xname,&dev[i])==0) {
+	have=1;
+	break;
+      }
+    }
+    if(have==0)
+      return ret;
+  }
 
-	printf("%s ",dev);
-	buf=malloc(2048);
-	int filelen,cmdlen;
-	cmd=malloc(1024);
-	ver=malloc(30);
+  printf("%s ",dev);
+  buf=malloc(2048);
+  int filelen,cmdlen;
+  cmd=malloc(1024);
+  ver=malloc(30);
 #ifdef LS1BSOC
-	sprintf(buf,"%s/autoexec.1b",dev); //1b开发板
+  sprintf(buf,"%s/autoexec.1b",dev); //1b开发板
 #else   
-	sprintf(buf,"%s/autoexec.bat",dev); //开龙
+  sprintf(buf,"%s/autoexec.bat",dev); //开龙
 #endif
-	if(fp=fopen(buf,"r")){
+  fp=fopen(buf,"r");
+  if(fp){
 #ifdef LS1BSOC
-		printf("\nrun autoexec.1b from %s\n",dev);
+    printf("\nrun autoexec.1b from %s\n",dev);
 #else   
-		printf("\nrun autoexec.bat from %s\n",dev);
+    printf("\nrun autoexec.bat from %s\n",dev);
 #endif
-		fgets(buf,300,fp);
-		for(i=0;i<20;i++) { //第一行是版本号，
-			if(buf[i]==13) break; 
-			if(buf[i]==10) break; 
-			if(buf[i]==' ') break; //空格截断
-			if(buf[i]=="\t") break; 
-			ver[i]=buf[i];
-			ver[i+1]=0;
-		}
+    fgets(buf,300,fp);
+    for(i=0;i<20;i++) { //第一行是版本号，
+      if(buf[i]==13) break;
+      if(buf[i]==10) break;
+      if(buf[i]==' ') break; //空格截断
+      if(buf[i]=='\t') break;
+      ver[i]=buf[i];
+      ver[i+1]=0;
+    }
+    old_ver=getenv("autoexecVer");
+    if(!old_ver)  //getenv函数有个问题， 会返回0值，造成strcmp崩溃，所以先要判断下
+      old_ver="";
 #ifdef UPDATE_KEY
-	if (gpio_get_value(UPDATE_KEY)==0) 
-	  old_ver="";
-	printf("key2 is down, update...\n",old_ver,ver);
-#else
-		old_ver=getenv("autoexecVer");
-		if(!old_ver)  //getenv函数有个问题， 会返回0值，造成strcmp崩溃，所以先要判断下
-			old_ver="";
-		printf("old_ver=%s,new_ver=%s\n",old_ver,ver);
-		if( ver && strcmp(ver,old_ver) != 0) 
+    ls1x_gpio_direction_input(UPDATE_KEY);
+    if(gpio_get_value(UPDATE_KEY)==0)
+      old_ver="";
 #endif
-		{ 
-			setenv("autoexecDev",dev); //可以在autoexec.bat中用${autoexecDev}调用
-			filelen=fread (buf, 1, 2048, fp); //一次读入
-			fclose(fp);
-			cmdlen=0;
-			memset(cmd,0,1024);
-			if(filelen>0) 
-				for(i=0;i<filelen;i++) {
-					switch(buf[i]) {
-						case 0:
-						case 13:
-						case 10:
-						case '#':
-							if(cmdlen>0 && cmd[0]!='#' && strncmp(cmd,"[end]",5)!=0) { //不是"[end]"
-							printf("%s\r\n",cmd);	
-						  	  do_cmd(cmd);
-							}
-							memset(cmd,0,1024);
-							cmdlen=0;
-							break;
-						default:
-							cmd[cmdlen]=buf[i];
-							cmdlen++;
-							break;
-					}
-				}
-		}
-		printf("OK\r\n");
-		unsetenv("autoexecDev");
-		ret=0; //返回完成， 就不会再查其他的位置的autoexec.bat
-		if(ver[0]!='#') {  //第一行的第一个字母是#,则不会更新环境变量autoexecVer, 就可以每次都自动执行。
-			setenv("autoexecVer",ver);
-			if(strcmp(ver,old_ver)!=0)
-				do_cmd("reboot"); //版本有变化才reboot
-		}
+    printf("old_ver=%s,new_ver=%s\n",old_ver,ver);
+    if( ver && strcmp(ver,old_ver) != 0) 
+    {
+      strncpy(buf,dev,100);
+      setenv("autoexecDev",buf); //可以在autoexec.bat中用${autoexecDev}调用
+      filelen=fread (buf, 1, 2048, fp); //一次读入
+      fclose(fp);
+      cmdlen=0;
+      memset(cmd,0,1024);
+      if(filelen>0) 
+	for(i=0;i<filelen;i++) {
+	  switch(buf[i]) {
+	    case 0:
+	    case 13:
+	    case 10:
+	    case '#':
+	      if(cmdlen>0 && cmd[0]!='#' && strncmp(cmd,"[end]",5)!=0) { //不是"[end]"
+		printf("%s\r\n",cmd);	
+		do_cmd(cmd);
+	      }
+	      memset(cmd,0,1024);
+	      cmdlen=0;
+	      break;
+	    default:
+	      cmd[cmdlen]=buf[i];
+	      cmdlen++;
+	      break;
+	  }
 	}
-	free(ver);
-	free(buf);
-	free(cmd);
-	return ret;
-}
-
-static int load_menu_list(void)
-{
-	char* rootdev = NULL;
-	char* path = NULL;
-
-
-	show_menu=1;
-	if (path == NULL) {
-		path = malloc(512);
-			if (path == NULL) {
-			return 0;
-		}
-	}
-
-	memset(path, 0, 512);
-	rootdev = getenv("bootdev");
-	if (rootdev == NULL) {
-		rootdev = "/dev/fs/ext2@wd0";
-	}
-
-	sprintf(path, "%s/boot/boot.cfg", rootdev);
-	if (check_config(path) == 1) {
-		sprintf(path, "bl -d ide %s/boot/boot.cfg", rootdev);
-		if (do_cmd(path) == 0) {
-			show_menu = 0;
-			//                                      video_cls();
-			free(path);
-			path = NULL;
-			return 1;
-		}
-	}
-	else {
-		sprintf(path, "/dev/fs/ext2@wd0/boot/boot.cfg", rootdev);
-		if (check_config(path) == 1) {
-			sprintf(path, "bl -d ide /dev/fs/ext2@wd0/boot/boot.cfg", rootdev);
-			if (do_cmd(path) == 0) {
-				show_menu = 0;
-				//video_cls();
-				free(path);
-				path = NULL;
-				return 1;
-			}
-		}
-	}
-#if 0
-	if( check_ide() == 1 )// GOT IDE
-	{
-		if( do_cmd ("bl -d ide /dev/fs/ext2@wd0/boot.cfg") ==0 ) {
-			show_menu=0;
-			video_cls();
-			return 1;
-		}
-	}
-	else if( check_cdrom () == 1 ) // GOT CDROM
-	{
-		if( do_cmd ("bl -d cdrom /dev/fs/ext2@wd0/boot.cfg") ==0 ) {
-			show_menu=0;
-			video_cls();
-			return 1;
-		}
-	}
+    }
+    printf("OK\r\n");
+    unsetenv("autoexecDev");
+    ret=0; //返回完成， 就不会再查其他的位置的autoexec.bat
+    if(ver[0]!='#') {  //第一行的第一个字母是#,则不会更新环境变量autoexecVer, 就可以每次都自动执行。
+      setenv("autoexecVer",ver);
+#ifdef UPDATE_KEY
+      while(gpio_get_value(UPDATE_KEY)==0) ; //等待释放key2,再继续
 #endif
-	free(path);
-	path = NULL;
-//	video_cls();
-	show_menu=0;
-	return 0;
-	show_menu=0;
-	return 1;
+      if(strcmp(ver,old_ver)!=0)
+	do_cmd("reboot"); //版本有变化才reboot
+    }
+  }
+  free(ver);
+  free(buf);
+  free(cmd);
+  return ret;
 }
 
-int check_user_password(void)
-{
-	char buf[50];
-	struct termio tty;
-	int i;
-	char c;
+/* autoexec */
+void load_autoexec() {
+  char *s;
+  s=getenv("autoexec");
+  if(!s) s="";
 
-	if (!pwd_exist()||!pwd_is_set("user"))
-		return 0;
+#ifdef UPDATE_KEY
+  ls1x_gpio_direction_input(UPDATE_KEY);
+  if (gpio_get_value(UPDATE_KEY)==0){
+    printf("key2 is down, update...\n");
+    s="yes";
+  }
+#endif
 
-	for (i=0; i<2; i++) {
-		ioctl(i,TCGETA,&tty);
-		tty.c_lflag &= ~ ECHO;
-		ioctl(i,TCSETAW,&tty);
-	}
-	printf("\nPlease input user password:");
-
-loop0:
-	for (i=0; i<50; i++) {
-		c=getchar();
-		if (c!='\n'&&c!='\r') {	
-			printf("*");
-			buf[i] = c;
-		}
-		else {
-			buf[i]='\0';
-			break;
-		}
-	}
-	
-	if (!pwd_cmp("user",buf)) {
-		printf("\nPassword error!\n");
-		printf("Please input user password:");
-		goto loop0;
-	}
-
-	for (i=0; i<2; i++) {
-		tty.c_lflag |=  ECHO;
-		ioctl(i,TCSETAW,&tty);
-	}
-			
-	return 0;
+  if(strcmp(s,"yes") == 0){
+    if(autoexec("/dev/fat@usb0") == 1
+	&& autoexec("/dev/ext2@usb0") == 1)
+      if(sdcard_init() == 0xff00)
+	if(autoexec("/dev/fat@sdcard0") == 1)
+	  autoexec("/dev/ext2@sdcard0");
+  }
 }
 
-int check_admin_password(void)
-{
-	char buf[50];
-	struct termio tty;
-	int i;
-	char c;
-
-	if (!pwd_exist()||!pwd_is_set("admin"))
-		return 0;
-
-	for (i=0; i<2; i++) {
-		ioctl(i,TCGETA,&tty);
-		tty.c_lflag &= ~ ECHO;
-		ioctl(i,TCSETAW,&tty);
-	}
-	printf("\nPlease input admin password:");
-
-loop1:
-	for (i= 0; i<50; i++) {
-		c=getchar();
-		if (c!='\n'&&c!='\r') {	
-			printf("*");
-			buf[i] = c;
-		}
-		else {
-			buf[i]='\0';
-			break;
-		}
-	}
-	
-	if (!pwd_cmp("admin",buf)) {
-		printf("\nPassword error!\n");
-		printf("Please input admin password:");
-		goto loop1;
-	}
-
-	for (i=0; i<2; i++) {
-		tty.c_lflag |=  ECHO;
-		ioctl(i,TCSETAW,&tty);
-	}
-	
-	return 0;
-}
-
-int check_sys_password(void)
-{
-	char buf[50];
-	struct termio tty;
-	int i;
-	char c;
-	int count=0;
-
-	if (!pwd_exist()||!pwd_is_set("sys"))
-		return 0;
-
-	for (i=0; i<6; i++) {
-		ioctl(i,TCGETA,&tty);
-		tty.c_lflag &= ~ ECHO;
-		ioctl(i,TCSETAW,&tty);
-	}
-	printf("\nPlease input sys password:");
-
-loop1:
-	for (i= 0; i<50; i++) {
-		c=getchar();
-		if (c!='\n'&&c!='\r') {	
-			printf("*");
-			buf[i] = c;
-		}
-		else {
-			buf[i]='\0';
-			break;
-		}
-	}
-	
-	if (!pwd_cmp("sys",buf)) {
-		printf("\nPassword error!\n");
-		printf("Please input sys password:");
-		count++;
-		if (count==3)
-			return -1;
-		goto loop1;
-	}
-
-	for (i=0; i<6; i++) {
-		tty.c_lflag |=  ECHO;
-		ioctl(i,TCSETAW,&tty);
-	}
-
-	return 0;
-}
 
 /*
  *  Main interactive command loop
@@ -458,72 +279,11 @@ int main(void)
 #endif
 	md_setsr(NULL, initial_sr);	/* XXX does this belong here? */
 
-	{
-//		check_user_password();
-		if(!getenv("al"))
-			;
-//		load_menu_list();
-	}
-
-	{
-	static int run = 0;
 	char *s;
-	int ret = 0;
 
-	if (!run) {
-
-#ifdef BOOT_TEST_NAND_MEM
-		if((s = getenv("boot_test")) == NULL) s="";
-		if (!strcmp(s, "yes")) {
-			ret = do_cmd("mt -v");
-			ret = ret + ls1x_nand_test();
-			printf("mt -v %x\n", ret);
-			if (ret == 0) {
-				ls1x_gpio_direction_output(BOOT_TEST_LED_GREEN, 0);
-				gpio_set_value(BOOT_TEST_LED_GREEN, 0);
-				setenv("boot_test", "no");
-			}
-		}
-#endif
-
-/* autoexec */
-#ifdef UPDATE_KEY
-	ls1x_gpio_direction_input(UPDATE_KEY);
-	if (gpio_get_value(UPDATE_KEY)==0) 
-#else
-s=getenv("autoexec");
-if(s && strcmp(s,"yes") == 0)
-#endif
-{
-  if(autoexec("/dev/fat@usb0") == 1
-      && autoexec("/dev/ext2@usb0") == 1)
-    if(sdcard_init() == 0xff00)
-      if(autoexec("/dev/fat@sdcard0") == 1)
-	autoexec("/dev/ext2@sdcard0");
-}
-
-	#ifdef FAST_STARTUP
-		do_cmd("test");
-	#endif
-		run = 1;
-	#ifdef AUTOLOAD
-		s = getenv("al");
-		if(s) autoload(s);
-	#else
-		s = getenv("autoboot");
-		if(s) autorun(s);
-	#endif
-	}
-	}
-
+	s = getenv("al");
+	if(s) autoload(s);
 	while (1) {
-		#if 0
-		while (1) {
-			char c;int i;
-			i=term_read(0,&c,1);
-			printf("haha:%d,%02x\n",i,c);
-		}
-		#endif
 	if(getenv("prompt"))
 		strncpy (prompt, getenv ("prompt"), sizeof(prompt));
 	else
@@ -550,7 +310,6 @@ if(s && strcmp(s,"yes") == 0)
 	return(0);
 }
 
-#ifdef AUTOLOAD
 static void autoload(char *s)
 {
 	char buf[LINESZ];
@@ -601,6 +360,7 @@ static void autoload(char *s)
 	#endif
 
 		if (cnt == 0) {
+		  	load_autoexec();
 			if (getenv("autocmd")) {
 				strcpy(buf, getenv("autocmd"));
 				do_cmd(buf);
@@ -635,116 +395,6 @@ static void autoload(char *s)
 		}
 	}
 }
-#else
-
-/*
- *  Handle autoboot execution
- *  -------------------------
- *
- *  Autoboot variable set. Countdown bootdelay to allow manual
- *  intervention. If CR is pressed skip counting. If var bootdelay
- *  is set use the value othervise default to 15 seconds.
- */
-static void autorun(char *s)
-{
-	char buf[LINESZ];
-	char *d;
-	unsigned int dly, lastt;
-	unsigned int cnt;
-	struct termio sav;
-
-	if(s != NULL  && strlen(s) != 0) {
-		d = getenv ("bootdelay");
-		if(d == NULL) d="8";
-		if(!d || !atob (&dly, d, 10) || dly < 0 || dly > 99) {
-			dly = 15;
-		}
-
-		SBD_DISPLAY ("AUTO", CHKPNT_AUTO);
-		printf("Autoboot command: \"%.60s\"\n", s);
-		printf("Press <Enter> to execute or any other key to abort.\n");
-		ioctl (STDIN, CBREAK, &sav);
-		lastt = 0;
-		dly++;
-		do {
-#if defined(HAVE_TOD) && defined(DELAY_INACURATE)
-			time_t t;
-			t = tgt_gettime ();
-			if(t != lastt) {
-				printf ("\r%2d", --dly);
-				lastt = t;
-			}
-#else
-			delay(1000000);
-			printf ("\r%2d", --dly);
-#endif
-			ioctl (STDIN, FIONREAD, &cnt);
-		} while (dly != 0 && cnt == 0);
-
-		if(cnt > 0 && strchr("\n\r", getchar())) {
-			cnt = 0;
-		}
-
-		ioctl (STDIN, TCSETAF, &sav);
-		putchar ('\n');
-
-		if(cnt == 0) {
-			strcpy (buf, s);
-			do_cmd (buf);
-		}
-	}
-}
-#endif
-
-#ifdef FAST_STARTUP
-void fast_startup(void)		//lxy
-{
-#if 0
-extern	int vga_available;
-#if NMOD_FRAMEBUFFER > 0 
-	unsigned long fbaddress;
-#endif
-#endif
-
-	__init();
-	
-	CpuOnboardCacheOn = 1;
-	CpuExternalCacheOn = 1;	
-	CPU_ConfigCache();
-
-	vminit();
-	kmeminit();
-	init_proc ();
-	
-#if 0
-#if NMOD_FRAMEBUFFER > 0
-	printf("begin fb_init\n");
-	fbaddress = dc_init();
-	fbaddress |= 0xa0000000;
-#ifdef GC300
-extern unsigned long GPU_fbaddr;
-        GPU_fbaddr = fbaddress ;
-#endif
-	fb_init(fbaddress, 0);
-	printf("after fb_init\n");
-	vga_available = 1;
-#endif
-#endif
-
-	printf ("lxy: begin nand_init....\n");
-//extern   void norflash_init();
-	ls1g_soc_nand_init();
-//	printf ("lxy: after norflash_init.....\n");
-	do_cmd("load /dev/mtd0");
-	printf ("lxy: after load mtd .....\n");
-	do_cmd("g console=ttyS2,115200 root=/dev/mtdblock1 rw rootfstype=yaffs2 init=/sbin/init video=ls1bfb:vga1024x768-24@60 quiet");
-//	do_cmd("g console=ttyS2,115200 lpj=530432 root=/dev/mtdblock1 rw rootfstype=yaffs2 init=/sbin/init video=ls1bfb:vga1024x768-16@60 quiet");
-	printf ("lxy: after cmd_go .....\n");
-//	do_cmd("g console=ttyS0,115200 lpj=530432 rdinit=/linuxrc quiet");
-//	printf ("lxy: after go .....\n");
-
-}
-#endif
 
 /*
  *  PMON2000 entrypoint. Called after initial setup.
