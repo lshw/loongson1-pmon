@@ -45,7 +45,7 @@ struct ls1x_nand_info {
 	unsigned int	seqin_page_addr;
 };
 
-static struct mtd_info *ls1x_mtd = NULL;
+struct mtd_info *ls1x_mtd = NULL;
 
 static void nand_gpio_init(void)
 {
@@ -542,16 +542,13 @@ int ls1x_nand_init(void)
 
 	/* Register the partitions */
 	ls1x_mtd->name = "ls1x-nand";
-#ifdef FAST_STARTUP
-	if (output_mode == 0) {
-		add_mtd_device(ls1x_mtd, 0, 0x400000, "kernel");
-		return 0;
-	}
-#endif
+
+//如果设置文件中定义MTDPARTS ， mtd分区设置将从env mtdparts里获取
+#ifndef MTDPARTS
 	add_mtd_device(ls1x_mtd, 2*1024*1024, 20*1024*1024, "kernel");
 	add_mtd_device(ls1x_mtd, 22*1024*1024, 106*1024*1024, "rootfs");
 	add_mtd_device(ls1x_mtd, 0, 2*1024*1024, "pmon(nand)");
-
+#endif
 	return 0;
 }
 

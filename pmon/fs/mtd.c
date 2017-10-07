@@ -47,6 +47,7 @@
 #include <pmon.h>
 #include <linux/mtd/mtd.h>
 #include "../sys/dev/nand/yaf-nand/nand.h"
+#include <linux/mtd/nand.h>
 
 
 LIST_HEAD(mtdfiles, mtdfile) mtdfiles = LIST_HEAD_INITIALIZER(mtdfiles);
@@ -54,6 +55,7 @@ LIST_HEAD(mtdfiles, mtdfile) mtdfiles = LIST_HEAD_INITIALIZER(mtdfiles);
 static int mtdidx = 0;
 static struct mtdfile *goodpart0 = 0;
 extern unsigned char use_yaf;		//lxy
+extern struct mtd_info *ls1x_mtd;
 
 extern int nand_write_skip_bad(nand_info_t *nand, 
 	loff_t offset, size_t *length, 	u_char *buffer, int withoob);
@@ -336,7 +338,7 @@ int add_mtd_device(struct mtd_info *mtd, int offset, int size, char *name)
 	struct mtdfile *rmp;
 	int len = sizeof(struct mtdfile);
 
-	printf("Creat MTD partitions on \"%s\": name=\"%s\" size=%dByte\n", mtd->name, name, size);
+	printf("Creat MTD partitions on \"%s\": name=\"%s\" offset=%dByte size=%dByte\n", mtd->name, name, offset, size);
 
 	if (name)
 		len += strlen(name);

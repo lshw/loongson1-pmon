@@ -91,6 +91,7 @@ cmd_go (ac, av)
 	int	ac;
 	char	*av[];
 {
+	char *mtdparts,buf[30];
 	int32_t	adr;
 	int	sflag;
 	int	c;
@@ -142,11 +143,17 @@ extern char	*optarg;
 
 	if (initrd_execed())
 	{
-		char buf[30];
 		sprintf(buf, "rd_start=0x%x rd_size=0x%x ", 
 			get_initrd_start(), get_initrd_size());
 		strcat(clientcmd, buf);
 	}
+
+	mtdparts=getenv("mtdparts");
+	if(mtdparts) {
+		sprintf(buf,"mtdparts=%s ",mtdparts);
+		strcat(clientcmd, buf);
+	}
+	
 
 	if (!sflag) {
 		md_adjstack(NULL, tgt_clienttos ());

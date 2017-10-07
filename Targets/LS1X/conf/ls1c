@@ -178,7 +178,8 @@ option		SDCARD_CLK=25000000	#25MHz
 option		WRITE_ROM_LED=53 #devcp写mtd时闪动
 option		UPDATE_KEY=86 #按住key2时强制执行autoexec.bat升级系统
 
-select			mod_sdio
+#select		mod_sdio
+option		MTDPARTS    #使用mtdparts env进行mtd分区设置
 
 #### USB
 #uhci*		at pci? dev ? function ?
