@@ -10,25 +10,33 @@ fi
 
 PATH=/opt/gcc-4.3-ls232/bin:`pwd`/tools/pmoncfg:$PATH
 
+if ! [ "`which bison`" ] ;then
+  install=y
+fi
+
+if ! [ "`which make`" ] ;then
+  install=y
+fi
+
+if ! [ "`which flex`" ] ;then
+  install=y
+fi
+
+if ! [ "`which makedepend`" ] ;then
+ install=y
+fi
+
+if [ "$install" == "y" ] ; then
+  apt-get update
+  apt-get install make bison flex xutils-dev
+fi
+
 if ! [ "`which pmoncfg`" ] ; then
 cd tools/pmoncfg
 make
 cd ../..
 fi
 
-if ! [ "`which bison`" ] ;then
- apt-get install bison
-fi
-
-if ! [ "`which make`" ] ;then
- apt-get install make
-fi
-
-if ! [ "`which flex`" ] ;then
- apt-get install flex
-fi
-
-make all tgt=rom
 
 cd zloader.ls1c.openloongson
 make cfg all tgt=rom CROSS_COMPILE=mipsel-linux- LANG=C

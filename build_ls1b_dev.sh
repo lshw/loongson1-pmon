@@ -10,20 +10,26 @@ fi
 
 PATH=/opt/gcc-4.3-ls232/bin:`pwd`/tools/pmoncfg:$PATH
 #git pull
-if ! [ "`which bison`" ] ;then
- apt-get install bison
-fi
 
-if ! [  "`which flex`" ] ;then
- apt-get install flex
+if ! [ "`which bison`" ] ;then
+  install=y
 fi
 
 if ! [ "`which make`" ] ;then
- apt-get install make
+  install=y
+fi
+
+if ! [ "`which flex`" ] ;then
+  install=y
 fi
 
 if ! [ "`which makedepend`" ] ;then
- apt-get install xutils-dev
+ install=y
+fi
+
+if [ "$install" == "y" ] ; then
+  apt-get update
+  apt-get install make bison flex xutils-dev
 fi
 
 make pmontools
