@@ -29,7 +29,7 @@ fi
 
 if [ "$install" == "y" ] ; then
   apt-get update
-  apt-get install make bison flex xutils-dev
+  apt-get install -y make bison flex xutils-dev
 fi
 
 make pmontools
