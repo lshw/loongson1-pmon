@@ -18,6 +18,10 @@ if ! [  "`which flex`" ] ;then
  apt-get install flex
 fi
 
+if ! [ "`which make`" ] ;then
+ apt-get install make
+fi
+
 if ! [ "`which makedepend`" ] ;then
  apt-get install xutils-dev
 fi

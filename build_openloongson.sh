@@ -20,6 +20,10 @@ if ! [ "`which bison`" ] ;then
  apt-get install bison
 fi
 
+if ! [ "`which make`" ] ;then
+ apt-get install make
+fi
+
 if ! [ "`which flex`" ] ;then
  apt-get install flex
 fi
