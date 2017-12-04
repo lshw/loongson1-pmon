@@ -279,6 +279,7 @@ option		CONFIG_FB_DYN
 
 ### IIS IIS控制器和设备初始化
 #option		mod_iis_ls1x
+#option		SAMP_RATE=44100
 
 option		wait_key
 #option		HAVE_MUT_COM		#多串口输入/输出,把控制台信息同时输入/输出到多个串口

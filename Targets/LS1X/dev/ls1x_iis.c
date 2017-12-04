@@ -99,13 +99,13 @@ static int iis_config(void)
 	printf("config iis codec\n");
 #endif
 
-#define SAMP_RATE 44100
+#ifdef SAMP_RATE
 	sck_ratio = tgt_apbfreq()/(SAMP_RATE*2*2*2*16) - 1;
 	bck_ratio = tgt_apbfreq()/(SAMP_RATE*2*2*512) - 1;
 #else
 	sck_ratio = 0xf;
 	bck_ratio = 0x1;
-#end
+#endif
 //	printf("sck_ratio=%x bck_ratio=%x\n", sck_ratio, bck_ratio);
 
 	writel((16<<24) | (16<<16) | (sck_ratio<<8) | (bck_ratio<<0), LS1X_IIS_CONFIG);
