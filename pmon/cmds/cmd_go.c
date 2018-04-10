@@ -91,7 +91,7 @@ cmd_go (ac, av)
 	int	ac;
 	char	*av[];
 {
-	char *mtdparts,buf[30];
+	char *mtdparts,*watchdog,buf[30];
 	int32_t	adr;
 	int	sflag;
 	int	c;
@@ -153,7 +153,12 @@ extern char	*optarg;
 		sprintf(buf,"mtdparts=%s ",mtdparts);
 		strcat(clientcmd, buf);
 	}
-	
+        	
+	watchdog=getenv("watchdog");
+	if(watchdog) {
+		sprintf(buf,"watchdog=yes ");
+		strcat(clientcmd, buf);
+	}
 
 	if (!sflag) {
 		md_adjstack(NULL, tgt_clienttos ());

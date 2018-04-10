@@ -67,6 +67,8 @@
 #include <flash.h>
 #include <sys/device.h>
 
+#include <target/regs-wdt.h>
+
 extern void    *callvec;
 unsigned int show_menu;
 
@@ -243,6 +245,16 @@ void load_autoexec() {
   }
 }
 
+void watchdog() {
+  char *s;
+  s=getenv("watchdog");
+  if(strcmp(s,"yes") == 0) {
+    printf("watchdog = yes, set timeout to 34 sec \n");
+    __raw_writel(1, LS1X_WDT_EN);
+    __raw_writel(0xffffffff, LS1X_WDT_TIMER); //34s
+    __raw_writel(1, LS1X_WDT_SET);
+  }
+}
 
 /*
  *  Main interactive command loop
@@ -391,6 +403,8 @@ static void autoload(char *s)
 			}
 			printf("%s\n", buf);
 //			delay(100000);
+			if(getenv("watchdog"))
+				watchdog();
 			do_cmd(buf);
 		}
 	}
