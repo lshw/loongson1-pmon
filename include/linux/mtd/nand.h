@@ -27,13 +27,6 @@
 struct mtd_info;
 /* Scan and identify a NAND device */
 extern int nand_scan (struct mtd_info *mtd, int max_chips);
-/*
- * Separate phases of nand_scan(), allowing board driver to intervene
- * and override command or ECC setup according to flash type.
- */
-extern int nand_scan_ident(struct mtd_info *mtd, int maxchips);
-extern int nand_scan_tail(struct mtd_info *mtd);
-
 /* Free resources held by the NAND device */
 extern void nand_release (struct mtd_info *mtd);
 
@@ -44,8 +37,8 @@ extern void nand_release (struct mtd_info *mtd);
  * is supported now. If you add a chip with bigger oobsize/page
  * adjust this accordingly.
  */
-#define NAND_MAX_OOBSIZE	64
-#define NAND_MAX_PAGESIZE	2048
+#define NAND_MAX_OOBSIZE	256
+#define NAND_MAX_PAGESIZE	4096
 
 /*
  * Constants for hardware specific CLE/ALE/NCE function
@@ -122,6 +115,7 @@ typedef enum {
 	NAND_ECC_SOFT,
 	NAND_ECC_HW,
 	NAND_ECC_HW_SYNDROME,
+	NAND_ECC_SOFT_BCH,
 } nand_ecc_modes_t;
 
 /*
@@ -246,9 +240,11 @@ struct nand_ecc_ctrl {
 	int			size;
 	int			bytes;
 	int			total;
+	int strength;
 	int			prepad;
 	int			postpad;
 	struct nand_ecclayout	*layout;
+	void *priv;
 	void			(*hwctl)(struct mtd_info *mtd, int mode);
 	int			(*calculate)(struct mtd_info *mtd,
 					     const uint8_t *dat,
@@ -412,6 +408,7 @@ struct nand_chip {
 #define NAND_MFR_RENESAS	0x07
 #define NAND_MFR_STMICRO	0x20
 #define NAND_MFR_HYNIX		0xad
+#define NAND_MFR_MICRON		0x2c
 
 /**
  * struct nand_flash_dev - NAND Flash Device ID Structure

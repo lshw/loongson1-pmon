@@ -292,7 +292,6 @@ int main(void)
 	md_setsr(NULL, initial_sr);	/* XXX does this belong here? */
 
 	char *s;
-
 	s = getenv("al");
 	if(s) autoload(s);
 	while (1) {
