@@ -372,6 +372,8 @@ static void autoload(char *s)
 
 		if (cnt == 0) {
 		  	load_autoexec();
+			if(getenv("watchdog"))
+				watchdog();
 			if (getenv("autocmd")) {
 				strcpy(buf, getenv("autocmd"));
 				do_cmd(buf);
@@ -401,9 +403,6 @@ static void autoload(char *s)
 				strcat(buf, " console=tty");
 			}
 			printf("%s\n", buf);
-//			delay(100000);
-			if(getenv("watchdog"))
-				watchdog();
 			do_cmd(buf);
 		}
 	}
