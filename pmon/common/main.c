@@ -327,8 +327,8 @@ static void autoload(char *s)
 	char buf[LINESZ];
 	char *pa;
 	char *rd;
-	unsigned int dly, lastt;
-	unsigned int cnt;
+	unsigned int dly;
+	unsigned int cnt,cnt0;
 	struct termio sav;
 
 	if(s != NULL  && strlen(s) != 0) {
@@ -347,17 +347,21 @@ static void autoload(char *s)
 		printf("Press <Enter> to execute loading image:%s\n",s);
 		printf("Press any other key to abort.\n");
 		ioctl(STDIN, CBREAK, &sav);
-		lastt = 0;
-		ioctl(STDIN, FIONREAD, &cnt);
+		ioctl(STDIN, FIONREAD, &cnt0);
+		cnt=cnt0;
 
 		/* 每次循环为100ms延时，原延时时间为1秒太长 */
-		while (dly != 0 && cnt == 0) {
+		while (dly != 0 && cnt == cnt0) {
 			delay(200000);
 			printf ("\b\b%02d", --dly);
 			ioctl (STDIN, FIONREAD, &cnt);
 		} 
+		if(cnt != cnt0) 
+			cnt=1;
+		else
+			cnt=0;
 
-		if (cnt > 0 && strchr("\n\r", getchar())) {
+		if (cnt >0 && strchr("\n\r", getchar())) {
 			cnt = 0;
 		} else if (cnt > 0 && strchr("u", getchar())) {
 			do_cmd("test");
