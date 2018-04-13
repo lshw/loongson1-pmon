@@ -189,8 +189,8 @@ int autoexec(const char *dev) {
 	    case 0:
 	    case 13:
 	    case 10:
-	    case '#':
-	      if(cmdlen>0 && cmd[0]!='#' && strncmp(cmd,"[end]",5)!=0) { //不是"[end]"
+              if(strncmp(cmd,"[end]",5)==0) break;
+	      if(cmdlen>0 && cmd[0]!='#') { //不是"[end]"
 		printf("%s\r\n",cmd);	
 		do_cmd(cmd);
 	      }
@@ -202,6 +202,7 @@ int autoexec(const char *dev) {
 	      cmdlen++;
 	      break;
 	  }
+          if(strncmp(cmd,"[end]",5)==0) break;
 	}
     }
     printf("OK\r\n");

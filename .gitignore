@@ -12,6 +12,9 @@
 .cvsignore
 *.rej
 *.orig
+conf/vers.h
+conf/vers.c
+conf/version
 pmon*.bin
 gzram.*
 
