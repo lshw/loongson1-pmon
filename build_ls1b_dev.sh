@@ -1,5 +1,6 @@
 #!/bin/bash
-#本脚本在debian5-debian9测试没有问题,i386和amd64都可以
+#本脚本用于编译龙芯1B的pmon
+#本脚本在debian5-debian9,ubuntu16.04测试没有问题,i386和amd64都可以
 if ! [ -x /opt/gcc-4.3-ls232 ]  ; then
 wget https://mirrors.ustc.edu.cn/loongson/loongson1c_bsp/gcc-4.3/gcc-4.3-ls232.tar.gz -c
 tar zxvf gcc-4.3-ls232.tar.gz -C /opt
