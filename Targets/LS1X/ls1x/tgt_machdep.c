@@ -338,6 +338,13 @@ extern unsigned long GPU_fbaddr;
 
 void tgt_devconfig(void)
 {
+/* 打开LCD背光 */
+
+       *(volatile unsigned int *)0xbfd010c0 |= (1 << 6);
+       *(volatile unsigned int *)0xbfd010d0 &= ~(1 << 6);
+       *(volatile unsigned int *)0xbfd010f0 |= (1 << 6);
+
+
 #if NMOD_VGACON > 0
 	int rc = 0;
 #if NMOD_FRAMEBUFFER > 0 

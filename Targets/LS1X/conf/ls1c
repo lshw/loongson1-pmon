@@ -231,13 +231,13 @@ option		DC_FB0
 #option		X240x320
 #option		X320x240
 #option		X320x480
-#option		X480x272
+option		X480x272
 #option		X480x640
 #option		X640x480
 #option		X640x640
 #option		X640x768
 #option		X640x800
-option		X800x480
+#option		X800x480
 #option		X800x600
 #option		X800x640
 #option		X832x600
