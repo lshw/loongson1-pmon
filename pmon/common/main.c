@@ -148,15 +148,16 @@ int autoexec(const char *dev) {
 #ifdef LS1BSOC
   sprintf(buf,"%s/autoexec.1b",dev); //1b开发板
 #else   
-  sprintf(buf,"%s/autoexec.bat",dev); //开龙
+  sprintf(buf,"%s/autoexec.1c",dev); //开龙1c
+  fp=fopen(buf,"r");  //开龙1c 找不到autoexec.1c时 试试autoexec.bat
+  if(fp)
+    fclose(fp);
+  else
+    sprintf(buf,"%s/autoexec.bat",dev);
 #endif
   fp=fopen(buf,"r");
   if(fp){
-#ifdef LS1BSOC
-    printf("\nrun autoexec.1b from %s\n",dev);
-#else   
-    printf("\nrun autoexec.bat from %s\n",dev);
-#endif
+    printf("\nrun %s from %s\n",buf,dev);
     fgets(buf,300,fp);
     for(i=0;i<20;i++) { //第一行是版本号，
       if(buf[i]==13) break;
