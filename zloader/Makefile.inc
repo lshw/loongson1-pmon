@@ -30,6 +30,15 @@ export CC += ${MYCC}  -mno-abicalls -fno-pic
 export LD
 export MKDEP=makedepend
 ifeq ("${tgt}","rom")
+#rom can not update pmon ,ram bin can update pmon
+CC += -D DISABLE_UPDATE_PMON
+export CC
+gencode=./genrom
+endif
+
+ifeq ("${tgt}","install")
+CC += -D INSTALL_RAM
+export CC
 gencode=./genrom
 endif
 

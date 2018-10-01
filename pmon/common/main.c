@@ -155,6 +155,9 @@ int autoexec(const char *dev) {
   else
     sprintf(buf,"%s/autoexec.bat",dev);
 #endif
+#ifdef INSTALL_RAM
+  sprintf(buf,"%s/install.ls",dev); //如果编译的目标代码是install，就用install.ls做自动脚本
+#endif
   fp=fopen(buf,"r");
   if(fp){
     printf("\nrun %s from %s\n",buf,dev);
@@ -174,6 +177,10 @@ int autoexec(const char *dev) {
     ls1x_gpio_direction_input(UPDATE_KEY);
     if(gpio_get_value(UPDATE_KEY)==0)
       old_ver="";
+#endif
+
+#ifdef INSTALL_RAM
+    old_ver="";
 #endif
     printf("old_ver=%s,new_ver=%s\n",old_ver,ver);
     if( ver && strcmp(ver,old_ver) != 0) 
