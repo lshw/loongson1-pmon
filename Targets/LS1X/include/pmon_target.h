@@ -65,6 +65,6 @@ void hexserial __P((int));
  */
 #define CLIENTPC 0x80100000
 #define SETCLIENTPC "80100000"
-#define TGT_DEFENV {"mtdparts","ls1x-nand:20M@2M(kernel),106M@22M(rootfs),2M@0(pmon_nand)",0,0},\
+#define TGT_DEFENV {"mtdparts","ls1x-nand:14M@0M(kernel),100M@14M(rootfs),14M@114M(data)",0,0},\
 {"al","mtd0",0},\
 {"append","console=ttyS2,115200 root=/dev/mtdblock1 rw rootfstype=yaffs2 video=ls1bfb:vga1024x768-24@60 panic=10 noswap",0,0}
