@@ -134,7 +134,7 @@ static int nload(int argc, char **argv)
 				flags |= IFLAG; break;
 #ifdef HAVE_FLASH
 			case 'f':
-#ifndef DISABLE_UPDATE_PMON
+#ifdef DISABLE_UPDATE_PMON
 				printf("update flash is disabled.\r\n");
 				err++;
 				break;
