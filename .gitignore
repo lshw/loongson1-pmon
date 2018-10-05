@@ -11,6 +11,7 @@
 #*.a
 .cvsignore
 *.rej
+install_ram.bin
 *.orig
 conf/vers.h
 conf/vers.c

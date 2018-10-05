@@ -31,9 +31,9 @@
 #define SIZE_REMAINING UINT_MAX
 
 /* mtdpart_setup() parses into here */
-extern struct mtd_info *ls1x_mtd ;
+extern struct mtd_info *ls1x_mtd ,*nor_mtd;
 
-
+struct mtd_info *mtd;
 unsigned long long memparse (char *ptr, char **retptr)
 {
       unsigned long long ret = strtoul (ptr, retptr, 0);
@@ -63,15 +63,31 @@ unsigned long long memparse (char *ptr, char **retptr)
  * is allocated upon the last definition being found. At that point the
  * syntax has been verified ok.
  */
-unsigned long mtd_offset;
 unsigned int this_part=0;
 static  int newpart(char *s,char **retptr)
 {
+        printf("%s %d\r\n",s,__LINE__);
 	unsigned long size;
+        unsigned long mtd_offset;
 	char *name,realname[200];
 	int name_len;
-	char delim;
-
+ 	char delim;
+        char *p,*p1,*p2;
+        /* fetch mtd_id  "ls1x-nand" or "spi-flash"      */
+        if(p = strchr(s,':')) {
+                p1 = strchr(s,',');
+                p2 = strchr(s,';');
+                if(!p1 && p2) p1=p2; //not find ',' , find ';'
+                if(p1 && p2 && p2 < p1) p1 = p2;  //find ',' and ';' ,but p2<p1 
+                if(!p1 || p < p1) {
+                                if(strncmp(s,"ls1x-nand",sizeof("ls1x-nand")-1) == 0){ 
+                                        mtd = ls1x_mtd; //ls1x-nand
+                                }else{ 
+                                        mtd = nor_mtd; //spi-flash
+}
+                                s = p + 1;
+                        }
+        }
 	/* fetch the partition size */
 	if (*s == '-')
 	{	/* assign all remaining space to this partition */
@@ -117,15 +133,13 @@ static  int newpart(char *s,char **retptr)
 	}
 	else
 		sprintf(realname,"mtd%d",this_part);
-
 	if(size == SIZE_REMAINING)
-		size=ls1x_mtd->size - mtd_offset;
+		        size=mtd->size - mtd_offset;
 	this_part ++;
-	add_mtd_device(ls1x_mtd,mtd_offset,size,realname);
-
-	if (*s == ',')
+                        add_mtd_device(mtd,mtd_offset,size,realname);
+	if (*s == ','|| *s == ';')
 	{
-	        *retptr = s;
+	        *retptr = s + 1;
 		mtd_offset += size;
 		return 1;
 		/* more partitions follow, parse them */
@@ -144,24 +158,15 @@ static  int newpart(char *s,char **retptr)
 int mtdpart_setup_real(char *s)
 {
  
-	    	int mtd_id_len;
-		char *p, *mtd_id;
-
-	    	mtd_id = s;
-		/* fetch <mtd-id> */
-		if (!(p = strchr(s, ':')))
-		{
-			printf("no mtd-id\n");
-			return 0;
-		}
-		mtd_id_len = p - mtd_id;
-
+		char *p;
+if(!nor_mtd) norflash_init();
+                 p=s;
 		/*
 		 * parse one mtd. have it reserve memory for the
 		 * struct cmdline_mtd_partition and the mtd-id string.
 		 */
 		while(
-		newpart(p + 1,&s)!=NULL) {
+		newpart(p,&s)!=NULL) {
 		 p=s ;
 		}	
 	       	return 0;

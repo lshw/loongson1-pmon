@@ -217,8 +217,8 @@ select		nand
 #option		NAND_PARAMETER=0x000	#外部颗粒容量大小 NAND_PARAMETER（寄存器地址：0x1fe7_8018）
 									#注意：根据nand flash大小修改,低8bit保留
 
-#select		nor_flash			#如果使用nor flash分区需要该选项
-#option		NORFLASH_PARTITION	#nor flash(spi flash)分区
+select		nor_flash			#如果使用nor flash分区需要该选项
+option		NORFLASH_PARTITION	#nor flash(spi flash)分区
 #option		W25X64
 #option		W25Q80
 #select		loop

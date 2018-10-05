@@ -17,6 +17,8 @@ static unsigned char flash_id[3];
 static unsigned char init_id = 0;
 static struct fl_device *nor_dev;
 
+struct mtd_info *nor_mtd = NULL;
+
 static int read_status(void)
 {
 	int val;
@@ -487,7 +489,6 @@ static void print_sector(void)
 
 void norflash_init(void)
 {
-	struct mtd_info *nor_mtd;
 	nor_mtd = malloc(sizeof(struct mtd_info));	
 	memset(nor_mtd, 0, sizeof(struct mtd_info));
 	nor_mtd->read		= nor_mtd_read;
@@ -502,11 +503,12 @@ void norflash_init(void)
 #endif
 	nor_mtd->erasesize	= 64 * 1024;
 	nor_mtd->type		= MTD_NORFLASH;
-	nor_mtd->name		= "ls1b-nor";
+	nor_mtd->name		= "spi-flash";
 
 	/* W25Q128 16MB
 	   使用winb25x128bf 可能需要修改SPI控制器的SPER寄存器，提高分频值，winb25x128bf的工作频率不能太高
 	 */
+#ifndef MTDPARTS
 #ifdef W25Q128
 	/* 1A/1B 的SPI控制器 支持SPI Flash快速(高速 双IO)读取 但只支持最大8MB容量
 	   所以需要快速读取的分区如内核区，尽量设置在8MB内
@@ -521,7 +523,7 @@ void norflash_init(void)
 #else
 	add_mtd_device(nor_mtd, 0, 0x80000, "pmon");	//512KB
 #endif
-
+#endif
 	wb_write_status(0);
 }
 #endif
