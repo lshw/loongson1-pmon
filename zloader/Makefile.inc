@@ -135,16 +135,18 @@ cleanall: clean
 	make -C ../Targets/${TARGET}/compile/${TARGETEL}/ clean
 clean:
 	rm -rf *.o zlib_gzip zloader pmon.bin.c gzrom gzrom.bin gzram  initmips.c pmon.bin.gz pmon.bin.c ld.script zlib_deflate/*.o zlib_inflate/*.o zlib_gzrom zlib_gzrom.bin
+	cp ../lib/libc/Makefile.in ../lib/libc/Makefile
+	cp ../lib/libm/Makefile.in ../lib/libm/Makefile
+	cp ../lib/libz/Makefile.in ../lib/libz/Makefile
 cfg1:
-	perl -i -ne 'print;exit if(/^# DO NOT DELETE/);' ../lib/libc/Makefile 
-	perl -i -ne 'print;exit if(/^# DO NOT DELETE/);' ../lib/libm/Makefile 
-	perl -i -ne 'print;exit if(/^# DO NOT DELETE/);' ../lib/libz/Makefile 
+	cp ../lib/libc/Makefile.in ../lib/libc/Makefile
+	cp ../lib/libm/Makefile.in ../lib/libm/Makefile
+	cp ../lib/libz/Makefile.in ../lib/libz/Makefile
 	cd ../Targets/${TARGET}/conf/;pmoncfg ${TARGETEL}
 cfg:
-	# DO NOT DELETE
-	perl -i -ne 'print;exit if(/^# DO NOT DELETE/);' ../lib/libc/Makefile 
-	perl -i -ne 'print;exit if(/^# DO NOT DELETE/);' ../lib/libm/Makefile 
-	perl -i -ne 'print;exit if(/^# DO NOT DELETE/);' ../lib/libz/Makefile 
+	cp ../lib/libc/Makefile.in ../lib/libc/Makefile
+	cp ../lib/libm/Makefile.in ../lib/libm/Makefile
+	cp ../lib/libz/Makefile.in ../lib/libz/Makefile
 	mkdir -p ../Targets/${TARGET}/compile
 	cd ../Targets/${TARGET}/conf/;pmoncfg ${TARGETEL}
 	make -C ../Targets/${TARGET}/compile/${TARGETEL}/ depend clean
