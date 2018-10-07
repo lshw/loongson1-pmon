@@ -863,6 +863,13 @@ void tgt_mapenv(int (*func) __P((char *, char *)))
 	nvram = (char *)malloc(NVRAM_SECSIZE);
 	nvram_get(nvram);
 	if(cksum(nvram, NVRAM_SIZE, 0) != 0) {
+		spi_flash_read_area(0x70000,nvram,NVRAM_SECSIZE); //用老版本的nvram
+	if(cksum(nvram, NVRAM_SIZE, 0) == 0){
+		spi_flash_erase_area(NVRAM_POS,0x80000,0x1000);
+		spi_flash_write_area(NVRAM_POS,nvram,0x200);
+	}
+	}
+	if(cksum(nvram, NVRAM_SIZE, 0) != 0) {
 #endif
 		printf("NVRAM is invalid!\n");
 		nvram_invalid = 1;

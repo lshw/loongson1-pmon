@@ -496,12 +496,14 @@ void norflash_init(void)
 	nor_mtd->erase		= nor_mtd_erase;
 #ifdef W25Q128
 	nor_mtd->size		= 0x1000000;
+	nor_mtd->erasesize	= 64 * 1024;
 #elif W25X64
 	nor_mtd->size		= 0x800000;
+	nor_mtd->erasesize	= 64 * 1024;
 #else
 	nor_mtd->size		= 0x80000;
+	nor_mtd->erasesize	= 4 * 1024;
 #endif
-	nor_mtd->erasesize	= 64 * 1024;
 	nor_mtd->type		= MTD_NORFLASH;
 	nor_mtd->name		= "spi-flash";
 
