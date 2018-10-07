@@ -66,7 +66,6 @@ unsigned long long memparse (char *ptr, char **retptr)
 unsigned int this_part=0;
 static  int newpart(char *s,char **retptr)
 {
-        printf("%s %d\r\n",s,__LINE__);
 	unsigned long size;
         unsigned long mtd_offset;
 	char *name,realname[200];

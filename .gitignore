@@ -9,6 +9,9 @@
 #!.config
 *.o
 #*.a
+lib/libc/Makefile
+lib/libm/Makefile
+lib/libz/Makefile
 .cvsignore
 *.rej
 install_ram.bin

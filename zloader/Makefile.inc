@@ -1,5 +1,5 @@
 ifndef PMONCC
-CC=$(CROSS_COMPILE)gcc -fexec-charset=GB2312 
+CC=$(CROSS_COMPILE)gcc -fexec-charset=UTF-8
 CROSS_COMPILE ?= mipsel-linux-#mips-elf-
 #CROSS_COMPILE ?= mipsel-loongson-linux-gnu-#mips-elf-
 else
@@ -80,6 +80,7 @@ ejtag_rom ejtag_rom1 ejtag_ram rom: clean ${START} zloader.o
 	gcc  -DSTARTADDR=${GZROMSTARTADDR} -DOUT_FORMAT=\"${OUT_FORMAT}\" -DOUT_ARCH=mips -Umips -E -P ld.script.S  > ld.script
 	${LD} -T ld.script -e start -g -o gzrom ${START} zloader.o 
 	${CROSS_COMPILE}objcopy -O binary gzrom gzrom.bin
+	echo -n "END_end_END_end_" >>gzrom.bin
 
 ram: clean startram.o zloader.o 
 	${CC}  -DSTARTADDR=${RAMSTARTADDR} -DOUT_FORMAT=\"${OUT_FORMAT}\" -DOUT_ARCH=mips -Umips -E -P ld.script.S  > ld.script
