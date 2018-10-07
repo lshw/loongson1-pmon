@@ -9,6 +9,14 @@
 #!.config
 *.o
 #*.a
+Targets/LS1X/compile
+Targets/LS1X/conf/ld.script
+tools/pmoncfg/gram.h
+tools/pmoncfg/pmoncfg
+zloader/initmips.c
+zloader/ld.script
+zloader/pmon.bin.gz
+zloader/zlib_pmon.bin.c
 lib/libc/Makefile
 lib/libm/Makefile
 lib/libz/Makefile
