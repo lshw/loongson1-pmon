@@ -180,7 +180,7 @@ option		UPDATE_KEY=86 #按住key2时强制执行autoexec.bat升级系统
 
 select		mod_sdio
 option		MTDPARTS    #使用mtdparts env进行mtd分区设置
-
+option		MTD_SPI_DATA #把spi中除去pmon后剩余的空间，建立一个mtd4(spi-data),大约140k
 #### USB
 #uhci*		at pci? dev ? function ?
 #ohci0		at pci? dev ? function ?

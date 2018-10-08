@@ -312,12 +312,43 @@ unsetenv (pat)
 		}
 	}
 }
-
+#ifdef MTD_SPI_DATA
+#ifdef MTDPARTS
+long find_pmon_end(void)
+{
+  
+	char end_flag[18]="END_end_";
+	char *pmon;
+	unsigned long i;
+	char ch;
+	pmon = (char *)malloc(0x80000);
+	spi_flash_read_area(0, pmon, 0x80000); //把pmon映射到内存
+	for(i=0;i<8;i++)
+	end_flag[i+8]=end_flag[i];
+	end_flag[16]=0;
+	for(i=300000;i<0x7f000;i++) {
+	  if(strncmp(&pmon[i],end_flag,16)==0) {
+	  i=i+16;
+	  if(i!=(i&0xfff)) i=(i&0xff000)+0x1000; //对齐4k
+	  free(pmon);
+	  return i;
+	  }
+	}
+	free(pmon);
+	return -1;
+}
+#endif
+#endif
 void
 envinit ()
 {
 	int i;
-
+#ifdef MTD_SPI_DATA
+#ifdef MTDPARTS
+	char buf[200];
+	long pmon_end;
+#endif
+#endif
     SBD_DISPLAY ("MAPV", CHKPNT_MAPV);
 
     /* extract nvram variables into local copy */
@@ -329,7 +360,19 @@ envinit ()
     /* set defaults (only if not set at all) */
     for (i = 0; stdenvtab[i].name; i++) {
 	if (!getenv (stdenvtab[i].name)) {
-	  setenv (stdenvtab[i].name, stdenvtab[i].init);
+#ifdef MTD_SPI_DATA
+#ifdef MTDPARTS
+	  if(strcmp(stdenvtab[i].name,"mtdparts") == 0) {
+	      pmon_end = find_pmon_end();
+	      if(pmon_end > 0)
+	          sprintf(buf,"%s;spi-flash:%ld@%ld(spi_data)",stdenvtab[i].init,(long)0x7f000-pmon_end,pmon_end);
+	      else
+		  strcpy(buf,stdenvtab[i].init);
+	      setenv (stdenvtab[i].name, buf);
+	  }else
+#endif
+#endif
+	      setenv (stdenvtab[i].name, stdenvtab[i].init);
 	}
     }
 }
