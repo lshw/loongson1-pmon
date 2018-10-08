@@ -347,6 +347,7 @@ envinit ()
 #ifdef MTDPARTS
 	char buf[200];
 	long pmon_end;
+	int ia,len;
 #endif
 #endif
     SBD_DISPLAY ("MAPV", CHKPNT_MAPV);
@@ -363,11 +364,18 @@ envinit ()
 #ifdef MTD_SPI_DATA
 #ifdef MTDPARTS
 	  if(strcmp(stdenvtab[i].name,"mtdparts") == 0) {
+	      strcpy(buf,stdenvtab[i].init);
 	      pmon_end = find_pmon_end();
-	      if(pmon_end > 0)
-	          sprintf(buf,"%s;spi-flash:%ld@%ld(spi_data)",stdenvtab[i].init,(long)0x7f000-pmon_end,pmon_end);
-	      else
-		  strcpy(buf,stdenvtab[i].init);
+	      if(pmon_end > 0) {
+	          len=strlen(buf)-sizeof("spi-flash:")+1;
+		  for(ia=0;ia<len;ia++) {
+		     if(strncmp(&buf[ia],"spi-flash:",sizeof("spi-flash:")-1)==0) break;//找到spi-flash 
+		  }
+		  if(ia < len) //找到spi-flash:
+	              sprintf(buf,"%s,%ld@%ld(spi_data)",stdenvtab[i].init,(long)0x7f000-pmon_end,pmon_end);
+	          else
+	              sprintf(buf,"%s;spi-flash:%ld@%ld(spi_data)",stdenvtab[i].init,(long)0x7f000-pmon_end,pmon_end);
+	      }
 	      setenv (stdenvtab[i].name, buf);
 	  }else
 #endif
