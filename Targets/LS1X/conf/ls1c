@@ -33,7 +33,7 @@ select		mod_flash_sst		# intel flash device programming
 select		mod_debugger		# Debugging module
 select		mod_symbols		# Symbol table handling
 select		mod_s3load		# Srecord loading
-select		mod_fastload		# LSI Fastload
+#select		mod_fastload		# LSI Fastload
 select		mod_elfload		# ELF loading
 select		elf32only
 
@@ -41,7 +41,7 @@ select		elf32only
 # Command selection. Selects pmon commands
 #
 #select		cmd_newmt
-select		cmd_setup
+#select		cmd_setup
 select		mod_display
 #select		cmd_about		# Display info about PMON
 select		cmd_boot		# Boot wrapper
