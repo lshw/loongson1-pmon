@@ -7,32 +7,13 @@ wget https://mirrors.ustc.edu.cn/loongson/loongson1c_bsp/gcc-4.3/gcc-4.3-ls232.t
 tar zxvf gcc-4.3-ls232.tar.gz -C /opt
 dpkg --add-architecture i386 #增加i386架构的libz.so.1 龙芯提供的交叉编译工具缺这个运行库
 fi
+if ! [ -e /tmp/pmon_install.txt ] ; then
 apt-get update
-apt-get -y install zlib1g:i386
-
-PATH=/opt/gcc-4.3-ls232/bin:`pwd`/tools/pmoncfg:$PATH
-#git pull
-
-if ! [ "`which bison`" ] ;then
-  install=y
+apt-get -y install zlib1g:i386  make bison flex xutils-dev ccache
+touch /tmp/pmon_install.txt
 fi
 
-if ! [ "`which make`" ] ;then
-  install=y
-fi
-
-if ! [ "`which flex`" ] ;then
-  install=y
-fi
-
-if ! [ "`which makedepend`" ] ;then
- install=y
-fi
-
-if [ "$install" == "y" ] ; then
-  apt-get update
-  apt-get install -y make bison flex xutils-dev
-fi
+PATH=`pwd`/ccache:/opt/gcc-4.3-ls232/bin:`pwd`/tools/pmoncfg:$PATH
 
 make pmontools
 cd zloader.ls1b.dev
