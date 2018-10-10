@@ -97,6 +97,7 @@ cmd_set(ac, av)
 				break;
 			}
 		}
+		nvram_disp_free();
 		break;
 
 	case 2:			/* display specific variable */
@@ -114,6 +115,7 @@ cmd_set(ac, av)
 			printf("%s: cannot set\n", av[1]);
 			return(1);
 		}
+		nvram_disp_free();
 		break;
 
 	default:

@@ -1285,8 +1285,20 @@ void nvram_put(char *buffer)
 	spi_flash_write_area(NVRAM_POS, buffer, NVRAM_SECSIZE);
 #endif
 }
-
 #endif
+void nvram_disp_free()
+{
+        uint16_t i;
+        char *nvram;
+
+        nvram = (char *)malloc(NVRAM_SECSIZE);
+	nvram_get(nvram);
+        for(i=0;i<NVRAM_SECSIZE-30;i++) {
+                if(nvram[i]==0 && nvram[i+1]==0) break;
+        }
+        printf("---------------------------------\r\nnvram use %d bytes, free %d bytes\r\n",i,NVRAM_SECSIZE-30-i);
+        free(nvram);
+}
 
 /*
  *  Simple display function to display a 4 char string or code.
