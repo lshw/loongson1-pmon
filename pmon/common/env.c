@@ -318,7 +318,6 @@ long find_pmon_end(void)
 	char end_flag[18]="END_end_";
 	char *pmon;
 	unsigned long i;
-	char ch;
 	pmon = (char *)malloc(0x80000);
 	spi_flash_read_area(0, pmon, 0x80000); //把pmon映射到内存
 	for(i=0;i<8;i++)

@@ -45,18 +45,18 @@ extern char *heaptop;
 /*nvram define                                                       */
 /*********************************************************************/
 #ifdef NVRAM_IN_FLASH
-#	define NVRAM_SECSIZE		512
-#	define NVRAM_SIZE		NVRAM_SECSIZE
+#	define NVRAM_SECSIZE		4096
+#	define NVRAM_SIZE		(NVRAM_SECSIZE-30)
 #	define NVRAM_OFFS		0
 #	define FLASH_OFFS		(tgt_flashmap()->fl_map_size - 0x1000)
 #	define NVRAM_POS		0x0007F000
 #	define ETHER_OFFS		(NVRAM_SECSIZE-6) 	/* Ethernet address base */
-#	define PLL_OFFS		(ETHER_OFFS-10)
-#	define XRES_OFFS		(PLL_OFFS-2)
-#	define YRES_OFFS		(PLL_OFFS-4)
-#	define DEPTH_OFFS		(PLL_OFFS+8)
-#else	/* Use clock ram, 256 bytes only */
-#	define NVRAM_SECSIZE		512	/* Helper */
+#	define PLL_OFFS		(NVRAM_SECSIZE-16)
+#	define XRES_OFFS		(NVRAM_SECSIZE-18)
+#	define YRES_OFFS		(NVRAM_SECSIZE-20)
+#	define DEPTH_OFFS		(NVRAM_SECSIZE-22)
+#else	/* Use spi-flash */
+#	define NVRAM_SECSIZE		4096	/* Helper */
 #	define NVRAM_SIZE		(NVRAM_SECSIZE-30)
 #	define NVRAM_OFFS		0
 #	define NVRAM_POS		0x0007F000

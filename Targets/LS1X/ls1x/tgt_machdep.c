@@ -863,11 +863,18 @@ void tgt_mapenv(int (*func) __P((char *, char *)))
 	nvram = (char *)malloc(NVRAM_SECSIZE);
 	nvram_get(nvram);
 	if(cksum(nvram, NVRAM_SIZE, 0) != 0) {
-		spi_flash_read_area(0x70000,nvram,NVRAM_SECSIZE); //用老版本的nvram
-	if(cksum(nvram, NVRAM_SIZE, 0) == 0){
-		spi_flash_erase_area(NVRAM_POS,0x80000,0x1000);
-		spi_flash_write_area(NVRAM_POS,nvram,0x200);
-	}
+                if(cksum(nvram,512-30,0)!=0) {//老版本的nvram
+		        spi_flash_read_area(0x70000,nvram,512); //用老位置的老版本的nvram
+                }
+	        if(cksum(nvram, 512-30, 0) == 0){//老版本的nvram有效，开始搬运
+                        for(i=0;i<30;i++) {
+                                nvram[NVRAM_SECSIZE-30+i]=nvram[512-30+i];
+                                nvram[512-30+i]=0xff;
+                        }
+                        cksum(nvram,NVRAM_SIZE,1);//生成校验
+		        spi_flash_erase_area(NVRAM_POS,0x80000,0x1000); //写回spi
+		        spi_flash_write_area(NVRAM_POS,nvram,0x1000);
+	         }
 	}
 	if(cksum(nvram, NVRAM_SIZE, 0) != 0) {
 #endif
