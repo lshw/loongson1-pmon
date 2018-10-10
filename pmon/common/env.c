@@ -312,8 +312,6 @@ unsetenv (pat)
 		}
 	}
 }
-#ifdef MTD_SPI_DATA
-#ifdef MTDPARTS
 long find_pmon_end(void)
 {
   
@@ -337,16 +335,14 @@ long find_pmon_end(void)
 	free(pmon);
 	return -1;
 }
-#endif
-#endif
+long pmonEnd=-1,pmonFreeSize;
 void
 envinit ()
 {
 	int i;
+	char buf[200];
 #ifdef MTD_SPI_DATA
 #ifdef MTDPARTS
-	char buf[200];
-	long pmon_end;
 	int ia,len;
 #endif
 #endif
@@ -358,6 +354,15 @@ envinit ()
     envinited = 1;
 
     SBD_DISPLAY ("STDV", CHKPNT_STDV);
+    pmonEnd = find_pmon_end();
+    if(pmonEnd == -1) 
+        pmonEnd=0x70000;
+    pmonFreeSize = 0x7F000 - pmonEnd;
+    sprintf(buf,"%d",pmonEnd);
+    setenv("pmonEnd",buf);
+    sprintf(buf,"%d",pmonFreeSize);
+    setenv("pmonFreeSize",buf);
+
     /* set defaults (only if not set at all) */
     for (i = 0; stdenvtab[i].name; i++) {
 	if (!getenv (stdenvtab[i].name)) {
@@ -365,16 +370,15 @@ envinit ()
 #ifdef MTDPARTS
 	  if(strcmp(stdenvtab[i].name,"mtdparts") == 0) {
 	      strcpy(buf,stdenvtab[i].init);
-	      pmon_end = find_pmon_end();
-	      if(pmon_end > 0) {
+	      if(pmonEnd > 0) {
 	          len=strlen(buf)-sizeof("spi-flash:")+1;
 		  for(ia=0;ia<len;ia++) {
 		     if(strncmp(&buf[ia],"spi-flash:",sizeof("spi-flash:")-1)==0) break;//找到spi-flash 
 		  }
 		  if(ia < len) //找到spi-flash:
-	              sprintf(buf,"%s,%ld@%ld(spi_data)",stdenvtab[i].init,(long)0x7f000-pmon_end,pmon_end);
+	              sprintf(buf,"%s,%ld@%ld(spi_data)",stdenvtab[i].init,pmonFreeSize,pmonEnd);
 	          else
-	              sprintf(buf,"%s;spi-flash:%ld@%ld(spi_data)",stdenvtab[i].init,(long)0x7f000-pmon_end,pmon_end);
+	              sprintf(buf,"%s;spi-flash:%ld@%ld(spi_data)",stdenvtab[i].init,pmonFreeSize,pmonEnd);
 	      }
 	      setenv (stdenvtab[i].name, buf);
 	  }else
