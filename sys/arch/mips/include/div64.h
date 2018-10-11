@@ -58,9 +58,11 @@
 	__upper = __high; \
 	\
 	if (__high) \
-		__asm__("divu	$0,%z2,%z3" \
-			: "=h" (__upper), "=l" (__high) \
-			: "Jr" (__high), "Jr" (base)); \
+        __asm__("divu   $0,%z2,%z3              \n"     \
+                "mfhi   %z0                     \n"     \
+                "mflo   %z1                     \n"     \
+                : "=r" (__upper), "=r" (__high) \
+                : "Jr" (__high), "Jr" (base));  \
 	\
 	__mod = do_div64_32(__low, __upper, __low, base); \
 	\
