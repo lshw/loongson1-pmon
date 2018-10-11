@@ -208,18 +208,28 @@ static int mtdfile_write(int fd, const void *data, size_t n)
 	mtdpriv *priv;
 	struct erase_info erase;
 	unsigned int start_addr;
-	int maxlen;
+	int maxlen, newpos;
 	size_t retlen = 0, left = n;
 	void *buf = (void *)data;
-
+        void *cache;
 	unsigned int block_inc;
 	extern unsigned char yaf_use;	//lxy
 	extern unsigned char yaf_w;
 	size_t n1 = n;
 
+	newpos = mtdfile_lseek(fd,0,SEEK_CUR);
+        cache=malloc(n);
+        n1=mtdfile_read(fd,cache,n);
+        if(memcmp(data,cache,n)==0) {
+           free(cache);
+           return n1;
+        }
+        free(cache);
+        mtdfile_lseek(fd, newpos, SEEK_SET);
+        n1 = n;
+
 	if (yaf_use)		//lxy: yaffs2'img need a block of 128Kb, also with 4Kb oob
 		n -= 4*1024;
-
 	priv = (mtdpriv *)_file[fd].data;
 	p = priv->file;
 
