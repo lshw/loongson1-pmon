@@ -7,11 +7,11 @@ arch=`dpkg --print-architecture`
 if [ "_$arch" == "_amd64" ] ; then
 #amd64
 if ! [ -x /opt/gcc-4.9-ls232 ]  ; then
-wget https://mirrors.tuna.tsinghua.edu.cn/loongson/loongson1c_bsp/gcc-4.9/gcc-4.9-ls232.tar.gz -c
+wget https://mirrors.tuna.tsinghua.edu.cn/loongson/loongson1c_bsp/gcc-4.9/gcc-4.9-ls232.tar.xz -c
 if [ $? != 0 ] ; then
-wget https://www.anheng.com.cn/loongson/loongson1c_bsp/gcc-4.9/gcc-4.9-ls232.tar.gz -c
+wget https://www.anheng.com.cn/loongson/loongson1c_bsp/gcc-4.9/gcc-4.9-ls232.tar.xz -c
 fi
-tar zxvf gcc-4.3-ls232.tar.gz -C /opt
+tar Jxvf gcc-4.9-ls232.tar.xz -C /opt
 fi
 PATH=/opt/gcc-4.9-ls232/bin:$PATH
 else
