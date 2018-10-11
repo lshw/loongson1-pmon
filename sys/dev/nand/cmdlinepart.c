@@ -34,6 +34,12 @@
 extern struct mtd_info *ls1x_mtd ,*nor_mtd;
 
 struct mtd_info *mtd;
+void update_mtdpats(){
+  if(ls1x_mtd) free(ls1x_mtd);
+  ls1x_nand_init();
+  if(nor_mtd) free(nor_mtd);
+  mtdpart_setup_real(getenv("mtdparts"));
+}
 unsigned long long memparse (char *ptr, char **retptr)
 {
       unsigned long long ret = strtoul (ptr, retptr, 0);

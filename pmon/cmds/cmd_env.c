@@ -116,6 +116,10 @@ cmd_set(ac, av)
 			return(1);
 		}
 		nvram_disp_free();
+#ifdef MTDPARTS
+		if(strcmp(av[1],"mtdparts")==0) 
+                    update_mtdpats();
+#endif
 		break;
 
 	default:
@@ -163,6 +167,11 @@ cmd_eset(ac, av)
 			}
 		}
 	}
+	nvram_disp_free();
+#       ifdef MTDPARTS
+                if(strcmp(av[1],"mtdparts")==0) 
+                update_mtdpats();
+#       endif
 	return (0);
 }
 #endif /* NCMD_ENV */
@@ -183,6 +192,7 @@ cmd_unset(ac, av)
 			return (1);
 		}
 	}
+	nvram_disp_free();
 	return (0);
 }
 
