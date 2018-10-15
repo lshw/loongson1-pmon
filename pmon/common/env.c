@@ -314,32 +314,35 @@ unsetenv (pat)
 }
 long find_pmon_end(void)
 {
-  
 	char end_flag[18]="END_end_";
 	char *pmon;
-	unsigned long i;
-	pmon = (char *)malloc(0x80000);
-	spi_flash_read_area(0, pmon, 0x80000); //把pmon映射到内存
+	unsigned long i,i0,ret=-1;
 	for(i=0;i<8;i++)
 	end_flag[i+8]=end_flag[i];
-	end_flag[16]=0;
-	for(i=300000;i<0x7f000;i++) {
-	  if(strncmp(&pmon[i],end_flag,16)==0) {
-	  i=i+16;
-	  if(i!=(i&0xfff)) i=(i&0xff000)+0x1000; //对齐4k
-	  free(pmon);
-	  return i;
-	  }
-	}
-	free(pmon);
-	return -1;
+	end_flag[16]=0; //"END_end_END_end_"
+
+        pmon = (char *)malloc(0x1200);
+        for(i0=0x50000;i0<0x7e000;i0+=0x1000) {
+	        spi_flash_read_area(i0, pmon, 0x1200); //把pmon映射到内存
+	        for(i=0;i<0x1200;i++) {
+	                if(strncmp(&pmon[i],end_flag,16)==0) {
+	                        i=i+16;
+                                if(i<0x1000)
+                                        ret=i0+0x1000;
+                                else
+                                        ret=i0+0x2000;//对齐4k
+	                        }
+	               }
+                }
+        free(pmon);
+	return ret;
 }
-long pmonEnd=-1,pmonFreeSize;
 void
 envinit ()
 {
 	int i;
 	char buf[200];
+        long pmonEnd=-1,pmonFreeSize;
 #ifdef MTD_SPI_DATA
 #ifdef MTDPARTS
 	int ia,len;
