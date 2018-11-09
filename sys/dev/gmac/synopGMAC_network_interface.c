@@ -575,7 +575,7 @@ int synopGMAC_intr_handler(struct synopGMACNetworkAdapter * tp)
 	/* Optional hardware blocks, interrupts should be disabled */
 	if (dma_status_reg &
 		     (GmacPmtIntr | GmacMmcIntr | GmacLineIntfIntr)) {
-		TR("%s: unexpected status %08x\n", __func__, intr_status);
+		TR("%s: unexpected status %08x\n", __func__, dma_status_reg);
 		if(dma_status_reg & GmacPmtIntr){
 			synopGMAC_linux_powerup_mac(gmacdev);
 		}
