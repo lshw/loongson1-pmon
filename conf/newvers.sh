@@ -42,12 +42,12 @@ v=`cat version` u=${USER-root} d=`pwd` h=`hostname` t=`date +%Y-%m-%d\ %H:%M:%S\
 id=`basename ${d}`
 ost="PMON2000"
 osr="2.1"
-gitUrl="GitUrl:"`git remote get-url --push  origin`
+gitUrl="Git:"`git remote get-url --push  origin`
 gitLog=`git log -1`
 hashNumber=`git rev-parse --short HEAD`
-hashNumber="CommitId: "$hashNumber
-Author=`git log -1|grep ^Auth`
-Author="Commit"$Author
+hashNumber="Commit Id: "$hashNumber
+#Author=`git log -1|grep ^Auth`
+#Author="Commit"$Author"\n"
 commitDate=`git log -1 |grep ^Date |awk '{printf $2 " "$3" "$4" "$5" "$6}'`
 commitDate=`date +%Y-%m-%d\ %H:%M:%S --date="$commitDate"`
 tz=`git log -1 |grep ^Date |awk '{printf $7}'`
@@ -59,7 +59,7 @@ char osrelease[] = "${osr}";
 char osversion[] = "${id}#${v}";
 char sccs[8] = { ' ', ' ', ' ', ' ', '@', '(', '#', ')' };
 char vers[] =
-    "${hashNumber}\\n${gitUrl}\\n${Author}\\n${commitDate}\\n${makeTime}";
+    "${gitUrl}\\n${hashNumber}\\n${Author}${commitDate}\\n${makeTime}";
 eof
 
 cat >vers.h <<eof

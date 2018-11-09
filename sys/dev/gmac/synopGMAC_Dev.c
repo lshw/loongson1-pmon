@@ -997,10 +997,8 @@ s32 synopGMAC_mac_init(synopGMACdevice * gmacdev)
 {
 	u32 PHYreg;
 
-	printf("=====>enter %s:%d\n", __func__, __LINE__);
 
 	if(gmacdev->DuplexMode == FULLDUPLEX){
-		printf("=====>full duplex\n");
 
 		synopGMAC_wd_enable(gmacdev);
 //		synopGMAC_jab_enable(gmacdev);
@@ -1018,10 +1016,8 @@ s32 synopGMAC_mac_init(synopGMACdevice * gmacdev)
 		synopGMAC_rx_enable(gmacdev);
 
 		if(gmacdev->Speed == SPEED1000) {
-			printf("=====>1000M\n");
 			synopGMAC_select_gmii(gmacdev);
 		} else {
-			printf("=====>100M\n");
 			synopGMAC_select_mii(gmacdev);
 			if(gmacdev->Speed == SPEED100)
 				synopGMACSetBits(gmacdev->MacBase, GmacConfig, GmacFESpeed100);
@@ -1051,7 +1047,6 @@ s32 synopGMAC_mac_init(synopGMACdevice * gmacdev)
 #endif
 	}
 	else{//for Half Duplex configuration
-		printf("====>half duplex\n");
 
 		synopGMAC_wd_enable(gmacdev );
 		synopGMAC_jab_enable(gmacdev);
@@ -1150,7 +1145,7 @@ s32 synopGMAC_get_mac_addr(synopGMACdevice *gmacdev, u32 MacHigh, u32 MacLow, u8
 	MacAddr[1] = (data >> 8 ) & 0xff;
 	MacAddr[0] = (data )      & 0xff;
 
-	printf("MacAddr = 0x%x\t0x%x\t0x%x\t0x%x\t0x%x\t0x%x\n",MacAddr[0],MacAddr[1],MacAddr[2],MacAddr[3],MacAddr[4],MacAddr[5]);
+	printf("MacAddr = %02X:%02X:%02X:%02X:%02X:%02X\n",MacAddr[0],MacAddr[1],MacAddr[2],MacAddr[3],MacAddr[4],MacAddr[5]);
 
 	return 0;
 }
@@ -1193,7 +1188,6 @@ s32 synopGMAC_attach(synopGMACdevice *gmacdev, u64 macBase, u64 dmaBase, u32 phy
 	}
 
 	gmacdev->PhyBase = i;
-	printf("phy base = %d\n", gmacdev->PhyBase);
 	/* Program/flash in the station/IP's Mac address */
 	synopGMAC_set_mac_addr(gmacdev, GmacAddr0High, GmacAddr0Low, mac_addr); 
 

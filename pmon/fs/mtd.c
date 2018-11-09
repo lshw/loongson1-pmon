@@ -348,7 +348,7 @@ int add_mtd_device(struct mtd_info *mtd, int offset, int size, char *name)
 	struct mtdfile *rmp;
 	int len = sizeof(struct mtdfile);
 
-	printf("Creat MTD partitions on \"%s\": name=\"%s\" offset=%dByte size=%dByte\n", mtd->name, name, offset, size);
+	printf("Creat MTD partitions on \"%s\": name=\"mtd%d(%s)\" offset=%dByte size=%dByte\n", mtd->name, mtdidx, name, offset, size);
 
 	if (name)
 		len += strlen(name);
