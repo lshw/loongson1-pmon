@@ -48,5 +48,5 @@ cd ..
 
 commitDate=`git log -1 |grep ^Date |awk '{printf $2 " "$3" "$4" "$5" "$6}'`
 commitDate=`date +%Y%m%d --date="$commitDate"`
-tar cvfz pmon_openloongson_${commitDate}.tar.gz  install.ls install_ram.bin pmon_openloongson.bin
+tar cvfz pmon_openloongson_${commitDate}.tar.gz readme.html install.ls install_ram.bin pmon_openloongson.bin
 ls -l install_ram.bin pmon_openloongson.bin pmon_openloongson_${commitDate}.tar.gz
