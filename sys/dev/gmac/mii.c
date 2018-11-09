@@ -17,6 +17,22 @@ static inline unsigned int mii_nway_result (unsigned int negotiated)
 	return ret;
 }
 
+static void mii_power_up(struct mii_if_info *mii){
+  unsigned int reg;
+  reg=mii->mdio_read(mii->dev, mii->phy_id, MII_BMCR);
+  mii->mdio_write(mii->dev, mii->phy_id, MII_BMCR,reg & ~BMCR_PDOWN);
+}
+
+static int mii_regs_dump(struct mii_if_info *mii)
+{
+  unsigned int reg,i;
+  printf("mii regs: ");
+  for(i=0;i<0x1c;i++) {
+    reg=mii->mdio_read(mii->dev, mii->phy_id, i);
+    printf(" %08x",reg);
+  }
+  printf("\r\n");
+}
 static int mii_check_gmii_support(struct mii_if_info *mii)
 {
 	int reg;

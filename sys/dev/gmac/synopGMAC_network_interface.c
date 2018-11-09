@@ -98,6 +98,8 @@ s32 synopGMAC_check_phy_init (synopGMACPciNetworkAdapter *adapter)
 {	
 	struct ethtool_cmd cmd;
 	synopGMACdevice *gmacdev = adapter->synopGMACdev;
+         //mii_regs_dump(&adapter->mii);
+         mii_power_up(&adapter->mii);
 
 	if(!mii_link_ok(&adapter->mii)) {
 		gmacdev->DuplexMode = FULLDUPLEX;
