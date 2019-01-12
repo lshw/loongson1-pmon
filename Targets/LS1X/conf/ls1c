@@ -194,7 +194,7 @@ select		mod_usb_storage
 #select		mod_usb_uhci
 select		mod_usb_ohci
 #select		mod_usb_ehci
-#select		mod_usb_kbd
+select		mod_usb_kbd
 
 #### Pseudo devices
 pseudo-device	loop	1	# network loopback
