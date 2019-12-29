@@ -27,21 +27,21 @@ option		CPU_NAME="\"Loongson 1B\""
 option		MIPS
 option		INET
 
-#select		mod_flash_amd		# AMD flash device programming
-#select		mod_flash_intel		# intel flash device programming
+select		mod_flash_amd		# AMD flash device programming
+select		mod_flash_intel		# intel flash device programming
 select		mod_flash_sst		# intel flash device programming
 select		mod_debugger		# Debugging module
 select		mod_symbols		# Symbol table handling
 select		mod_s3load		# Srecord loading
-select		mod_fastload		# LSI Fastload
+#select		mod_fastload		# LSI Fastload
 select		mod_elfload		# ELF loading
 select		elf32only
 
 #
 # Command selection. Selects pmon commands
 #
-select		cmd_newmt
-select		cmd_setup
+#select		cmd_newmt
+#select		cmd_setup
 select		mod_display
 #select		cmd_about		# Display info about PMON
 select		cmd_boot		# Boot wrapper
@@ -55,20 +55,20 @@ select		cmd_flash		# Flash programming cmds
 select		cmd_hist		# Command history
 select		cmd_ifaddr		# Interface address command
 select		cmd_l			# Disassemble
-select		cmd_mem			# Memory manipulation commands
+#select		cmd_mem			# Memory manipulation commands
 select		cmd_more		# More paginator
-select		cmd_mt			# Simple memory test command
+#select		cmd_mt			# Simple memory test command
 select		cmd_misc		# Reboot & Flush etc.
 #select		cmd_stty		# TTY setings command
 select		cmd_tr			# Host port-through command
 select		cmd_devls		# Device list
 select		cmd_set			# As cmd_env but not req. cmd_hist
-select		cmd_testdisk
-select		cmd_test
+#select		cmd_testdisk
+#select		cmd_test
 #select		cmd_testfire
-select		cmd_cat
 select		cmd_xyzmodem
 select		pmon_zmodem_rz
+select		cmd_cat
 #
 select		cmd_shell		# Shell commands, vers, help, eval
 #
@@ -175,9 +175,12 @@ option		SDCARD_CS=2			#片选
 option		SDCARD_DETECT=41		#插入侦测 gpio41
 option		SDCARD_CLK=25000000	#25MHz
 
-#option		WRITE_ROM_LED=1 #devcp写mtd时LED6闪动 GPIO1
+#option		WRITE_ROM_LED=1 #devcp写mtd时闪动
 #option		UPDATE_KEY=60   #jp22的2-3短接 进入强制刷机
 
+select		mod_sdio
+option		MTDPARTS    #使用mtdparts env进行mtd分区设置
+option		MTD_SPI_DATA #把spi中除去pmon后剩余的空间，建立一个mtd4(spi-data),大约140k
 #### USB
 #uhci*		at pci? dev ? function ?
 #ohci0		at pci? dev ? function ?
@@ -209,8 +212,8 @@ option		INPUT_FROM_BOTH		#打印信息同时输出到UART(串口)和VGA控制台
 option		OUTPUT_TO_BOTH		#信息可以通过UART(串口)或VGA控制台(键盘输入设备)输入
 
 select		nand
-#select		nor_flash			#如果使用nor flash分区需要该选项
-#option		NORFLASH_PARTITION	#nor flash(spi flash)分区
+select		nor_flash			#如果使用nor flash分区需要该选项
+option		NORFLASH_PARTITION	#nor flash(spi flash)分区
 #option		W25X64
 #select		loop
 #select		raw_ether
