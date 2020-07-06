@@ -634,7 +634,6 @@ cpu_win_fixup:
 	sw a2, 0x0(a0)
 
 #elif defined(LS1CSOC)
-	li msize, MEM_SIZE
 #if !defined(NAND_BOOT_EN)
 #include "sdram_cfg.S"
 
@@ -651,8 +650,36 @@ cpu_win_fixup:
 	sw		a1, 0x0(t1)
 	li		a1, SD_PARA1_EN
 	sw		a1, 0x4(t1)
-//	DELAY(100)
+	DELAY(300) // Wait for SDRAM init
 #endif
+
+	/*
+	 * Auto msize check by flygoat
+	 * Register usage:
+	 *	msize: holding test address
+	 *	t1: holding test magic
+	 *	t2: holding read back data
+	 *      t3: end of low_mem
+	 */
+
+#define MSIZE_STEP 0x100000 // 1MB
+
+	li	msize, 0xa0000000 // BASE of Kseg1
+	li	t1, 0xdeadbeef // test magic
+	li	t3, 0xb0000000 // end of low_mem
+
+msizetest_continue:
+	add     msize, msize, MSIZE_STEP // forward step
+	sw	t1, 0x0(msize) // Store
+	lw	t2, 0x0(msize) // Readback
+	beq	msize, t3, msizetest_out // if reach end of low_mem, exit
+	nop
+	beq	t1, t2, msizetest_continue // if addr can hold data, continue
+	nop
+
+msizetest_out:
+	sub	msize, msize, 0xa0000000 // sub Kseg1 base to get actual size
+
 #endif
 /**************************************CACHE*****************************/
 
