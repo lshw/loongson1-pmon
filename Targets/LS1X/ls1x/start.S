@@ -97,6 +97,9 @@
 #define dbg			s5
 #define sdCfg		s6
 
+#define initstate	k0	/* High 32bit magic for step, low for internal */
+#define		INIT_STATE_DDR 0xdead0000
+
 #define CP0_CONFIG $16
 #define CP0_TAGLO  $28
 #define CP0_TAGHI  $29
@@ -125,7 +128,7 @@ start:
 	.globl	stack
 stack = start - 0x4000		/* Place PMON stack below PMON start in RAM */
 
-/* NOTE!! Not more that 16 instructions here!!! Right now it's FULL! */
+/* NOTE!! Not more that 16 instructions here!!! */
 	mtc0	zero, COP_0_STATUS_REG
 	mtc0	zero, COP_0_CAUSE_REG
 	li	t0, SR_BOOT_EXC_VEC	/* Exception to Boostrap Location */
@@ -261,6 +264,21 @@ exc_common:
 	mfc0	a0, COP_0_BAD_VADDR
 	bal	hexserial
 	nop
+
+#if defined(LS1CSOC)
+	move            t0, initstate
+	and		t0, t0, 0xffff0000
+	li		t1, INIT_STATE_DDR
+	bne		t1, t0, 1f
+	nop
+	la		t0, sdram_init_fault_handler
+	mtc0	        t0, COP_0_EXC_PC
+	DELAY(8) // SSNOP?
+	eret
+	nop
+#endif
+
+	PRINTSTR("\r\nPANIC LOOP\n")
 
 //	bal mydebug_main
 	nop
@@ -636,49 +654,38 @@ cpu_win_fixup:
 #elif defined(LS1CSOC)
 #if !defined(NAND_BOOT_EN)
 #include "sdram_cfg.S"
+#include "sdram_tester.S"
 
-	li  	t1, 0xbfd00410
-	li		a1, SD_PARA0
-	sw		a1, 0x0(t1)
-	li		a1, SD_PARA1
-	sw		a1, 0x4(t1)
-	li		a1, SD_PARA0
-	sw		a1, 0x0(t1)
-	li		a1, SD_PARA1
-	sw		a1, 0x4(t1)
-	li		a1, SD_PARA0
-	sw		a1, 0x0(t1)
-	li		a1, SD_PARA1_EN
-	sw		a1, 0x4(t1)
-	DELAY(300) // Wait for SDRAM init
+	b	sdram_init_start
+
+sdram_init_fault_handler:
+	PRINTSTR("SDRAM FAULT 0\n")
+	SDRAM_INIT_FAULT_ROUND(0)
+	PRINTSTR("SDRAM FAULT 1\n")
+	SDRAM_INIT_FAULT_ROUND(1)
+1:
+	b   1b
+	nop
+
+sdram_init_start:
+	PRINTSTR("SDRAM INIT ROUND 0\n")
+	SDRAM_INIT_ROUND(0, SD_PARA0_64M, SD_PARA1, 0x04000000)
+	PRINTSTR("SDRAM INIT ROUND 1\n")
+	SDRAM_INIT_ROUND(1, SD_PARA0_32M, SD_PARA1, 0x02000000)
+
+	PRINTSTR("SDRAM INIT ALL FAULT\n")
+1:
+	b   1b
+	nop
 #endif
 
-	/*
-	 * Auto msize check by flygoat
-	 * Register usage:
-	 *	msize: holding test address
-	 *	t1: holding test magic
-	 *	t2: holding read back data
-	 *      t3: end of low_mem
-	 */
-
-#define MSIZE_STEP 0x100000 // 1MB
-
-	li	msize, 0xa0000000 // BASE of Kseg1
-	li	t1, 0xdeadbeef // test magic
-	li	t3, 0xb0000000 // end of low_mem
-
-msizetest_continue:
-	add     msize, msize, MSIZE_STEP // forward step
-	sw	t1, 0x0(msize) // Store
-	lw	t2, 0x0(msize) // Readback
-	beq	msize, t3, msizetest_out // if reach end of low_mem, exit
+sdram_init_done:
+	move	initstate, zero
+	PRINTSTR("SDRAM INIT SUCCESS, msize: ")
+	move    a0, msize
+	bal	hexserial
 	nop
-	beq	t1, t2, msizetest_continue // if addr can hold data, continue
-	nop
-
-msizetest_out:
-	sub	msize, msize, 0xa0000000 // sub Kseg1 base to get actual size
+	PRINTSTR("\n")
 
 #endif
 /**************************************CACHE*****************************/

@@ -31,19 +31,17 @@
 #define	HANG_UP_N	0x0
 #define	CFG_VALID	0x1
 
-#if (MEM_SIZE == 0x02000000)	/* mem = 32MByte */
-#define	SD_PARA0	(0x7f<<25 | \
+#define	SD_PARA0_32M	(0x7f<<25 | \
 					(TRAS << 21) | \
 					(TRFC << 17) | (TRP << 14) | (TCL << 11) | \
 					(TRCD << 8) | (WIDTH_16 << 6) | (COL_512 << 3) | \
 					ROW_8K)
-#else /* mem > 32MByte */
-#define	SD_PARA0	(0x7f<<25 | \
+
+#define	SD_PARA0_64M	(0x7f<<25 | \
 					(TRAS << 21) | \
 					(TRFC << 17) | (TRP << 14) | (TCL << 11) | \
 					(TRCD << 8) | (WIDTH_16 << 6) | (COL_1K << 3) | \
 					ROW_8K)
-#endif
 
 #define	SD_PARA1	((HANG_UP_N << 8) | (DEF_SEL_N << 7) | (TWR << 5) | (TREF >> 7))
 
