@@ -240,9 +240,27 @@ ext_map_and_reboot:
 	lw	t1, 0x0(t0)
 	ori t1, t1, 0x2000
 	sw	t1, 0x0(t0)
-	
+
 	.align	8			/* bfc00500 */
 exc_common:
+#if defined(LS1CSOC)
+        move            t0, initstate
+        and             t0, t0, 0xffff0000
+        li              t1, INIT_STATE_DDR
+        bne             t1, t0, dump_regs
+        nop
+	PRINTSTR("SDRAM MEMTEST EXC HANDLER: ")
+        la              a0, sdram_init_fault_handler
+        addu            a0, a0, s0 // Get actual address in ROM by s0 offset
+        mtc0            a0, COP_0_EXC_PC
+	bal             hexserial
+	nop
+	PRINTSTR("\n")
+        eret
+	nop
+#endif
+
+dump_regs:
 	PRINTSTR("\r\nCAUSE=")
 	mfc0	a0, COP_0_CAUSE_REG
 	bal	hexserial
@@ -264,19 +282,6 @@ exc_common:
 	mfc0	a0, COP_0_BAD_VADDR
 	bal	hexserial
 	nop
-
-#if defined(LS1CSOC)
-	move            t0, initstate
-	and		t0, t0, 0xffff0000
-	li		t1, INIT_STATE_DDR
-	bne		t1, t0, 1f
-	nop
-	la		t0, sdram_init_fault_handler
-	mtc0	        t0, COP_0_EXC_PC
-	DELAY(8) // SSNOP?
-	eret
-	nop
-#endif
 
 	PRINTSTR("\r\nPANIC LOOP\n")
 
@@ -663,6 +668,7 @@ sdram_init_fault_handler:
 	SDRAM_INIT_FAULT_ROUND(0)
 	PRINTSTR("SDRAM FAULT 1\n")
 	SDRAM_INIT_FAULT_ROUND(1)
+        PRINTSTR("Unexpected SDRAM FAULT\n")
 1:
 	b   1b
 	nop
@@ -680,7 +686,7 @@ sdram_init_start:
 #endif
 
 sdram_init_done:
-	move	initstate, zero
+//	move	initstate, zero /* FIXME: Should go to next phrase */
 	PRINTSTR("SDRAM INIT SUCCESS, msize: ")
 	move    a0, msize
 	bal	hexserial

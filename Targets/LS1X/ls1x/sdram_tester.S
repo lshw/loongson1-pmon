@@ -10,12 +10,12 @@
  *      t3: end of posible mem
  */
 
-#define MSIZE_STEP 0x100000 // 1MB
+#define MSIZE_STEP 0x1000
 
 #define SDRAM_INIT_FAULT_ROUND(round) \
 	li   t1, (INIT_STATE_DDR + round) ; \
 	beq  initstate, t1, sdram_init_next_##round ; \
-	nop \
+	nop
 
 #define SDRAM_INIT_ROUND(round, para0, para1, size) \
 sdram_init_start_##round:                \
