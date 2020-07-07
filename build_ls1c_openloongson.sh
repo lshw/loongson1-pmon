@@ -45,8 +45,12 @@ cp gzrom.bin ../pmon_ls1c_openloongson.bin
 make cfg all tgt=ram CROSS_COMPILE=mipsel-linux- LANG=C
 cp gzram ../install.1c
 cd ..
+cd zloader.ls1c.openloongson_64m
+make cfg all tgt=rom CROSS_COMPILE=mipsel-linux- LANG=C
+cp gzrom.bin ../pmon_ls1c_openloongson_64m.bin
+cd ..
 
 commitDate=`git log -1 |grep ^Date |awk '{printf $2 " "$3" "$4" "$5" "$6}'`
 commitDate=`date +%Y%m%d --date="$commitDate"`
-tar cvfz pmon_ls1c_openloongson_${commitDate}.tar.gz readme.md install.1c pmon_ls1c_openloongson.bin Targets/LS1X/conf/ls1c
-ls -l install_ram.bin pmon_ls1c_openloongson.bin pmon_ls1c_openloongson_${commitDate}.tar.gz
+tar cvfz pmon_ls1c_openloongson_${commitDate}.tar.gz flashrom.sh readme.md install.1c pmon_ls1c_openloongson*.bin Targets/LS1X/conf/ls1c Targets/LS1X/conf/ls1c_64m
+ls -l install.1c pmon_ls1c_openloongson*.bin pmon_ls1c_openloongson_${commitDate}.tar.gz

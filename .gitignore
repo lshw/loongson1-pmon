@@ -9,6 +9,9 @@
 #!.config
 *.o
 #*.a
+*.diff
+*.patch
+*.tar.gz
 Targets/LS1X/compile
 Targets/LS1X/conf/ld.script
 tools/pmoncfg/gram.h
