@@ -12,6 +12,21 @@
 
 #define MSIZE_STEP 0x1000
 
+#define SDRAM_SYS_RESET \
+        li      t1, 0xbfd00410                ; \
+	li	t0, 0x80000080                ; \
+        sw      t0, 0x4(t1)                   ; \
+        li      t0, 0x00143803                ; \
+        sw      t0, 0x0(t1)                   ; \
+	li	t1, 0xbfd00420                ; \
+	lw	t0, 0x0(t1)                   ; \
+        or      t0, t0, (1 << 3)              ; \
+        sw      t0, 0x0(t1)                   ; \
+	DELAY(300)                            ; \
+        lw      t0, 0x0(t1)                   ; \
+	and     t0, t0, ~(1 << 3)             ; \
+        sw      t0, 0x0(t1)
+
 #define SDRAM_INIT_FAULT_ROUND(round) \
 	li   t1, (INIT_STATE_DDR + round) ; \
 	beq  initstate, t1, sdram_init_next_##round ; \

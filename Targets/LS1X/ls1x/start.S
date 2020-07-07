@@ -664,6 +664,7 @@ cpu_win_fixup:
 	b	sdram_init_start
 
 sdram_init_fault_handler:
+	SDRAM_SYS_RESET
 	PRINTSTR("SDRAM FAULT 0\n")
 	SDRAM_INIT_FAULT_ROUND(0)
 	PRINTSTR("SDRAM FAULT 1\n")
