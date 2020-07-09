@@ -160,6 +160,10 @@ extern char MipsException[], MipsExceptionEnd[];
 
 unsigned char hwethadr[6];
 static unsigned int pll_reg0, pll_reg1;
+#if defined(AUTO_MEM_SIZE)
+#include "sdram_cfg.S"
+static unsigned char ram_csize;
+#endif
 #if NMOD_FRAMEBUFFER > 0
 static unsigned int xres, yres, depth;
 #endif
@@ -914,7 +918,28 @@ void tgt_mapenv(int (*func) __P((char *, char *)))
 	sprintf(env, "%02x:%02x:%02x:%02x:%02x:%02x", hwethadr[0], hwethadr[1],
 	    hwethadr[2], hwethadr[3], hwethadr[4], hwethadr[5]);
 	(*func)("ethaddr", env);
-
+#if defined(AUTO_MEM_SIZE)
+        /* 从nvram 生成环境变量字符串 */
+        ram_csize = nvram[RAM_CSIZE_OFFS];
+	switch(ram_csize) {
+	  case COL_256:
+	    (*func)("ram_csize","256");
+	    break;
+	  case COL_512:
+	    (*func)("ram_csize","512");
+	    break;
+	  case COL_2K:
+	    (*func)("ram_csize","2K");
+	    break;
+	  case COL_4K:
+	    (*func)("ram_csize","4K");
+	    break;
+//        case COL_1K:
+	  default:
+	    (*func)("ram_csize","1K");
+	    break;
+	}
+#endif
 #if defined(LS1ASOC)
 	bcopy(&nvram[PLL_OFFS], &pll_reg0, 4);
 	if ((pll_reg0 >> 16) != 0x0000)
@@ -1144,12 +1169,54 @@ int tgt_setenv(char *name, char *value)
 			gethex(&v, s, 2);
 			hwethadr[i] = v;
 			s += 3;         /* Don't get to fancy here :-) */
-		} 
-	} 
+		}
+	}
 	else if(strcmp("pll_reg0", name) == 0)
 		pll_reg0 = strtoul(value, 0, 0);
 	else if(strcmp("pll_reg1", name) == 0)
 		pll_reg1 = strtoul(value, 0, 0);
+#if defined(AUTO_MEM_SIZE)
+	else if(strcmp("ram_csize", name) == 0) {
+	  if(strcmp("256",value) == 0)
+	    ram_csize = COL_256;
+	  else if(strcmp("512",value) == 0)
+	    ram_csize = COL_512;
+	  else if(strcmp("2K",value) == 0)
+	    ram_csize = COL_2K;
+	  else if(strcmp("2k",value) == 0)
+	    ram_csize = COL_2K;
+	  else if(strcmp("4K",value) == 0)
+	    ram_csize = COL_4K;
+	  else if(strcmp("4k",value) == 0)
+	    ram_csize = COL_4K;
+	  else if(strcmp("0",value) == 0)
+	    ram_csize = COL_4K;
+	  else if(strcmp("0K",value) == 0)
+	    ram_csize = COL_4K;
+	  else if(strcmp("0k",value) == 0)
+	    ram_csize = COL_4K;
+	  else
+	    ram_csize = COL_1K;
+          switch(ram_csize) {
+            case COL_256:
+              strcpy(value,"256");
+              break;
+            case COL_512:
+              strcpy(value,"512");
+              break;
+            case COL_2K:
+              strcpy(value,"2K");
+              break;
+            case COL_4K:
+              strcpy(value,"4K");
+              break;
+            //case COL_1K:
+            default:
+              strcpy(value,"1K");
+              break;
+          }
+	}
+#endif
 #if NMOD_FRAMEBUFFER > 0
 	else if(strcmp("xres", name) == 0)
 		xres = strtoul(value, 0, 0);
@@ -1211,6 +1278,9 @@ int tgt_setenv(char *name, char *value)
 	bcopy(hwethadr, &nvramsecbuf[ETHER_OFFS], 6);
 	bcopy(&pll_reg0, &nvramsecbuf[PLL_OFFS], 4);
 	bcopy(&pll_reg1, &nvramsecbuf[PLL_OFFS + 4], 4);
+#if defined(AUTO_MEM_SIZE)
+        nvramsecbuf[RAM_CSIZE_OFFS] = ram_csize;
+#endif
 #if NMOD_FRAMEBUFFER > 0
 	bcopy(&xres, &nvramsecbuf[XRES_OFFS], 2);
 	bcopy(&yres, &nvramsecbuf[YRES_OFFS], 2);
