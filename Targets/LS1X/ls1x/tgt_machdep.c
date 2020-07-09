@@ -845,7 +845,7 @@ void tgt_netreset(void)
 void tgt_mapenv(int (*func) __P((char *, char *)))
 {
 	char *ep;
-	char env[512];
+	char env[4096];
 	char *nvram;
 	int i;
 

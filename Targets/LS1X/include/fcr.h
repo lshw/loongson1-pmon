@@ -55,6 +55,7 @@ extern char *heaptop;
 #	define XRES_OFFS		(NVRAM_SECSIZE-18)
 #	define YRES_OFFS		(NVRAM_SECSIZE-20)
 #	define DEPTH_OFFS		(NVRAM_SECSIZE-22)
+#	define RAM_CSIZE_OFFS		(NVRAM_SECSIZE-24) /*ram芯片的CSIZE 0x7-256/0-512/0x1-1024/0x2-2048/0x3-4096*/
 #else	/* Use spi-flash */
 #	define NVRAM_SECSIZE		4096	/* Helper */
 #	define NVRAM_SIZE		(NVRAM_SECSIZE-30)
@@ -67,6 +68,7 @@ extern char *heaptop;
 #	define XRES_OFFS		(NVRAM_SECSIZE-18)
 #	define YRES_OFFS		(NVRAM_SECSIZE-20)
 #	define DEPTH_OFFS		(NVRAM_SECSIZE-22)
+#	define RAM_CSIZE_OFFS		(NVRAM_SECSIZE-24) /*ram芯片的CSIZE 0x7-256/0-512/0x1-1024/0x2-2048/0x3-4096*/
 #endif
 
 /*********************************************************************/
