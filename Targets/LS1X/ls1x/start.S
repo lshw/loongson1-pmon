@@ -638,19 +638,46 @@ cpu_win_fixup:
 #if !defined(NAND_BOOT_EN)
 #include "sdram_cfg.S"
 
+#if defined(AUTO_MEM_SIZE)	/* 内存大小自动诊断 */
+	li	v0, 0xbfc00000+(NVRAM_POS+RAM_CSIZE_OFFS)
+        lb	t1, (v0)
+        li	t0, COL_256
+        beq	t0, t1, 2f
+	nop
+        li	t0, COL_512
+        beq	t0, t1, 2f
+	nop
+        li	t0,COL_1K
+        beq	t0, t1, 2f
+	nop
+        li	t0,COL_2K
+        beq	t0, t1, 2f
+	nop
+        li	t0,COL_4K
+        beq	t0, t1, 2f
+	nop
+	li	t0,COL_512
+2:
+	li	t1,SD_PARA0 & 0b1111111111000111
+        sll	t0,t0,3
+	or	a0,t0,t1
+#else
+	move	a0, SD_PART0
+#endif  //AUTO_MEM_SIZE
+	li	a1, SD_PARA1
 	li  	t1, 0xbfd00410
-	li		a1, SD_PARA0
-	sw		a1, 0x0(t1)
-	li		a1, SD_PARA1
-	sw		a1, 0x4(t1)
-	li		a1, SD_PARA0
-	sw		a1, 0x0(t1)
-	li		a1, SD_PARA1
-	sw		a1, 0x4(t1)
-	li		a1, SD_PARA0
-	sw		a1, 0x0(t1)
-	li		a1, SD_PARA1_EN
-	sw		a1, 0x4(t1)
+	sw	a0, 0x0(t1)
+	sw	a1, 0x4(t1)
+	sw	a0, 0x0(t1)
+	sw	a1, 0x4(t1)
+	sw	a0, 0x0(t1)
+	li	a1, SD_PARA1_EN
+	sw	a1, 0x4(t1)
+//	PRINTSTR("\r\nSD_PARA0=")
+//	li  	t1, 0xbfd00410
+//	lw	a0, 0x0(t1)
+//	bal	hexserial
+//	nop
 //	DELAY(100)
 #endif
 #endif
