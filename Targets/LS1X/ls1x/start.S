@@ -638,7 +638,7 @@ cpu_win_fixup:
 #if !defined(NAND_BOOT_EN)
 #include "sdram_cfg.S"
 
-#if defined(AUTO_MEM_SIZE)	/* 内存大小自动诊断 */
+#if (MEM_SIZE == 0)	/* 内存大小自动诊断 */
 	li	v0, 0xbfc00000+(NVRAM_POS+RAM_CSIZE_OFFS)
         lb	t1, (v0)
         li	t0, COL_256
@@ -663,7 +663,7 @@ cpu_win_fixup:
 	or	a0,t0,t1
 #else
 	move	a0, SD_PART0
-#endif  //AUTO_MEM_SIZE
+#endif  //MEM_SIZE == 0
 	li	a1, SD_PARA1
 	li  	t1, 0xbfd00410
 	sw	a0, 0x0(t1)
@@ -680,7 +680,7 @@ cpu_win_fixup:
 //	nop
 //	DELAY(100)
 
-#if defined(AUTO_MEM_SIZE)	/* 内存大小自动诊断 */
+#if (MEM_SIZE == 0)	/* 内存大小自动诊断 */
 	li	msize, 0xa0000000
 	move	t4, msize
 	sw	zero, (t4)
@@ -703,7 +703,7 @@ msizetest_out:
 //        move	a0, msize
 //	bal	hexserial
 
-#endif  //AUTO_MEM_SIZE
+#endif  //MEM_SIZE == 0
 
 #endif
 #endif

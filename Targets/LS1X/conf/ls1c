@@ -85,8 +85,7 @@ option		CPU_DIV=2			# LS1C的CPU分频
 option		SDRAM_DIV=SDRAM_DIV_2	# LS1C的SDRAM分频
 #ls1c300b，设置sdram cs1复用关系，开发板使用ejtag_sel gpio_0引脚(第五复用)作为第二片sdram的片选
 #注意sw2拨码开关的设置，使用ejtag烧录pmon时需要调整拨码开关，烧录完再调整回来
-option		MEM_SIZE=0x04000000	# 32MB 定义内存大小
-option		AUTO_MEM_SIZE		#自动识别内存大小
+option		MEM_SIZE=0x00000000	# 定义内存大小0/32M/64M,0为自动测试大小
 											# 请确保内存配置正确，内存工作不正常会导致系统莫名其妙的问题
 option		SDRAM_USE_CS1  #ls1c300b
 
