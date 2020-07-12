@@ -679,6 +679,32 @@ cpu_win_fixup:
 //	bal	hexserial
 //	nop
 //	DELAY(100)
+
+#if defined(AUTO_MEM_SIZE)	/* 内存大小自动诊断 */
+	li	msize, 0xa0000000
+	move	t4, msize
+	sw	zero, (t4)
+	li	t1, 0xdeadbeef
+	li	t3, 0xa0000000 + 0x10000000 //最大检查到256M
+msizetest_continue:
+	add	msize, msize, 0x100000  //步进1M
+	sw	t1, (msize)
+	lw	t2, (msize)
+	beq	msize, t3, msizetest_out
+	nop
+	bne	t1, t2, msizetest_out
+	nop
+	lw	t2, (t4)
+        bne	t1, t2, msizetest_continue //如果ram[0]也被修改了， 那么就是循环了
+	nop
+msizetest_out:
+	sub	msize, msize, 0xa0000000
+//	PRINTSTR("\r\nmsize=0x")
+//        move	a0, msize
+//	bal	hexserial
+
+#endif  //AUTO_MEM_SIZE
+
 #endif
 #endif
 /**************************************CACHE*****************************/
