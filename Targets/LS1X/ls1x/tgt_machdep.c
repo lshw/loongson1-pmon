@@ -938,7 +938,7 @@ void tgt_mapenv(int (*func) __P((char *, char *)))
 	    (*func)("ram_csize","4K");
 	    break;
 	  default:
-	    (*func)("ram_csize","512");
+	    (*func)("ram_csize","4K");
 	    break;
 	}
 #endif //MEMSIZE == 0
@@ -1198,7 +1198,7 @@ int tgt_setenv(char *name, char *value)
 	  else if(strcmp("0k",value) == 0)
 	    ram_csize = COL_4K;
 	  else
-	    ram_csize = COL_1K;
+	    ram_csize = COL_4K;
           switch(ram_csize) {
             case COL_256:
               strcpy(value,"256");
@@ -1216,7 +1216,7 @@ int tgt_setenv(char *name, char *value)
               strcpy(value,"4K");
               break;
             default:
-              strcpy(value,"512");
+              strcpy(value,"4K");
               break;
           }
 	}
