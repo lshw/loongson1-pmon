@@ -1183,20 +1183,12 @@ int tgt_setenv(char *name, char *value)
 	    ram_csize = COL_256;
 	  else if(strcmp("512",value) == 0)
 	    ram_csize = COL_512;
+	  else if(strcmp("1K",value) == 0)
+	    ram_csize = COL_1K;
 	  else if(strcmp("2K",value) == 0)
 	    ram_csize = COL_2K;
 	  else if(strcmp("2k",value) == 0)
 	    ram_csize = COL_2K;
-	  else if(strcmp("4K",value) == 0)
-	    ram_csize = COL_4K;
-	  else if(strcmp("4k",value) == 0)
-	    ram_csize = COL_4K;
-	  else if(strcmp("0",value) == 0)
-	    ram_csize = COL_4K;
-	  else if(strcmp("0K",value) == 0)
-	    ram_csize = COL_4K;
-	  else if(strcmp("0k",value) == 0)
-	    ram_csize = COL_4K;
 	  else
 	    ram_csize = COL_4K;
           switch(ram_csize) {
