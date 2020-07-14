@@ -162,7 +162,7 @@ unsigned char hwethadr[6];
 static unsigned int pll_reg0, pll_reg1;
 #if (MEM_SIZE == 0)
 #include "sdram_cfg.S"
-static unsigned char ram_csize;
+static unsigned char ram_csize, now_csize;
 #endif
 #if NMOD_FRAMEBUFFER > 0
 static unsigned int xres, yres, depth;
@@ -921,25 +921,29 @@ void tgt_mapenv(int (*func) __P((char *, char *)))
 #if (MEM_SIZE == 0)
         /* 从nvram 生成环境变量字符串 */
         ram_csize = nvram[RAM_CSIZE_OFFS];
-	switch(ram_csize) {
+	now_csize = (inl(0xbfd00410) >> 3) & 0b111; //sdram.csize
+	switch(now_csize) {
 	  case COL_256:
-	    (*func)("ram_csize","256");
-	    break;
+		strcpy(env,"256");
+		break;
 	  case COL_512:
-	    (*func)("ram_csize","512");
-	    break;
+		strcpy(env,"512");
+		break;
          case COL_1K:
-	    (*func)("ram_csize","1K");
-	    break;
+		strcpy(env,"1K");
+		break;
 	  case COL_2K:
-	    (*func)("ram_csize","2K");
-	    break;
+		strcpy(env,"2K");
+		break;
 	  case COL_4K:
-	    (*func)("ram_csize","4K");
-	    break;
 	  default:
-	    (*func)("ram_csize","4K");
-	    break;
+		strcpy(env,"4K");
+		break;
+	}
+	(*func)("ram_csize",env);
+	if(now_csize != ram_csize) {
+		ram_csize = now_csize;
+		tgt_setenv("ram_csize", env);
 	}
 #endif //MEMSIZE == 0
 #if defined(LS1ASOC)
