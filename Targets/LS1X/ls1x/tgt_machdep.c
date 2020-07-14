@@ -915,9 +915,13 @@ void tgt_mapenv(int (*func) __P((char *, char *)))
 	 *  six bytes of nvram storage. Set environment to it.
 	 */
 	bcopy(&nvram[ETHER_OFFS], hwethadr, 6);
-	sprintf(env, "%02x:%02x:%02x:%02x:%02x:%02x", hwethadr[0], hwethadr[1],
+	sprintf(env, "%02x:%02x:%02x:%02x:%02x:%02x", hwethadr[0] & 0xfe, hwethadr[1],
 	    hwethadr[2], hwethadr[3], hwethadr[4], hwethadr[5]);
 	(*func)("ethaddr", env);
+	if((hwethadr[0] & 1) == 1) {
+		hwethadr[0] = hwethadr[0] & ~1; //mac[0]的最后一个bit是1时为mac组播地址，无效
+		tgt_setenv("ethaddr", env);
+	}
 #if (MEM_SIZE == 0)
         /* 从nvram 生成环境变量字符串 */
         ram_csize = nvram[RAM_CSIZE_OFFS];
