@@ -1,6 +1,6 @@
 #!/bin/bash
 #本脚本用于编译龙芯1C的pmon
-#本脚本在debian5-debian9,ubuntu16.04 测试没有问题,i386和amd64都可以
+#本脚本在debian5-debian10 测试没有问题,i386和amd64都可以
 #在win10的ubuntu子系统编译，也是可以的
 
 arch=`dpkg --print-architecture`
