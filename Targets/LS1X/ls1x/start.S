@@ -645,12 +645,11 @@ cpu_win_fixup:
 	li	t1, 0xbfe64030
 	lw	t0, (t1)
 	and	t0, 0xffffff00
-	li	t1, COL_512  //cpu版本1C300A, 固定使用32M内存
 	beqz	t0, cpu_1c300b
 	nop
 cpu_1c300a:
 	PRINTSTR("\r\nCPU:LS1C300A")
-	b	csize_t1
+	b	nomagic
 	nop
 cpu_1c300b:
 	PRINTSTR("\r\nCPU:LS1C300B")
