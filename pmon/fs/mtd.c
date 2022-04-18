@@ -425,6 +425,7 @@ int del_mtd_device (struct mtd_info *mtd)
 {
 	struct mtdfile *rmp;
 
+	mtdidx = 0;
 	LIST_FOREACH(rmp, &mtdfiles, i_next) {
 		if(rmp->mtd==mtd) {
 			if(rmp->refs == 0) {

@@ -163,17 +163,19 @@ static  int newpart(char *s,char **retptr)
 int mtdpart_setup_real(char *s)
 {
  
-		char *p;
-if(!nor_mtd) norflash_init();
-                 p=s;
-		/*
-		 * parse one mtd. have it reserve memory for the
-		 * struct cmdline_mtd_partition and the mtd-id string.
-		 */
-		while(
-		newpart(p,&s)!=NULL) {
-		 p=s ;
-		}	
-	       	return 0;
+	char *p;
+        if (s == 0)
+		return 0;
+	if(!nor_mtd) norflash_init();
+	p=s;
+	/*
+	 * parse one mtd. have it reserve memory for the
+	 * struct cmdline_mtd_partition and the mtd-id string.
+	 */
+       del_mtd_device(mtd); 
+	while(newpart(p,&s)!=NULL) {
+		p=s ;
+	}	
+	return 0;
 }
 
