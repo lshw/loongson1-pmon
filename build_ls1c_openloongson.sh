@@ -1,48 +1,27 @@
 #!/bin/bash
 #本脚本用于编译龙芯1C的pmon
-#本脚本在debian5-debian9,ubuntu16.04 测试没有问题,i386和amd64都可以
+#本脚本在debian5-debian12,ubuntu16-23 测试没有问题
 #在win10的ubuntu子系统编译，也是可以的
 
-arch=`dpkg --print-architecture`
-if [ "_$arch" == "_amd64" ] ; then
-#amd64
-if ! [ -x /opt/gcc-4.9-ls232 ]  ; then
-wget https://mirrors.tuna.tsinghua.edu.cn/loongson/loongson1c_bsp/gcc-4.9/gcc-4.9-ls232.tar.xz -c
-if [ $? != 0 ] ; then
-wget https://www.anheng.com.cn/loongson/loongson1c_bsp/gcc-4.9/gcc-4.9-ls232.tar.xz -c
-fi
-tar Jxvf gcc-4.9-ls232.tar.xz -C /opt
-fi
-PATH=/opt/gcc-4.9-ls232/bin:$PATH
-else
-#i386
-if ! [ -x /opt/gcc-4.3-ls232 ]  ; then
-wget https://mirrors.ustc.edu.cn/loongson/loongson1c_bsp/gcc-4.3/gcc-4.3-ls232.tar.gz -c
-if [ $? != 0 ] ; then
-wget https://mirrors.tuna.tsinghua.edu.cn/loongson/loongson1c_bsp/gcc-4.3/gcc-4.3-ls232.tar.gz -c
-fi
-tar zxvf gcc-4.3-ls232.tar.gz -C /opt
-fi
-PATH=/opt/gcc-4.3-ls232/bin:$PATH
+if ! [ -x /opt/mips-loongson-gcc7.3-linux-gnu/2019.06-29 ]  ; then
+wget http://ftp.loongnix.cn/toolchain/gcc/release/mips/gcc7/mips-loongson-gcc7.3-2019.06-29-linux-gnu.tar.gz -c
+cat mips-loongson-gcc7.3-2019.06-29-linux-gnu.tar.gz |bunzip2 |tar x  -C /opt
 fi
 
-if ! [ -e /tmp/pmon_install.txt ] ; then
-apt-get update
-apt-get -y install zlib1g  make bison flex xutils-dev ccache
-touch /tmp/pmon_install.txt
-fi
-PATH=`pwd`/ccache:`pwd`/tools/pmoncfg:$PATH
+PATH=`pwd`/ccache:`pwd`/tools/pmoncfg:/opt/mips-loongson-gcc7.3-linux-gnu/2019.06-29/bin:$PATH
 
 if ! [ "`which pmoncfg`" ] ; then
+apt-get update
+apt-get -y install zlib1g  make bison flex ccache libc6-dev xutils-dev
 cd tools/pmoncfg
 make
 cd ../..
 fi
 
 cd zloader.ls1c.openloongson
-make cfg all tgt=rom CROSS_COMPILE=mipsel-linux- LANG=C
+make cfg all tgt=rom CROSS_COMPILE=mips-linux-gnu- LANG=C
 cp gzrom.bin ../pmon_ls1c_openloongson.bin
-make cfg all tgt=ram CROSS_COMPILE=mipsel-linux- LANG=C
+make cfg all tgt=ram CROSS_COMPILE=mips-linux-gnu- LANG=C
 cp gzram ../install.1c
 cd ..
 
