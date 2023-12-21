@@ -277,45 +277,49 @@ struct objects {
  */
 struct hashtab;
 
-const char *conffile;		/* source file, e.g., "GENERIC.sparc" */
-const char *machine;		/* machine type, e.g., "sparc" or "sun3" */
-const char *machinearch;	/* machine arch, e.g., "sparc" or "m68k" */
-const char *sysarch;		/* extra architecture specification */
-const char *srcdir;		/* path to source directory (rel. to build) */
-const char *builddir;		/* path to build directory */
-const char *defbuilddir;	/* default build directory */
-int	errors;			/* counts calls to error() */
-struct	nvlist *options;	/* options */
-struct	nvlist *defoptions;	/* "defopt"'d options */
-struct	nvlist *mkoptions;	/* makeoptions */
-struct	hashtab *devbasetab;	/* devbase lookup */
-struct	hashtab *devatab;	/* devbase attachment lookup */
-struct	hashtab *selecttab;	/* selects things that are "optional foo" */
-struct	hashtab *needcnttab;	/* retains names marked "needs-count" */
-struct	hashtab *opttab;	/* table of configured options */
-struct	hashtab *defopttab;	/* options that have been "defopt"'d */
-struct	devbase *allbases;	/* list of all devbase structures */
-struct	deva *alldevas;		/* list of all devbase attachment structures */
-struct	config *allcf;		/* list of configured kernels */
-struct	devi *alldevi;		/* list of all instances */
-struct	devi *allpseudo;	/* list of all pseudo-devices */
-int	ndevi;			/* number of devi's (before packing) */
-int	npseudo;		/* number of pseudo's */
+extern const char *conffile;		/* source file, e.g., "GENERIC.sparc" */
+extern const char *machine;		/* machine type, e.g., "sparc" or "sun3" */
+extern const char *machinearch;	/* machine arch, e.g., "sparc" or "m68k" */
+extern const char *sysarch;		/* extra architecture specification */
+extern const char *srcdir;		/* path to source directory (rel. to build) */
+extern const char *builddir;		/* path to build directory */
+extern const char *defbuilddir;	/* default build directory */
+extern int	errors;			/* counts calls to error() */
+extern struct	nvlist *options;	/* options */
+extern struct	nvlist *defoptions;	/* "defopt"'d options */
+extern struct	nvlist *mkoptions;	/* makeoptions */
+extern struct	hashtab *devbasetab;	/* devbase lookup */
+extern struct	hashtab *devatab;	/* devbase attachment lookup */
+extern struct	hashtab *selecttab;	/* selects things that are "optional foo" */
+extern struct	hashtab *needcnttab;	/* retains names marked "needs-count" */
+extern struct	hashtab *opttab;	/* table of configured options */
+extern struct	hashtab *defopttab;	/* options that have been "defopt"'d */
+extern struct	devbase *allbases;	/* list of all devbase structures */
+extern struct	deva *alldevas;		/* list of all devbase attachment structures */
+extern struct	config *allcf;		/* list of configured kernels */
+extern struct	devi *alldevi;		/* list of all instances */
+extern struct	devi *allpseudo;	/* list of all pseudo-devices */
+extern int	ndevi;			/* number of devi's (before packing) */
+extern int	npseudo;		/* number of pseudo's */
 
-struct	files *allfiles;	/* list of all kernel source files */
-struct objects *allobjects;	/* list of all kernel object and library files */
+extern struct	files *allfiles;	/* list of all kernel source files */
+extern struct objects *allobjects;	/* list of all kernel object and library files */
 
-struct	devi **packed;		/* arrayified table for packed devi's */
-int	npacked;		/* size of packed table, <= ndevi */
+extern struct	devi **packed;		/* arrayified table for packed devi's */
+extern int	npacked;		/* size of packed table, <= ndevi */
 
-struct {			/* pv[] table for config */
+struct parent_t {			/* pv[] table for config */
 	short	*vec;
 	int	used;
-} parents;
-struct {			/* loc[] table for config */
+}; 
+
+
+struct locator_t {			/* loc[] table for config */
 	const char **vec;
 	int	used;
-} locators;
+};
+extern struct parent_t parents;
+extern struct locator_t locators;
 
 /* files.c */
 void	initfiles(void);
