@@ -64,7 +64,7 @@ int	sigpending __P((sigset_t *));
 int	sigprocmask __P((int, const sigset_t *, sigset_t *));
 int	sigsuspend __P((const sigset_t *));
 
-#if defined(__GNUC__) && defined(__STDC__)
+#if defined(__GNUC__) && defined(__STDC__) && !defined(__OpenBSD__)
 extern __inline int sigaddset(sigset_t *set, int signo) {
 	extern int errno;
 
