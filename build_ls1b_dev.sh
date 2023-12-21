@@ -1,48 +1,30 @@
 #!/bin/bash
-#本脚本用于编译龙芯1C的pmon
-#本脚本在debian5-debian10 测试没有问题,i386和amd64都可以
+#本脚本用于编译龙芯1B的pmon
+#本脚本在debian5-debian12, 使用debian的 交叉编译工具 进行pmon编译
 #在win10的ubuntu子系统编译，也是可以的
-
-arch=`dpkg --print-architecture`
-if [ "_$arch" == "_amd64" ] ; then
-#amd64
-if ! [ -x /opt/gcc-4.9-ls232 ]  ; then
-wget https://mirrors.tuna.tsinghua.edu.cn/loongson/loongson1c_bsp/gcc-4.9/gcc-4.9-ls232.tar.xz -c
-if [ $? != 0 ] ; then
-wget https://www.anheng.com.cn/loongson/loongson1c_bsp/gcc-4.9/gcc-4.9-ls232.tar.xz -c
-fi
-tar Jxvf gcc-4.9-ls232.tar.xz -C /opt
-fi
-PATH=/opt/gcc-4.9-ls232/bin:$PATH
-else
-#i386
-if ! [ -x /opt/gcc-4.3-ls232 ]  ; then
-wget https://mirrors.ustc.edu.cn/loongson/loongson1c_bsp/gcc-4.3/gcc-4.3-ls232.tar.gz -c
-if [ $? != 0 ] ; then
-wget https://mirrors.tuna.tsinghua.edu.cn/loongson/loongson1c_bsp/gcc-4.3/gcc-4.3-ls232.tar.gz -c
-fi
-tar zxvf gcc-4.3-ls232.tar.gz -C /opt
-fi
-PATH=/opt/gcc-4.3-ls232/bin:$PATH
-fi
-
-if ! [ -e /tmp/pmon_install.txt ] ; then
+if ! [ "`which mipsel-linux-gnu-gcc`"  ] ;then
 apt-get update
-apt-get -y install zlib1g  make bison flex xutils-dev ccache
-touch /tmp/pmon_install.txt
+apt-get -y install gcc-mipsel-linux-gnu
+if ! [ "`which mipsel-linux-gnu-gcc`" ] ;then
+echo 没有找到gcc-mipsel-linux-gnu包, 请执行 buils_ls1c_openloongson_by_loongnix.sh 使用龙芯公司的gcc工具进行编译 
+exit
+fi
+date > /var/log/pmon_install.txt
 fi
 PATH=`pwd`/ccache:`pwd`/tools/pmoncfg:$PATH
 
 if ! [ "`which pmoncfg`" ] ; then
+apt-get update
+apt-get -y install zlib1g  make bison flex xutils-dev libc6-dev ccache
 cd tools/pmoncfg
 make
 cd ../..
 fi
 
 cd zloader.ls1b.dev
-make cfg all tgt=rom CROSS_COMPILE=mipsel-linux- LANG=C
+make cfg all tgt=rom CROSS_COMPILE=mipsel-linux-gnu- LANG=C
 cp gzrom.bin ../pmon_ls1b_dev.bin
-make cfg all tgt=ram CROSS_COMPILE=mipsel-linux- LANG=C
+make cfg all tgt=ram CROSS_COMPILE=mipsel-linux-gnu- LANG=C
 cp gzram ../install.1b
 cd ..
 
