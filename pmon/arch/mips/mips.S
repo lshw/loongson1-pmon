@@ -296,14 +296,14 @@ END(exception_handler)
  *  Call with a0 pointing at frame.
  */
 LEAF(md_fpsave)
+        .set push
+        .set hardfloat
 	mfc0	t1, COP_0_STATUS_REG
 	or	v0, t1, SR_COP_1_BIT|SR_FR_32
 	mtc0	v0, COP_0_STATUS_REG
 	NOP8
-
 	cfc1	t0, FPC_CSR		/* drain FP pipeline */
 	cfc1	t0, FPC_CSR		/* get updated status... */
-
 	FSTORE	$f0, F0 * RSIZE(a0)
 	FSTORE	$f1, F1 * RSIZE(a0)
 	FSTORE	$f2, F2 * RSIZE(a0)
@@ -379,9 +379,12 @@ LEAF(md_fpsave)
 
 	j	ra
 	nop
+	.set pop
 END(md_fpsave)
 
 LEAF(md_fprestore)
+        .set push
+        .set hardfloat
 	mfc0	t1, COP_0_STATUS_REG
 	or	v0, t1, SR_COP_1_BIT|SR_FR_32
 	mtc0	v0, COP_0_STATUS_REG
@@ -429,6 +432,7 @@ LEAF(md_fprestore)
 
 	j	ra
 	nop
+	.set pop
 END(md_fprestore)
 
 /*
