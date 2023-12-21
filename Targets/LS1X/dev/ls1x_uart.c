@@ -18,7 +18,7 @@ inline u8 uart16550_read(unsigned long base, int reg)
 	return readb(base + reg);
 }
 
-inline void uart16550_write(unsigned long base, int reg, u8 valu)
+void uart16550_write(unsigned long base, int reg, u8 valu)
 {
 	writeb(valu, base + reg);
 }

@@ -805,12 +805,12 @@ void video_drawsline(char *str, int rows, int cols)
 
 #endif
 
-void inline video_putchar(int xx, int yy, unsigned char c)
+void video_putchar(int xx, int yy, unsigned char c)
 {
 	video_drawchars(xx, yy + VIDEO_LOGO_HEIGHT, &c, 1);
 }
 
-void inline video_putchar_xor(int xx, int yy, unsigned char c)
+void video_putchar_xor(int xx, int yy, unsigned char c)
 {
 	video_drawchars_xor(xx, yy + VIDEO_LOGO_HEIGHT, &c, 1);
 }
@@ -1559,7 +1559,7 @@ void video_console_print(int console_col, int console_row, unsigned char *s)
 	}
 }
 
-void inline begin_record(void)
+void begin_record(void)
 {
 	record = 1;
 }
