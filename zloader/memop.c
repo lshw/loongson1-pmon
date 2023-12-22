@@ -14,7 +14,7 @@ void *memcpy(void *s1, const void *s2, size_t n)
 	return s1;
 }
 
-static void * memset(void * s,int c, size_t count)
+void * memset(void * s,int c, size_t count)
 {
 	char *xs = (char *) s;
 
