@@ -1,6 +1,6 @@
 ifndef PMONCC
 CC=$(CROSS_COMPILE)gcc -fexec-charset=UTF-8
-CROSS_COMPILE ?= mipsel-linux-#mips-elf-
+CROSS_COMPILE ?= mipsel-linux-gnu-gnu-#mips-elf-
 #CROSS_COMPILE ?= mipsel-loongson-linux-gnu-#mips-elf-
 else
 CC=${PMONCC}

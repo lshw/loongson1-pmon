@@ -17,8 +17,8 @@
 #
 .SUFFIXES:	.S .c .o
 
-CROSS_COMPILE 	?=mips-elf-
-#CROSS_COMPILE 	=mipsel-linux-
+#CROSS_COMPILE 	?=mips-elf-
+CROSS_COMPILE 	?=mipsel-linux-gnu-
 
 #
 # Include the make variables (CC, etc...)

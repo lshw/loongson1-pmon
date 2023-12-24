@@ -1,6 +1,6 @@
 #!/usr/bin/perl 
 my ($myedata,$myend,$initmips,$mystart,$tgt_putchar);
-open(F,qq(mipsel-linux-objdump -x $ARGV[0]|));
+open(F,qq(objdump -x $ARGV[0]|));
 while(<F>)
 {
 chomp;
