@@ -155,6 +155,7 @@ extern int optind;
 	}
 
 	printf ("PMON: %s\n", vers);
+	printf ("GCC: %d.%d\n", __GNUC__, __GNUC_MINOR__);
 
 	if(aflag) {
 		tgt_cmd_vers();
