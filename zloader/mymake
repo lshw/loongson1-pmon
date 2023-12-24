@@ -9,7 +9,7 @@ close F;
 shift @ARGV;
 print STDERR "$cmd\n";
 system qq($cmd);
-system qq(cp $obj /tmp/tmp.o;mipsel-linux-objdump -Slz /tmp/tmp.o >/tmp/tmp.S);
+system qq(cp $obj /tmp/tmp.o;objdump -Slz /tmp/tmp.o >/tmp/tmp.S);
 $cmd=~s/\s-c\s/ @ARGV -E -C /;
 print STDERR "$cmd\n";
 system($cmd);
