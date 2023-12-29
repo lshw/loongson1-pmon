@@ -46,6 +46,10 @@
 
 #include "cmd_more.h"
 
+#include <pflash.h>
+#include <flash.h>
+#include <dev/pflash_tgt.h>
+
 static int	envinited = 0;
 
 static struct stdenv {
@@ -364,7 +368,18 @@ envinit ()
     setenv("pmonEnd",buf);
     sprintf(buf,"%d",pmonFreeSize);
     setenv("pmonFreeSize",buf);
+#ifdef MTD_SPI_DATA
+#ifdef MTDPARTS
+	struct fl_map *map;
+	struct fl_device *dev;
+        unsigned int rom_size;
 
+	map = tgt_flashmap();
+	dev = fl_devident((void *)map->fl_map_base, NULL);
+	// map->fl_map_size, size 0x80000->8M, 0x10000->1M
+        rom_size = dev->fl_size;
+#endif
+#endif
     /* set defaults (only if not set at all) */
     for (i = 0; stdenvtab[i].name; i++) {
 	if (!getenv (stdenvtab[i].name)) {
@@ -377,9 +392,11 @@ envinit ()
 		  for(ia=0;ia<len;ia++) {
 		     if(strncmp(&buf[ia],"spi-flash:",sizeof("spi-flash:")-1)==0) break;//找到spi-flash 
 		  }
-		  if(ia < len) //找到spi-flash:
+		  if(ia < len) {//找到spi-flash:
 	              sprintf(buf,"%s,%ld@%ld(spi_data)",stdenvtab[i].init,pmonFreeSize,pmonEnd);
-	          else
+                      if(rom_size > 0x80000) //512k
+	              sprintf(buf,"%s,%ld@%ld(spi_data1)",stdenvtab[i].init,rom_size - 0x80000, 0x80000); //大于1M的rom ， 1M后面的剩余部分，划分为一个mtd
+	          }else
 	              sprintf(buf,"%s;spi-flash:%ld@%ld(spi_data)",stdenvtab[i].init,pmonFreeSize,pmonEnd);
 	      }
 	      setenv (stdenvtab[i].name, buf);
