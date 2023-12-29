@@ -682,15 +682,15 @@ fl_query_info()
 	struct fl_device *dev;
 
 	printf("Available FLASH memory\n");
-	printf("   Start      Size    Width  Sectorsize  Type\n");
+	printf("   Start      Size    MapSize    Width  Sectorsize  Type\n");
 	/*	0x0000ffff 0x0000ffff  4*8   0x00010000  Am29f040   */
 	for(map = tgt_flashmap(); map->fl_map_size != 0; map++) {
 		dev = fl_devident((void *)map->fl_map_base, NULL);
 		if(dev == NULL) {
 			continue;	/* Empty socket ? */
 		}
-		printf("0x%08x 0x%08x %2d*8   0x%08x   %-10s\n",
-			map->fl_map_base, map->fl_map_size, map->fl_map_width,
+		printf("0x%08x %9d 0x%08x %2d*8   0x%08x   %-10s\n",
+			map->fl_map_base, dev->fl_size, map->fl_map_size, map->fl_map_width,
 			dev->fl_secsize * map->fl_map_chips, dev->fl_name);
 	}
 	printf("\n");
