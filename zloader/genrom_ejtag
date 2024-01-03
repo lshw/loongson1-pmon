@@ -94,9 +94,9 @@ asm volatile(\
 #endif
 void initmips(unsigned int msize,int dmsize,int dctrl)
 {
-    long *edata=(void *)$myedata;
-    long *end=(void *)$myend;
-    int *p;
+    volatile long *edata=(void *)$myedata;
+    volatile long *end=(void *)$myend;
+    volatile long *p;
 	int debug=(msize==0);
 	CPU_TLBClear();
     stringserial("Uncompressing Bios");

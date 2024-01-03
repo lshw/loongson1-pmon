@@ -87,9 +87,9 @@ asm volatile(\
 #endif
 void initmips(unsigned int msize,struct callvectors *cv)
 {
-    int *edata=(void *)$myedata;
-    int *end=(void *)$myend;
-    int *p;
+    volatile long *edata=(void *)$myedata;
+    volatile long *end=(void *)$myend;
+    volatile long *p;
     cvs=cv;
     tgt_puts("Uncompressing Bios");
     run_unzip(biosdata,$mystart);

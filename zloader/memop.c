@@ -1,26 +1,18 @@
-void *memcpy(void *s1, const void *s2, size_t n)
+void *
+memcpy (void *dest, const void *src, size_t len)
 {
-	const char *f = s2;
-	char *t = s1;
-
-	if (f < t) {
-		f += n;
-		t += n;
-		while (n-- > 0)
-			*--t = *--f;
-	} else
-		while (n-- > 0)
-			*t++ = *f++;
-	return s1;
+  volatile char *d = dest;
+  const char *s = src;
+  while (len--)
+    *d++ = *s++;
+  return dest;
 }
 
-static void * memset(void * s,int c, size_t count)
+void *
+memset (void *dest, int val, size_t len)
 {
-	char *xs = (char *) s;
-
-	while (count--)
-		*xs++ = c;
-
-	return s;
+  volatile unsigned char *ptr = dest;
+  while (len-- > 0)
+    *ptr++ = val;
+  return dest;
 }
-
