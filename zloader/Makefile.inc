@@ -26,7 +26,7 @@ GZROMSTARTADDR?=0xffffffff81000000
 ROMSTARTADDR?=0xffffffff80010000
 RAMSTARTADDR?=0xffffffff88000000
 export CROSS_COMPILE
-export CC += ${MYCC}  -mno-abicalls -fno-pic
+export CC += ${MYCC}  -mno-abicalls -fno-pic -fno-tree-loop-distribute-patterns
 export LD
 export MKDEP=makedepend
 ifeq ("${tgt}","rom")
