@@ -14,7 +14,9 @@ if ! [ "`which pmoncfg`" ] ; then
 apt-get update
 apt-get -y install zlib1g  make bison flex ccache libc6-dev xutils-dev
 cd tools/pmoncfg
+make clean
 make
+cp pmoncfg /opt/mips-loongson-gcc7.3-linux-gnu/2019.06-29/bin
 cd ../..
 fi
 
